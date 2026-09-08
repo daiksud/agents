@@ -1,0 +1,5 @@
+name: daiksud-agents
+version: 0.1.0
+description: Shared AI agent skills and instructions.
+type: instructions
+includes: auto
