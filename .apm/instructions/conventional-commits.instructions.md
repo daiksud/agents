@@ -1,6 +1,5 @@
 ---
 description: コミットメッセージは Conventional Commits の仕様に従います。
-applyTo: "**/*"
 ---
 
 # Conventional Commits 1.0.0
