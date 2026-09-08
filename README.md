@@ -16,4 +16,10 @@
 
 ```bash
 apm install daiksud/agents
+apm compile --target codex
 ```
+
+`apm install` はパッケージと依存関係を配置します。Codexで
+`.apm/instructions/` の内容を利用するには、続けて
+`apm compile --target codex` を実行してください。Codexが参照する
+ルートの `AGENTS.md` が生成されます。
