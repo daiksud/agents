@@ -1,4 +1,6 @@
 ---
+type: Instruction
+title: コミットメッセージ
 description: コミットメッセージは Conventional Commits の仕様に従います。
 ---
 

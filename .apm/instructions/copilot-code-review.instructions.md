@@ -1,4 +1,6 @@
 ---
+type: Instruction
+title: Copilot Code Review
 description: Copilot Code Review をリクエストする方法
 ---
 
