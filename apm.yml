@@ -4,6 +4,7 @@ description: Shared AI agent skills and instructions.
 type: instructions
 includes: auto
 targets:
+  - copilot
   - codex
 dependencies:
   apm:
