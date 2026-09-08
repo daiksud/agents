@@ -1,18 +1,18 @@
 # daiksud/agents
 
-An [APM](https://microsoft.github.io/apm/) package for shared AI agent skills
-and instructions.
+[APM](https://microsoft.github.io/apm/) を利用した、AIエージェント向けの
+共有スキルと指示のパッケージです。
 
-## Contents
+## 内容
 
-- Conventional Commit guidance for agent-created commits and pull requests
-- Anthropic's `skill-creator` skill for creating and improving agent skills
+- エージェントが作成するコミットとプルリクエスト向けの Conventional Commits ガイド
+- エージェントスキルの作成・改善に使用する Anthropic の `skill-creator` スキル
 
-The `skill-creator` skill is resolved from
+`skill-creator` スキルは、パッケージのインストール時に
 [`anthropics/skills`](https://github.com/anthropics/skills/tree/main/skills/skill-creator)
-when the package is installed.
+から解決されます。
 
-## Install
+## インストール
 
 ```bash
 apm install daiksud/agents
