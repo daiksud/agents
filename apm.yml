@@ -3,3 +3,6 @@ version: 0.1.0
 description: Shared AI agent skills and instructions.
 type: instructions
 includes: auto
+dependencies:
+  apm:
+    - anthropics/skills/skills/skill-creator
