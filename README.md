@@ -16,6 +16,8 @@
 
 ## インストール
 
+Codexの実行承認を事前に準備する場合は、[Codexのコマンド事前許可](docs/guides/codex-command-approvals.md)を参照してください。
+
 ```bash
 apm install daiksud/agents
 apm compile --target codex
