@@ -22,7 +22,7 @@
     {
       "id": 4,
       "prompt": "READMEの誤記を直して。タスク指示者はowner-user。既存Issueはなく、documentationラベルがある。",
-      "expected_output": "Issueに目的・目標・手段と完了条件を記載し、IssueとPRのAssigneeをowner-userに設定する。両方にdocumentationラベルを設定し、PR本文に指定の6項目を書く。",
+      "expected_output": "Issueに目的・目標・手段・計画・検証・完了条件の6見出しを設け、IssueとPRのAssigneeをowner-userに設定する。両方にdocumentationラベルを設定し、PR本文に指定の6項目を書く。",
       "files": []
     },
     {
