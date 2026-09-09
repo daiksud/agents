@@ -1,0 +1,23 @@
+{
+  "skill_name": "bdd-tdd",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "HTTPクライアントのタイムアウト処理を修正して。ドメインの判断は変わらない。",
+      "expected_output": "task-workflowとbdd-tddを読む。技術処理の具体的仕様をテストに記述してレッド・グリーン・リファクタリングを行い、feature文書は作らない。",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "注文のキャンセル可否のドメインルールを変更して。",
+      "expected_output": "task-workflow、bdd-tdd、okf-docsを読む。用語と不変条件を確認し、1シナリオ単位で日本語feature文書を実装より先に保存し、具体例はユニットテストでTDDする。",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "既存のTDD方針を読んで説明して。変更はしない。",
+      "expected_output": "説明だけなのでTDDサイクルやIssue・PRは要求しない。",
+      "files": []
+    }
+  ]
+}

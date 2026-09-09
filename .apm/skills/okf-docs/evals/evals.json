@@ -1,0 +1,23 @@
+{
+  "skill_name": "okf-docs",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "docsの設計判断に、採用した認証方式を記録して。",
+      "expected_output": "task-workflowとokf-docsを読み、docs/adrに1概念のOKF文書を作成する。type/title/description、確認済みの根拠、リンクを検証する。",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "ドメイン変更に伴うfeature文書を更新して。",
+      "expected_output": "okf-docsとbdd-tddの記法を確認し、OKF frontmatterと日本語Markdown with Gherkinを用い、技術手順や具体値をシナリオへ書かない。rumdl整形後の構造を確認する。",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "この文書の要点を説明して。保存は不要。",
+      "expected_output": "読み取り・説明のみなので文書作成の手順やIssue・PRは要求しない。",
+      "files": []
+    }
+  ]
+}
