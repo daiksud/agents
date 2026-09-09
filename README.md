@@ -7,9 +7,9 @@
 | 原本 | 役割 |
 | --- | --- |
 | `.apm/instructions/core.instructions.md` | 常時適用する設計原則、変更保護、スキルの読み込み条件と完了条件 |
-| `.apm/skills/task-workflow/` | Issue・計画からレビュー・スカッシュマージまでの作業手順 |
-| `.apm/skills/bdd-tdd/` | 設計確認、シナリオ分割、BDD・TDD、検証 |
-| `.apm/skills/okf-docs/` | OKF v0.2に従う文書の作成・更新・検証 |
+| `skills/task-workflow/` | Issue・計画からレビュー・スカッシュマージまでの作業手順 |
+| `skills/bdd-tdd/` | 設計確認、シナリオ分割、BDD・TDD、検証 |
+| `skills/okf-docs/` | OKF v0.2に従う文書の作成・更新・検証 |
 
 変更・成果物作成には作業スキルを適用します。相談・比較・説明・読み取りのみの調査にはIssue・PR・マージを要求しません。
 外部依存の `anthropics/skills/skills/skill-creator` は、スキルの作成・改善に使います。
@@ -17,6 +17,16 @@
 共通指示には `applyTo` を付けません。詳細な手順はスキルに置き、必要な段階で `references/` を読みます。
 [インストラクションのテンプレート](docs/templates/instructions.md)は、常時必要なルールを編集するためのひな形です。
 スキルは `name`・`description` を持つ `SKILL.md` と、同梱資料・`evals/evals.json` で管理します。
+
+## gh skillでスキルを導入
+
+スキルだけを導入する場合は、GitHub CLIの `gh skill` を利用できます。ルートの `skills/` は標準探索対象なので、追加の探索オプションは不要です。
+
+```bash
+gh skill install daiksud/agents --all --agent codex --scope user
+```
+
+このコマンドは、このリポジトリの3スキルと同梱資料を導入します。APMの外部依存である `skill-creator` と共通指示のAGENTS.mdは導入しません。共通指示と外部依存もまとめて導入する場合は、以下のAPM手順を使います。
 
 ## グローバル導入
 
