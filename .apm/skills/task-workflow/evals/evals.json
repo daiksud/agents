@@ -34,7 +34,7 @@
     {
       "id": 6,
       "prompt": "PRはスカッシュマージ済み。作業ツリーはクリーンで、作業ブランチ先端はPRの最終コミットと一致。別のマージ済みブランチは他worktreeで使用中。完了処理して。",
-      "expected_output": "mainに切り替えgit pull --ff-onlyを実行する。マージ済み作業ブランチをリモート・ローカルから削除し、必要なら確認後にbranch -Dを使う。他worktreeで使用中のブランチは残して理由を報告し、mainの同期と削除結果を確認する。",
+      "expected_output": "mainに切り替えgit pull --ff-onlyを実行する。マージ済み作業ブランチをリモート・ローカルから削除し、必要なら確認後にgit branch -Dを使う。他worktreeで使用中のブランチは残して理由を報告し、mainの同期と削除結果を確認する。",
       "files": []
     }
   ]
