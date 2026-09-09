@@ -16,6 +16,7 @@
 
 共通指示には `applyTo` を付けません。詳細な手順はスキルに置き、必要な段階で `references/` を読みます。
 [インストラクションのテンプレート](docs/templates/instructions.md)は、常時必要なルールを編集するためのひな形です。
+スキルの作成・更新時は[スキルの編集指示](skills/AGENTS.md)に従います。
 スキルは `name`・`description` を持つ `SKILL.md` と、同梱資料・`evals/evals.json` で管理します。
 
 ## gh skillでスキルを導入
