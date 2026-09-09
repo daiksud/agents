@@ -42,7 +42,7 @@ description: GitとGitHubを前提に、計画からworktreeでの変更、PRレ
 ## worktreeとブランチ
 
 - 着手時に `gh qw worktree add -b <branch> <base>` で作業用worktreeを作成する。`<branch>` は作業ブランチ名、`<base>` は分岐元とする最新のマージ先ブランチを指定する。
-- `gh qw` が使えない場合は、導入・設定の不足を解決してからworktreeを作成する。
+- `gh qw` が使えない場合は、[gh-qwの導入手順](https://github.com/daiksud/gh-qw#install)と[GitHub CLIの認証手順](https://cli.github.com/manual/gh_auth_login)を参照し、導入・設定の不足を解決してからworktreeを作成する。
 - 作成したworktreeで変更・コミット・検証を行う。
 - ブランチ名のプリフィックスは次の表に従う。
 
