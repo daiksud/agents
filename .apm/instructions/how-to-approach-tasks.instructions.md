@@ -1,13 +1,15 @@
 ---
 type: Instruction
 title: 一般的なタスクの進め方
-description: 一般的なタスクに共通する計画、実行、検証・報告の進め方を定めます。
+description: GitとGitHubを前提に、計画からworktreeでの変更、PRレビュー、検証、スカッシュマージまでの進め方を定めます。
 ---
 
 # 一般的なタスクの進め方
 
-調査、実装、修正、文書作成などの作業依頼に適用する。
+調査、実装、修正、文書作成などの作業依頼に適用し、GitとGitHubを前提とする。
 コードの追加・変更・修正を伴う場合は、[プログラミングを行うタスクの指示](./programming-tasks.instructions.md)も適用する。
+
+計画・実行・検証・完了の1サイクルで、worktree作成、変更、コミット、プッシュ、PR作成、レビュー、CIパス確認、スカッシュマージまで進める。
 
 ## GitHub Issueとタスク分割
 
@@ -36,6 +38,31 @@ description: 一般的なタスクに共通する計画、実行、検証・報�
 - 依頼内容から変更が必要なファイルを調査し、新規作成・変更・削除するファイルと、それぞれの変更理由を計画に記載する。
 - 成果物や変更範囲を左右する不明点は質問し、回答に依存しない作業は進める。
 - 容易に修正できる細部は既存の慣習に合わせて判断し、結果に影響する仮定は伝える。
+
+## worktreeとブランチ
+
+- 着手時に `gh qw worktree add -b <branch> <base>` で作業用worktreeを作成する。
+- 作成したworktreeで変更・コミット・検証を行う。
+- ブランチ名のプリフィックスは次の表に従う。
+
+| 変更内容 | プリフィックス |
+| --- | --- |
+| 破壊的変更を含む機能追加 | `breaking/feat/` |
+| 破壊的変更を含むバグ修正 | `breaking/fix/` |
+| 破壊的変更を含まない機能追加 | `feat/` |
+| 破壊的変更を含まないバグ修正 | `fix/` |
+| ドキュメントのみの変更 | `docs/` |
+| その他 | `build/`・`chore/`・`ci/`・`perf/`・`refactor/`・`revert/`・`style/`・`test/` のうち変更内容に合うもの |
+
+その他のプリフィックスは [@commitlint/config-conventionalのtype定義](https://github.com/conventional-changelog/commitlint/blob/f4b108182e6d20eca52433135c7ba1675746318e/%40commitlint/config-conventional/src/index.ts#L24-L36) に従う。
+破壊的変更に許可する型は、[コミットメッセージの指示](./conventional-commits.instructions.md)に従う。
+
+## コミットとプッシュ
+
+- コミットメッセージは[コミットメッセージの指示](./conventional-commits.instructions.md)に従う。
+- テスト追加、テストを通す変更、リファクタリングなど、検証可能な小さな単位でコミットする。
+- TDDではレッド・グリーン・リファクタリングの1サイクルを完了したらリモートへプッシュする。
+- 文書変更などTDDを適用しない作業では、変更を検証・コミットしたらリモートへプッシュする。
 
 ## 実行と障害対応
 
