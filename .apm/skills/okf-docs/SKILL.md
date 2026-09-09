@@ -1,10 +1,11 @@
 ---
-type: Instruction
-title: ドキュメントの構成
-description: Open Knowledge Formatに準拠したdocs以下の文書の形式・分類・記法を定めます。
+name: okf-docs
+description: 文書を作成・更新するときに使用し、docs以下の文書をOKF v0.2で整理・検証する。Markdown with Gherkinのfeature文書も対象とし、読み取り・説明だけでは使用しない。
 ---
 
-# ドキュメントの構成
+# OKFで文書を作成する
+
+文書作成・更新では `task-workflow` も適用する。以下の `docs/` は作業対象リポジトリのパスを指す。
 
 ## 文書の形式
 
@@ -23,3 +24,9 @@ description: Open Knowledge Formatに準拠したdocs以下の文書の形式・
 - 画像など Markdown に含められない外部アセットは使用しない。
 - GitHub Flavored Markdown（GFM）を積極的に活用し、見出し、リスト、タスクリスト、表、コードブロックで情報を読みやすく整理する。
 - Emojiは見出しや状態の識別に、GitHub Alertsは注意事項や重要な制約の強調に使用する。
+
+## 検証
+
+- frontmatterの形式・必須項目、文書の分類、用語、相対リンク、記載したコマンドと差分の体裁を確認する。
+- feature文書は `bdd-tdd` の記法に従い、rumdlで整形後も見出し・ステップの構造を確認する。
+- 確認できなかった出典や検証結果を、確認済みとして記載しない。

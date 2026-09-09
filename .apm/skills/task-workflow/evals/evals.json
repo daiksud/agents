@@ -1,0 +1,23 @@
+{
+  "skill_name": "task-workflow",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "AGENTS.mdとスキルの違いを比較して説明して。ファイル変更は不要。",
+      "expected_output": "読み取りのみの相談としてIssue・PRを作成せず回答する。",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "READMEの導入手順をグローバル配布に更新して。",
+      "expected_output": "task-workflowとokf-docsを読み、Issue・計画・ブランチ確認から文書検証、PR、レビュー、マージまで計画する。TDDは要求しない。",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "PRのCopilotレビューが完了した。Suppressed commentsと複雑な条件でのみ再現する指摘がある。",
+      "expected_output": "review-and-mergeを読み、既存基準で修正しない指摘の理由を返信してからResolveする。CopilotのApprove、最新コミットのレビュー、CI、競合を確認する。",
+      "files": []
+    }
+  ]
+}
