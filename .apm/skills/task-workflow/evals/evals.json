@@ -18,6 +18,24 @@
       "prompt": "PRのCopilotレビューが完了した。Suppressed commentsと複雑な条件でのみ再現する指摘がある。",
       "expected_output": "review-and-mergeを読み、既存基準で修正しない指摘の理由を返信してからResolveする。CopilotのApprove、最新コミットのレビュー、CI、競合を確認する。",
       "files": []
+    },
+    {
+      "id": 4,
+      "prompt": "READMEの誤記を直して。タスク指示者はowner-user。既存Issueはなく、documentationラベルがある。",
+      "expected_output": "Issueに目的・目標・手段と完了条件を記載し、IssueとPRのAssigneeをowner-userに設定する。両方にdocumentationラベルを設定し、PR本文に指定の6項目を書く。",
+      "files": []
+    },
+    {
+      "id": 5,
+      "prompt": "PRレビュー対応で変更範囲を縮小し、受け入れる制約と検証結果が変わった。修正を反映して。",
+      "expected_output": "修正・検証・コミット・プッシュ・返信と同時に、PR本文の目的・経緯・変更内容・検証・やらないこと・受け入れることのうち変化した内容を更新し、ラベルを見直して最新コミットに再レビューを依頼する。",
+      "files": []
+    },
+    {
+      "id": 6,
+      "prompt": "PRはスカッシュマージ済み。作業ツリーはクリーンで、作業ブランチ先端はPRの最終コミットと一致。別のマージ済みブランチは他worktreeで使用中。完了処理して。",
+      "expected_output": "mainに切り替えgit pull --ff-onlyを実行する。マージ済み作業ブランチをリモート・ローカルから削除し、必要なら確認後にbranch -Dを使う。他worktreeで使用中のブランチは残して理由を報告し、mainの同期と削除結果を確認する。",
+      "files": []
     }
   ]
 }
