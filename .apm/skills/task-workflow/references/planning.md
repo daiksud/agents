@@ -25,7 +25,7 @@ description: 変更・成果物作成に着手する際のIssue、計画、ブ�
 
 ## Issueの記述
 
-- IssueとSub-issueはGitHub Flavored Markdownを積極的に活用し、「目的」「目標」「手段」「計画」「検証」「完了条件」の見出しで整理する。
+- IssueとSub-issueはGitHub Flavored Markdownを積極的に活用し、「目的」「目標」「手段」の見出しで整理し、「目標」の下に「検証」「完了条件」、「手段」の下に「計画」の小見出しを設ける。
 - [目的・目標・手段の整理](https://github.com/my-take-dev/inspired-mino-design-skills/blob/main/mino-doc/01-purpose-goal-means.md)に従い、目的には誰が実現したい状態・得たい価値を、目標には達成を判定できる仕様・制約・成功条件を、手段には目標を満たす作業・実装方法を書く。
 - 「計画」には作業範囲・変更ファイル・実行手順を、「検証」には確認方法と実行結果（未実行ならその旨）を、「完了条件」には完了を判断するチェックリストを書く。
 - Issue・Sub-issueの作成時はリポジトリのラベル一覧と説明を確認し、作業内容に合うラベルを設定する。
