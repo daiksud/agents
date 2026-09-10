@@ -52,7 +52,7 @@ GitHub投稿本文には共通設定を明示指定する。リポジトリ文�
    ```
 
 3. 修正後の差分を確認し、もう一度整形して差分が出ないことを確認する。指摘が残る場合は意味を維持して修正し、チェックに合格するまで投稿しない。必要な段落やコードが変形した場合はその構造を直し、再検証する。
-4. 整形済みファイルを `gh issue create/edit --body-file`、`gh pr create/edit --body-file`、`gh issue/pr comment --body-file`、または対応するAPIで投稿する。整形後の文字列を手で再構築しない。
+4. 整形済みファイルを `gh issue create --body-file`、`gh issue edit --body-file`、`gh pr create --body-file`、`gh pr edit --body-file`、`gh issue comment --body-file`、`gh pr comment --body-file`、または対応するAPIで投稿する。整形後の文字列を手で再構築しない。
 5. 保存済み本文を再取得して整形済みファイルと一致することを確認する。GitHubのレンダリングで見出し・表・Alerts・リンク・チェックリスト・リスト余白を確認する。HTML検査では単純リストに不要な `li > p` がないこと、複数段落の `p` は意図どおりであることを区別する。
 6. 表示が不自然なら元ファイルを修正し、整形・チェック・投稿・再取得を繰り返す。APIのHTML確認だけの場合は画面を目視確認したと報告しない。
 
