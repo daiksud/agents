@@ -15,9 +15,10 @@ class InstallationTests(unittest.TestCase):
         installs = [call for call in run.call_args_list if call.args[0][1:3] == ['skill', 'install']]
         self.assertEqual(3, len(installs))
         for call in installs:
-            if '--dir' not in call.args[0]:
-                self.assertEqual(subprocess.DEVNULL, call.kwargs.get('stdin'))
-                self.assertTrue(call.kwargs.get('capture_output'))
+            self.assertIn('--dir', call.args[0])
+        listing = installs[0]
+        self.assertEqual(subprocess.DEVNULL, listing.kwargs.get('stdin'))
+        self.assertTrue(listing.kwargs.get('capture_output'))
 
     def test_empty_source_is_not_a_successful_install(self):
         with tempfile.TemporaryDirectory() as directory:
