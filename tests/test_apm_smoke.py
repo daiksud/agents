@@ -102,7 +102,8 @@ class DeliveryTests(unittest.TestCase):
     def test_missing_instruction_frontmatter_is_a_validation_error(self):
         for root in (self.source, self.cached):
             (root / '.apm/instructions/core.instructions.md').write_text('Missing metadata', encoding='utf-8')
-        self.assertTrue(self.validate())
+        errors = self.validate()
+        self.assertIn('.apm/instructions/core.instructions.md: missing YAML frontmatter', errors)
 
     def test_wrong_commit_is_rejected(self):
         self.assertTrue(validate_deployment(self.source, self.scope, 'b' * 40))
