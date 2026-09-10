@@ -26,6 +26,7 @@ def expected_content(original, source, cached, deployed, skill_root):
 
 
 def validate_deployment(source, scope, sha):
+    source, scope = source.resolve(), scope.resolve()
     errors = []
     cached = scope / '.apm/apm_modules/daiksud/agents'
     try:
