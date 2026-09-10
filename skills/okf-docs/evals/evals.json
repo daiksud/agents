@@ -3,20 +3,32 @@
   "evals": [
     {
       "id": 1,
-      "prompt": "docsの設計判断に、採用した認証方式を記録して。",
-      "expected_output": "task-workflowとokf-docsを読み、docs/adrに1概念のOKF文書を作成する。type/title/description、確認済みの根拠、リンクを検証する。",
+      "prompt": "Issue本文提示・計画承認済み。rumdlは導入済み。docsの設計判断に、採用した認証方式を記録して。",
+      "expected_output": "task-workflowとokf-docsを読み、docs/adrに1概念のOKF文書を作成する。type/title/description、確認済みの根拠、リンクを検証する。 task-workflowの共通Markdown品質手順に従い文書全体を整形・チェックする。",
       "files": []
     },
     {
       "id": 2,
-      "prompt": "ドメイン変更に伴うfeature文書を更新して。",
-      "expected_output": "okf-docsとbdd-tddの記法を確認し、OKF frontmatterと日本語Markdown with Gherkinを用い、技術手順や具体値をシナリオへ書かない。rumdl整形後の構造を確認する。",
+      "prompt": "Issue本文提示・計画承認済み。rumdlは導入済み。ドメイン変更に伴うfeature文書を更新して。",
+      "expected_output": "okf-docsとbdd-tddの記法を確認し、OKF frontmatterと日本語Markdown with Gherkinを用い、技術手順や具体値をシナリオへ書かない。rumdl整形後の構造を確認する。 task-workflowの共通Markdown品質手順に従い文書全体を整形・チェックする。",
       "files": []
     },
     {
       "id": 3,
       "prompt": "この文書の要点を説明して。保存は不要。",
       "expected_output": "読み取り・説明のみなので文書作成の手順やIssue・PRは要求しない。",
+      "files": []
+    },
+    {
+      "id": 4,
+      "prompt": "計画承認済み。PR本文を読みやすく更新して。rumdlは導入済み。",
+      "expected_output": "GitHub投稿本文にはOKF・YAML frontmatterを付けない。task-workflowの共通設定とGFM構成、投稿前整形・チェック、投稿後確認を適用する。",
+      "files": []
+    },
+    {
+      "id": 5,
+      "prompt": "計画承認済み。docsの文書を更新して。rumdl未導入で導入許可はまだない。",
+      "expected_output": "文書に必要なOKFを適用する。rumdl導入・更新やダウンロードを伴う一時実行は事前許可を求め、無断で行わない。実行不能を検証合格と扱わない。",
       "files": []
     }
   ]
