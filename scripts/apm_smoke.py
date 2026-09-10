@@ -1,5 +1,6 @@
 """Verify APM delivery only on disposable GitHub-hosted runners."""
 from pathlib import Path
+import hashlib
 import os
 import re
 
@@ -71,3 +72,15 @@ def require_runner(environment, scope):
     if any((scope / name).exists() for name in
            ('.apm', '.agents/skills', '.codex/AGENTS.md', '.copilot/AGENTS.md')):
         raise RuntimeError('Refusing to modify an existing user installation')
+
+
+def snapshot(scope):
+    files = list((scope / '.agents/skills').rglob('*'))
+    files += [scope / f'.{target}/AGENTS.md' for target in ('codex', 'copilot')]
+    return {str(path.relative_to(scope)): hashlib.sha256(path.read_bytes()).hexdigest()
+            for path in sorted(files) if path.is_file()}
+
+
+def require_same(before, after, label):
+    if before != after:
+        raise RuntimeError(f'{label}: files changed unexpectedly')

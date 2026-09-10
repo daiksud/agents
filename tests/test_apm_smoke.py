@@ -5,7 +5,7 @@ import unittest
 
 import yaml
 
-from scripts.apm_smoke import require_runner, validate_deployment
+from scripts.apm_smoke import require_runner, require_same, snapshot, validate_deployment
 
 
 class DeliveryTests(unittest.TestCase):
@@ -72,6 +72,15 @@ class DeliveryTests(unittest.TestCase):
         obsolete.parent.mkdir()
         obsolete.write_text('old skill', encoding='utf-8')
         self.assertTrue(self.validate())
+
+    def test_snapshot_detects_generated_and_skill_changes(self):
+        before = snapshot(self.scope)
+        self.assertIn('.codex/AGENTS.md', before)
+        self.assertIn('.agents/skills/sample/asset.txt', before)
+        require_same(before, snapshot(self.scope), 'reinstall')
+        (self.scope / '.codex/AGENTS.md').write_text('handwritten changed', encoding='utf-8')
+        with self.assertRaises(RuntimeError):
+            require_same(before, snapshot(self.scope), 'handwritten protection')
 
     def test_wrong_commit_is_rejected(self):
         self.assertTrue(validate_deployment(self.source, self.scope, 'b' * 40))
