@@ -164,7 +164,8 @@ def main():
                 for d in data['dependencies']['apm']]
             manifest.write_text(yaml.safe_dump(data), encoding='utf-8')
             run('apm', 'update', '--global', '--yes', 'daiksud/agents')
-            compile_and_verify(source, candidate, 'update')
+            run('apm', 'install', '--global')
+            require_same(clean, compile_and_verify(source, candidate, 'update'), 'update')
             restoring = time.monotonic()
             run('apm', 'install', '--global', '--target', 'codex,copilot', f'daiksud/agents#{baseline}')
             require_same(previous, compile_and_verify(old_source, baseline, 'restore'), 'restore')
