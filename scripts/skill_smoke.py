@@ -18,7 +18,10 @@ def skill_content(path):
 
 def validate_install(source, target):
     errors = []
-    for skill in sorted((source / 'skills').glob('*/SKILL.md')):
+    skills = sorted((source / 'skills').glob('*/SKILL.md'))
+    if not skills:
+        return ['no source skills found']
+    for skill in skills:
         for original in sorted(skill.parent.rglob('*')):
             if not original.is_file():
                 continue

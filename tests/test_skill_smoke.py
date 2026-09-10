@@ -6,6 +6,11 @@ from scripts.skill_smoke import validate_install
 
 
 class InstallationTests(unittest.TestCase):
+    def test_empty_source_is_not_a_successful_install(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            self.assertTrue(validate_install(root, root))
+
     def test_installed_content_and_missing_files(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
