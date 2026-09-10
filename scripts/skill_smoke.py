@@ -44,7 +44,10 @@ def validate_install(source, target):
 def main():
     source = Path(__file__).resolve().parents[1]
     subprocess.run(['gh', '--version'], check=True)
-    subprocess.run(['gh', 'skill', 'install', '.', '--from-local'], cwd=source, check=True)
+    listing = subprocess.run(['gh', 'skill', 'install', '.', '--from-local'],
+                             cwd=source, check=True, stdin=subprocess.DEVNULL,
+                             capture_output=True, text=True)
+    print(listing.stdout)
     with tempfile.TemporaryDirectory(prefix='agents-skills-') as directory:
         target = Path(directory)
         command = ['gh', 'skill', 'install', '.', '--from-local', '--all', '--dir', str(target)]
