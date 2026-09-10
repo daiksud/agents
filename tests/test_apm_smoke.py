@@ -53,6 +53,26 @@ class DeliveryTests(unittest.TestCase):
                 self.assertTrue(self.validate())
                 path.write_bytes(original)
 
+    def test_rewritten_outbound_link_resolves_to_same_cached_source(self):
+        for root in (self.source, self.cached):
+            target = root / 'docs/help.md'
+            target.parent.mkdir()
+            target.write_text('Help', encoding='utf-8')
+            skill = root / 'skills/sample/SKILL.md'
+            skill.write_text(skill.read_text() + '\n[Help](../../docs/help.md)\n', encoding='utf-8')
+        deployed = self.scope / '.agents/skills/sample/SKILL.md'
+        deployed.write_text(deployed.read_text() +
+                           '\n[Help](../../../.apm/apm_modules/daiksud/agents/docs/help.md)\n', encoding='utf-8')
+        self.assertEqual([], self.validate())
+        (self.cached / 'docs/help.md').write_text('wrong document', encoding='utf-8')
+        self.assertTrue(self.validate())
+
+    def test_obsolete_owned_skill_is_rejected(self):
+        obsolete = self.scope / '.agents/skills/obsolete/SKILL.md'
+        obsolete.parent.mkdir()
+        obsolete.write_text('old skill', encoding='utf-8')
+        self.assertTrue(self.validate())
+
     def test_wrong_commit_is_rejected(self):
         self.assertTrue(validate_deployment(self.source, self.scope, 'b' * 40))
 

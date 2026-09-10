@@ -1,7 +1,28 @@
 """Verify APM delivery only on disposable GitHub-hosted runners."""
 from pathlib import Path
+import os
+import re
 
 import yaml
+
+
+def expected_content(original, source, cached, deployed, skill_root):
+    if original.suffix != '.md':
+        return original.read_bytes()
+
+    def rewrite(match):
+        link, marker, fragment = match[1].partition('#')
+        if not link or ':' in link or link.startswith('/'):
+            return match[0]
+        target = (original.parent / link).resolve()
+        if target.is_relative_to(skill_root):
+            return match[0]
+        cached_target = cached / target.relative_to(source)
+        if target.read_bytes() != cached_target.read_bytes():
+            raise ValueError(f'outbound link target differs: {link}')
+        return '](' + os.path.relpath(cached_target, deployed.parent) + marker + fragment + ')'
+
+    return re.sub(r'\]\(([^)\s]+)\)', rewrite, original.read_text(encoding='utf-8')).encode('utf-8')
 
 
 def validate_deployment(source, scope, sha):
@@ -15,6 +36,9 @@ def validate_deployment(source, scope, sha):
         skills = sorted((source / 'skills').glob('*/SKILL.md'))
         if not skills:
             errors.append('candidate contains no skills')
+        installed = {p.parent.name for p in (scope / '.agents/skills').glob('*/SKILL.md')}
+        if installed - {p.parent.name for p in skills} - {'skill-creator'}:
+            errors.append('obsolete or unexpected deployed skills')
         for skill in skills:
             for original in sorted(skill.parent.rglob('*')):
                 if not original.is_file():
@@ -23,7 +47,7 @@ def validate_deployment(source, scope, sha):
                 if (cached / relative).read_bytes() != original.read_bytes():
                     errors.append(f'cached candidate differs: {relative}')
                 deployed = scope / '.agents' / relative
-                if deployed.read_bytes() != original.read_bytes():
+                if deployed.read_bytes() != expected_content(original, source, cached, deployed, skill.parent):
                     errors.append(f'deployed content differs: {relative}')
         core = Path('.apm/instructions/core.instructions.md')
         original = (source / core).read_text(encoding='utf-8')
