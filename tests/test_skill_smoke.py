@@ -16,6 +16,7 @@ class InstallationTests(unittest.TestCase):
         self.assertEqual(3, len(installs))
         for call in installs:
             self.assertIn('--dir', call.args[0])
+            self.assertEqual(subprocess.DEVNULL, call.kwargs.get('stdin'))
         listing = installs[0]
         self.assertEqual(subprocess.DEVNULL, listing.kwargs.get('stdin'))
         self.assertTrue(listing.kwargs.get('capture_output'))

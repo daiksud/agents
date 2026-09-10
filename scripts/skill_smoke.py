@@ -52,7 +52,7 @@ def main():
         print(listing.stdout)
         command.append('--all')
         for extra in ([], ['--force']):
-            subprocess.run(command + extra, cwd=source, check=True)
+            subprocess.run(command + extra, cwd=source, check=True, stdin=subprocess.DEVNULL)
             errors = validate_install(source, target)
             if errors:
                 raise SystemExit('\n'.join(errors))
