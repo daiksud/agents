@@ -105,3 +105,29 @@ rumdlは自動インストールしません。未導入・旧版の場合は導
 
 - [APM: グローバルコンパイル](https://microsoft.github.io/apm/producer/compile/#global-compilation--g)
 - [APM: スキルの作成と配布](https://microsoft.github.io/apm/producer/author-primitives/skills/)
+
+### ローカルとCIで同じ検査を実行
+
+Python 3.12、GitHub CLI 2.100.0を使います。依存ツールの導入を承認した環境で、リポジトリ直下から実行します。
+
+```bash
+python3 -m venv .venv
+.venv/bin/python -m pip install -r requirements-ci.txt
+source .venv/bin/activate
+python -m unittest discover -s tests -v
+python scripts/check_repository.py
+python scripts/skill_smoke.py
+```
+
+静的検査は隠しディレクトリを含む原本のMarkdown・相対リンク・YAML・JSON・必須メタデータ・評価データを確認します。導入検証は一時ディレクトリで `gh skill` の列挙、新規導入、強制再導入と原本との内容一致を確認し、終了時に削除します。探索的に内容を読む場合は、次のコマンドで検証用ディレクトリを作れます。
+
+```bash
+exploration_dir=$(mktemp -d)
+gh skill install . --from-local --all --dir "$exploration_dir"
+```
+
+表示された導入先で各SKILL.mdと同梱リンクを読み、使いにくい指示や不足を確認します。終了後はその検証用ディレクトリだけを削除します。エージェントによる読み取り専用模擬評価は別途行い、形式検査や導入成功をスキルの判断品質の証明とは扱いません。
+
+GitHub Actionsは全ブランチへのpush、main向けPR、mainへの統合後、手動実行で検査します。`static-checks` 成功後に `skill-install` を実行し、失敗をマージで持ち越しません。必須チェックの定義は [.github/required-checks.json](.github/required-checks.json) です。初回の実行成功後、管理者が既存ルールを保持してmainの必須チェックに反映し、ジョブ名の変更時も両方を更新します。
+
+[CIの実践](https://continuousdelivery.com/foundations/continuous-integration/)と[継続的テスト](https://continuousdelivery.com/foundations/test-automation/)に基づく最小基盤です。APMの更新・復旧経路と日常の統合運用の整備は後続段階で行います。

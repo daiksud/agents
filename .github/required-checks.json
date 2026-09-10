@@ -1,0 +1,4 @@
+{
+  "contexts": ["static-checks", "skill-install"],
+  "strict": true
+}
