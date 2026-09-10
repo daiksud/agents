@@ -78,6 +78,8 @@ apm compile --global
 
 Codexの実行権限を準備する場合は[コマンド事前許可のガイド](docs/guides/codex-command-approvals.md)を参照します。計画承認は環境の権限付与を意味しません。
 
+Issueの新規作成（Sub-issue・計画なしの後続Issueを含む）と計画の保存・更新では、投稿前整形と保存後の本文一致確認を経てOSの既定ブラウザで一度開きます。起動の都度確認は求めません。参照・重複案内、コメント、進捗・検証結果だけの更新、PR操作は対象外です。起動失敗時は保存成功と区別して理由とURLを伝え、承認済み作業を継続します。表示確認・本文とURLの提示・計画承認の手順は維持し、後続Issueの起動をその計画・実装開始承認にはしません。詳細は[Issue保存後のブラウザ起動](skills/task-workflow/references/planning.md#issue保存後のブラウザ起動)を参照します。
+
 ## Markdownの整形と投稿
 
 Issue・PR本文・コメントはEmoji付き見出し、対応関係の表、制約のAlertsで構成し、投稿・更新前に本文全体をrumdlで整形・チェックします。GitHub投稿本文にはOKFを付けません。
