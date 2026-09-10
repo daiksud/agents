@@ -4,7 +4,7 @@ title: コミットメッセージ
 description: コミットメッセージは Conventional Commits の仕様に従います。
 ---
 
-# コミットメッセージ
+## コミットメッセージ
 
 - 英語で簡潔に書く。
 - タイトルの形式は `<type>[(scope)][!]: <description>`（`[]` 内は任意）。コロンの後にスペースを入れる。
