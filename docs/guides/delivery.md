@@ -18,7 +18,7 @@ description: 同じ候補SHAの導入・更新・復旧を検証し、証跡か�
 | 内容照合 | インストール済みパッケージのSHA、原本と配布内容、APMが書き換えたリンクの参照先を確認 |
 | 証跡 | Actions artifactのdelivery-report.jsonとapm-delivery.logに候補・正常SHA、依存SHA、ツール版、OS、ファイルハッシュと所要時間を保存 |
 
-PRではGitHubが作る統合候補SHA、mainへのpushではマージ後SHAを同じ公開GitHubの `daiksud/agents#<SHA>` 経路で導入します。可変のmainを後段で再取得して別の候補に置き換えません。`apm.yml` の外部skill-creator依存は完全SHAに固定し、[検証設定](../../.github/delivery.json)と合わせてPRで更新します。初回成功後に[必須チェック](../../.github/required-checks.json)を既存保護ルールへ反映します。
+PRではGitHubが作る統合候補SHAを一時Gitミラーから供給し、mainへのpushではマージ後SHAを公開GitHubの `daiksud/agents#<SHA>` 経路で導入します。APM 0.30.0が一時マージコミットを通常cloneで取得できないため、PRだけAPM子プロセスのGit URL解決をミラーへ向けます。ミラーのHEAD・内容はチェックアウト済み候補と同じで、元リポジトリやグローバルGit設定を書き換えません。可変のmainを後段で再取得して別の候補に置き換えません。`apm.yml` の外部skill-creator依存は完全SHAに固定し、[検証設定](../../.github/delivery.json)と合わせてPRで更新します。初回成功後に[必須チェック](../../.github/required-checks.json)を既存保護ルールへ反映します。
 
 > [!IMPORTANT]
 > APM検証は使い捨てのGitHub-hosted runnerだけで実行します。既存のAPM導入先・配布スキル・AGENTS.mdがあれば停止します。ローカルやself-hosted runnerで実ユーザーのグローバル配布先を検証用に変更しません。

@@ -86,6 +86,21 @@ def require_same(before, after, label):
         raise RuntimeError(f'{label}: files changed unexpectedly')
 
 
+def candidate_environment(source, directory):
+    import subprocess
+
+    subprocess.run(['git', 'clone', '--mirror', str(source), str(directory)], check=True, timeout=60)
+    sha = subprocess.check_output(['git', '-C', str(source), 'rev-parse', 'HEAD'], text=True).strip()
+    subprocess.run(['git', '-C', str(directory), 'update-ref', 'refs/heads/ci-candidate', sha], check=True)
+    subprocess.run(['git', '-C', str(directory), 'symbolic-ref', 'HEAD', 'refs/heads/ci-candidate'], check=True)
+    offset = int(os.environ.get('GIT_CONFIG_COUNT', '0'))
+    environment = {'GIT_CONFIG_COUNT': str(offset + 2)}
+    for index, suffix in enumerate(('.git', '')):
+        environment[f'GIT_CONFIG_KEY_{offset + index}'] = f'url.{directory.resolve().as_uri()}.insteadOf'
+        environment[f'GIT_CONFIG_VALUE_{offset + index}'] = 'https://github.com/daiksud/agents' + suffix
+    return environment
+
+
 def main():
     import io
     import json
@@ -106,10 +121,13 @@ def main():
               'python': platform.python_version(), 'phases': {}}
     report_path = Path(os.environ['RUNNER_TEMP']) / 'delivery-report.json'
     started = time.monotonic()
+    process_environment = os.environ.copy()
+    report['source_transport'] = 'public-github'
 
     def run(*arguments):
         print('+', ' '.join(arguments), flush=True)
-        subprocess.run(arguments, cwd=source, check=True, stdin=subprocess.DEVNULL, timeout=180)
+        subprocess.run(arguments, cwd=source, check=True, stdin=subprocess.DEVNULL, timeout=180,
+                       env=process_environment)
 
     def compile_and_verify(tree, sha, phase):
         run('apm', 'compile', '--global', '--dry-run')
@@ -139,6 +157,9 @@ def main():
             archive = subprocess.check_output(['git', 'archive', baseline], cwd=source)
             with tarfile.open(fileobj=io.BytesIO(archive)) as bundle:
                 bundle.extractall(old_source, filter='data')
+            if os.environ.get('GITHUB_EVENT_NAME') == 'pull_request':
+                process_environment.update(candidate_environment(source, old_source / 'origin.git'))
+                report['source_transport'] = 'local-mirror-of-integration-candidate'
             handwritten = {}
             for target in ('codex', 'copilot'):
                 path = scope / f'.{target}/AGENTS.md'

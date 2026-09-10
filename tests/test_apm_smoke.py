@@ -1,11 +1,13 @@
 from pathlib import Path
 import shutil
+import os
+import subprocess
 import tempfile
 import unittest
 
 import yaml
 
-from scripts.apm_smoke import require_runner, require_same, snapshot, validate_deployment
+from scripts.apm_smoke import candidate_environment, require_runner, require_same, snapshot, validate_deployment
 
 
 class DeliveryTests(unittest.TestCase):
@@ -81,6 +83,21 @@ class DeliveryTests(unittest.TestCase):
         (self.scope / '.codex/AGENTS.md').write_text('handwritten changed', encoding='utf-8')
         with self.assertRaises(RuntimeError):
             require_same(before, snapshot(self.scope), 'handwritten protection')
+
+    def test_candidate_mirror_serves_exact_commit_without_network(self):
+        subprocess.run(['git', 'init', '-q', str(self.source)], check=True)
+        subprocess.run(['git', '-C', str(self.source), 'add', '.'], check=True)
+        subprocess.run(['git', '-C', str(self.source), '-c', 'user.name=Fixture',
+                        '-c', 'user.email=fixture@example.invalid', 'commit', '-qm', 'fixture'], check=True)
+        subprocess.run(['git', '-C', str(self.source), 'checkout', '--detach', '-q'], check=True)
+        subprocess.run(['git', '-C', str(self.source), '-c', 'user.name=Fixture',
+                        '-c', 'user.email=fixture@example.invalid', 'commit', '--allow-empty', '-qm', 'candidate'], check=True)
+        sha = subprocess.check_output(['git', '-C', str(self.source), 'rev-parse', 'HEAD']).decode().strip()
+        environment = candidate_environment(self.source, self.root / 'mirror.git')
+        self.assertIn('GIT_CONFIG_COUNT', environment)
+        result = subprocess.check_output(['git', 'ls-remote', 'https://github.com/daiksud/agents.git', 'HEAD'],
+                                         env={**os.environ, **environment, 'GIT_ALLOW_PROTOCOL': 'file'})
+        self.assertEqual(sha, result.decode().split()[0])
 
     def test_wrong_commit_is_rejected(self):
         self.assertTrue(validate_deployment(self.source, self.scope, 'b' * 40))
