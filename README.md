@@ -85,8 +85,8 @@ Issue・PR本文・コメントはEmoji付き見出し、対応関係の表、�
 共通設定は `task-workflow` に同梱され、本リポジトリの `.rumdl.toml` も同じ設定を継承します。MD013・MD033・MD034・MD041のみを無効化し、MD060をcompact、MD076をtightにします。その他のルールは既定のままです。
 
 ```bash
-rumdl check --fix <変更したMarkdownファイル>
-rumdl check <変更したMarkdownファイル>
+rumdl check --deny-config-warnings --fix <変更したMarkdownファイル>
+rumdl check --deny-config-warnings <変更したMarkdownファイル>
 ```
 
 投稿用の一時本文や配布先での実行は[GitHub向けMarkdownの品質](skills/task-workflow/references/markdown-quality.md)に従って設定を明示指定します。`okf-docs` は既存の依存スキル `task-workflow` に同梱された設定・資料を参照するため、両スキルを導入します。
