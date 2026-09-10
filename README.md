@@ -78,6 +78,21 @@ apm compile --global
 
 Codexの実行権限を準備する場合は[コマンド事前許可のガイド](docs/guides/codex-command-approvals.md)を参照します。計画承認は環境の権限付与を意味しません。
 
+## Markdownの整形と投稿
+
+Issue・PR本文・コメントはEmoji付き見出し、対応関係の表、制約のAlertsで構成し、投稿・更新前に本文全体をrumdlで整形・チェックします。GitHub投稿本文にはOKFを付けません。
+
+共通設定は `task-workflow` に同梱され、本リポジトリの `.rumdl.toml` も同じ設定を継承します。MD013・MD033・MD034・MD041のみを無効化し、MD060をcompact、MD076をtightにします。その他のルールは既定のままです。
+
+```bash
+rumdl check --fix <変更したMarkdownファイル>
+rumdl check <変更したMarkdownファイル>
+```
+
+投稿用の一時本文や配布先での実行は[GitHub向けMarkdownの品質](skills/task-workflow/references/markdown-quality.md)に従って設定を明示指定します。`okf-docs` は既存の依存スキル `task-workflow` に同梱された設定・資料を参照するため、両スキルを導入します。
+
+rumdlは自動インストールしません。未導入・旧版の場合は導入方法を示して事前許可を得ます。ダウンロードを伴う一時実行も同様です。未検証の投稿は保留します。
+
 ## 検証
 
 原本のYAML・JSON、ルールの移行漏れ、参照先、rumdlと `git diff --check` を確認します。

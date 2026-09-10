@@ -7,6 +7,8 @@ description: 文書を作成・更新するときに使用し、docs以下の文
 
 文書作成・更新では `task-workflow` も適用する。以下の `docs/` は作業対象リポジトリのパスを指す。
 
+GitHubに投稿するIssue・PR本文・コメントにはOKFやYAML frontmatterを適用しない。投稿の構成・整形は依存スキル `task-workflow` の手順に従う。
+
 ## 文書の形式
 
 - `docs/` をKnowledge Bundleとして扱い、文書の作成・更新時は [Open Knowledge Format（OKF）](https://github.com/GoogleCloudPlatform/knowledge-catalog/blob/main/okf/SPEC.md) v0.2に従う。
@@ -27,6 +29,8 @@ description: 文書を作成・更新するときに使用し、docs以下の文
 
 ## 検証
 
+- 依存スキル `task-workflow` の[GitHub向けMarkdownの品質](../task-workflow/references/markdown-quality.md)に従い、Markdown全体を保存前にrumdlで整形・チェックする。共通設定は同スキルの `assets/rumdl.toml` を参照し、既存プロジェクト設定を無断で上書きしない。
+- rumdl未導入・旧版の場合の導入・更新やダウンロードを伴う一時実行は、同資料に従ってユーザーの事前許可を得る。実行不能を検証合格と扱わない。
 - frontmatterの形式・必須項目、文書の分類、用語、相対リンク、記載したコマンドと差分の体裁を確認する。
 - feature文書は `bdd-tdd` の記法に従い、rumdlで整形後も見出し・ステップの構造を確認する。
 - 確認できなかった出典や検証結果を、確認済みとして記載しない。
