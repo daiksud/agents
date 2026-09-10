@@ -84,3 +84,99 @@ def snapshot(scope):
 def require_same(before, after, label):
     if before != after:
         raise RuntimeError(f'{label}: files changed unexpectedly')
+
+
+def main():
+    import io
+    import json
+    import platform
+    import subprocess
+    import tarfile
+    import tempfile
+    import time
+
+    source, scope = Path(__file__).resolve().parents[1], Path.home()
+    require_runner(os.environ, scope)
+    config = json.loads((source / '.github/delivery.json').read_text())
+    candidate = subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=source).decode().strip()
+    baseline = config['baseline_sha']
+    if not all(re.fullmatch('[0-9a-f]{40}', sha) for sha in (candidate, baseline)):
+        raise RuntimeError('Delivery requires immutable commit SHAs')
+    report = {'candidate': candidate, 'baseline': baseline, 'environment': platform.platform(),
+              'python': platform.python_version(), 'phases': {}}
+    report_path = Path(os.environ['RUNNER_TEMP']) / 'delivery-report.json'
+    started = time.monotonic()
+
+    def run(*arguments):
+        print('+', ' '.join(arguments), flush=True)
+        subprocess.run(arguments, cwd=source, check=True, stdin=subprocess.DEVNULL, timeout=180)
+
+    def compile_and_verify(tree, sha, phase):
+        run('apm', 'compile', '--global', '--dry-run')
+        run('apm', 'compile', '--global')
+        errors = validate_deployment(tree, scope, sha)
+        if errors:
+            raise RuntimeError('\n'.join(errors))
+        lock = yaml.safe_load((scope / '.apm/apm.lock.yaml').read_text())
+        dependencies = [{k: d.get(k) for k in ('repo_url', 'resolved_commit', 'virtual_path')}
+                        for d in lock['dependencies']]
+        if sha == candidate and not any(
+                d['resolved_commit'] == config['skill_creator_sha']
+                and d['virtual_path'] == 'skills/skill-creator' for d in dependencies):
+            raise RuntimeError('skill-creator dependency does not match its pin')
+        if not (scope / '.agents/skills/skill-creator/SKILL.md').is_file():
+            raise RuntimeError('skill-creator was not deployed')
+        hashes = snapshot(scope)
+        report['phases'][phase] = {'sha': sha, 'hashes': hashes, 'dependencies': dependencies,
+                                  'elapsed_seconds': round(time.monotonic() - started, 2)}
+        return hashes
+
+    try:
+        for tool in ('apm', 'gh'):
+            report[tool] = subprocess.check_output([tool, '--version'], text=True).strip()
+        with tempfile.TemporaryDirectory(prefix='agents-baseline-') as directory:
+            old_source = Path(directory)
+            archive = subprocess.check_output(['git', 'archive', baseline], cwd=source)
+            with tarfile.open(fileobj=io.BytesIO(archive)) as bundle:
+                bundle.extractall(old_source, filter='data')
+            handwritten = {}
+            for target in ('codex', 'copilot'):
+                path = scope / f'.{target}/AGENTS.md'
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_text(f'Handwritten {target} instructions.\n', encoding='utf-8')
+                handwritten[path] = path.read_bytes()
+            run('apm', 'install', '--global', '--target', 'codex,copilot', f'daiksud/agents#{candidate}')
+            run('apm', 'compile', '--global', '--dry-run')
+            run('apm', 'compile', '--global')
+            require_same(handwritten, {p: p.read_bytes() for p in handwritten}, 'handwritten protection')
+            report['handwritten_preserved'] = True
+            for path in handwritten:
+                path.unlink()  # Only these verified, test-created files are removed.
+            clean = compile_and_verify(source, candidate, 'clean')
+            run('apm', 'install', '--global', '--frozen')
+            require_same(clean, compile_and_verify(source, candidate, 'reinstall'), 'reinstall')
+            run('apm', 'install', '--global', '--target', 'codex,copilot', f'daiksud/agents#{baseline}')
+            previous = compile_and_verify(old_source, baseline, 'baseline')
+            manifest = scope / '.apm/apm.yml'
+            data = yaml.safe_load(manifest.read_text())
+            data['dependencies']['apm'] = [
+                f'daiksud/agents#{candidate}' if d == f'daiksud/agents#{baseline}' else d
+                for d in data['dependencies']['apm']]
+            manifest.write_text(yaml.safe_dump(data), encoding='utf-8')
+            run('apm', 'update', '--global', '--yes', 'daiksud/agents')
+            compile_and_verify(source, candidate, 'update')
+            restoring = time.monotonic()
+            run('apm', 'install', '--global', '--target', 'codex,copilot', f'daiksud/agents#{baseline}')
+            require_same(previous, compile_and_verify(old_source, baseline, 'restore'), 'restore')
+            report['restore_seconds'] = round(time.monotonic() - restoring, 2)
+            if report['restore_seconds'] > 600:
+                raise RuntimeError('Restoration exceeded the initial 10-minute target')
+            report['success'] = True
+    finally:
+        report['elapsed_seconds'] = round(time.monotonic() - started, 2)
+        report_path.write_text(json.dumps(report, indent=2) + '\n', encoding='utf-8')
+        print(f'Delivery evidence: {report_path}', flush=True)
+
+
+if __name__ == '__main__':
+    main()
