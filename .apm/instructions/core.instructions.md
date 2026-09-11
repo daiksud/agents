@@ -15,6 +15,7 @@ description: 全プロジェクトに適用する設計原則、変更保護、�
 | --- | --- |
 | 変更・成果物作成、Issue対応、PR・レビュー対応 | `~/.agents/skills/task-workflow/SKILL.md` |
 | コードの追加・変更・修正 | `~/.agents/skills/bdd-tdd/SKILL.md` |
+| コードレビューの実行時だけ | `~/.agents/skills/code-review/SKILL.md` |
 | 文書の作成・更新 | `~/.agents/skills/okf-docs/SKILL.md` |
 
 - 複数の条件に該当するときは、それぞれのスキルを適用する。
@@ -73,5 +74,5 @@ description: 全プロジェクトに適用する設計原則、変更保護、�
 - 変更・成果物作成はIssueに紐づけ、計画、検証、コミット、PR、レビュー、CI確認、スカッシュマージまで進める。
 - コミットは英語のConventional Commits形式とし、破壊的変更を許可する型は `feat`・`fix` のみとする。
 - 最新コミットのレビュー完了、対応が必要な指摘ゼロ、CIパス、コンフリクトゼロをマージ条件とする。
-- Copilot Code Reviewを利用する場合は、CopilotのApproveを得るまで完了としない。
+- 通常は最新コミットのCopilot Approveを得る。利用枠・権限・設定・障害による利用不能を証拠付きで確認した場合は、追加確認なしでCodexへ切り替え、最新HEADの正常完了と過去を含む要対応指摘ゼロを確認する。詳細と依頼重複の防止は `task-workflow` に従う。リポジトリの必須承認・保護設定は緩めない。
 - 検証不能・権限不足・外部サービスの制約を成功とみなさず、完了範囲と未完了範囲、再開条件を報告する。

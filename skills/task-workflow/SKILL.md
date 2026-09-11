@@ -30,6 +30,8 @@ description: 変更・成果物作成の依頼、Issueに紐づく実装・文�
 2. コミット前に[コミットメッセージ](references/conventional-commits.md)を読む。
 3. PR作成・レビュー対応・リベース・マージ・作業環境の整理の前に[レビューとマージ](references/review-and-merge.md)を読む。
 
+レビュー自体を実行するときだけ `code-review` を適用する。依頼・指摘対応・完了判定は本スキルが担当し、通常のCopilotが利用不能と確認できた場合のCodexへの切り替えは[レビューとマージ](references/review-and-merge.md)に従う。
+
 コード変更では `bdd-tdd`、文書の作成・更新では `okf-docs` も適用する。
 資料に書かれたプロジェクトのパスは作業対象リポジトリを基準とし、資料へのMarkdownリンクは本スキルを基準に解決する。
 
