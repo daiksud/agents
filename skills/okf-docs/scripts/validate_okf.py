@@ -84,13 +84,17 @@ def structure_lines(body):
                 list_indents.pop()
         base = list_indents[-1] if list_indents else 0
         content = line[base:]
-        marker = re.match(r'^ {0,3}(`{3,}|~{3,})(.*)$', content)
+        item = re.match(r'^( {0,3})(?:[-+*]|\d+[.)])( +)', content)
+        fence_content = content[item.end():] if item else content
+        marker = re.match(r'^ {0,3}(`{3,}|~{3,})(.*)$', fence_content)
         if marker and not (marker[1][0] == '`' and '`' in marker[2]):
+            if item:
+                base += item.end()
+                list_indents.append(base)
             fence = (marker[1][0], len(marker[1]), quote_depth, base)
             paragraph = False
             yield ''
             continue
-        item = re.match(r'^( {0,3})(?:[-+*]|\d+[.)])( +)', content)
         if item:
             list_indents.append(base + item.end())
             paragraph = False
@@ -111,7 +115,9 @@ def reserved_issues(path, bundle, data, body, has_frontmatter, profile):
     def error(field, message):
         issues.append(Issue(path, field, message, 'specification'))
 
-    lines = list(structure_lines(body))
+    content = prose(body, remove_escapes=False)
+    lines = content.splitlines()
+    definitions = reference_definitions(content)
     for i, line in enumerate(lines):
         if i and re.fullmatch(r' {0,3}(?:=+|-+)\s*', line) and lines[i - 1].strip():
             if not re.match(r'^ {0,3}(?:#|[-+*]\s|\d+[.)]\s)', lines[i - 1]):
@@ -133,7 +139,8 @@ def reserved_issues(path, bundle, data, body, has_frontmatter, profile):
                 if heading and entries == 0:
                     error('body', 'index section must contain linked list entries')
                 heading, entries = True, 0
-            elif re.match(r'^ {0,3}(?:[-+*]|\d+[.)])\s+\[[^]]+\](?:\([^)]+\)|\[[^]]*\])', line) and heading:
+            elif (heading and re.match(r'^ {0,3}(?:[-+*]|\d+[.)])\s+', line)
+                  and any(linked_paths(line, definitions=definitions))):
                 entries += 1
         if not heading or not entries:
             error('body', 'index requires headings and linked list entries')
@@ -306,7 +313,9 @@ def state_issues(path, data, now, profile):
                             'specification', 'warning'))
     events = data.get('verified', [])
     events = [events] if isinstance(events, dict) else events
-    if not events:
+    usable_events = [event for event in (events if isinstance(events, list) else []) if isinstance(event, dict)
+                     and nonempty(event.get('by')) and timestamp(event.get('at'))]
+    if not usable_events:
         issues.append(Issue(path, 'verified', 'unverified content; confirmation is not inferred',
                             'specification', 'warning'))
     generated = data.get('generated')
@@ -379,21 +388,33 @@ def bracket_label(text, start):
     return None, start + 1
 
 
-def linked_paths(body):
-    content = prose(body, remove_escapes=False)
+def normalized_label(text):
+    return ' '.join(text.split()).casefold()
 
-    def normalized(text):
-        return ' '.join(text.split()).casefold()
 
+def reference_definitions(content):
     definitions = {}
-    for line in content.splitlines():
+    lines = content.splitlines()
+    for number, line in enumerate(lines):
         if line.startswith('    '):
             continue
         line = line.lstrip()
         if line.startswith('[') and not line.startswith('[^'):
             label, end = bracket_label(line, 0)
             if label is not None and line[end:end + 1] == ':':
-                definitions[normalized(label)] = markdown_destination(line[end + 1:].lstrip())
+                value = line[end + 1:].lstrip()
+                if not value and number + 1 < len(lines):
+                    value = lines[number + 1].lstrip()
+                target = markdown_destination(value)
+                if target:
+                    definitions[normalized_label(label)] = target
+    return definitions
+
+
+def linked_paths(body, *, definitions=None):
+    content = prose(body, remove_escapes=False)
+    if definitions is None:
+        definitions = reference_definitions(content)
     i = 0
     while i < len(content):
         if content[i] == '\\':
@@ -414,7 +435,7 @@ def linked_paths(body):
             if content[end:end + 1] == '[':
                 reference, i = bracket_label(content, end)
                 label = reference or label
-            key = normalized(label)
+            key = normalized_label(label)
             if key in definitions:
                 yield definitions[key]
 

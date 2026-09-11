@@ -361,3 +361,30 @@ class ValidationTests(unittest.TestCase):
         self.assertTrue(self.errors(self.check(text, 'authoring')))
         opaque = self.concept('x-extension: {date: 2026-13-30T00:00:00Z}\n')
         self.assertEqual([], self.errors(self.check(opaque, 'authoring')))
+
+    def test_fence_on_list_marker_line_masks_its_contents(self):
+        body = '- ```markdown\n  [Example](missing.md)\n  [^fake]\n  ```\n'
+        self.assertEqual([], self.errors(self.check(self.concept(body=body), 'authoring')))
+
+    def test_index_uses_the_shared_escaped_label_parser(self):
+        self.write('page.md', self.concept())
+        text = '# Group\n- [a\\]b](page.md)\n'
+        for profile in ('conformance', 'authoring'):
+            self.assertEqual([], self.errors(self.check(text, profile, 'index.md')))
+
+    def test_reference_definition_target_can_be_on_next_line(self):
+        self.write('page.md', self.concept())
+        body = '[Page][target]\n\n[target]:\n  page.md\n'
+        self.assertEqual([], self.errors(self.check(self.concept(body=body), 'authoring')))
+        self.assertTrue(self.errors(self.check(self.concept(body=body.replace('page.md','missing.md')), 'authoring')))
+
+    def test_malformed_verification_does_not_suppress_unverified_warning(self):
+        for value in ['garbage', '[null]', '{x: y}', '{by: human:reader}']:
+            issues = self.check(self.concept(f'verified: {value}\n'))
+            self.assertEqual([], self.errors(issues))
+            self.assertTrue(any(x.field=='verified' and x.severity=='warning' for x in issues))
+
+    def test_comments_do_not_count_as_reserved_file_structure(self):
+        for name, body in [('index.md', '# Group\n- [Page](page.md)\n'),
+                           ('log.md', '# Log\n## 2026-09-11\n- Created\n')]:
+            self.assertTrue(self.errors(self.check('<!--\n'+body+'-->\n', name=name)))
