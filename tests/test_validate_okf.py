@@ -450,3 +450,17 @@ class ValidationTests(unittest.TestCase):
         result = subprocess.run([sys.executable, str(SCRIPT), str(self.root), '--profile', 'authoring'],
                                 capture_output=True, text=True, timeout=3)
         self.assertEqual(0, result.returncode, result.stdout)
+
+    def test_inline_link_destinations_titles_and_html_attributes_are_not_links(self):
+        self.write('report[ref].md', self.concept())
+        for body in ['[Report](report[ref].md)\n',
+                     '[Report](<report[ref].md> "Title [ref]")\n',
+                     '<span title="[ref]">Text</span>\n']:
+            with self.subTest(body=body):
+                self.assertEqual([], self.errors(self.check(self.concept(body=body+'\n[ref]: missing.md\n'), 'authoring')))
+        index = '# Group\n- <span title="[ref]">No link</span>\n\n[ref]: report[ref].md\n'
+        for profile in ('conformance', 'authoring'):
+            self.assertTrue(self.errors(self.check(index, profile, 'index.md')))
+
+    def test_comment_marker_inside_inline_code_does_not_hide_later_links(self):
+        self.assertTrue(self.errors(self.check(self.concept(body='`<!--` [Target](missing.md)\n'), 'authoring')))

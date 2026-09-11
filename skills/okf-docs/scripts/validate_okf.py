@@ -191,9 +191,9 @@ def timestamp(value):
 
 def prose(body, *, remove_escapes=True):
     text = '\n'.join(structure_lines(body))
-    text = re.sub(r'<!--.*?(?:-->|\Z)', '', text, flags=re.S)
     # Matched code spans only; an unmatched backtick remains prose.
     text = re.sub(r'(`+)(?!`)(.+?)(?<!`)\1(?!`)', '', text, flags=re.S)
+    text = re.sub(r'<!--.*?(?:-->|\Z)', '', text, flags=re.S)
     return re.sub(r'\\[\\`*{}\[\]()#+.!_>~-]', '', text) if remove_escapes else text
 
 
@@ -424,10 +424,38 @@ def reference_definitions(content, *, mask=False):
             if mask else definitions)
 
 
+HTML_TOKEN = re.compile(r'''<(?:/?[A-Za-z][A-Za-z0-9-]*\b(?:[^'">]|"[^"]*"|'[^']*')*|[A-Za-z][A-Za-z0-9+.-]*:[^<>]*)>''')
+
+
+def inline_link_end(content, start):
+    """Find the end of a parenthesized destination and optional title."""
+    depth, quote, i = 1, None, start + 1
+    while i < len(content):
+        char = content[i]
+        if char == '\\':
+            i += 2
+            continue
+        if quote:
+            if char == quote:
+                quote = None
+        elif char == '<':
+            quote = '>'
+        elif char in '\"\'' and content[i - 1].isspace():
+            quote = char
+        elif char == '(':
+            depth += 1
+        elif char == ')':
+            depth -= 1
+            if not depth:
+                return i + 1
+        i += 1
+    return None
+
+
 def footnote_content(body):
     """Retain visible labels/text, excluding destinations and HTML attributes."""
     content = reference_definitions(prose(body, remove_escapes=False), mask=True)
-    content = re.sub(r'''<(?:/?[A-Za-z][A-Za-z0-9-]*\b(?:[^'">]|"[^"]*"|'[^']*')*|[A-Za-z][A-Za-z0-9+.-]*:[^<>]*)>''', '', content)
+    content = HTML_TOKEN.sub('', content)
     result, i = [], 0
     while i < len(content):
         if content[i] == '\\':
@@ -435,17 +463,8 @@ def footnote_content(body):
             continue
         result.append(content[i])
         if content[i:i + 2] == '](':
-            depth, j = 1, i + 2
-            while j < len(content) and depth:
-                if content[j] == '\\':
-                    j += 2
-                    continue
-                if content[j] == '(':
-                    depth += 1
-                elif content[j] == ')':
-                    depth -= 1
-                j += 1
-            if not depth:
+            j = inline_link_end(content, i + 1)
+            if j is not None:
                 i = j
                 continue
         i += 1
@@ -456,6 +475,7 @@ def linked_paths(body, *, definitions=None):
     content = prose(body, remove_escapes=False)
     if definitions is None:
         definitions = reference_definitions(content)
+    content = reference_definitions(content, mask=True)
     # Identify unmatched openings once; keep valid inner links discoverable.
     stack, closed, escaped = [], set(), False
     for position, char in enumerate(content):
@@ -472,6 +492,11 @@ def linked_paths(body, *, definitions=None):
         if content[i] == '\\':
             i += 2
             continue
+        if content[i] == '<':
+            html = HTML_TOKEN.match(content, i)
+            if html:
+                i = html.end()
+                continue
         if content[i] == '!' and i + 1 in closed:
             _, i = bracket_label(content, i + 1)
             continue
@@ -483,9 +508,12 @@ def linked_paths(body, *, definitions=None):
         if label is None or label.startswith('^'):
             continue
         if content[end:end + 1] == '(':
-            target = markdown_destination(content[end + 1:].lstrip())
-            if target:
-                yield target
+            stop = inline_link_end(content, end)
+            if stop is not None:
+                target = markdown_destination(content[end + 1:stop - 1].lstrip())
+                i = stop
+                if target:
+                    yield target
         elif content[end:end + 1] != ':':
             if content[end:end + 1] == '[':
                 reference, i = bracket_label(content, end)
