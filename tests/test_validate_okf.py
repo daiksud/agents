@@ -230,3 +230,24 @@ class ValidationTests(unittest.TestCase):
         result = self.cli(self.root, 'bad.md')
         self.assertEqual(1, result.returncode)
         self.assertIn('UTF-8', result.stdout + result.stderr)
+
+    def test_invalid_dates_are_document_errors_not_environment_failures(self):
+        self.write('bad.md', self.concept('stale_after: 2026-13-30T00:00:00Z\n'))
+        self.assertEqual(1, self.cli(self.root, '--profile', 'authoring').returncode)
+        issues = self.errors(self.check(self.concept('resource: "https://[invalid"\n'), 'authoring'))
+        self.assertTrue(issues)
+
+    def test_scope_descriptors_are_not_paths_and_extensions_remain_opaque(self):
+        text = self.concept('sources: [{resource: "all queries in BigQuery project X/Y"}]\n'
+                            'x-future: {stale_after: not-a-date, verified: {custom: true}}\n')
+        self.assertEqual([], self.errors(self.check(text, 'authoring')))
+
+    def test_setext_index_headings_and_ordered_entries(self):
+        self.write('other.md', self.concept())
+        self.assertEqual([], self.errors(self.check('Group\n=====\n1. [Other](other.md)\n',
+                                                    name='index.md')))
+
+    def test_empty_or_unclosed_index_frontmatter_is_not_ignored(self):
+        for text in ['---\r\nokf_version: "0.2"\r\n# Group\r\n- [X](x)\r\n',
+                     '---\n---\n# Group\n- [X](x)\n']:
+            self.assertTrue(self.errors(self.check(text, name='index.md')))

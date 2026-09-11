@@ -1,0 +1,32 @@
+仮想作業。Bundle rootはdocs/。依頼: 受付時間を17時から18時へ更新し、sourcesをhours、contactの順に並べ替える。変更後全文と検証方針を示す。
+以下の全資料以外を調べず、実環境を変更しない。確認者の追加証拠はない。
+FILE notes/help.md
+---
+type: Guide
+title: 問い合わせ
+description: 受付時間と連絡先を説明する。
+x-owner: {team: care, ticket: C-7}
+sources:
+  - {id: contact, resource: 'https://example.invalid/contact', title: 連絡先}
+  - {id: hours, resource: 'https://example.invalid/hours', title: 受付時間}
+generated: {by: 'writer/1', at: '2026-06-01T09:00:00+09:00'}
+verified: {by: 'human:aki', at: '2026-06-02T10:00:00+09:00'}
+---
+# 問い合わせ
+受付終了は17時。[^hours] 連絡先はcare@example.invalid。[^contact]
+関連する[用語](../glossary.md)も参照する。
+[^hours]: 受付時間
+[^contact]: 連絡先
+FILE glossary.md
+---
+type: Glossary
+title: 用語
+description: 問い合わせの用語を説明する。
+---
+窓口は問い合わせを受け付ける担当を指す。
+SOURCE https://example.invalid/hours
+受付終了は18時。2026年6月3日から適用。
+SOURCE https://example.invalid/contact
+連絡先はcare@example.invalid。
+HISTORY 2026-06-02
+akiは変更前の17時という本文を確認した。変更後の確認は未実施。

@@ -1,0 +1,19 @@
+仮想読み取り。現在時刻を2026-06-03T00:00:00Zに固定。以下の2文書が全文。定義の信頼・状態・鮮度と、未記録情報を判定して説明する。実行は禁止。
+FILE machine.md
+---
+type: Metric
+title: 件数
+description: 完了行の件数。
+generated: {by: 'writer/1', at: '2026-06-01T00:00:00Z'}
+verified: {by: 'process:check-policy', at: '2026-06-02T00:00:00+00:00'}
+stale_after: '2026-06-03T00:00:00Z'
+---
+件数は完了行の数。
+FILE unverified.md
+---
+type: Metric
+title: 予備件数
+description: 予備行の件数。
+---
+予備件数は予備行の数。
+追加証拠: machine.mdの検査CIは成功した。人間の内容確認、計算の実行とreceipt、attestationは実施されていない。

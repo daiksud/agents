@@ -52,6 +52,11 @@ def reserved_issues(path, bundle, data, body, has_frontmatter):
         issues.append(Issue(path, field, message, 'specification'))
 
     lines = list(structure_lines(body))
+    for i, line in enumerate(lines):
+        if i and re.fullmatch(r' {0,3}(?:=+|-+)\s*', line) and lines[i - 1].strip():
+            if not re.match(r'^ {0,3}(?:#|[-+*]\s|\d+[.)]\s)', lines[i - 1]):
+                lines[i - 1] = ('# ' if line.lstrip().startswith('=') else '## ') + lines[i - 1].strip()
+                lines[i] = ''
     if path.name == 'index.md':
         if has_frontmatter and (path.parent.resolve() != bundle.resolve()
                                 or 'okf_version' not in data or 'type' in data):
@@ -62,7 +67,7 @@ def reserved_issues(path, bundle, data, body, has_frontmatter):
                 if heading and entries == 0:
                     error('body', 'index section must contain linked list entries')
                 heading, entries = True, 0
-            elif re.match(r'^ {0,3}[-+*]\s+\[[^]]+\](?:\([^)]+\)|\[[^]]*\])', line) and heading:
+            elif re.match(r'^ {0,3}(?:[-+*]|\d+[.)])\s+\[[^]]+\](?:\([^)]+\)|\[[^]]*\])', line) and heading:
                 entries += 1
         if not heading or not entries:
             error('body', 'index requires headings and linked list entries')
@@ -281,9 +286,15 @@ def contract_issues(path, bundle, data, body):
         if not nonempty(value):
             error(field, 'must be a nonempty path or URL')
             return
+        if descriptor and re.search(r'\s', value) and not re.match(r'^(?:\.?\.?/|[A-Za-z][A-Za-z0-9+.-]*:)', value):
+            return
         if descriptor and not ('/' in value or re.search(r'\.[a-zA-Z0-9]+(?:#.*)?$', value)):
             return
-        target = local_target(value, path, bundle)
+        try:
+            target = local_target(value, path, bundle)
+        except ValueError:
+            error(field, 'malformed path or URL')
+            return
         if target is not None:
             if not target.resolve().is_relative_to(bundle.resolve()):
                 error(field, f'reference leaves the Bundle: {value}')
@@ -377,14 +388,14 @@ def validate_file(path, bundle, profile='conformance', *, now=None):
         return [Issue(path, 'encoding', 'document must be UTF-8', 'specification')]
     match = re.match(r'\A---\r?\n(.*?)\r?\n---(?:\r?\n|\Z)', text, re.S)
     reserved = path.name in {'index.md', 'log.md'}
-    if not match and reserved and not text.startswith('---\n'):
+    if not match and reserved and not re.match(r'\A---(?:\r?\n|\Z)', text):
         return (reserved_issues(path, bundle, {}, text, False)
                 + (contract_issues(path, bundle, {}, text) if profile == 'authoring' else []))
     if not match:
         return [Issue(path, 'frontmatter', 'missing YAML frontmatter', 'specification')]
     try:
         data = yaml.safe_load(match[1])
-    except yaml.YAMLError as error:
+    except (yaml.YAMLError, ValueError) as error:
         return [Issue(path, 'frontmatter', str(error), 'specification')]
     if not isinstance(data, dict):
         return [Issue(path, 'frontmatter', 'must be a mapping', 'specification')]

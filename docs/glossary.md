@@ -2,6 +2,9 @@
 type: Reference
 title: 開発実践と作業スキルの用語
 description: このパッケージで用いる開発実践と診断の用語、適用範囲、対応する名称を定義します。
+sources:
+  - id: okf-v02
+    resource: https://github.com/GoogleCloudPlatform/open-knowledge-format/blob/ad30107c31c06aec8a7d5636e0d1058118604e6f/SPEC.md
 ---
 
 ## 開発実践と作業スキルの用語
@@ -37,7 +40,7 @@ description: このパッケージで用いる開発実践と診断の用語、�
 
 ### OKF文書検査の用語
 
-この境界は配布スキルによる文書検査であり、利用先の業務モデルとは別である。
+この境界は配布スキルによる文書検査であり、利用先の業務モデルとは別である。OKFの語義は固定版の仕様に基づく。[^okf-v02]
 
 | 用語 | この文脈での定義 | 適用境界 | コード・指示上の名称 |
 | --- | --- | --- | --- |
@@ -48,3 +51,5 @@ description: このパッケージで用いる開発実践と診断の用語、�
 | 出典ID | 個別主張の脚注とsourcesを順序に依存せず結ぶキー | OKF文書検査 | `sources[].id` |
 | 確認記録 | 文書の内容や計算定義を確認したActorと日時 | OKF文書検査 | `verified` |
 | 実行証明 | 許可された計算による単一実行の結果をreceiptから確認すること。静的検査の対象外 | OKF計算契約 | Attestation |
+
+[^okf-v02]: OKF v0.2 §§2、5、10–11。profile名は本パッケージの検査契約。

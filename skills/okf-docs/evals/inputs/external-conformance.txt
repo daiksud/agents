@@ -1,0 +1,13 @@
+仮想読み取り。vendor/を外部からそのまま受け入れる。以下がBundle全文。ファイル修正も実行もせず、OKF v0.2適合判定と自作公開文書の品質条件を区別して報告する。
+FILE vendor/one.md
+---
+type: VendorExtension
+x-vendor: {revision: 7, preserve: true}
+---
+[後日公開する概念](missing.md)を参照。
+FILE vendor/two.md
+---
+type: Note
+---
+関連する[one](/one.md)を参照。
+索引・履歴はない。Bundle rootはvendor/であり、/one.mdはOSのルートを指さない。

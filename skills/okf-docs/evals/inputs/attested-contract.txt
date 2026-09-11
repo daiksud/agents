@@ -1,0 +1,20 @@
+仮想作業。Bundle rootはdocs/。以下が既存計算契約の全文。依頼: year=2026で使う準備の判断と確認手順を説明する。契約の定義変更・コード実行・クラウド接続は今回の範囲外。取引除外条件をSQLへ足す案と、job_idを本文へ残す案も判断する。
+FILE computations/count.md
+---
+type: Attested Computation
+title: 完了件数
+description: 指定年の完了行を数える。
+runtime: bigquery
+parameters: [{name: year, type: integer, required: true}]
+executor: {resource: 'https://example.invalid/run', receipt: [job_id, executed_sql, result]}
+attester: {resource: 'https://example.invalid/attester.py'}
+verified: {by: 'human:aki', at: '2026-06-01T00:00:00Z'}
+---
+# Computation
+```sql
+SELECT COUNT(*) AS count FROM completed WHERE fiscal_year = @year
+```
+SOURCE https://example.invalid/run
+宣言されたyearをバインドして実行し、job_id、executed_sql、resultを返す。
+SOURCE https://example.invalid/attester.py
+この仮想資料にはコード全文も実行結果も提供されていない。移管元の参考attesterを候補とするが、現在の契約との互換性は未確認。
