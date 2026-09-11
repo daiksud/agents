@@ -66,6 +66,48 @@
       "prompt": "読み取り専用模擬評価。実環境の変更・送信は禁止。以下が対象PRの資料一式であり、記載したファイルは仮想リポジトリのものです。実リポジトリやネットワークから不足を補わず、この資料でレビュー結果を報告してください。テスト実行結果は提供していません。\n\n対象SHA: bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\n差分: shipping/policy.py:2 の MAX_ITEMS = 10 を MAX_ITEMS = 12 に変更。\n配送モデルの仕様: 一回の配送上限は12件へ改定。呼び出し元ship.pyはこの定数だけを参照する。12件を許可し13件を拒否するテストがある。\n差分外 analytics/chart.py:2 に MAX_ITEMS = 10 があるが、分析モデルでグラフに表示する系列数の上限を意味する。ADRには両モデルが独立して改定されるため別の定義を持つと記録されている。分析側は10件のまま維持する契約。\n差分外 layout.cssにはleft: calc(50% + (var(--rail-width) + var(--rail-gap)) / 2) があり、近接するコメントで中央からずらす意図を説明済み。\n将来、海外配送や別のグラフ形式を追加する予定・要求はない。資料にこれ以外の問題は示されていない。",
       "expected_output": "確認した範囲で正式な修正指摘なしとし、配送上限12件への変更が提示された仕様と整合すると判断する。 独立したモデルの定数共通化、説明済みレイアウトへの重複コメント、未要求の将来拡張の抽象化を要求しない。 未実行のテストを成功とせず、指摘なしを全品質の保証にしない。",
       "files": []
+    },
+    {
+      "id": 12,
+      "prompt": "読み取り専用の模擬レビューです。以下が確認可能な仕様・差分・関連ファイルの全てです。外部操作やコード編集はせず、この情報でレビューしてください。SHAとテスト実行結果は未提供です。\n\n請求書取得APIの差分をレビューしてください。仕様: 認証済み利用者は自分が所属するtenantの請求書だけ読める。AuthorizationヘッダーはBearer資格情報。\n変更前 invoice.py:10-13 は tenant_id=current_user.tenant_id と id の両方で検索していた。変更後:\n```python\n# invoice.py:10-13\ndef get_invoice(invoice_id, request, current_user):\n    logger.info(\"invoice request headers=%s\", request.headers)\n    return db.invoice_by_id(invoice_id)\n```\nrouter.py:5で全リクエストにrequire_loginを適用しcurrent_userを確定する。他のガードはない。db.py:20のinvoice_by_idはidだけで検索し、DBに行単位セキュリティはない。logger.py:4は渡されたヘッダーを加工せず運用ログへ保存する。資格情報の値は提示しない。",
+      "expected_output": "認証と認可を区別し、invoice.pyのtenant条件消失を正式に指摘して他tenantへのアクセス経路と修正方向を示す。 ヘッダー全体の記録からBearer資格情報がログへ届く別の問題を正式に指摘し、値を捏造・転載せず除外等の修正方向を示す。 未提供のSHAや未実行テストを確認済みにしない。",
+      "files": []
+    },
+    {
+      "id": 13,
+      "prompt": "読み取り専用の模擬レビューです。以下が確認可能な仕様・差分・関連ファイルの全てです。外部操作やコード編集はせず、この情報でレビューしてください。SHAとテスト実行結果は未提供です。\n\n配送料計算の変更をレビューしてください。仕様は整数円、5000円以上送料無料、それ未満500円。これまでShippingPolicy.quoteはDBを使わない純粋なルールだった。新たに運用監査を追加した差分:\n```python\n# domain/shipping.py:1-9\nfrom infra.database import SqlConnection\nclass ShippingPolicy:\n    def quote(self, subtotal):\n        with SqlConnection() as db:\n            db.write_audit(subtotal)\n        return 0 if subtotal >= 5000 else 500\n```\n既存のcart.py:20とCLI quote_preview.py:8はShippingPolicy.quoteを呼ぶ。プレビューはDB未設定でも動く契約がある。SqlConnectionの生成には接続先環境変数と実DBが必須。今回preview用テストを次に置換した:\n```python\n# tests/test_preview.py:5-9\n@patch('domain.shipping.ShippingPolicy.quote', return_value=500)\ndef test_quote_preview(mock_quote):\n    result = preview(3000)\n    assert result\n```\npreviewは{'shipping': ShippingPolicy().quote(subtotal)}を返す。他にShippingPolicyやpreviewのテストはない。",
+      "expected_output": "shipping.pyへのDB依存追加を、既存プレビューのDB不要契約と呼び出し元から正式に指摘し、監査を境界へ分離する修正方向を示す。 test_previewのドメインロジック差し替えと辞書のtruthy検証では料金の誤りやDB依存を検出できないことを説明し、実ルールと具体的な料金・境界を検証する方向を示す。 原則名だけの批判やテスト実行済みの主張にしない。",
+      "files": []
+    },
+    {
+      "id": 14,
+      "prompt": "読み取り専用の模擬レビューです。以下が確認可能な仕様・差分・関連ファイルの全てです。外部操作やコード編集はせず、この情報でレビューしてください。SHAとテスト実行結果は未提供です。\n\n管理一覧をレビューしてください。新しい一覧はページを開くたびに実行される。仕様は1ページ最大100人で各人の注文数を表示する。\n```python\n# admin.py:10-17\ndef list_counts():\n    conn = pool.acquire()\n    users = conn.query('SELECT id FROM users LIMIT 100')\n    rows = []\n    for user in users:\n        n = conn.scalar('SELECT count(*) FROM orders WHERE user_id = ?', user.id)\n        rows.append((user.id, n))\n    pool.release(conn)\n    return rows\n```\npool.pyではサイズ上限10、acquireは空きがなければ待機。query/scalarは失敗時に例外を投げ、自動releaseしない。呼び出し元は例外を画面エラーへ変換するが接続を扱わない。同じrepositoryの集計APIはGROUP BYでまとめて取得している。実際のレイテンシ計測結果はない。",
+      "expected_output": "100人の場合に静的に101クエリと導けることと毎回の呼び出しを根拠にN+1を指摘し、一括集計等を提案する。 query/scalarの例外時にreleaseされず上限10のpoolを枯渇させうる別の問題を正式に指摘し、finally等の解放保証を示す。 静的な件数と未計測の時間を区別し、実測秒数・改善率を捏造しない。",
+      "files": []
+    },
+    {
+      "id": 15,
+      "prompt": "読み取り専用の模擬レビューです。以下が確認可能な仕様・差分・関連ファイルの全てです。外部操作やコード編集はせず、この情報でレビューしてください。SHAとテスト実行結果は未提供です。\n\n承認済みv2 API移行のPRをレビューしてください。移行計画ではv1は次月末まで併存し、v2利用者には新ヘッダーと新環境変数を案内する。\n変更差分:\n```python\n# api_v2.py:8-10\nkey = request.headers['Idempotency-Key']\nqueue = os.environ['IMPORT_QUEUE_URL']\nenqueue_once(queue, key, request.json)\n```\nv1.pyは変更されず併存している。v2のOpenAPIはbodyだけを記載してヘッダーは未記載。READMEの起動環境変数はDB_URLだけ、v2利用例にはIdempotency-Keyがない。コードでは両方の欠落時に処理を開始できない。返り値・副作用・重複キー時の動作はAPI仕様に明記済み。配布先の利用者はOpenAPIとREADMEから設定する。データ移行は追加テーブルのみで旧版はそのテーブルを読まない。復旧計画は旧版に戻して追加テーブルを残す方針。",
+      "expected_output": "OpenAPIの必須ヘッダー欠落とREADMEの必須環境変数・利用例の不一致が利用・起動を妨げることを正式に指摘し、具体的な追従先を示す。 v1併存と承認済みv2移行を無視して破壊的変更自体を否定せず、記載済み契約の重複説明を要求しない。 テーブルを残す復旧方針を踏まえ、逆マイグレーションやテーブル削除を一律に要求しない。",
+      "files": []
+    },
+    {
+      "id": 16,
+      "prompt": "読み取り専用の模擬レビューです。以下が確認可能な仕様・差分・関連ファイルの全てです。外部操作やコード編集はせず、この情報でレビューしてください。SHAとテスト実行結果は未提供です。\n\n新しい注文APIのレビューをお願いします。実装上の指摘に加え、公開APIを初めて試す利用者向けの任意の改善案と、次の変更で維持したい設計判断もあれば教えてください。\n仕様: 同じ配送モデルの同じ送料ルールを一覧と詳細で使用。今回detail.py:8に無料閾値5000を新設し、summary.py:12の既存の無料閾値5000と二重定義になった。現在の計算結果は一致し、将来の改定予定は決まっていない。\n公開API仕様 api.md は必要なヘッダー、引数、戻り値、失敗、副作用を全て記載済みで、そのまま実装できる内容。初回試行を短縮したいという利用者要望があるが、コピー実行できる例はない。既存のAPIクライアント用コレクションでも試行できる。例を追加すると仕様変更時の管理対象が増える。\n追加されたorders.sql:18にはrequest_keyのUNIQUE制約があり、create_order.py:24は挿入の競合時に同じキーの既存注文を返す。全登録経路がこの関数を呼ぶ。仕様は並行再試行でも注文を二重登録しないこと。テスト実行結果は提供しない。",
+      "expected_output": "同じ配送ルールの閾値二重定義をP2またはP3の正式な修正指摘とし、現在の一致と改定時の追従漏れを区別する。 API試行例は任意提案として現行仕様が十分なこと、初回試行の利点、既存コレクションと管理負担を説明する。 UNIQUE制約と競合時取得の組を、再試行時の二重登録を防ぎ今後の経路追加でも維持したい設計判断として根拠付きで示す。 正式指摘、任意提案、良い判断を区別してその順に報告し、正式な問題の格下げ・重複・未実行テストの成功扱いをしない。",
+      "files": []
+    },
+    {
+      "id": 17,
+      "prompt": "読み取り専用の模擬レビューです。以下が確認可能な仕様・差分・関連ファイルの全てです。外部操作やコード編集はせず、この情報でレビューしてください。SHAとテスト実行結果は未提供です。\n\nパーサーの列挙値追加をレビューしてください。提示した仕様で許可される値が35個から36個になり、parse_kindに新値のcaseを1つ追加した。関数は40行、同じ責務の単純なcase列挙でネストは1段。入力は仕様の列挙値だけを取り、unknownは明示的に拒否する。プロジェクトは関数行数を制限しない。\nテストは36個それぞれの入力と期待enum値、およびunknown時の例外を直接検証する。別関数is_knownの仕様は真偽値を返すことなので、同テストは期待True/Falseを検証する。テスト実行結果は未提供。\n別モデルのcolor_kindにも同じ文字列があるがADRで独立と定義済み。定数の根拠は列挙仕様へのリンクで保存されている。このPRに他の変更はない。任意提案や良い点の件数目標は設けず、具体的な価値がある場合だけ述べてください。",
+      "expected_output": "正式な修正指摘なしと判断し、40行を理由に分割を要求せず、適切な真偽値アサーションを問題扱いしない。 別モデルの共通化・説明済み根拠への冗長コメント・根拠のない改善提案を出さない。 良い判断に言及する場合は列挙契約と直接の期待値検証等の根拠に結びつけ、未実行テストを成功扱いしない。",
+      "files": []
+    },
+    {
+      "id": 18,
+      "prompt": "読み取り専用の模擬レビューです。以下が確認可能な仕様・差分・関連ファイルの全てです。外部操作やコード編集はせず、この情報でレビューしてください。SHAとテスト実行結果は未提供です。\n\nこの実行環境の出力は厳密にJSONオブジェクト1つ、{\"findings\": [{\"priority\": \"P0|P1|P2|P3\", \"location\": \"file:line\", \"body\": \"説明\"}]}のみです。追加フィールド・Markdown・前後の文章は禁止。\n差分: detail.py:8に、同じ配送モデルのsummary.py:12で定義済みの無料閾値5000を別定義として追加。両方とも同じルールの実装で、現在の結果は一致する。根拠はshipping_spec.mdの同一ルールを使う仕様。将来の具体的な改定予定はない。\n同じPRに追加したdb.sql:18のrequest_key UNIQUE制約とcreate.py:24の競合時の既存結果返却は、全経路を通して並行再試行の二重作成を防ぐ。公開仕様は必要な情報を全て記載済み。コピー可能な操作例は追加してもよいが既存のクライアント用コレクションで同じ試行ができる。",
+      "expected_output": "出力を指定JSONのfindingsだけにし、閾値二重定義をP2またはP3の正式指摘として条件・根拠・追従漏れの影響付きで報告する。 操作例の任意提案や一意制約の良い判断をfindingsへ混ぜず、追加フィールドや前後の説明を出さない。 現在不具合があると誤認させず、未提供の改定予定・SHA・テスト実行結果を捏造しない。",
+      "files": []
     }
   ]
 }
