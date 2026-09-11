@@ -42,3 +42,29 @@ class ValidationTests(unittest.TestCase):
                      '---\ntype: "  "\n---\n']:
             with self.subTest(text=text):
                 self.assertTrue(self.errors(self.check(text)))
+
+    def test_reserved_files(self):
+        for profile in ('conformance', 'authoring'):
+            for name, text in [
+                ('index.md', '---\nokf_version: "0.2"\n---\n# Group\n- [Next](next/) - Next\n'),
+                ('nested/index.md', '# Group\n- [Other](https://example.com)\n'),
+                ('log.md', '# History\n## 2026-09-11\n- Added.\n## 2026-09-10\n- Created.\n')]:
+                with self.subTest(profile=profile, name=name):
+                    self.assertEqual([], self.errors(self.check(text, profile, name)))
+        for name, text in [
+            ('nested/index.md', '---\nokf_version: "0.2"\n---\n# Group\n- [Next](next.md)\n'),
+            ('index.md', '---\ntype: Concept\n---\n# Group\n- [Next](next.md)\n'),
+            ('index.md', '# Group\nJust prose\n'),
+            ('log.md', '# History\n## 2026-02-30\n- Bad date\n'),
+            ('log.md', '# History\n## 2026-09-10\n- Old\n## 2026-09-11\n- New\n'),
+            ('log.md', '# History\n## Yesterday\n- Not ISO\n'),
+            ('log.md', '# History\n## 2026-09-11\nJust prose\n')]:
+            with self.subTest(name=name, text=text):
+                self.assertTrue(self.errors(self.check(text, name=name)))
+
+    def test_examples_do_not_become_reserved_structure(self):
+        text = '# History\n## 2026-09-11\n- Added.\n\n````md\n## 2000-99-99\n```\n````\n'
+        self.assertEqual([], self.errors(self.check(text, name='log.md')))
+        for text in ['```md\n# Group\n- [X](x.md)\n```\n',
+                     '    # Group\n    - [X](x.md)\n']:
+            self.assertTrue(self.errors(self.check(text, name='index.md')))
