@@ -418,7 +418,7 @@ def contract_issues(path, bundle, data, body):
                     active = False
         if 'computation' in data and count:
             error('computation', 'choose a file or an inline Computation fence, not both')
-        elif 'computation' not in data and (count != 1 or fence or not has_content):
+        elif 'computation' not in data and (count != 1 or (fence and active) or not has_content):
             error('computation', 'requires one closed, nonempty fenced code block under Computation')
     return issues
 

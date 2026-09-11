@@ -321,3 +321,8 @@ class ValidationTests(unittest.TestCase):
             self.assertEqual(0, okf.main([str(self.root)]))
         self.assertEqual(1, Clock.calls)
         self.assertNotIn('stale_after', output.getvalue())
+
+    def test_unrelated_example_does_not_change_computation_fence_state(self):
+        body = '# Computation\n```python\nprint(1)\n```\n# Examples\n```text\nExample continues to EOF\n'
+        text = self.concept('runtime: python\n', body).replace('type: Reference','type: Attested Computation')
+        self.assertEqual([], self.errors(self.check(text, 'authoring')))
