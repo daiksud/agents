@@ -268,3 +268,56 @@ class ValidationTests(unittest.TestCase):
     def test_cli_profile_may_precede_file_selection(self):
         self.write('good.md', self.concept())
         self.assertEqual(0, self.cli(self.root, '--profile', 'authoring', 'good.md').returncode)
+
+    def test_authoring_rejects_concept_metadata_on_root_index(self):
+        text = '---\nokf_version: "0.2"\ntitle: Not a concept\nx-extension: kept\n---\n# Group\n- [X](https://example.com)\n'
+        self.assertEqual([], self.errors(self.check(text, name='index.md')))
+        issues = self.errors(self.check(text, 'authoring', 'index.md'))
+        self.assertEqual(['title'], [x.field for x in issues])
+        self.assertEqual(['authoring'], [x.rule for x in issues])
+        self.assertEqual([], self.errors(self.check(text.replace('title: Not a concept\n',''), 'authoring', 'index.md')))
+
+    def test_historical_verification_warning_is_authoring_only(self):
+        text = self.concept('generated: {by: writer/1, at: 2026-09-11T00:00:00Z}\n'
+                            'verified: {by: human:reader, at: 2026-09-10T00:00:00Z}\n')
+        self.assertEqual([], self.check(text))
+        warnings = self.check(text, 'authoring')
+        self.assertEqual(['verified'], [x.field for x in warnings])
+        self.assertTrue(all(x.rule == 'authoring' and x.severity == 'warning' for x in warnings))
+
+    def test_invalid_http_authority_and_nul_paths_are_document_errors(self):
+        for value in ['https://', 'https:///missing', 'https://user@', 'https://bad host/path']:
+            for extra in [f'resource: "{value}"\n',f'sources: [{{resource: "{value}"}}]\n']:
+                self.write('bad.md', self.concept(extra))
+                self.assertEqual(1, self.cli(self.root, '--profile', 'authoring').returncode, value)
+                self.assertEqual(0, self.cli(self.root).returncode)
+        self.write('bad.md', self.concept(body='[Reference](%00)\n'))
+        self.assertEqual(1, self.cli(self.root, '--profile', 'authoring').returncode)
+
+    def test_empty_inline_computation_is_not_a_definition(self):
+        for content in ['', '  \n\t\n']:
+            text = self.concept('runtime: python\n', '# Computation\n```python\n'+content+'\n```\n')
+            text = text.replace('type: Reference', 'type: Attested Computation')
+            self.assertTrue(self.errors(self.check(text, 'authoring')))
+            self.assertEqual([], self.errors(self.check(text)))
+
+    def test_cli_uses_one_time_for_all_documents(self):
+        from datetime import datetime, timezone
+        from unittest.mock import patch
+        from contextlib import redirect_stdout
+        import io
+        first = datetime(2026, 9, 22, 23, 59, 59, tzinfo=timezone.utc)
+        second = datetime(2026, 9, 23, tzinfo=timezone.utc)
+        for name in ['a.md', 'b.md']:
+            self.write(name, self.concept('stale_after: "2026-09-23T00:00:00Z"\n'))
+        class Clock(datetime):
+            calls = 0
+            @classmethod
+            def now(cls, tz=None):
+                cls.calls += 1
+                return first if cls.calls == 1 else second
+        output = io.StringIO()
+        with patch.object(okf, 'datetime', Clock), redirect_stdout(output):
+            self.assertEqual(0, okf.main([str(self.root)]))
+        self.assertEqual(1, Clock.calls)
+        self.assertNotIn('stale_after', output.getvalue())

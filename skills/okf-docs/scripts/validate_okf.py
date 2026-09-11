@@ -46,7 +46,7 @@ def structure_lines(body):
             yield line
 
 
-def reserved_issues(path, bundle, data, body, has_frontmatter):
+def reserved_issues(path, bundle, data, body, has_frontmatter, profile):
     issues = []
 
     def error(field, message):
@@ -59,6 +59,12 @@ def reserved_issues(path, bundle, data, body, has_frontmatter):
                 lines[i - 1] = ('# ' if line.lstrip().startswith('=') else '## ') + lines[i - 1].strip()
                 lines[i] = ''
     if path.name == 'index.md':
+        if profile == 'authoring':
+            concept_fields = {'type', 'title', 'description', 'resource', 'tags', 'sources',
+                              'generated', 'verified', 'status', 'stale_after', 'usage_window',
+                              'runtime', 'parameters', 'computation', 'executor', 'attester'}
+            for field in sorted(concept_fields.intersection(data)):
+                issues.append(Issue(path, field, 'concept metadata does not belong on an index', 'authoring'))
         if has_frontmatter and (path.parent.resolve() != bundle.resolve()
                                 or 'okf_version' not in data or 'type' in data):
             error('frontmatter', 'only a bundle-root index may declare okf_version; not a concept')
@@ -233,7 +239,7 @@ def metadata_issues(path, data, body):
     return issues
 
 
-def state_issues(path, data, now):
+def state_issues(path, data, now, profile):
     issues = []
     deadline = timestamp(data.get('stale_after'))
     if deadline and now >= deadline:
@@ -246,7 +252,7 @@ def state_issues(path, data, now):
                             'specification', 'warning'))
     generated = data.get('generated')
     changed = timestamp(generated.get('at')) if isinstance(generated, dict) else None
-    if changed and isinstance(events, list):
+    if profile == 'authoring' and changed and isinstance(events, list):
         times = [timestamp(e.get('at')) for e in events if isinstance(e, dict)]
         if times and all(t and t < changed for t in times):
             issues.append(Issue(path, 'verified', 'recorded checks predate the content change',
@@ -259,6 +265,11 @@ def local_target(value, path, bundle):
     if not nonempty(value):
         return None
     parsed = urlsplit(value)
+    if parsed.scheme.lower() in ('http', 'https'):
+        if not parsed.hostname or re.search(r'\s', parsed.netloc):
+            raise ValueError('HTTP(S) URL requires an authority without whitespace')
+        # Accessing port validates its syntax without contacting the endpoint.
+        _ = parsed.port
     if parsed.scheme or parsed.netloc or not parsed.path:
         return None
     relative = unquote(parsed.path)
@@ -327,10 +338,13 @@ def contract_issues(path, bundle, data, body):
             error(field, 'malformed path or URL')
             return
         if target is not None:
-            if not target.resolve().is_relative_to(bundle.resolve()):
-                error(field, f'reference leaves the Bundle: {value}')
-            elif not target.exists():
-                error(field, f'local reference does not exist: {value}')
+            try:
+                if not target.resolve().is_relative_to(bundle.resolve()):
+                    error(field, f'reference leaves the Bundle: {value}')
+                elif not target.exists():
+                    error(field, f'local reference does not exist: {value}')
+            except (ValueError, RuntimeError):
+                error(field, 'invalid local path')
 
     for value in linked_paths(body):
         link(value, 'links')
@@ -382,12 +396,14 @@ def contract_issues(path, bundle, data, body):
         link(data['computation'], 'computation')
     if is_computation:
         # Count real fences under the conventional heading, before its next peer.
-        active, level, fence, count = False, 0, None, 0
+        active, level, fence, count, has_content = False, 0, None, 0, False
         for line in body.splitlines():
             marker = re.match(r'^ {0,3}(`{3,}|~{3,})(.*)$', line)
             if fence:
                 if marker and marker[1][0] == fence[0] and len(marker[1]) >= fence[1] and not marker[2].strip():
                     fence = None
+                elif active and line.strip():
+                    has_content = True
                 continue
             if marker:
                 fence = (marker[1][0], len(marker[1]))
@@ -402,8 +418,8 @@ def contract_issues(path, bundle, data, body):
                     active = False
         if 'computation' in data and count:
             error('computation', 'choose a file or an inline Computation fence, not both')
-        elif 'computation' not in data and (count != 1 or fence):
-            error('computation', 'requires one closed fenced code block under Computation')
+        elif 'computation' not in data and (count != 1 or fence or not has_content):
+            error('computation', 'requires one closed, nonempty fenced code block under Computation')
     return issues
 
 
@@ -420,7 +436,7 @@ def validate_file(path, bundle, profile='conformance', *, now=None):
     match = re.match(r'\A---\r?\n(.*?)\r?\n---(?:\r?\n|\Z)', text, re.S)
     reserved = path.name in {'index.md', 'log.md'}
     if not match and reserved and not re.match(r'\A---(?:\r?\n|\Z)', text):
-        return (reserved_issues(path, bundle, {}, text, False)
+        return (reserved_issues(path, bundle, {}, text, False, profile)
                 + (contract_issues(path, bundle, {}, text) if profile == 'authoring' else []))
     if not match:
         return [Issue(path, 'frontmatter', 'missing YAML frontmatter', 'specification')]
@@ -431,7 +447,7 @@ def validate_file(path, bundle, profile='conformance', *, now=None):
     if not isinstance(data, dict):
         return [Issue(path, 'frontmatter', 'must be a mapping', 'specification')]
     if reserved:
-        return (reserved_issues(path, bundle, data, text[match.end():], True)
+        return (reserved_issues(path, bundle, data, text[match.end():], True, profile)
                 + (contract_issues(path, bundle, {}, text[match.end():]) if profile == 'authoring' else []))
     issues = []
     if not nonempty(data.get('type')):
@@ -442,7 +458,7 @@ def validate_file(path, bundle, profile='conformance', *, now=None):
                 issues.append(Issue(path, field, 'must be a nonempty string', 'authoring'))
         issues.extend(metadata_issues(path, data, text[match.end():]))
         issues.extend(contract_issues(path, bundle, data, text[match.end():]))
-    issues.extend(state_issues(path, data, now or datetime.now(timezone.utc)))
+    issues.extend(state_issues(path, data, now or datetime.now(timezone.utc), profile))
     return issues
 
 
@@ -487,8 +503,10 @@ def main(argv=None):
         return 2
     try:
         bundle = Path(os.path.abspath(args.bundle))
+        now = datetime.now(timezone.utc)
         paths = selected_files(bundle, args.files)
-        issues = [issue for path in paths for issue in validate_file(path, bundle, args.profile)]
+        issues = [issue for path in paths
+                  for issue in validate_file(path, bundle, args.profile, now=now)]
         for issue in issues:
             message = ' '.join(issue.message.splitlines())
             print(f'{issue.path.relative_to(bundle)}: {issue.field}: '
