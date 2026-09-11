@@ -25,7 +25,7 @@ GitHubに投稿するIssue・PR本文・コメントにはOKFやYAML frontmatter
 - ページは `docs/<分類>/<page-name>.md` に作成する。全体の案内など、分類に属さない文書は `docs/<page-name>.md` に配置する。
 - 画像など Markdown に含められない外部アセットは使用しない。
 - GitHub Flavored Markdown（GFM）を積極的に活用し、見出し、リスト、タスクリスト、表、コードブロックで情報を読みやすく整理する。
-- Emojiは見出しや状態の識別に、GitHub Alertsは注意事項や重要な制約の強調に使用する。
+- EmojiやGitHub Alertsは、見出し・状態の識別や重要な制約の理解に役立つ場合に使う。不要な表・装飾・空の節を要求しない。
 
 ## 検証
 

@@ -113,7 +113,7 @@ apm compile --global
 
 ### Markdownの整形と投稿
 
-Issue・PR本文・コメントはEmoji付き見出し、対応関係の表、制約のAlertsで構成し、投稿・更新前に本文全体をrumdlで整形・チェックします。GitHub投稿本文にはOKFを付けません。
+Issue・PR本文・コメントは導入先の指定テンプレートと内容に合う構成を使い、投稿・更新前に本文全体をrumdlで整形・チェックします。固定見出しや不要な表・Alerts・空の節は要求しません。GitHub投稿本文にはOKFを付けません。
 
 共通設定は `task-workflow` に同梱され、本リポジトリの `.rumdl.toml` も同じ設定を継承します。MD013・MD033・MD034・MD041のみを無効化し、MD060をcompact、MD076をtightにします。その他のルールは既定のままです。
 
