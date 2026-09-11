@@ -185,3 +185,48 @@ class ValidationTests(unittest.TestCase):
             issues = self.errors(self.check(self.concept(body='[Escape](escape.md)'), 'authoring'))
             self.assertTrue(issues)
             self.assertNotIn('secret-not-valid', str(issues))
+
+    def cli(self, *args, no_site=False):
+        import subprocess
+        return subprocess.run([sys.executable, *(['-S'] if no_site else []), str(SCRIPT),
+                               *map(str, args)], capture_output=True, text=True)
+
+    def test_cli_exit_codes_and_diagnostics(self):
+        self.write('concept.md', '---\ntype: Custom\n---\n')
+        result = self.cli(self.root)
+        self.assertEqual(0, result.returncode, result.stderr)
+        result = self.cli(self.root, 'concept.md', '--profile', 'authoring')
+        self.assertEqual(1, result.returncode)
+        for detail in ('concept.md', 'title', 'authoring', 'nonempty'):
+            self.assertIn(detail, result.stdout + result.stderr)
+        for args in [(), (self.root, '--profile', 'unknown'),
+                     (self.root, 'absent.md'), (self.root / 'absent',),
+                     (self.root, '../escape.md'), (self.root, 'folder')]:
+            self.assertEqual(2, self.cli(*args).returncode, str(args))
+        result = self.cli(self.root, no_site=True)
+        self.assertEqual(2, result.returncode)
+        self.assertIn('PyYAML', result.stderr)
+        self.assertNotIn('Traceback', result.stderr)
+
+    def test_cli_selection_and_symlink_boundary(self):
+        good = self.write('good.md', self.concept())
+        self.write('invalid.md', 'invalid')
+        self.assertEqual(0, self.cli(self.root, good).returncode)
+        self.assertEqual(1, self.cli(self.root).returncode)
+        (self.root / 'invalid.md').unlink()
+        with tempfile.TemporaryDirectory() as outside:
+            self.write('not-markdown.txt', 'anything')
+            foreign = Path(outside) / 'secret.md'
+            foreign.write_text('secret-invalid')
+            (self.root / 'external').symlink_to(Path(outside), target_is_directory=True)
+            (self.root / 'external.md').symlink_to(foreign)
+            result = self.cli(self.root)
+            self.assertEqual(0, result.returncode, result.stderr)
+            self.assertNotIn('secret-invalid', result.stdout + result.stderr)
+            self.assertEqual(2, self.cli(self.root, 'external.md').returncode)
+            self.assertEqual(2, self.cli(self.root, 'external/secret.md').returncode)
+        bad_utf8 = self.root / 'bad.md'
+        bad_utf8.write_bytes(b'\xff')
+        result = self.cli(self.root, 'bad.md')
+        self.assertEqual(1, result.returncode)
+        self.assertIn('UTF-8', result.stdout + result.stderr)

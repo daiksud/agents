@@ -1,11 +1,17 @@
 """Read-only OKF v0.2 checks, independent of the hosting repository."""
+import argparse
 from dataclasses import dataclass
 from datetime import date, datetime, timezone
 from pathlib import Path
+import os
 import re
+import sys
 from urllib.parse import unquote, urlsplit
 
-import yaml
+try:
+    import yaml
+except ImportError:
+    yaml = None
 
 
 @dataclass(frozen=True)
@@ -361,7 +367,14 @@ def contract_issues(path, bundle, data, body):
 
 def validate_file(path, bundle, profile='conformance', *, now=None):
     path, bundle = Path(path), Path(bundle)
-    text = path.read_text(encoding='utf-8')
+    if yaml is None:
+        raise RuntimeError('PyYAML is required; use an existing environment with PyYAML installed')
+    if profile not in ('conformance', 'authoring'):
+        raise ValueError('unknown profile')
+    try:
+        text = path.read_text(encoding='utf-8')
+    except UnicodeError:
+        return [Issue(path, 'encoding', 'document must be UTF-8', 'specification')]
     match = re.match(r'\A---\r?\n(.*?)\r?\n---(?:\r?\n|\Z)', text, re.S)
     reserved = path.name in {'index.md', 'log.md'}
     if not match and reserved and not text.startswith('---\n'):
@@ -389,3 +402,60 @@ def validate_file(path, bundle, profile='conformance', *, now=None):
         issues.extend(contract_issues(path, bundle, data, text[match.end():]))
     issues.extend(state_issues(path, data, now or datetime.now(timezone.utc)))
     return issues
+
+
+def selected_files(bundle, names):
+    if not bundle.is_dir():
+        raise ValueError('Bundle root must be an existing directory')
+    if names:
+        paths = []
+        for name in names:
+            path = Path(name)
+            path = path if path.is_absolute() else bundle / path
+            if not path.absolute().is_relative_to(bundle) or '..' in path.parts:
+                raise ValueError(f'target must be inside the Bundle: {name}')
+            relative = path.relative_to(bundle)
+            if any((bundle.joinpath(*relative.parts[:i])).is_symlink()
+                   for i in range(1, len(relative.parts) + 1)):
+                raise ValueError(f'target must not traverse a symbolic link: {name}')
+            if not path.is_file() or path.suffix != '.md':
+                raise ValueError(f'target must be an existing Markdown file: {name}')
+            paths.append(path)
+        return sorted(set(paths))
+
+    def walk_error(error):
+        raise error
+
+    paths = []
+    for directory, directories, files in os.walk(bundle, followlinks=False, onerror=walk_error):
+        directories[:] = sorted(d for d in directories if not (Path(directory) / d).is_symlink())
+        paths.extend(Path(directory) / name for name in sorted(files)
+                     if name.endswith('.md') and not (Path(directory) / name).is_symlink())
+    return paths
+
+
+def main(argv=None):
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('bundle', type=Path, help='Knowledge Bundle root')
+    parser.add_argument('files', nargs='*', help='Markdown files relative to Bundle; default: all')
+    parser.add_argument('--profile', choices=('conformance', 'authoring'), default='conformance')
+    args = parser.parse_args(argv)
+    if yaml is None:
+        print('environment: PyYAML is required; no packages were installed', file=sys.stderr)
+        return 2
+    try:
+        bundle = Path(os.path.abspath(args.bundle))
+        paths = selected_files(bundle, args.files)
+        issues = [issue for path in paths for issue in validate_file(path, bundle, args.profile)]
+        for issue in issues:
+            message = ' '.join(issue.message.splitlines())
+            print(f'{issue.path.relative_to(bundle)}: {issue.field}: '
+                  f'{issue.severity} [{issue.rule}]: {message}')
+        return int(any(issue.severity == 'error' for issue in issues))
+    except (OSError, ValueError, RuntimeError) as error:
+        print(f'environment: {error}', file=sys.stderr)
+        return 2
+
+
+if __name__ == '__main__':
+    sys.exit(main())
