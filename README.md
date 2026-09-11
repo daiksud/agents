@@ -132,7 +132,10 @@ gh skill install . --from-local --all --dir "$exploration_dir"
 
 GitHub Actionsは全ブランチへのpush、main向けPR、mainへの統合後、手動実行で検査します。`static-checks` 成功後にUbuntu・macOSの `acceptance` を並列実行し、失敗をマージで持ち越しません。必須チェックの定義は [.github/required-checks.json](.github/required-checks.json) です。初回の実行成功後、管理者が既存ルールを保持してmainの必須チェックに反映し、ジョブ名の変更時も両方を更新します。
 
-[CIの実践](https://continuousdelivery.com/foundations/continuous-integration/)と[継続的テスト](https://continuousdelivery.com/foundations/test-automation/)に基づく最小基盤です。APMの導入・更新・復旧と固定候補の選び方は[配布ガイド](docs/guides/delivery.md)を参照します。日常の統合運用は後続段階で整備します。
+[CIの実践](https://continuousdelivery.com/foundations/continuous-integration/)と[継続的テスト](https://continuousdelivery.com/foundations/test-automation/)に基づく基盤です。APMの導入・更新・復旧と固定候補の選び方は[配布ガイド](docs/guides/delivery.md)を参照します。
+
+変更担当者は小さな変更を活動日ごとに統合し、マージ後mainの必要チェックと公開配布検証まで確認します。main失敗時は原因を確認して復旧を優先し、リポジトリ変更には復旧PRを使います。通常の計画承認・レビュー・CIを維持して正常化するまで後続作業を進めません。
+[日常の統合手順](docs/guides/delivery.md#小さく統合しmainまで確認する)、[計測定義](docs/guides/delivery.md#計測の定義)、[欠陥と障害の記録](docs/guides/delivery.md#欠陥から検証を改善する)も配布ガイドにまとめています。実測値はIssue・PRに残し、欠測をゼロや成功に置き換えません。
 
 ## GitHub上のレビュー用配置
 
