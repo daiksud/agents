@@ -251,3 +251,20 @@ class ValidationTests(unittest.TestCase):
         for text in ['---\r\nokf_version: "0.2"\r\n# Group\r\n- [X](x)\r\n',
                      '---\n---\n# Group\n- [X](x)\n']:
             self.assertTrue(self.errors(self.check(text, name='index.md')))
+
+    def test_markdown_links_with_parentheses_and_reference_labels(self):
+        self.write('version(2).md', self.concept())
+        for body in ['[Version](version(2).md)\n',
+                     '[Version][POLICY]\n\n[policy]: version(2).md\n',
+                     '[Version](<version(2).md> "Title")\n']:
+            self.assertEqual([], self.errors(self.check(self.concept(body=body), 'authoring')))
+        self.assertTrue(self.errors(self.check(self.concept(body='[V][MISSING]\n\n[missing]: gone.md\n'), 'authoring')))
+
+    def test_quoted_code_examples_and_html_comments_do_not_create_footnotes(self):
+        body = ('A fact.\n\n> ```markdown\n> [^fake]\n> ```\n'
+                '<!-- [^comment] -->\n')
+        self.assertEqual([], self.errors(self.check(self.concept(body=body), 'authoring')))
+
+    def test_cli_profile_may_precede_file_selection(self):
+        self.write('good.md', self.concept())
+        self.assertEqual(0, self.cli(self.root, '--profile', 'authoring', 'good.md').returncode)

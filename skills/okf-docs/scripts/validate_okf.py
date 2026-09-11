@@ -31,7 +31,8 @@ def structure_lines(body):
     """Ignore fenced/indented examples before recognizing document structure."""
     fence = None
     for line in body.splitlines():
-        marker = re.match(r'^ {0,3}(`{3,}|~{3,})(.*)$', line)
+        candidate = re.sub(r'^(?: {0,3}> ?)+', '', line)
+        marker = re.match(r'^ {0,3}(`{3,}|~{3,})(.*)$', candidate)
         if fence:
             if marker and marker[1][0] == fence[0] and len(marker[1]) >= fence[1] and not marker[2].strip():
                 fence = None
@@ -110,11 +111,12 @@ def timestamp(value):
     return parsed if parsed.utcoffset() is not None else None
 
 
-def prose(body):
+def prose(body, *, remove_escapes=True):
     text = '\n'.join(structure_lines(body))
+    text = re.sub(r'<!--.*?(?:-->|\Z)', '', text, flags=re.S)
     # Matched code spans only; an unmatched backtick remains prose.
     text = re.sub(r'(`+)(?!`)(.+?)(?<!`)\1(?!`)', '', text, flags=re.S)
-    return re.sub(r'\\[\\`*{}\[\]()#+.!_>~-]', '', text)
+    return re.sub(r'\\[\\`*{}\[\]()#+.!_>~-]', '', text) if remove_escapes else text
 
 
 def metadata_issues(path, data, body):
@@ -264,16 +266,45 @@ def local_target(value, path, bundle):
             else path.parent / relative)
 
 
+def markdown_destination(text):
+    if text.startswith('<'):
+        end = text.find('>')
+        return text[1:end] if end >= 0 else ''
+    result, depth, escaped = [], 0, False
+    for char in text:
+        if escaped:
+            result.append(char)
+            escaped = False
+            continue
+        if char == '\\':
+            escaped = True
+            continue
+        if char == ')' and depth == 0 or char.isspace() and depth == 0:
+            break
+        if char == '(':
+            depth += 1
+        elif char == ')':
+            depth -= 1
+        result.append(char)
+    return ''.join(result)
+
+
 def linked_paths(body):
-    content = prose(body)
-    # Inline and reference-style Markdown links; avoid footnotes and images.
-    for match in re.finditer(r'(?<!!)\[[^]\n]+\]\(\s*(<[^>]*>|[^\s]+?)(?:\s+["\'][^\n]*?["\'])?\s*\)', content):
-        yield match[1].strip('<>')
-    definitions = dict(re.findall(r'^ {0,3}\[([^]^\n]+)\]:\s*<?([^\s>]+)>?', content, re.M))
-    for match in re.finditer(r'(?<!!)\[([^]^\n]+)\](?:\[([^]\n]*)\])?(?![:(])', content):
-        label = match[2] or match[1]
-        if label in definitions:
-            yield definitions[label]
+    content = prose(body, remove_escapes=False)
+    for match in re.finditer(r'(?<!!)(?<!\\)\[[^]\n]+\]\(\s*', content):
+        target = markdown_destination(content[match.end():])
+        if target:
+            yield target
+    # Markdown reference labels are case-insensitive and whitespace-normalized.
+    def label(text):
+        return ' '.join(text.split()).casefold()
+
+    definitions = {label(key): markdown_destination(value) for key, value in
+                   re.findall(r'^ {0,3}\[([^]^\n]+)\]:\s*(.+)$', content, re.M)}
+    for match in re.finditer(r'(?<!!)(?<!\\)\[([^]^\n]+)\](?:\[([^]\n]*)\])?(?![:(])', content):
+        key = label(match[2] or match[1])
+        if key in definitions:
+            yield definitions[key]
 
 
 def contract_issues(path, bundle, data, body):
