@@ -1,5 +1,6 @@
 """Read-only OKF v0.2 checks, independent of the hosting repository."""
 import argparse
+from collections import Counter
 from dataclasses import dataclass
 from datetime import date, datetime, timezone
 from pathlib import Path
@@ -296,10 +297,10 @@ def metadata_issues(path, data, body):
             if 'usage_window' not in source and 'usage_window' not in data:
                 error(field + '.usage_count', 'requires a source or shared usage_window')
     content = footnote_content(body)
-    definitions = re.findall(r'^ {0,3}\[\^([^]\s]+)\]:', content, re.M)
+    definitions = Counter(re.findall(r'^ {0,3}\[\^([^]\s]+)\]:', content, re.M))
     refs = re.findall(r'\[\^([^]\s]+)\](?!:)', content)
-    for key in set(definitions):
-        if definitions.count(key) > 1:
+    for key, count in definitions.items():
+        if count > 1:
             error('footnotes.' + key, 'duplicate footnote definition')
     for key in set(refs):
         if key not in definitions:

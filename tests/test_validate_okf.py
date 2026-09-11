@@ -442,3 +442,11 @@ class ValidationTests(unittest.TestCase):
     def test_excessively_nested_yaml_is_a_document_error(self):
         self.write('nested.md', '---\ntype: ' + '[' * 1200 + 'x' + ']' * 1200 + '\n---\n')
         self.assertEqual(1, self.cli(self.root).returncode)
+
+    def test_many_distinct_footnotes_complete_promptly(self):
+        import subprocess
+        body = '\n'.join(f'[^note{i}]: Explanation' for i in range(40000))
+        self.write('large.md', self.concept(body=body))
+        result = subprocess.run([sys.executable, str(SCRIPT), str(self.root), '--profile', 'authoring'],
+                                capture_output=True, text=True, timeout=3)
+        self.assertEqual(0, result.returncode, result.stdout)
