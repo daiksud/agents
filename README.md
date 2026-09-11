@@ -9,6 +9,7 @@
 | `.apm/instructions/core.instructions.md` | 常時適用する設計原則、変更保護、スキルの読み込み条件と完了条件 |
 | `skills/task-workflow/` | Issue・計画からレビュー・スカッシュマージまでの作業手順 |
 | `skills/bdd-tdd/` | 設計確認、シナリオ分割、BDD・TDD、検証 |
+| `skills/code-review/` | 欠陥・回帰を根拠から評価する読み取り専用レビュー |
 | `skills/okf-docs/` | OKF v0.2に従う文書の作成・更新・検証 |
 
 変更・成果物作成には作業スキルを適用します。文書のみ・小さな修正も、読み取り調査で計画をIssue本文に保存し、再取得したURLと本文をユーザーが確認・明示的に承認してから、作業ブランチの準備と実行に進みます。関連する範囲追加・方針変更はIssue更新と本文提示を経て再承認を得ます。現在の目的・成功条件と関連の薄い追加依頼は例外として、計画・実装承認を求めず「後続対応・計画未作成」の独立したIssueへ記録し、現在のタスクを承認済み範囲で継続します。重複を確認してURLを案内し、関連性が不明なら確認します。後続Issueへの着手時または明示的な計画作成依頼時に通常形式で計画を作り、計画のみの依頼を実装承認とは扱いません。詳細は[追加依頼の記録手順](skills/task-workflow/references/planning.md#関連の薄い追加依頼の記録)に従います。相談・比較・説明・読み取りのみの調査にはIssue・PR・マージを要求しません。
@@ -27,7 +28,7 @@
 gh skill install daiksud/agents --all --agent codex --scope user
 ```
 
-このコマンドは、このリポジトリの3スキルと同梱資料を導入します。APMの外部依存である `skill-creator` と共通指示のAGENTS.mdは導入しません。共通指示と外部依存もまとめて導入する場合は、以下のAPM手順を使います。
+このコマンドは、このリポジトリの4スキルと同梱資料を導入します。APMの外部依存である `skill-creator` と共通指示のAGENTS.mdは導入しません。共通指示と外部依存もまとめて導入する場合は、以下のAPM手順を使います。
 
 ## グローバル導入
 
@@ -131,3 +132,23 @@ gh skill install . --from-local --all --dir "$exploration_dir"
 GitHub Actionsは全ブランチへのpush、main向けPR、mainへの統合後、手動実行で検査します。`static-checks` 成功後に `skill-install` を実行し、失敗をマージで持ち越しません。必須チェックの定義は [.github/required-checks.json](.github/required-checks.json) です。初回の実行成功後、管理者が既存ルールを保持してmainの必須チェックに反映し、ジョブ名の変更時も両方を更新します。
 
 [CIの実践](https://continuousdelivery.com/foundations/continuous-integration/)と[継続的テスト](https://continuousdelivery.com/foundations/test-automation/)に基づく最小基盤です。APMの更新・復旧経路と日常の統合運用の整備は後続段階で行います。
+
+## GitHub上のレビュー用配置
+
+ローカル導入とGitHub上の配置は別です。個人環境への導入だけでGitHubのレビューがスキルを利用できるとは扱いません。
+
+| 利用先 | 配置・読み込み |
+| --- | --- |
+| ローカル | `gh skill` またはAPMで導入した `code-review` をレビュー実行時に読む |
+| Copilot GitHubレビュー | 原本 `skills/code-review/` の実行時ファイルを `.github/skills/code-review/` へ同期する。`evals/` はコピーしない |
+| Codex GitHubレビュー | root `AGENTS.md` の条件付き参照から原本SKILL.mdを読む。ネイティブなスキル自動探索の保証ではない |
+
+```bash
+python scripts/sync_review_skill.py
+python scripts/sync_review_skill.py --check
+gh skill install . --from-local code-review --dir /tmp/review-skill-install
+```
+
+同期先は生成専用です。原本を編集して同期し、両方をコミットします。CIで内容差分・欠落・余分なファイルを検出します。レビュー依頼・指摘対応・完了判定は[task-workflow](skills/task-workflow/references/review-and-merge.md#代替レビュー)が担当します。
+
+[Copilot公式資料](https://docs.github.com/en/copilot/how-tos/use-copilot-agents/request-a-code-review/use-code-review#mcp-servers-and-agent-skills)に従い、実PRの指摘の出典またはセッションログで使用したスキルを確認します。[Codex公式資料](https://learn.chatgpt.com/docs/third-party/github)によるAGENTS.mdの案内も、実PRで読み込みを検証します。通常の `@codex review`、確認できなければ原本パスを付けた依頼を順に試し、ログまたは固有手順の根拠付き適用を確認します。後者のみ成功ならパス指定を標準にし、いずれも未確認なら連携未完了とします。結果と未確認範囲はPRに記録し、パス復唱やリアクションだけを成功の証拠にしません。
