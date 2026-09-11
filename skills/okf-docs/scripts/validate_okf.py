@@ -3,6 +3,7 @@ from dataclasses import dataclass
 from datetime import date, datetime, timezone
 from pathlib import Path
 import re
+from urllib.parse import unquote, urlsplit
 
 import yaml
 
@@ -240,13 +241,132 @@ def state_issues(path, data, now):
     return issues
 
 
+def local_target(value, path, bundle):
+    """Return local target or None for external URLs and scope descriptors."""
+    if not nonempty(value):
+        return None
+    parsed = urlsplit(value)
+    if parsed.scheme or parsed.netloc or not parsed.path:
+        return None
+    relative = unquote(parsed.path)
+    return (bundle / relative.lstrip('/') if relative.startswith('/')
+            else path.parent / relative)
+
+
+def linked_paths(body):
+    content = prose(body)
+    # Inline and reference-style Markdown links; avoid footnotes and images.
+    for match in re.finditer(r'(?<!!)\[[^]\n]+\]\(\s*(<[^>]*>|[^\s]+?)(?:\s+["\'][^\n]*?["\'])?\s*\)', content):
+        yield match[1].strip('<>')
+    definitions = dict(re.findall(r'^ {0,3}\[([^]^\n]+)\]:\s*<?([^\s>]+)>?', content, re.M))
+    for match in re.finditer(r'(?<!!)\[([^]^\n]+)\](?:\[([^]\n]*)\])?(?![:(])', content):
+        label = match[2] or match[1]
+        if label in definitions:
+            yield definitions[label]
+
+
+def contract_issues(path, bundle, data, body):
+    issues = []
+
+    def error(field, message):
+        issues.append(Issue(path, field, message, 'authoring'))
+
+    def link(value, field, descriptor=False):
+        if not nonempty(value):
+            error(field, 'must be a nonempty path or URL')
+            return
+        if descriptor and not ('/' in value or re.search(r'\.[a-zA-Z0-9]+(?:#.*)?$', value)):
+            return
+        target = local_target(value, path, bundle)
+        if target is not None:
+            if not target.resolve().is_relative_to(bundle.resolve()):
+                error(field, f'reference leaves the Bundle: {value}')
+            elif not target.exists():
+                error(field, f'local reference does not exist: {value}')
+
+    for value in linked_paths(body):
+        link(value, 'links')
+    if 'resource' in data and nonempty(data['resource']):
+        link(data['resource'], 'resource')
+    sources = data.get('sources', [])
+    if isinstance(sources, list):
+        for i, source in enumerate(sources):
+            if isinstance(source, dict) and nonempty(source.get('resource')):
+                link(source['resource'], f'sources[{i}].resource', descriptor=True)
+    is_computation = data.get('type') == 'Attested Computation'
+    if is_computation or 'runtime' in data:
+        if not nonempty(data.get('runtime')):
+            error('runtime', 'Attested Computation requires a nonempty runtime')
+    if 'parameters' in data:
+        params = data['parameters']
+        if not isinstance(params, list):
+            error('parameters', 'must be a list of declarations')
+        else:
+            names = set()
+            for i, param in enumerate(params):
+                field = f'parameters[{i}]'
+                if not isinstance(param, dict):
+                    error(field, 'must contain name, type, required')
+                    continue
+                for key in ('name', 'type'):
+                    if not nonempty(param.get(key)):
+                        error(field + '.' + key, 'must be a nonempty string')
+                name = param.get('name')
+                if nonempty(name):
+                    if name in names:
+                        error(field + '.name', 'duplicate declared parameter')
+                    names.add(name)
+                if type(param.get('required')) is not bool:
+                    error(field + '.required', 'must be a boolean')
+    for field in ('executor', 'attester'):
+        if field not in data:
+            continue
+        contract = data[field]
+        if not isinstance(contract, dict):
+            error(field, 'must be a mapping')
+        else:
+            link(contract.get('resource'), field + '.resource')
+            if field == 'executor' and 'receipt' in contract:
+                receipt = contract['receipt']
+                if not isinstance(receipt, list) or any(not nonempty(x) for x in receipt):
+                    error('executor.receipt', 'must be a list of field names, not runtime evidence')
+    if 'computation' in data:
+        link(data['computation'], 'computation')
+    if is_computation:
+        # Count real fences under the conventional heading, before its next peer.
+        active, level, fence, count = False, 0, None, 0
+        for line in body.splitlines():
+            marker = re.match(r'^ {0,3}(`{3,}|~{3,})(.*)$', line)
+            if fence:
+                if marker and marker[1][0] == fence[0] and len(marker[1]) >= fence[1] and not marker[2].strip():
+                    fence = None
+                continue
+            if marker:
+                fence = (marker[1][0], len(marker[1]))
+                if active:
+                    count += 1
+                continue
+            heading = re.match(r'^ {0,3}(#{1,6})\s+(.+?)(?:\s+#+)?\s*$', line)
+            if heading:
+                if heading[2] == 'Computation':
+                    active, level = True, len(heading[1])
+                elif len(heading[1]) <= level:
+                    active = False
+        if 'computation' in data and count:
+            error('computation', 'choose a file or an inline Computation fence, not both')
+        elif 'computation' not in data and (count != 1 or fence):
+            error('computation', 'requires one closed fenced code block under Computation')
+    return issues
+
+
 def validate_file(path, bundle, profile='conformance', *, now=None):
     path, bundle = Path(path), Path(bundle)
     text = path.read_text(encoding='utf-8')
     match = re.match(r'\A---\r?\n(.*?)\r?\n---(?:\r?\n|\Z)', text, re.S)
     reserved = path.name in {'index.md', 'log.md'}
     if not match and reserved and not text.startswith('---\n'):
-        return reserved_issues(path, bundle, {}, text, False)
+        return (reserved_issues(path, bundle, {}, text, False)
+                + (contract_issues(path, bundle, {}, text) if profile == 'authoring' else []))
     if not match:
         return [Issue(path, 'frontmatter', 'missing YAML frontmatter', 'specification')]
     try:
@@ -256,7 +376,8 @@ def validate_file(path, bundle, profile='conformance', *, now=None):
     if not isinstance(data, dict):
         return [Issue(path, 'frontmatter', 'must be a mapping', 'specification')]
     if reserved:
-        return reserved_issues(path, bundle, data, text[match.end():], True)
+        return (reserved_issues(path, bundle, data, text[match.end():], True)
+                + (contract_issues(path, bundle, {}, text[match.end():]) if profile == 'authoring' else []))
     issues = []
     if not nonempty(data.get('type')):
         issues.append(Issue(path, 'type', 'must be a nonempty string', 'specification'))
@@ -265,5 +386,6 @@ def validate_file(path, bundle, profile='conformance', *, now=None):
             if not nonempty(data.get(field)):
                 issues.append(Issue(path, field, 'must be a nonempty string', 'authoring'))
         issues.extend(metadata_issues(path, data, text[match.end():]))
+        issues.extend(contract_issues(path, bundle, data, text[match.end():]))
     issues.extend(state_issues(path, data, now or datetime.now(timezone.utc)))
     return issues
