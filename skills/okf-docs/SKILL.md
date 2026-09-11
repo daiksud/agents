@@ -9,6 +9,8 @@ description: 文書を作成・更新するときに使用し、docs以下の文
 
 GitHubに投稿するIssue・PR本文・コメントにはOKFやYAML frontmatterを適用しない。投稿の構成・整形は依存スキル `task-workflow` の手順に従う。
 
+要求・外部契約・受け入れ条件を仕様として作成・更新するときは、[既存文書を使って仕様を明確にする](references/specification.md)を読む。既存feature・ADR・API仕様の正本を先に確認する。
+
 ## 文書の形式
 
 - `docs/` をKnowledge Bundleとして扱い、文書の作成・更新時は [Open Knowledge Format（OKF）](https://github.com/GoogleCloudPlatform/knowledge-catalog/blob/main/okf/SPEC.md) v0.2に従う。
