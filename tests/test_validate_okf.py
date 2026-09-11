@@ -464,3 +464,10 @@ class ValidationTests(unittest.TestCase):
 
     def test_comment_marker_inside_inline_code_does_not_hide_later_links(self):
         self.assertTrue(self.errors(self.check(self.concept(body='`<!--` [Target](missing.md)\n'), 'authoring')))
+
+    def test_computation_reuses_list_fence_structure(self):
+        for body in ['# Computation\n- ```python\n  print(1)\n  ```\n',
+                     '# Computation\n- Definition\n\n  ```python\n  print(1)\n  ```\n']:
+            text = self.concept('runtime: python\n', body).replace('type: Reference','type: Attested Computation')
+            with self.subTest(body=body):
+                self.assertEqual([], self.errors(self.check(text, 'authoring')))

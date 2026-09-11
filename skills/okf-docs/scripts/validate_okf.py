@@ -57,8 +57,8 @@ def nonempty(value):
     return isinstance(value, str) and bool(value.strip())
 
 
-def structure_lines(body):
-    """Mask code, retaining paragraph/list content at its container indentation."""
+def structure_lines(body, *, preserve_fences=False):
+    """Normalize containers; optionally retain real fences for contract checks."""
     fence, list_indents, paragraph = None, [], False
     for raw in body.expandtabs(4).splitlines():
         quoted, quote_depth = raw, 0
@@ -75,7 +75,7 @@ def structure_lines(body):
                     marker = re.match(r'^ {0,3}(`{3,}|~{3,})\s*$', content[base:])
                     if marker and marker[1][0] == char and len(marker[1]) >= length:
                         fence = None
-                    yield ''
+                    yield content[base:] if preserve_fences else ''
                     continue
             fence = None  # Leaving a list/quote ends its fenced block.
         line = quoted
@@ -94,7 +94,7 @@ def structure_lines(body):
                 list_indents.append(base)
             fence = (marker[1][0], len(marker[1]), quote_depth, base)
             paragraph = False
-            yield ''
+            yield fence_content if preserve_fences else ''
             continue
         if item:
             list_indents.append(base + item.end())
@@ -605,7 +605,7 @@ def contract_issues(path, bundle, data, body):
         # Count real fences under the conventional heading, before its next peer.
         active, level, fence, count, has_content = False, 0, None, 0, False
         comment = False
-        for line in body.splitlines():
+        for line in structure_lines(body, preserve_fences=True):
             if not fence:
                 visible = ''
                 while line:
