@@ -424,3 +424,12 @@ class ValidationTests(unittest.TestCase):
         for body in ['<span title="ok">Fact[^missing]</span>\n',
                      '[Fact[^missing]](report[^draft].md)\n']:
             self.assertTrue(self.errors(self.check(self.concept(body=body), 'authoring')))
+
+    def test_index_parent_heading_can_group_child_sections(self):
+        self.write('page.md', self.concept())
+        text = '# Bundle index\n## Guides\n- [Page](page.md)\n## References\n### Details\n- [Page](page.md)\n'
+        for profile in ('conformance', 'authoring'):
+            self.assertEqual([], self.errors(self.check(text, profile, 'index.md')))
+        for text in ['# Empty\n# Guides\n- [Page](page.md)\n',
+                     '# Index\n## Empty\n## Guides\n- [Page](page.md)\n']:
+            self.assertTrue(self.errors(self.check(text, name='index.md')))

@@ -133,16 +133,21 @@ def reserved_issues(path, bundle, data, body, has_frontmatter, profile):
         if has_frontmatter and (path.parent.resolve() != bundle.resolve()
                                 or 'okf_version' not in data or 'type' in data):
             error('frontmatter', 'only a bundle-root index may declare okf_version; not a concept')
-        heading, entries = False, 0
+        sections, entries = [], 0
         for line in lines:
-            if re.match(r'^ {0,3}#{1,6}\s+\S', line):
-                if heading and entries == 0:
-                    error('body', 'index section must contain linked list entries')
-                heading, entries = True, 0
-            elif (heading and re.match(r'^ {0,3}(?:[-+*]|\d+[.)])\s+', line)
+            heading = re.match(r'^ {0,3}(#{1,6})\s+\S', line)
+            if heading:
+                level = len(heading[1])
+                while sections and sections[-1][0] >= level:
+                    if not sections.pop()[1]:
+                        error('body', 'index section must contain linked list entries')
+                sections.append([level, 0])
+            elif (sections and re.match(r'^ {0,3}(?:[-+*]|\d+[.)])\s+', line)
                   and any(linked_paths(line, definitions=definitions))):
                 entries += 1
-        if not heading or not entries:
+                for section in sections:
+                    section[1] += 1
+        if not entries or any(not section[1] for section in sections):
             error('body', 'index requires headings and linked list entries')
     else:
         if has_frontmatter:
