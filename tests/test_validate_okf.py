@@ -395,3 +395,13 @@ class ValidationTests(unittest.TestCase):
         self.assertEqual([], self.errors(self.check(text, 'authoring')))
         hidden = self.concept('runtime: python\n', '<!--\n'+code+'-->\n').replace('type: Reference','type: Attested Computation')
         self.assertTrue(self.errors(self.check(hidden, 'authoring')))
+
+    def test_links_respect_escaped_image_markers_and_first_reference_definition(self):
+        self.write('real.md', self.concept())
+        with self.subTest(marker='escaped'):
+            self.assertTrue(self.errors(self.check(self.concept(body=r'\![X](missing.md)'), 'authoring')))
+        self.assertEqual([], self.errors(self.check(self.concept(body=r'![X](missing.md)'), 'authoring')))
+        for first, second, broken in [('missing.md', 'real.md', True), ('real.md', 'missing.md', False)]:
+            body = f'[X][ref]\n\n[REF]: {first}\n[ref]: {second}\n'
+            with self.subTest(first=first):
+                self.assertEqual(broken, bool(self.errors(self.check(self.concept(body=body), 'authoring'))))

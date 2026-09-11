@@ -407,7 +407,7 @@ def reference_definitions(content):
                     value = lines[number + 1].lstrip()
                 target = markdown_destination(value)
                 if target:
-                    definitions[normalized_label(label)] = target
+                    definitions.setdefault(normalized_label(label), target)
     return definitions
 
 
@@ -420,7 +420,10 @@ def linked_paths(body, *, definitions=None):
         if content[i] == '\\':
             i += 2
             continue
-        if content[i] != '[' or (i and content[i - 1] == '!'):
+        if content[i] == '!' and content[i + 1:i + 2] == '[':
+            _, i = bracket_label(content, i + 1)
+            continue
+        if content[i] != '[':
             i += 1
             continue
         label, end = bracket_label(content, i)
