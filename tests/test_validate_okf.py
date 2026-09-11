@@ -354,3 +354,10 @@ class ValidationTests(unittest.TestCase):
                 self.assertTrue(self.errors(self.check(text, profile)))
         text = self.concept('x-base: &base {key: first}\nx-extension: {<<: *base, key: override}\n')
         self.assertEqual([], self.errors(self.check(text, 'authoring')))
+
+    def test_optional_datetimes_are_not_validated_by_yaml_resolution(self):
+        text = self.concept('stale_after: 2026-13-30T00:00:00Z\n')
+        self.assertEqual([], self.errors(self.check(text)))
+        self.assertTrue(self.errors(self.check(text, 'authoring')))
+        opaque = self.concept('x-extension: {date: 2026-13-30T00:00:00Z}\n')
+        self.assertEqual([], self.errors(self.check(opaque, 'authoring')))

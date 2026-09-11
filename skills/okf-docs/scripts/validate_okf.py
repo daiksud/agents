@@ -17,6 +17,14 @@ except ImportError:
 if yaml is not None:
     class UniqueKeyLoader(yaml.SafeLoader):
         """Reject duplicate explicit keys before SafeLoader expands YAML merges."""
+        # Keep optional datetimes opaque until authoring checks their fields.
+        # Copy the resolver table so other PyYAML consumers are unaffected.
+        yaml_implicit_resolvers = {
+            key: [(tag, pattern) for tag, pattern in resolvers
+                  if tag != 'tag:yaml.org,2002:timestamp']
+            for key, resolvers in yaml.SafeLoader.yaml_implicit_resolvers.items()
+        }
+
         def construct_mapping(self, node, deep=False):
             seen = set()
             for key_node, _ in node.value:
