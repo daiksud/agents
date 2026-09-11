@@ -104,7 +104,7 @@ apm compile --global
 | `.apm/instructions/core.instructions.md` | 常時適用する設計原則、変更保護、スキルの読み込み条件と完了条件 |
 | `skills/task-workflow/` | Issue・計画からレビュー・スカッシュマージまでの作業手順 |
 | `skills/bdd-tdd/` | 設計確認、シナリオ分割、BDD・TDD、検証 |
-| `skills/code-review/` | 欠陥・回帰を根拠から評価する読み取り専用レビュー |
+| `skills/code-review/` | 将来の変更への耐性を最優先に、欠陥・回帰も根拠から評価する読み取り専用レビュー |
 | `skills/okf-docs/` | OKF v0.2に従う文書の作成・更新・検証 |
 
 共通指示には `applyTo` を付けません。詳細手順はスキルと同梱資料に置きます。[インストラクションのテンプレート](../templates/instructions.md)と[スキルの編集指示](../../skills/AGENTS.md)を参照します。スキルの作成・改善には外部依存の `skill-creator` を使います。
