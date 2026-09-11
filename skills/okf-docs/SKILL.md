@@ -1,6 +1,6 @@
 ---
 name: okf-docs
-description: 文書を作成・更新するときに使用し、docs以下の文書をOKF v0.2で整理・検証する。Markdown with Gherkinのfeature文書も対象とし、読み取り・説明だけでは使用しない。
+description: 要求・外部契約・受け入れ条件の仕様を含む文書の作成・更新に使用する。docs外のOpenAPI・JSON Schema等の契約文書も対象とする。docs以下のMarkdown・feature文書はOKF v0.2で整理・検証し、読み取り・説明だけでは使用しない。
 ---
 
 # OKFで文書を作成する

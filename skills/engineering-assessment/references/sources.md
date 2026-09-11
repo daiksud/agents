@@ -12,7 +12,7 @@ description: 診断の根拠にした一次資料、版の違い、資料の要�
 
 | 資料・著者 | 参照点と注意 |
 | --- | --- |
-| [DevOps Core Principles — GitHub awesome-copilot](https://github.com/github/awesome-copilot/blob/858c81233f31bf5f160ed0ae44243e47961f4b37/instructions/devops-core-principles.instructions.md)（2025-07-13版） | CALMSとエンドツーエンドの責任。コミュニティの指示例であり、固定のFour Keys・MTTR・Elite値は現行DORAの定義へ更新する |
+| [DevOps Core Principles — GitHub awesome-copilot](https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/instructions/devops-core-principles.instructions.md)（2026-09-11確認） | CALMS、エンドツーエンドの責任、運用の観測・手順共有を診断へ具体化。全自動化や特定製品を必須にせず、固定のFour Keys・MTTR・Elite値は現行DORAの定義へ更新する。コミュニティの指示例として参照する |
 | [What is Lean? — Lean Enterprise Institute](https://www.lean.org/explore-lean/what-is-lean/) | 顧客の問題から価値、仕事、人と継続的な実験を考える |
 | [Lean practice — LEI](https://tech.lean.org/lean-practice) | 価値・価値の流れ・フロー・プル・改善を扱う |
 | [How to transform — Jez Humble / DORA](https://dora.dev/guides/how-to-transform/)（2025-10-06更新） | 現状、目標状態、制約、小さな実験から改善する |

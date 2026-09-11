@@ -44,7 +44,7 @@ description: 診断で確認する証拠、未確認事項の扱い、改善の�
 
 例は診断前の処方箋ではない。確認済みの規則・契約を守り、判断が未確定なら「関係者と条件を確認する」を最初の実験の前提に置く。レガシーの全面書き換え、マイクロサービス化、リポジトリ分割、特定製品の導入を一般解にしない。
 
-運用の観測と手順共有の観点は[DevOps Core Principles](https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/instructions/devops-core-principles.instructions.md)（2026-09-11確認）を参考に具体化した。全自動化や特定の監視・配備製品を必須にせず、CALMSとDORAの版差は[既存の原則](principles.md)と[出典・適用判断](sources.md)を使う。
+運用の観測と手順共有の観点はDevOps Core Principlesを参考に具体化した。参照版と適用判断は[出典資料](sources.md)に集約し、CALMSとDORAの版差は[既存の原則](principles.md)を使う。
 
 各実験には目標状態、現状の証拠、実施する役割、順序・依存、受け入れ条件、観測方法、見直す時点を対応づける。変更に運用リスクがある場合は、戻し方と中止条件も提案する。数値目標や日程を創作せず、暫定提案と合意済みの条件を区別する。
 
