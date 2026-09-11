@@ -290,7 +290,7 @@ def metadata_issues(path, data, body):
                 error(field + '.usage_count', 'must be a nonnegative integer')
             if 'usage_window' not in source and 'usage_window' not in data:
                 error(field + '.usage_count', 'requires a source or shared usage_window')
-    content = prose(body)
+    content = footnote_content(body)
     definitions = re.findall(r'^ {0,3}\[\^([^]\s]+)\]:', content, re.M)
     refs = re.findall(r'\[\^([^]\s]+)\](?!:)', content)
     for key in set(definitions):
@@ -392,9 +392,10 @@ def normalized_label(text):
     return ' '.join(text.split()).casefold()
 
 
-def reference_definitions(content):
+def reference_definitions(content, *, mask=False):
     definitions = {}
     lines = content.splitlines()
+    hidden = set()
     for number, line in enumerate(lines):
         if line.startswith('    '):
             continue
@@ -408,7 +409,39 @@ def reference_definitions(content):
                 target = markdown_destination(value)
                 if target:
                     definitions.setdefault(normalized_label(label), target)
-    return definitions
+                    hidden.add(number)
+                    if not line[end + 1:].strip():
+                        hidden.add(number + 1)
+    return ('\n'.join('' if i in hidden else line for i, line in enumerate(lines))
+            if mask else definitions)
+
+
+def footnote_content(body):
+    """Retain visible labels/text, excluding destinations and HTML attributes."""
+    content = reference_definitions(prose(body, remove_escapes=False), mask=True)
+    content = re.sub(r'''<(?:/?[A-Za-z][A-Za-z0-9-]*\b(?:[^'">]|"[^"]*"|'[^']*')*|[A-Za-z][A-Za-z0-9+.-]*:[^<>]*)>''', '', content)
+    result, i = [], 0
+    while i < len(content):
+        if content[i] == '\\':
+            i += 2
+            continue
+        result.append(content[i])
+        if content[i:i + 2] == '](':
+            depth, j = 1, i + 2
+            while j < len(content) and depth:
+                if content[j] == '\\':
+                    j += 2
+                    continue
+                if content[j] == '(':
+                    depth += 1
+                elif content[j] == ')':
+                    depth -= 1
+                j += 1
+            if not depth:
+                i = j
+                continue
+        i += 1
+    return ''.join(result)
 
 
 def linked_paths(body, *, definitions=None):

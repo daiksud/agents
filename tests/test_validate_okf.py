@@ -412,3 +412,15 @@ class ValidationTests(unittest.TestCase):
         result = subprocess.run([sys.executable, str(SCRIPT), str(self.root)],
                                 capture_output=True, text=True, timeout=3)
         self.assertEqual(1, result.returncode)
+
+    def test_footnotes_are_visible_text_not_link_destinations_or_html_attributes(self):
+        self.write('report[^draft].md', self.concept())
+        for body in ['[Report](report[^draft].md)\n',
+                     '[Report][r]\n\n[r]:\n  report[^draft].md\n',
+                     '<span title="[^draft]">Report</span>\n',
+                     '<https://example.com/report[^draft]>\n']:
+            with self.subTest(body=body):
+                self.assertEqual([], self.errors(self.check(self.concept(body=body), 'authoring')))
+        for body in ['<span title="ok">Fact[^missing]</span>\n',
+                     '[Fact[^missing]](report[^draft].md)\n']:
+            self.assertTrue(self.errors(self.check(self.concept(body=body), 'authoring')))
