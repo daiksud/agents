@@ -56,7 +56,7 @@ apm compile --global
 
 [小さな統合単位と活動日](../../skills/task-workflow/references/planning.md#小さな統合単位と活動日)に従い、Issueへ開始日時・次の統合単位・検証を記録します。活動日の毎日の統合、原則1活動日以内のブランチを目安とし、超過時の理由と次の単位を更新します。
 
-マージ後は[main確認と作業環境整理](../../skills/task-workflow/references/review-and-merge.md#統合後mainの確認と復旧)まで担当します。本リポジトリではmainのSHAと必要チェックに加えて、両OSartifactの候補・依存・配布ハッシュを照合し、正常なmain・同期・ブランチ整理の後に完了を記録します。承認・レビュー・CIを省略せず、他プロジェクト向けの[CI未設定の例外](../../skills/task-workflow/references/review-and-merge.md#ci未設定の場合)を本リポジトリへ適用しません。
+マージ後は[main確認](../../skills/task-workflow/references/review-and-merge.md#統合後mainの確認と復旧)と[作業環境整理](../../skills/task-workflow/references/review-and-merge.md#マージ後の作業環境の整理)まで担当します。本リポジトリではmainのSHAと必要チェックに加えて、両OSartifactの候補・依存・配布ハッシュを照合し、正常なmain・同期・ブランチ整理の後に完了を記録します。承認・レビュー・CIを省略せず、他プロジェクト向けの[CI未設定の例外](../../skills/task-workflow/references/review-and-merge.md#ci未設定の場合)を本リポジトリへ適用しません。
 
 ### 計測の定義
 
