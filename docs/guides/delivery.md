@@ -102,7 +102,8 @@ apm compile --global
 | 原本 | 役割 |
 | --- | --- |
 | `.apm/instructions/core.instructions.md` | 常時適用する設計原則、変更保護、スキルの読み込み条件と完了条件 |
-| `skills/task-workflow/` | Issue・計画からレビュー・スカッシュマージまでの作業手順 |
+| `skills/task-workflow/` | Issue記録、実装時の計画からレビュー・スカッシュマージまでの作業手順 |
+| `skills/engineering-assessment/` | 開発実践の証拠に基づく診断と段階的な導入計画。Issue記録で完了 |
 | `skills/bdd-tdd/` | 設計確認、小さな変更への分割、BDD・ATDD・TDD、検証 |
 | `skills/code-review/` | 将来の変更への耐性を最優先に、欠陥・回帰も根拠から評価する読み取り専用レビュー |
 | `skills/okf-docs/` | OKF v0.2に従う文書の作成・更新・検証 |
