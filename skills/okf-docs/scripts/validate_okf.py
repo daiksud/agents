@@ -338,6 +338,8 @@ def local_target(value, path, bundle):
     if not nonempty(value):
         return None
     parsed = urlsplit(value)
+    if parsed.netloc and not parsed.scheme:
+        raise ValueError('external URL requires an explicit scheme')
     if parsed.scheme.lower() in ('http', 'https'):
         if not parsed.hostname or re.search(r'\s', parsed.netloc):
             raise ValueError('HTTP(S) URL requires an authority without whitespace')
@@ -636,7 +638,7 @@ def validate_file(path, bundle, profile='conformance', *, now=None):
         return [Issue(path, 'frontmatter', 'missing YAML frontmatter', 'specification')]
     try:
         data = yaml.load(match[1], Loader=UniqueKeyLoader)
-    except (yaml.YAMLError, ValueError) as error:
+    except (yaml.YAMLError, ValueError, RecursionError) as error:
         return [Issue(path, 'frontmatter', str(error), 'specification')]
     if not isinstance(data, dict):
         return [Issue(path, 'frontmatter', 'must be a mapping', 'specification')]

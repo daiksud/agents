@@ -433,3 +433,12 @@ class ValidationTests(unittest.TestCase):
         for text in ['# Empty\n# Guides\n- [Page](page.md)\n',
                      '# Index\n## Empty\n## Guides\n- [Page](page.md)\n']:
             self.assertTrue(self.errors(self.check(text, name='index.md')))
+
+    def test_network_path_source_requires_an_explicit_scheme_in_authoring(self):
+        text = self.concept('sources: [{resource: "//example.com/policy"}]\n')
+        self.assertEqual([], self.errors(self.check(text)))
+        self.assertTrue(self.errors(self.check(text, 'authoring')))
+
+    def test_excessively_nested_yaml_is_a_document_error(self):
+        self.write('nested.md', '---\ntype: ' + '[' * 1200 + 'x' + ']' * 1200 + '\n---\n')
+        self.assertEqual(1, self.cli(self.root).returncode)
