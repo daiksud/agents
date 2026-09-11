@@ -405,3 +405,10 @@ class ValidationTests(unittest.TestCase):
             body = f'[X][ref]\n\n[REF]: {first}\n[ref]: {second}\n'
             with self.subTest(first=first):
                 self.assertEqual(broken, bool(self.errors(self.check(self.concept(body=body), 'authoring'))))
+
+    def test_long_unclosed_index_label_is_rejected_promptly(self):
+        import subprocess
+        self.write('index.md', '# Group\n- ' + '[' * 16000 + '\n')
+        result = subprocess.run([sys.executable, str(SCRIPT), str(self.root)],
+                                capture_output=True, text=True, timeout=3)
+        self.assertEqual(1, result.returncode)

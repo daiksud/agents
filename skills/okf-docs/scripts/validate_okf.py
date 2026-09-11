@@ -415,15 +415,26 @@ def linked_paths(body, *, definitions=None):
     content = prose(body, remove_escapes=False)
     if definitions is None:
         definitions = reference_definitions(content)
+    # Identify unmatched openings once; keep valid inner links discoverable.
+    stack, closed, escaped = [], set(), False
+    for position, char in enumerate(content):
+        if escaped:
+            escaped = False
+        elif char == '\\':
+            escaped = True
+        elif char == '[':
+            stack.append(position)
+        elif char == ']' and stack:
+            closed.add(stack.pop())
     i = 0
     while i < len(content):
         if content[i] == '\\':
             i += 2
             continue
-        if content[i] == '!' and content[i + 1:i + 2] == '[':
+        if content[i] == '!' and i + 1 in closed:
             _, i = bracket_label(content, i + 1)
             continue
-        if content[i] != '[':
+        if content[i] != '[' or i not in closed:
             i += 1
             continue
         label, end = bracket_label(content, i)
