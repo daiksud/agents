@@ -10,7 +10,7 @@
     {
       "id": 2,
       "prompt": "Issue本文提示・計画承認済み。rumdlは導入済み。ドメイン変更に伴うfeature文書を更新して。",
-      "expected_output": "okf-docsとbdd-tddの記法を確認し、OKF frontmatterと日本語Markdown with Gherkinを用い、技術手順や具体値をシナリオへ書かない。rumdl整形後の構造を確認する。 task-workflowの共通Markdown品質手順に従い文書全体を整形・チェックする。",
+      "expected_output": "okf-docsとbdd-tddの記法を確認し、OKF frontmatterと日本語Markdown with Gherkinを用いる。ルールの理解に意味を持つ具体値・入出力例はシナリオに含め、無関係なデータや内部実装の手順を省く。task-workflowの共通Markdown品質手順で文書全体を整形・チェックし、構造を確認する。",
       "files": []
     },
     {
@@ -29,6 +29,12 @@
       "id": 5,
       "prompt": "計画承認済み。docsの文書を更新して。rumdl未導入で導入許可はまだない。",
       "expected_output": "文書に必要なOKFを適用する。rumdl導入・更新やダウンロードを伴う一時実行は事前許可を求め、無断で行わない。実行不能を検証合格と扱わない。",
+      "files": []
+    },
+    {
+      "id": 6,
+      "prompt": "読み取り専用模擬評価。実際の編集・投稿はせず判断と文案を示して。計画承認済み、rumdl導入済み。合意済みの「税込商品合計5,000円以上は送料0円、それ未満は500円」のfeature文書をOKFで作る。4,999円と5,000円をシナリオに残してよいか。必要なfrontmatter、見出し・ステップの文案と検証方法を示して。",
+      "expected_output": "意味のある具体値をシナリオに残し、抽象ルールと宣言的な具体例を分ける。type/title/descriptionのOKF frontmatter、日本語Markdown with Gherkinの見出しと箇条書きステップを示す。実装手順を混ぜず、rumdl整形後の構造を確認する。実行コードを変えない今回の文書作成にTDD実行を要求しない。",
       "files": []
     }
   ]
