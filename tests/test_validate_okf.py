@@ -326,3 +326,31 @@ class ValidationTests(unittest.TestCase):
         body = '# Computation\n```python\nprint(1)\n```\n# Examples\n```text\nExample continues to EOF\n'
         text = self.concept('runtime: python\n', body).replace('type: Reference','type: Attested Computation')
         self.assertEqual([], self.errors(self.check(text, 'authoring')))
+
+    def test_nested_list_links_are_not_indented_code(self):
+        for body in ['- Parent\n    - [Child](missing.md)\n',
+                     'Paragraph\n    continuation [Child](missing.md)\n']:
+            self.assertTrue(self.errors(self.check(self.concept(body=body), 'authoring')))
+        for body in ['- Parent\n\n      [Code](missing.md)\n',
+                     '> ```md\n> [Code](missing.md)\n> ```\n']:
+            self.assertEqual([], self.errors(self.check(self.concept(body=body), 'authoring')))
+
+    def test_escaped_and_nested_link_labels(self):
+        for label in [r'a\]b', 'a [nested] label']:
+            self.assertTrue(self.errors(self.check(self.concept(body=f'[{label}](missing.md)\n'), 'authoring')))
+        self.write('real.md', self.concept())
+        self.assertEqual([], self.errors(self.check(self.concept(body=r'[a\]b](real.md)'), 'authoring')))
+
+    def test_computation_local_reference_must_be_a_file(self):
+        (self.root / 'refs').mkdir()
+        text = self.concept('runtime: python\ncomputation: refs/\n').replace('type: Reference','type: Attested Computation')
+        self.assertTrue(self.errors(self.check(text, 'authoring')))
+        self.assertEqual([], self.errors(self.check(text)))
+
+    def test_yaml_duplicate_keys_are_errors_but_merge_overrides_are_valid(self):
+        for text in ['---\ntype: Wrong\ntype: Guide\n---\n',
+                     self.concept('x-extension: {key: first, key: second}\n')]:
+            for profile in ['conformance', 'authoring']:
+                self.assertTrue(self.errors(self.check(text, profile)))
+        text = self.concept('x-base: &base {key: first}\nx-extension: {<<: *base, key: override}\n')
+        self.assertEqual([], self.errors(self.check(text, 'authoring')))

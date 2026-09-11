@@ -14,6 +14,27 @@ except ImportError:
     yaml = None
 
 
+if yaml is not None:
+    class UniqueKeyLoader(yaml.SafeLoader):
+        """Reject duplicate explicit keys before SafeLoader expands YAML merges."""
+        def construct_mapping(self, node, deep=False):
+            seen = set()
+            for key_node, _ in node.value:
+                key = ('<<' if key_node.tag == 'tag:yaml.org,2002:merge'
+                       else self.construct_object(key_node, deep=deep))
+                try:
+                    if key in seen:
+                        raise yaml.constructor.ConstructorError(
+                            'while constructing a mapping', node.start_mark,
+                            f'duplicate key: {key}', key_node.start_mark)
+                    seen.add(key)
+                except TypeError:
+                    raise yaml.constructor.ConstructorError(
+                        'while constructing a mapping', node.start_mark,
+                        'unhashable mapping key', key_node.start_mark) from None
+            return super().construct_mapping(node, deep=deep)
+
+
 @dataclass(frozen=True)
 class Issue:
     path: Path
@@ -28,22 +49,52 @@ def nonempty(value):
 
 
 def structure_lines(body):
-    """Ignore fenced/indented examples before recognizing document structure."""
-    fence = None
-    for line in body.splitlines():
-        candidate = re.sub(r'^(?: {0,3}> ?)+', '', line)
-        marker = re.match(r'^ {0,3}(`{3,}|~{3,})(.*)$', candidate)
+    """Mask code, retaining paragraph/list content at its container indentation."""
+    fence, list_indents, paragraph = None, [], False
+    for raw in body.expandtabs(4).splitlines():
+        quoted, quote_depth = raw, 0
+        while re.match(r'^ {0,3}>', quoted):
+            quoted = re.sub(r'^ {0,3}> ?', '', quoted, count=1)
+            quote_depth += 1
         if fence:
-            if marker and marker[1][0] == fence[0] and len(marker[1]) >= fence[1] and not marker[2].strip():
-                fence = None
+            char, length, depth, base = fence
+            if quote_depth >= depth:
+                content = raw
+                for _ in range(depth):
+                    content = re.sub(r'^ {0,3}> ?', '', content, count=1)
+                if not content.strip() or len(content) - len(content.lstrip()) >= base:
+                    marker = re.match(r'^ {0,3}(`{3,}|~{3,})\s*$', content[base:])
+                    if marker and marker[1][0] == char and len(marker[1]) >= length:
+                        fence = None
+                    yield ''
+                    continue
+            fence = None  # Leaving a list/quote ends its fenced block.
+        line = quoted
+        indent = len(line) - len(line.lstrip())
+        if line.strip():
+            while list_indents and indent < list_indents[-1]:
+                list_indents.pop()
+        base = list_indents[-1] if list_indents else 0
+        content = line[base:]
+        marker = re.match(r'^ {0,3}(`{3,}|~{3,})(.*)$', content)
+        if marker and not (marker[1][0] == '`' and '`' in marker[2]):
+            fence = (marker[1][0], len(marker[1]), quote_depth, base)
+            paragraph = False
             yield ''
-        elif marker and not (marker[1][0] == '`' and '`' in marker[2]):
-            fence = (marker[1][0], len(marker[1]))
+            continue
+        item = re.match(r'^( {0,3})(?:[-+*]|\d+[.)])( +)', content)
+        if item:
+            list_indents.append(base + item.end())
+            paragraph = False
+        elif not content.strip():
+            paragraph = False
+        elif content.startswith('    ') and not paragraph:
             yield ''
-        elif line.startswith(('    ', '\t')):
-            yield ''
+            continue
         else:
-            yield line
+            paragraph = not bool(re.match(r'^ {0,3}(?:#|[-=]{3,}\s*$)', content))
+        # Keep quote markers so quoted headings/definitions are not root structure.
+        yield ('> ' * quote_depth) + content
 
 
 def reserved_issues(path, bundle, data, body, has_frontmatter, profile):
@@ -300,22 +351,64 @@ def markdown_destination(text):
     return ''.join(result)
 
 
+def bracket_label(text, start):
+    """Read a Markdown label, respecting escaped and nested brackets."""
+    depth, result, i = 1, [], start + 1
+    while i < len(text):
+        char = text[i]
+        if char == '\\' and i + 1 < len(text):
+            result.append(text[i + 1])
+            i += 2
+            continue
+        if char == '[':
+            depth += 1
+        elif char == ']':
+            depth -= 1
+            if depth == 0:
+                return ''.join(result), i + 1
+        result.append(char)
+        i += 1
+    return None, start + 1
+
+
 def linked_paths(body):
     content = prose(body, remove_escapes=False)
-    for match in re.finditer(r'(?<!!)(?<!\\)\[[^]\n]+\]\(\s*', content):
-        target = markdown_destination(content[match.end():])
-        if target:
-            yield target
-    # Markdown reference labels are case-insensitive and whitespace-normalized.
-    def label(text):
+
+    def normalized(text):
         return ' '.join(text.split()).casefold()
 
-    definitions = {label(key): markdown_destination(value) for key, value in
-                   re.findall(r'^ {0,3}\[([^]^\n]+)\]:\s*(.+)$', content, re.M)}
-    for match in re.finditer(r'(?<!!)(?<!\\)\[([^]^\n]+)\](?:\[([^]\n]*)\])?(?![:(])', content):
-        key = label(match[2] or match[1])
-        if key in definitions:
-            yield definitions[key]
+    definitions = {}
+    for line in content.splitlines():
+        if line.startswith('    '):
+            continue
+        line = line.lstrip()
+        if line.startswith('[') and not line.startswith('[^'):
+            label, end = bracket_label(line, 0)
+            if label is not None and line[end:end + 1] == ':':
+                definitions[normalized(label)] = markdown_destination(line[end + 1:].lstrip())
+    i = 0
+    while i < len(content):
+        if content[i] == '\\':
+            i += 2
+            continue
+        if content[i] != '[' or (i and content[i - 1] == '!'):
+            i += 1
+            continue
+        label, end = bracket_label(content, i)
+        i = end
+        if label is None or label.startswith('^'):
+            continue
+        if content[end:end + 1] == '(':
+            target = markdown_destination(content[end + 1:].lstrip())
+            if target:
+                yield target
+        elif content[end:end + 1] != ':':
+            if content[end:end + 1] == '[':
+                reference, i = bracket_label(content, end)
+                label = reference or label
+            key = normalized(label)
+            if key in definitions:
+                yield definitions[key]
 
 
 def contract_issues(path, bundle, data, body):
@@ -324,7 +417,7 @@ def contract_issues(path, bundle, data, body):
     def error(field, message):
         issues.append(Issue(path, field, message, 'authoring'))
 
-    def link(value, field, descriptor=False):
+    def link(value, field, descriptor=False, require_file=False):
         if not nonempty(value):
             error(field, 'must be a nonempty path or URL')
             return
@@ -343,6 +436,8 @@ def contract_issues(path, bundle, data, body):
                     error(field, f'reference leaves the Bundle: {value}')
                 elif not target.exists():
                     error(field, f'local reference does not exist: {value}')
+                elif require_file and not target.is_file():
+                    error(field, 'computation must reference a regular file')
             except (ValueError, RuntimeError):
                 error(field, 'invalid local path')
 
@@ -393,7 +488,7 @@ def contract_issues(path, bundle, data, body):
                 if not isinstance(receipt, list) or any(not nonempty(x) for x in receipt):
                     error('executor.receipt', 'must be a list of field names, not runtime evidence')
     if 'computation' in data:
-        link(data['computation'], 'computation')
+        link(data['computation'], 'computation', require_file=True)
     if is_computation:
         # Count real fences under the conventional heading, before its next peer.
         active, level, fence, count, has_content = False, 0, None, 0, False
@@ -441,7 +536,7 @@ def validate_file(path, bundle, profile='conformance', *, now=None):
     if not match:
         return [Issue(path, 'frontmatter', 'missing YAML frontmatter', 'specification')]
     try:
-        data = yaml.safe_load(match[1])
+        data = yaml.load(match[1], Loader=UniqueKeyLoader)
     except (yaml.YAMLError, ValueError) as error:
         return [Issue(path, 'frontmatter', str(error), 'specification')]
     if not isinstance(data, dict):
@@ -497,7 +592,7 @@ def main(argv=None):
     parser.add_argument('bundle', type=Path, help='Knowledge Bundle root')
     parser.add_argument('files', nargs='*', help='Markdown files relative to Bundle; default: all')
     parser.add_argument('--profile', choices=('conformance', 'authoring'), default='conformance')
-    args = parser.parse_args(argv)
+    args = parser.parse_intermixed_args(argv)
     if yaml is None:
         print('environment: PyYAML is required; no packages were installed', file=sys.stderr)
         return 2
