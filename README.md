@@ -62,6 +62,7 @@ apm compile --global
 
 ```bash
 apm update --global daiksud/agents
+apm install --global
 apm compile --global --dry-run
 apm compile --global
 ```
@@ -129,9 +130,9 @@ gh skill install . --from-local --all --dir "$exploration_dir"
 
 表示された導入先で各SKILL.mdと同梱リンクを読み、使いにくい指示や不足を確認します。終了後はその検証用ディレクトリだけを削除します。エージェントによる読み取り専用模擬評価は別途行い、形式検査や導入成功をスキルの判断品質の証明とは扱いません。
 
-GitHub Actionsは全ブランチへのpush、main向けPR、mainへの統合後、手動実行で検査します。`static-checks` 成功後に `skill-install` を実行し、失敗をマージで持ち越しません。必須チェックの定義は [.github/required-checks.json](.github/required-checks.json) です。初回の実行成功後、管理者が既存ルールを保持してmainの必須チェックに反映し、ジョブ名の変更時も両方を更新します。
+GitHub Actionsは全ブランチへのpush、main向けPR、mainへの統合後、手動実行で検査します。`static-checks` 成功後にUbuntu・macOSの `acceptance` を並列実行し、失敗をマージで持ち越しません。必須チェックの定義は [.github/required-checks.json](.github/required-checks.json) です。初回の実行成功後、管理者が既存ルールを保持してmainの必須チェックに反映し、ジョブ名の変更時も両方を更新します。
 
-[CIの実践](https://continuousdelivery.com/foundations/continuous-integration/)と[継続的テスト](https://continuousdelivery.com/foundations/test-automation/)に基づく最小基盤です。APMの更新・復旧経路と日常の統合運用の整備は後続段階で行います。
+[CIの実践](https://continuousdelivery.com/foundations/continuous-integration/)と[継続的テスト](https://continuousdelivery.com/foundations/test-automation/)に基づく最小基盤です。APMの導入・更新・復旧と固定候補の選び方は[配布ガイド](docs/guides/delivery.md)を参照します。日常の統合運用は後続段階で整備します。
 
 ## GitHub上のレビュー用配置
 

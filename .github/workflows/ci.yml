@@ -24,28 +24,63 @@ jobs:
       - run: python -m unittest discover -s tests -v
       - run: python scripts/check_repository.py
       - run: python scripts/sync_review_skill.py --check
-  skill-install:
+  acceptance:
     needs: static-checks
-    runs-on: ubuntu-24.04
-    timeout-minutes: 5
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, macos-15]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
+          fetch-depth: 0
       - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
           python-version: '3.12'
       - run: python -m pip install -r requirements-ci.txt
-      - name: Install pinned GitHub CLI
+      - name: Install pinned delivery tools
         shell: bash
         run: |
           cd "$RUNNER_TEMP"
+          case "$(uname -s)-$(uname -m)" in
+            Linux-x86_64) gh_platform=linux_amd64; gh_extension=tar.gz; apm_platform=linux-x86_64 ;;
+            Darwin-arm64) gh_platform=macOS_arm64; gh_extension=zip; apm_platform=darwin-arm64 ;;
+            Darwin-x86_64) gh_platform=macOS_amd64; gh_extension=zip; apm_platform=darwin-x86_64 ;;
+            *) exit 1 ;;
+          esac
+          gh_asset="gh_2.100.0_${gh_platform}.${gh_extension}"
           base=https://github.com/cli/cli/releases/download/v2.100.0
-          curl --fail --silent --show-error --location "$base/gh_2.100.0_linux_amd64.tar.gz" -o gh.tar.gz
-          curl --fail --silent --show-error --location "$base/gh_2.100.0_checksums.txt" -o checksums.txt
-          awk '$2 == "gh_2.100.0_linux_amd64.tar.gz" {print $1 "  gh.tar.gz"}' checksums.txt | sha256sum --check --strict
-          tar -xzf gh.tar.gz
-          echo "$RUNNER_TEMP/gh_2.100.0_linux_amd64/bin" >> "$GITHUB_PATH"
+          curl -fsSL "$base/$gh_asset" -o "$gh_asset"
+          curl -fsSL "$base/gh_2.100.0_checksums.txt" -o checksums.txt
+          awk -v asset="$gh_asset" '$2 == asset {print}' checksums.txt | shasum -a 256 --check --strict
+          mkdir gh-tool apm-tool
+          if [ "$gh_extension" = zip ]; then unzip -q "$gh_asset" -d gh-tool; else tar -xzf "$gh_asset" -C gh-tool; fi
+          gh_binary=$(find "$RUNNER_TEMP/gh-tool" -type f -name gh -print -quit)
+          echo "$(dirname "$gh_binary")" >> "$GITHUB_PATH"
+          apm_asset="apm-${apm_platform}.tar.gz"
+          base=https://github.com/microsoft/apm/releases/download/v0.30.0
+          curl -fsSL "$base/$apm_asset" -o "$apm_asset"
+          curl -fsSL "$base/$apm_asset.sha256" -o apm-checksum.txt
+          shasum -a 256 --check --strict apm-checksum.txt
+          tar -xzf "$apm_asset" -C apm-tool
+          apm_binary=$(find "$RUNNER_TEMP/apm-tool" -type f -name apm -print -quit)
+          echo "$(dirname "$apm_binary")" >> "$GITHUB_PATH"
       - run: python scripts/skill_smoke.py
         env:
           GH_TOKEN: ${{ github.token }}
+      - name: Verify APM lifecycle against the checked-out commit
+        shell: bash
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: python scripts/apm_smoke.py 2>&1 | tee "$RUNNER_TEMP/apm-delivery.log"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        if: always()
+        with:
+          name: delivery-${{ matrix.os }}-${{ github.sha }}
+          path: |
+            ${{ runner.temp }}/delivery-report.json
+            ${{ runner.temp }}/apm-delivery.log
+          if-no-files-found: error
