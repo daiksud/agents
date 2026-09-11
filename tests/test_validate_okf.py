@@ -388,3 +388,10 @@ class ValidationTests(unittest.TestCase):
         for name, body in [('index.md', '# Group\n- [Page](page.md)\n'),
                            ('log.md', '# Log\n## 2026-09-11\n- Created\n')]:
             self.assertTrue(self.errors(self.check('<!--\n'+body+'-->\n', name=name)))
+
+    def test_computation_ignores_comments_but_preserves_comment_text_in_code(self):
+        code = '# Computation\n```python\nprint("<!--")\n```\n'
+        text = self.concept('runtime: python\n', code).replace('type: Reference','type: Attested Computation')
+        self.assertEqual([], self.errors(self.check(text, 'authoring')))
+        hidden = self.concept('runtime: python\n', '<!--\n'+code+'-->\n').replace('type: Reference','type: Attested Computation')
+        self.assertTrue(self.errors(self.check(hidden, 'authoring')))

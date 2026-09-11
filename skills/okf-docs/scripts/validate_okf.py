@@ -521,7 +521,25 @@ def contract_issues(path, bundle, data, body):
     if is_computation:
         # Count real fences under the conventional heading, before its next peer.
         active, level, fence, count, has_content = False, 0, None, 0, False
+        comment = False
         for line in body.splitlines():
+            if not fence:
+                visible = ''
+                while line:
+                    if comment:
+                        end = line.find('-->')
+                        if end < 0:
+                            line = ''
+                        else:
+                            line, comment = line[end + 3:], False
+                    else:
+                        start = line.find('<!--')
+                        if start < 0:
+                            visible += line
+                            break
+                        visible += line[:start]
+                        line, comment = line[start + 4:], True
+                line = visible
             marker = re.match(r'^ {0,3}(`{3,}|~{3,})(.*)$', line)
             if fence:
                 if marker and marker[1][0] == fence[0] and len(marker[1]) >= fence[1] and not marker[2].strip():
