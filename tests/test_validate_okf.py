@@ -600,3 +600,10 @@ class ValidationTests(unittest.TestCase):
                              [line.split(': ')[1] for line in result.stdout.splitlines()
                               if 'footnotes.' in line])
         self.assertEqual(1, len(set(outputs)))
+
+    def test_source_file_reference_keeps_query_and_fragment_out_of_path(self):
+        text = self.concept('sources: [{resource: "missing policy.md?revision=1#section"}]\n')
+        self.assertEqual(['sources[0].resource'],
+                         [x.field for x in self.errors(self.check(text, 'authoring'))])
+        self.write('missing policy.md', '')
+        self.assertEqual([], self.errors(self.check(text, 'authoring')))

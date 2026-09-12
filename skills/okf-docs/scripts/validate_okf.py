@@ -370,7 +370,7 @@ def contract_issues(path, bundle, data, document):
             return
         if descriptor:
             explicit_path = (re.match(r'^(?:\.?\.?/|[A-Za-z][A-Za-z0-9+.-]*:|[^\s/]+/)', value)
-                             or re.search(r'\.[a-zA-Z0-9]+(?:#.*)?$', value))
+                             or re.search(r'\.[a-zA-Z0-9]+(?:[?#].*)?$', value))
             if not explicit_path:
                 if '/' in value:
                     issues.append(Issue(path, field,
