@@ -160,7 +160,7 @@
         "evals/inputs/external-conformance.txt"
       ],
       "expectations": [
-        "未知type・追加キー・title/description欠落・索引不在・リンク切れだけで外部Bundleを不適合にしない",
+        "提示された外部BundleはOKF v0.2 conformanceに適合すると明示し、未知type・追加キー・任意項目欠落・索引不在・リンク切れを理由に判定を留保しない",
         "/one.mdをBundle基準で解釈し、リンク切れの注意と仕様適合の拒否を区別する",
         "自作公開用の追加品質条件を外部受け入れの必須条件にせず、ファイルを自動修正しない"
       ]
@@ -174,7 +174,7 @@
       ],
       "expectations": [
         "単一verified mappingを有効として扱い、自動プロセスの確認を人間レビューと同一視しない",
-        "固定現在時刻がstale_afterに等しいため期限到達を報告し、構文エラーとは扱わない",
+        "固定現在時刻がstale_afterに等しいため期限到達済みと明示する。境界判定を留保せず、構文エラーにはしない",
         "status省略はstableの扱い、確認記録なしは未検証と説明し、欠落だけで拒否しない",
         "CI成功や定義確認を計算の実行証明に置き換えない"
       ]
@@ -204,6 +204,35 @@
         "OpenAPIのcurrencyを必須かつJPYに制約し、amount等の既存契約を保持する",
         "契約文書としてokf-docsの適用を認識しつつOpenAPIとPR本文へOKF frontmatterを追加しない",
         "実行コードなしの依頼にTDD実行を要求せず、未実行の検証を成功としない"
+      ]
+    },
+    {
+      "id": 22,
+      "prompt": "読み取り専用模擬評価: 計算文書とMarkdown。添付された仮想資料の全文で判断と文案を示してください。実環境の編集・投稿・導入・コマンド実行は禁止です。検査は未実行として計画を示してください。",
+      "expected_output": "valid.mdはOKF authoringで有効と判断し、計算文書だけfront-matter-titleを空文字列にするrumdl設定または同等の限定設定を示す。wrong-level.mdのComputationをH1へ直し、valid.mdのH1をH2に変更しない。duplicate.mdは本文H1重複を解消し、MD025自体を無効にしない。ordinary.mdは通常のtitleとH1の扱いを維持し、全ファイルへの計算用設定拡大を要求しない。OKF authoringとrumdl両方の検証を計画し、実行済み成功や計算の実行証明を創作しない。",
+      "files": [
+        "evals/inputs/computation-markdown.txt"
+      ],
+      "expectations": [
+        "valid.mdはOKF authoringで有効と判断し、計算文書だけfront-matter-titleを空文字列にするrumdl設定または同等の限定設定を示す",
+        "wrong-level.mdのComputationをH1へ直し、valid.mdのH1をH2に変更しない",
+        "duplicate.mdは本文H1重複を解消し、MD025自体を無効にしない",
+        "ordinary.mdは通常のtitleとH1の扱いを維持し、全ファイルへの計算用設定拡大を要求しない",
+        "OKF authoringとrumdl両方の検証を計画し、実行済み成功や計算の実行証明を創作しない"
+      ]
+    },
+    {
+      "id": 23,
+      "prompt": "読み取り専用模擬評価: 原本CIと固有形式。添付された仮想資料の全文で判断と文案を示してください。実環境の編集・投稿・導入・コマンド実行は禁止です。検査は未実行として計画を示してください。",
+      "expected_output": "Bundle rootをrepo/としてdocsとskillsのファイル相対リンクを解釈し、OKF対象だけauthoringへ渡す。root indexのokf_versionとlog構造を保持し、SKILL.md・生成AGENTS.md・Issueテンプレートに通常概念のメタデータを追加しない。既存sourcesと安定ID脚注、未知x-maintainerを保持し、verified・generated・期限を推測で補わない。CI成功を人間の内容確認と同一視せず、実ユーザーの配布先へ未公開版を適用せずに検証する。",
+      "files": [
+        "evals/inputs/repository-integration.txt"
+      ],
+      "expectations": [
+        "Bundle rootをrepo/としてdocsとskillsのファイル相対リンクを解釈し、OKF対象だけauthoringへ渡す",
+        "root indexのokf_versionとlog構造を保持し、SKILL.md・生成AGENTS.md・Issueテンプレートに通常概念のメタデータを追加しない",
+        "既存sourcesと安定ID脚注、未知x-maintainerを保持し、verified・generated・期限を推測で補わない",
+        "CI成功を人間の内容確認と同一視せず、実ユーザーの配布先へ未公開版を適用せずに検証する"
       ]
     }
   ]

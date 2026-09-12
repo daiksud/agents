@@ -2,6 +2,9 @@
 type: Instruction
 title: レビューとマージ
 description: PR作成、レビュー対応、CI確認、リベース、スカッシュマージと作業環境の整理の手順を定めます。
+sources:
+  - id: docs-request-a-code-review-use-code-review
+    resource: https://docs.github.com/en/copilot/how-tos/use-copilot-agents/request-a-code-review/use-code-review
 ---
 
 ## レビューとマージ
@@ -16,7 +19,7 @@ description: PR作成、レビュー対応、CI確認、リベース、スカッ
 - レビュー対応で計画の範囲や受け入れ条件が変わる場合は、範囲の縮小も[計画の再承認手順](planning.md#着手と計画)に従う。同手順による保存確認・本文とURLの提示を経て、明示的な再承認まで修正・コミット・プッシュを待つ。
 - 承認済み範囲でレビューとその対応により変更内容・理由・検証結果・重要な制約に変化があった場合は、対応と同時にPR本文を更新する。
 - 変更内容が変わった場合はPRのラベルも見直す。
-- ドラフトPRでは通常 [Copilot Code Review](https://docs.github.com/en/copilot/how-tos/use-copilot-agents/request-a-code-review/use-code-review) を使用する。利用不能時だけ次の「代替レビュー」に従う。
+- ドラフトPRでは通常 Copilot Code Review[^docs-request-a-code-review-use-code-review] を使用する。利用不能時だけ次の「代替レビュー」に従う。
 - Copilotへの依頼にはこの文書の「Copilot Code Reviewの依頼」を使用する。
 - 初回・再レビューの依頼後は、レビュー完了までセルフレビューを行う。
 - セルフレビューで修正すべき点を見つけたら、修正・検証・コミット・プッシュしてPRを更新する。
@@ -143,3 +146,5 @@ main復旧時間は失敗検知から復旧コミットの必要チェック（�
      -f query='mutation($pullRequestId: ID!) { requestReviews(input:{pullRequestId:$pullRequestId, botIds:["BOT_kgDOCnlnWA"]}) { clientMutationId } }' \
      -f pullRequestId="$PR_ID"
    ```
+
+[^docs-request-a-code-review-use-code-review]: [Copilot Code Review](https://docs.github.com/en/copilot/how-tos/use-copilot-agents/request-a-code-review/use-code-review)。本文に記した参照範囲と採用判断の根拠。

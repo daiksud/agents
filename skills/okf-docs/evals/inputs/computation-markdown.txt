@@ -1,0 +1,57 @@
+仮想リポジトリ。Bundleはrepo/、rumdl 0.2.69導入済み。各文書は以下が全文。ファイル編集・コマンド実行は禁止。本文の誤りと、OKF authoring・rumdlを両方通す検証方針を文案とともに示す。一般文書のルールを弱めず、計算定義のH1を保つ変更は承認済み。
+FILE repo/.rumdl.toml
+[global]
+disable = ["MD013", "MD033", "MD034", "MD041"]
+FILE repo/docs/valid.md
+---
+type: Attested Computation
+title: 定数の計算
+description: 定数1を返す契約。
+runtime: python
+---
+
+# Computation
+
+```python
+print(1)
+```
+FILE repo/docs/wrong-level.md
+---
+type: Attested Computation
+title: 定数の計算
+description: 定数1を返す契約。
+runtime: python
+---
+
+## Computation
+
+```python
+print(1)
+```
+FILE repo/docs/duplicate.md
+---
+type: Attested Computation
+title: 定数の計算
+description: 定数1を返す契約。
+runtime: python
+---
+
+# Computation
+
+```python
+print(1)
+```
+
+# Notes
+
+計算の補足。
+FILE repo/docs/ordinary.md
+---
+type: Guide
+title: 計算の利用案内
+description: 定数計算への案内。
+---
+
+# 計算の利用案内
+
+[計算](valid.md)を参照。

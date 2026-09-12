@@ -2,6 +2,9 @@
 type: Instruction
 title: スキルの作成・更新
 description: このリポジトリのスキルを作成・更新するときの形式、内容、評価と配布の確認方法を定めます。
+sources:
+  - id: agentskills-specification
+    resource: https://agentskills.io/specification
 ---
 
 ## スキルの作成・更新
@@ -20,12 +23,13 @@ description: このリポジトリのスキルを作成・更新するときの�
 ### 配置と形式
 
 - 原本は `skills/<name>/SKILL.md` に置く。`gh skill` の標準探索を維持するため、隠しディレクトリに移さない。
-- `SKILL.md` は [Agent Skills仕様](https://agentskills.io/specification)に従い、YAML frontmatterに `name` と `description` を記載する。
+- `SKILL.md` は Agent Skills仕様[^agentskills-specification]に従い、YAML frontmatterに `name` と `description` を記載する。
 - `name` はディレクトリ名と一致させ、小文字英数字とハイフンで1〜64文字とする。先頭・末尾のハイフンと連続するハイフンは使わない。
 - `description` は1〜1024文字で、何をするスキルか、どの依頼で使うかを具体的に書く。隣接するスキルと紛らわしい場合は適用しない場面も明記する。
 - 既存スキルの更新では、依頼に必要な変更がない限り名前と適用範囲を保持する。
 - 本文と説明は日本語を基本とし、コマンド・識別子・固有名詞は元の表記を保つ。
-- このAGENTS.mdと同梱する通常のMarkdown文書はOKF v0.2に従い、`type`・`title`・`description` を記載する。`SKILL.md` のfrontmatterはAgent Skills仕様を用いる。
+- このAGENTS.mdと同梱する通常概念はOKF v0.2に従う。仕様必須の `type` に加え、自作時の追加条件として `title`・`description` を記載する。`index.md`・`log.md` は予約形式とし、`SKILL.md` のfrontmatterはAgent Skills仕様を用いる。
+- Bundleの境界、出典・確認履歴の保持と更新、検証の判断は [okf-docs](okf-docs/SKILL.md) に従う。原本検査でのBundleはリポジトリルートとし、対象を明示して固有形式を除く。
 
 ### 内容と同梱資料
 
@@ -54,3 +58,5 @@ description: このリポジトリのスキルを作成・更新するときの�
 - スキルの追加・削除・名前・配置・同梱資源を変更した場合は、`gh skill install . --from-local` の非対話での列挙と、一時ディレクトリへの導入で対象スキルと必要な資料が揃うことを確認する。
 - 配布構成を変更した場合は、APMでの導入・更新・共通指示生成も隔離環境で確認する。実ユーザーのグローバル配布先を検証用に書き換えない。
 - スキルの構成や導入方法を変更した場合はREADMEの案内を更新する。検証とレビューの結果はIssue・PRに記録する。
+
+[^agentskills-specification]: [Agent Skills仕様](https://agentskills.io/specification)。本文に記した参照範囲と採用判断の根拠。

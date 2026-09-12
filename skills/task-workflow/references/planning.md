@@ -2,6 +2,17 @@
 type: Instruction
 title: 計画と作業ブランチの準備
 description: 変更・成果物作成に着手する際のIssue、計画、ブランチ、権限の確認手順を定めます。
+sources:
+  - id: continuousdelivery-foundations-continuous-integration
+    resource: https://continuousdelivery.com/foundations/continuous-integration/
+  - id: github-src-index-ts
+    resource: https://github.com/conventional-changelog/commitlint/blob/f4b108182e6d20eca52433135c7ba1675746318e/%40commitlint/config-conventional/src/index.ts#L24-L36
+  - id: github-instructions-spec-driven-workflow-v1-instructions-md
+    resource: https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/instructions/spec-driven-workflow-v1.instructions.md
+  - id: github-agents-research-technical-spike-agent-md
+    resource: https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/agents/research-technical-spike.agent.md
+  - id: github-context-map-skill-md
+    resource: https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/skills/context-map/SKILL.md
 ---
 
 ## 計画と作業ブランチの準備
@@ -25,7 +36,7 @@ description: 変更・成果物作成に着手する際のIssue、計画、ブ�
 
 ### 小さな統合単位と活動日
 
-変更を早く検証してmainへ統合し、長期ブランチによる前提のずれを小さくする。[CIの原則](https://continuousdelivery.com/foundations/continuous-integration/)に基づき、次を計画に含める。
+変更を早く検証してmainへ統合し、長期ブランチによる前提のずれを小さくする。CIの原則[^continuousdelivery-foundations-continuous-integration]に基づき、次を計画に含める。
 
 - 1つの変更を、独立して検証・レビュー・統合できる単位にする。ファイル数だけで分けず、利用者の目標と成功条件が確認できるまとまりにする。
 - 変更作業を記録した日を活動日とし、活動日の毎日のmain統合、原則1活動日以内のブランチを目安にする。休日などの非活動日を作業遅延と決めつけない。
@@ -153,7 +164,7 @@ Issueへ計画を保存する前に、実際のファイルと根拠から次を
 | ドキュメントのみの変更 | `docs/` |
 | その他 | `build/`・`chore/`・`ci/`・`perf/`・`refactor/`・`revert/`・`style/`・`test/` のうち変更内容に合うもの |
 
-その他のプリフィックスは [@commitlint/config-conventionalのtype定義](https://github.com/conventional-changelog/commitlint/blob/f4b108182e6d20eca52433135c7ba1675746318e/%40commitlint/config-conventional/src/index.ts#L24-L36) に従う。
+その他のプリフィックスは @commitlint/config-conventionalのtype定義[^github-src-index-ts] に従う。
 破壊的変更に許可する型は、[コミットメッセージの指示](conventional-commits.md)に従う。
 
 ### 実行権限とツール呼び出し
@@ -169,8 +180,14 @@ Issueへ計画を保存する前に、実際のファイルと根拠から次を
 
 ### 参照元と適用判断
 
-[GitHub awesome-copilotのSpec Driven Workflow v1](https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/instructions/spec-driven-workflow-v1.instructions.md)と[Technical spike research mode](https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/agents/research-technical-spike.agent.md)を2026-09-11に確認し、不確実性に応じた調査・試作、実験前の成功条件、証拠による判断の更新を要約・再構成した。
+GitHub awesome-copilotのSpec Driven Workflow v1[^github-instructions-spec-driven-workflow-v1-instructions-md]とTechnical spike research mode[^github-agents-research-technical-spike-agent-md]を2026-09-11に確認し、不確実性に応じた調査・試作、実験前の成功条件、証拠による判断の更新を要約・再構成した。
 
 本環境では結果や実現性を左右する未確認事項に限定し、業務上の合意と技術的な検証を分け、既存Issueと実行承認へ統合する。参照元の固定3文書、確信度スコア、6段階の一律適用、全操作ログ、調査の網羅や専用の試作文書は要求しない。これは本環境への適用判断であり、参照元全体の採用ではない。
 
-[GitHub awesome-copilotのcontext-map](https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/skills/context-map/SKILL.md)を2026-09-11に確認し、変更対象・依存・テスト・参考パターン・リスクの調査観点を要約・再構成した。本環境では文書のリンク・関連指示と参照元への影響も含め、既存Issueの計画へ組み込む。固定の表やチェックリスト、独立したマップのレビュー待ちは導入せず、確認を既存の計画承認に統合する。
+GitHub awesome-copilotのcontext-map[^github-context-map-skill-md]を2026-09-11に確認し、変更対象・依存・テスト・参考パターン・リスクの調査観点を要約・再構成した。本環境では文書のリンク・関連指示と参照元への影響も含め、既存Issueの計画へ組み込む。固定の表やチェックリスト、独立したマップのレビュー待ちは導入せず、確認を既存の計画承認に統合する。
+
+[^continuousdelivery-foundations-continuous-integration]: [CIの原則](https://continuousdelivery.com/foundations/continuous-integration/)。本文に記した参照範囲と採用判断の根拠。
+[^github-src-index-ts]: [@commitlint/config-conventionalのtype定義](https://github.com/conventional-changelog/commitlint/blob/f4b108182e6d20eca52433135c7ba1675746318e/%40commitlint/config-conventional/src/index.ts#L24-L36)。本文に記した参照範囲と採用判断の根拠。
+[^github-instructions-spec-driven-workflow-v1-instructions-md]: [GitHub awesome-copilotのSpec Driven Workflow v1](https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/instructions/spec-driven-workflow-v1.instructions.md)。本文に記した参照範囲と採用判断の根拠。
+[^github-agents-research-technical-spike-agent-md]: [Technical spike research mode](https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/agents/research-technical-spike.agent.md)。本文に記した参照範囲と採用判断の根拠。
+[^github-context-map-skill-md]: [GitHub awesome-copilotのcontext-map](https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/skills/context-map/SKILL.md)。本文に記した参照範囲と採用判断の根拠。

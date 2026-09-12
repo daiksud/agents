@@ -2,6 +2,11 @@
 type: Guide
 title: 既存文書を使って仕様を明確にする
 description: 要求・制約・外部契約・受け入れ条件を既存文書の正本へ記録し、未確定事項と検証の対応を明確にする手順を示します。
+sources:
+  - id: github-create-specification-skill-md
+    resource: https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/skills/create-specification/SKILL.md
+  - id: github-instructions-spec-driven-workflow-v1-instructions-md
+    resource: https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/instructions/spec-driven-workflow-v1.instructions.md
 ---
 
 ## 既存文書を使って仕様を明確にする
@@ -55,8 +60,11 @@ IssueにはADRの正本へのリンクと作業判断に必要な要約を置き
 
 ### 参照元と適用判断
 
-[GitHub awesome-copilotのCreate Specification](https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/skills/create-specification/SKILL.md)を2026-09-11に確認し、明示的な要求・契約・受け入れ条件の整理を要約・再構成した。
+GitHub awesome-copilotのCreate Specification[^github-create-specification-skill-md]を2026-09-11に確認し、明示的な要求・契約・受け入れ条件の整理を要約・再構成した。
 
 既存のOKF・feature・ADRを優先するため、参照元の `/spec/` 配置、固定ファイル名、全11節、独自frontmatterは採用しない。特定テストフレームワークや網羅率目標を例から共通要件へ変えない。これは本環境への適用判断であり、仕様書形式の普遍的な規格ではない。
 
-[GitHub awesome-copilotのSpec Driven Workflow v1](https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/instructions/spec-driven-workflow-v1.instructions.md)を2026-09-11に確認し、判断の理由と再検討条件を残す考え方を取り入れた。本環境では重要な設計判断に限定し、依存する前提と観測を対応づけて既存ADRへ記録する。全判断への固定テンプレート、固定3文書、全操作ログ、6段階の一律適用は採用しない。
+GitHub awesome-copilotのSpec Driven Workflow v1[^github-instructions-spec-driven-workflow-v1-instructions-md]を2026-09-11に確認し、判断の理由と再検討条件を残す考え方を取り入れた。本環境では重要な設計判断に限定し、依存する前提と観測を対応づけて既存ADRへ記録する。全判断への固定テンプレート、固定3文書、全操作ログ、6段階の一律適用は採用しない。
+
+[^github-create-specification-skill-md]: [GitHub awesome-copilotのCreate Specification](https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/skills/create-specification/SKILL.md)。本文に記した参照範囲と採用判断の根拠。
+[^github-instructions-spec-driven-workflow-v1-instructions-md]: [GitHub awesome-copilotのSpec Driven Workflow v1](https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/instructions/spec-driven-workflow-v1.instructions.md)。本文に記した参照範囲と採用判断の根拠。

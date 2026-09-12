@@ -2,6 +2,9 @@
 type: Guide
 title: レビューの具体的な確認基準と報告例
 description: 11領域を具体的な調査へ結びつけ、正式な修正指摘・任意提案・維持したい設計判断を根拠から区別するための資料。
+sources:
+  - id: github-instructions-code-review-generic-instructions-md
+    resource: https://github.com/github/awesome-copilot/blob/main/instructions/code-review-generic.instructions.md
 ---
 
 ## 具体的な確認基準
@@ -87,6 +90,8 @@ SKILL.mdの11領域のうち差分に関係する項目を調べるときに使�
 
 ## 参照元と適用方針
 
-[GitHub awesome-copilotのGeneric Code Review Instructions](https://github.com/github/awesome-copilot/blob/main/instructions/code-review-generic.instructions.md)の品質観点、全体から詳細へ進む調査、具体的で建設的な報告を参考にした。
+GitHub awesome-copilotのGeneric Code Review Instructions[^github-instructions-code-review-generic-instructions-md]の品質観点、全体から詳細へ進む調査、具体的で建設的な報告を参考にした。
 
 このスキルでは変更耐性を最重要の評価軸とし、重大度はP0〜P3で影響から決める。参照元の領域別の重要度、行数の目安、Copilot用のfrontmatterはそのまま適用しない。レビュー結果は確認範囲の判断として報告し、GitHub上の承認・マージを代行しない。
+
+[^github-instructions-code-review-generic-instructions-md]: [GitHub awesome-copilotのGeneric Code Review Instructions](https://github.com/github/awesome-copilot/blob/main/instructions/code-review-generic.instructions.md)。本文に記した参照範囲と採用判断の根拠。

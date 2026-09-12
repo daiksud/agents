@@ -1,0 +1,46 @@
+仮想のagents原本保守。以下が今回の対象ファイルの全文。計画承認済み。ルートはrepo/。sources移行・共通authoring接続後の検査方法と、メタデータを新設すべきかの判断を示す。編集・導入・検査実行は禁止。CIは未実行で、人間の内容確認は記録されていない。
+FILE repo/index.md
+---
+okf_version: "0.2"
+---
+# Bundle
+
+- [配布案内](docs/delivery.md)
+FILE repo/docs/delivery.md
+---
+type: Guide
+title: 配布案内
+description: スキルの配布先を説明する。
+sources:
+  - id: package-contract
+    resource: https://example.com/package-contract
+x-maintainer: {preserve: yes}
+---
+
+## 配布案内
+
+パッケージはスキル単位で配布する。[^package-contract]
+[入口](../skills/sample/SKILL.md)を読む。
+
+[^package-contract]: 提供されたパッケージ契約。
+FILE repo/skills/sample/SKILL.md
+---
+name: sample
+description: 配布先で案内を読むときに使う。
+---
+
+# 案内
+
+配布資料を読む。
+FILE repo/AGENTS.md
+# 生成済み共通指示
+
+手書き部分は保持する。
+FILE repo/.github/ISSUE_TEMPLATE/bug.md
+# 問題の報告
+
+再現条件を記入する。
+FILE repo/docs/log.md
+## 2026-09-12
+
+- 配布案内を追加。
