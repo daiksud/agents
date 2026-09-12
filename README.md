@@ -12,7 +12,9 @@ gh skill install daiksud/agents --all --agent codex --scope user
 
 このコマンドは、このリポジトリの作業スキルと同梱資料を導入します。APMの外部依存である `skill-creator` と共通指示のAGENTS.mdは導入しません。共通指示と外部依存もまとめて導入する場合は、以下のAPM手順を使います。
 
-`okf-docs`の検査スクリプトにはPython 3.10以上と同梱requirements.txtの依存が必要です。スキルの配布はPython依存を自動導入しません。外部Bundleの受け入れは `conformance`、自作の公開前検査は `authoring` を使います。[検査環境の準備](skills/okf-docs/SKILL.md#検証)に従って利用する環境を確認してください。
+各スキルの `SKILL.md` から、計画・Issue記録・ブランチ準備、設計・共有仕様・テスト、文書検証など、現在の工程に対応する資料を参照します。feature文書だけの作成では形式資料を使い、コード実装のTDD工程は開始しません。
+
+`okf-docs`の検査スクリプトにはPython 3.10以上と同梱requirements.txtの依存が必要です。スキルの配布はPython依存を自動導入しません。外部Bundleの受け入れは `conformance`、自作の公開前検査は `authoring` を使います。[検査環境の準備](skills/okf-docs/references/validation.md)に従って利用する環境を確認してください。
 
 ## グローバル導入
 

@@ -3,6 +3,8 @@ type: Template
 title: インストラクションの汎用テンプレート
 description: 再利用できるインストラクションの記入欄、記入指針、確認項目を提供します。
 sources:
+  - id: openai-rethinking-skills-astra
+    resource: https://learn.chatgpt.com/blog/rethinking-skills-and-prompts-for-gpt-6-astra
   - id: docs-prompting-response-customization
     resource: https://docs.github.com/en/copilot/concepts/prompting/response-customization
   - id: learn-guides-best-practices
@@ -41,6 +43,7 @@ sources:
 - コマンドや構成が変わったら指示も更新する。曖昧なルールを増やすより、短く正確に保つ。
 - 特定の作業で繰り返す詳細な手順は `skills/<name>/SKILL.md` にまとめ、共通指示には読み込む条件と配布先を書く。
 - 詳細なAPI仕様や頻繁に変わる情報は転記せず、必要な場面で参照する資料と参照条件を書く。
+- スキルの説明は担当する依頼と紛らわしい対象外へ絞り、複数工程は短い入口から工程別資料へ案内する。読み込み量と判断の維持を代表例で確認する。[^openai-rethinking-skills-astra]
 - 強調は見落とされやすい重要な指示に限定する。多くの行を一律に強調しない。
 - 必ず実行させる検査や制限は、文章の指示だけに頼らず、CIやフックなどで機械的に適用することを検討する。
 
@@ -167,10 +170,13 @@ description: <この指示の対象と目的を一文で書く。>
 
 ### 参照元と適用判断
 
+OpenAIのRethinking skills and prompts for GPT-6 Astra[^openai-rethinking-skills-astra]を2026-09-12に確認し、具体的な適用条件、工程別の参照、実行境界と終了条件の明示を採用する。本環境ではCodex・Copilot共通のDDD・BDD/ATDD/TDD・OKF・レビュー・CIを維持し、特定モデルの能力を理由に検証や保護を外さない。
+
 GitHub awesome-copilotのCustom Instructions File Guidelines[^github-instructions-instructions-instructions-md]を2026-09-11に確認した。目的・適用範囲を示し、最小限の規則、具体的な条件と行動、必要な理由と例、実際の失敗に基づく見直しを使う。
 
 本環境では既存のOKF・Agent Skills・AGENTS.mdの形式とAPMの配置を維持する。参照元の `.github/instructions/` 配置、`applyTo` 必須、固定章構成、すべての規則へのコード例は要求しない。共通指示には `applyTo` を付けず、仮想の失敗を埋めるための規則を増やさない。
 
+[^openai-rethinking-skills-astra]: [OpenAI: Rethinking skills and prompts for GPT-6 Astra](https://learn.chatgpt.com/blog/rethinking-skills-and-prompts-for-gpt-6-astra)。適用条件・段階的な参照・境界・継続の記述を参考にした。
 [^docs-prompting-response-customization]: [GitHub Docs: About customizing GitHub Copilot responses](https://docs.github.com/en/copilot/concepts/prompting/response-customization)。本文に記した参照範囲と採用判断の根拠。
 [^learn-guides-best-practices]: [OpenAI: Best practices](https://learn.chatgpt.com/guides/best-practices)。本文に記した参照範囲と採用判断の根拠。
 [^code-en-best-practices]: [Anthropic: Best practices for Claude Code](https://code.claude.com/docs/en/best-practices)。本文に記した参照範囲と採用判断の根拠。

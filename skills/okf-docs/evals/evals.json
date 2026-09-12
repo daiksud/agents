@@ -245,6 +245,28 @@
         "誤記だけを直す方針と既存sources・x-owner・verifiedの保持を維持する",
         "OKF authoring・rumdl・関連リンクと差分の確認を計画し、未実行や人間の確認を捏造しない"
       ]
+    },
+    {
+      "id": 25,
+      "prompt": "読み取り専用模擬評価。実際の編集・投稿・導入・ブランチ操作・テスト実行は禁止。対象スキルの本文と同梱資料から必要な参照先を選び、以下の仮想資料だけを根拠に判断と手順を示してください。未実行の操作を実施済みと報告しないでください。\n\nユーザーは国内配送モデルの送料無料条件を説明するfeature文書だけの更新を依頼した。コードとテストは変更しない。税込小計6,000円以上で送料0円、それ未満は500円というルールは合意済みで、用語集も同じ意味。既存のdocs/behavior/shipping.feature.mdが仕様の正本。Issueの計画保存・確認・提示済み。5,999円と6,000円の日本語シナリオを文案として示し、使う参照資料と検証を説明して。",
+      "expected_output": "okf-docsのspecification.mdと基本形式を使い、featureの日本語記法は依存するbdd-tddのreferences/behavior.mdを直接参照する。既存正本にOKF frontmatterと意味のある境界シナリオを保ち、文書形式と意味・参照・rumdl整形後のGherkin構造を確認する手順を示す。形式の参照だけでbdd-tddの実装ワークフローやTDD・コード変更を起動しない。",
+      "files": [],
+      "expectations": [
+        "featureの記法はbdd-tddのreferences/behavior.mdを直接参照し、既存仕様の正本を保つ",
+        "日本語のルールと5,999円・6,000円のシナリオ、OKF形式と整形後の構造確認を維持する",
+        "文書のみの依頼でbdd-tddの実装ワークフロー・TDD・コード変更を始めない"
+      ]
+    },
+    {
+      "id": 26,
+      "prompt": "読み取り専用模擬評価。実際の編集・投稿・導入・ブランチ操作・テスト実行は禁止。対象スキルの本文と同梱資料から必要な参照先を選び、以下の仮想資料だけを根拠に判断と手順を示してください。未実行の操作を実施済みと報告しないでください。\n\ndocs/how-to/setup.mdの「インストル」を「インストール」に直すだけの依頼。本文は社内の設定手順で、通常概念のtype: Guide・title・descriptionがあり、sources・計算契約・その他メタデータはない。API契約や設計判断は変わらない。Bundleはdocs、対象ファイルはhow-to/setup.md。Issueの計画保存・確認・提示済み。既存Python環境にvalidatorの固定依存が揃い、rumdlもある。どの資料で検証の実行方法を確認し、何を検査するか。",
+      "expected_output": "通常文書の形式はbasic-format.md、validatorの実行・対象指定・profile・結果の判断はvalidation.mdへ進む。docsをBundle root、how-to/setup.mdを対象としてauthoringで検査し、rumdlと関連リンク・差分を確認する計画を示す。導入済み依存を再導入せず、誤記だけの修正にspecification-audit.mdやcomputation.md等の全資料読み込みを追加しない。形式検査の成功を内容の確認や未実行検証の成功と混同しない。",
+      "files": [],
+      "expectations": [
+        "通常形式はbasic-format.md、validatorの具体的な使い方と結果の判断はvalidation.mdを参照する",
+        "docsをBundle root、how-to/setup.mdを対象とするauthoring検査とrumdl・関連リンク・差分確認を計画する",
+        "依存の不要な再導入や仕様監査・計算資料の一律読み込みを要求せず、未実行を成功としない"
+      ]
     }
   ]
 }

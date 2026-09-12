@@ -75,7 +75,7 @@ apm compile --global
 
 ### 小さく統合しmainまで確認する
 
-[小さな統合単位と活動日](../../skills/task-workflow/references/planning.md#小さな統合単位と活動日)に従い、Issueへ開始日時・次の統合単位・検証を記録します。活動日の毎日の統合、原則1活動日以内のブランチを目安とし、超過時の理由と次の単位を更新します。
+[小さな統合単位と活動日](../../skills/task-workflow/references/branches.md#小さな統合単位と活動日)に従い、Issueへ開始日時・次の統合単位・検証を記録します。活動日の毎日の統合、原則1活動日以内のブランチを目安とし、超過時の理由と次の単位を更新します。
 
 マージ後は[main確認](../../skills/task-workflow/references/review-and-merge.md#統合後mainの確認と復旧)と[作業環境整理](../../skills/task-workflow/references/review-and-merge.md#マージ後の作業環境の整理)まで担当します。本リポジトリではmainのSHAと必要チェックに加えて、両OSartifactの候補・依存・配布ハッシュを照合し、正常なmain・同期・ブランチ整理の後に完了を記録します。必要な承認・レビュー・CIを省略せず、他プロジェクト向けの[CI未設定の例外](../../skills/task-workflow/references/review-and-merge.md#ci未設定の場合)を本リポジトリへ適用しません。
 
@@ -122,7 +122,7 @@ apm compile --global
 | `skills/code-review/` | 将来の変更への耐性を最優先に、欠陥・回帰も根拠から評価する読み取り専用レビュー |
 | `skills/okf-docs/` | OKF v0.2に従う文書の作成・更新・検証 |
 
-共通指示には `applyTo` を付けません。詳細手順はスキルと同梱資料に置きます。[インストラクションのテンプレート](../templates/instructions.md)と[スキルの編集指示](../../skills/AGENTS.md)を参照します。スキルの作成・改善には外部依存の `skill-creator` を使います。
+共通指示には `applyTo` を付けません。詳細手順はスキルと同梱資料に置きます。各SKILL.mdを工程別の入口にし、task-workflowは計画・Issue記録・ブランチ、bdd-tddは設計・共有仕様・テスト、okf-docsは形式・出典・検証へ分けます。参照を移した場合はリンク元と導入後の同梱資料も確認します。[インストラクションのテンプレート](../templates/instructions.md)と[スキルの編集指示](../../skills/AGENTS.md)を参照します。スキルの作成・改善には外部依存の `skill-creator` を使います。
 
 原本を編集しても公開版やユーザースコープは更新されません。編集中の原本を適用するための自己更新は行わず、公開後の導入・更新は[README](../../README.md)の利用者向け操作として扱います。生成されたAGENTS.mdは直接編集しません。
 

@@ -1,6 +1,6 @@
 ---
 name: okf-docs
-description: 要求・外部契約・受け入れ条件の仕様を含む文書の作成・更新に使用する。docs外のOpenAPI・JSON Schema等の契約文書も対象とする。docs以下のMarkdown・feature文書はOKF v0.2で整理・検証し、読み取り・説明だけでは使用しない。
+description: 文書・仕様・ADRを作成・更新し、OKF v0.2と固有形式を区別して検証する。docs外のOpenAPI・JSON Schemaも対象。読み取り・説明だけには使わない。
 ---
 
 # OKFで文書を作成する
@@ -23,45 +23,19 @@ description: 要求・外部契約・受け入れ条件の仕様を含む文書�
 3. 通常概念は1ファイル1概念とし、`type` を記載する。本環境で自作する概念には推奨項目の `title`・`description` も付ける。この追加条件をOKF適合の必須条件と呼ばない。
 4. 外部資料に依拠する内容には `sources` を記録し、個別の主張を安定したsource IDの脚注へ結ぶ。関連文書への移動用リンクを出典の代わりにしない。
 5. 意味のある変更か誤字・整形だけかを判断し、実際に確認した生成・確認事実だけを更新する。日時・人間の確認・期限を推測で補わず、古い確認を更新後の内容の確認として主張しない。
-6. 下記の検証を実施し、形式の合否、内容の確認、未検証・期限切れの注意、実行不能な検査を分けて報告する。
+6. [検証手順](references/validation.md)を実施し、形式の合否、内容の確認、未検証・期限切れの注意、実行不能な検査を分けて報告する。
 
 ## 配置と本文
 
 - 文書は目的に合う既存分類へ追加する。設計判断は `docs/adr/`、ふるまいは `docs/behavior/`、その他は `docs/<分類>/<page-name>.md` とする。全体案内は `docs/<page-name>.md` に置ける。
 - 新しい分類は既存分類に収まらない場合に作る。索引・履歴を全ディレクトリへ一律に新設しない。
-- `*.feature.md` はOKF frontmatterと、依存スキル `bdd-tdd` のMarkdown with Gherkinで記述する。
+- `*.feature.md` はOKF frontmatterと、依存スキル `bdd-tdd` の[共有仕様・形式資料](../bdd-tdd/references/behavior.md)のMarkdown with Gherkinで記述する。
 - GitHub・APMで閲覧できるよう、同梱資料はファイル相対リンクで結ぶ。外部の出典は完全URLで記録し、導入先に原本リポジトリがあることを前提にしない。
 - 画像などMarkdownに含められない外部アセットは使用しない。これは本環境の文書作成方針であり、OKFの適合条件ではない。
 - 見出し・リスト・表・コードブロックを使い、判断に必要な構造を示す。空の節や装飾のための表は作らない。
 
 ## 検証
 
-同梱の [validate_okf.py](scripts/validate_okf.py) はPython 3.10以上を使用する。[requirements.txt](scripts/requirements.txt)にPyYAML、markdown-it-py、mdit-py-pluginsとその依存mdurlの検証対象版を固定している。既存の実行環境を確認し、利用できるPythonコマンドを使う。検査は依存の自動インストール、ファイルの書き換え、ネットワーク取得を行わない。
+公開前に[OKFとMarkdownの検証](references/validation.md)を読み、同梱validatorとrumdlを実行する。外部Bundleの適合判定（conformance）と自作の公開品質（authoring）を区別し、固有形式は各形式で検査する。検証依存は既存環境を確認して隔離環境へ準備する。
 
-依存が不足する場合は、task-workflowの[検証環境の準備](../task-workflow/references/planning.md#検証環境の準備)に従い、必要な固定依存を隔離venvへ準備する。対象・配置先と理由を記録する。グローバル設定変更・追加権限・費用発生は確認し、実行できない検査を合格にしない。準備例は以下のとおり。
-
-```sh
-python3 -m venv /path/to/project/.venv-okf
-/path/to/project/.venv-okf/bin/python -m pip install -r /path/to/okf-docs/scripts/requirements.txt
-```
-
-準備した環境のPythonで検査を実行する。以下の `python3` はそのコマンドに置き換える。
-
-```sh
-python3 /path/to/okf-docs/scripts/validate_okf.py /path/to/project/docs
-python3 /path/to/okf-docs/scripts/validate_okf.py /path/to/project/docs adr/choice.md --profile authoring
-```
-
-対象ファイルはBundleルート基準で指定する。省略時はBundle内のMarkdownを検査する。固有形式を含むディレクトリ全体をOKF Bundleとして渡さず、OKF対象のファイルを指定する。シンボリックリンク経由で無関係な配布先へ検査を広げない。
-
-| profile | 用途と判定 |
-| --- | --- |
-| `conformance`（既定） | 外部Bundleの受け入れ。YAML・非空文字列の `type`・予約ファイル構造を確認する。任意項目の欠落、未知の型・キー、索引不在、リンク切れだけでは不適合にしない |
-| `authoring` | 自作文書の検査。上記に加え `title`・`description`、記載された既知メタデータの形式と対応、ローカル参照先を検査する。独自の公開品質条件を含む |
-
-結果のファイル・フィールド・理由・規則区分を確認する。終了値は成功 `0`、検査エラー `1`、引数・依存・実行環境の問題 `2`。未検証・期限切れ自体は構文エラーにしない。検査成功は出典の真偽、人間の内容確認、計算の実行証明を意味しない。
-
-- 依存スキル `task-workflow` の[GitHub向けMarkdownの品質](../task-workflow/references/markdown-quality.md)に従い、Markdown全体をrumdlで整形・チェックする。既存プロジェクト設定を無断で上書きしない。
-- rumdl未導入・旧版の場合の導入・更新やダウンロードを伴う一時実行は、同資料の権限確認手順に従う。実行不能を合格と扱わない。
-- 分類、用語、リンク、記載したコマンド、差分を確認する。リンク検査とrumdlは本環境の公開品質検査であり、外部BundleのOKF適合判定に流用しない。
-- feature文書は整形後も見出し・ステップを確認する。出典の内容や契約の意味は、validatorとは別に読んで確認する。
+形式検査の成功を、出典の真偽・人間による内容確認・計算の実行証明にしない。分類・用語・リンク・コマンド・最終差分と内容も照合し、未検証・期限切れ・実行不能を区別して報告する。
