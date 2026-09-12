@@ -543,3 +543,60 @@ class ValidationTests(unittest.TestCase):
         body = '# Computation\n```python\nprint("\u2028")\n```\n'
         text = self.concept('runtime: python\n', body).replace('type: Reference','type: Attested Computation')
         self.assertEqual([], self.errors(self.check(text, 'authoring')))
+
+    def test_source_paths_with_spaces_are_not_scope_descriptors(self):
+        for resource in ['references/missing policy.md', 'missing policy.md',
+                         './references/missing policy.md', 'references/missing policy',
+                         './reference folder/missing policy']:
+            with self.subTest(resource=resource):
+                text = self.concept(f'sources: [{{resource: "{resource}"}}]\n')
+                self.assertEqual([], self.errors(self.check(text)))
+                self.assertEqual(['sources[0].resource'],
+                                 [x.field for x in self.errors(self.check(text, 'authoring'))])
+                self.write(resource, '')
+                self.assertEqual([], self.errors(self.check(text, 'authoring')))
+                (self.root / resource).unlink()
+        text = self.concept('sources: [{resource: "all queries in project X"}]\n')
+        self.assertEqual([], self.errors(self.check(text, 'authoring')))
+        ambiguous = self.concept('sources: [{resource: "all queries in project X/Y"}]\n')
+        issues = self.check(ambiguous, 'authoring')
+        self.assertEqual([], self.errors(issues))
+        self.assertTrue(any(x.field == 'sources[0].resource' and x.severity == 'warning' for x in issues))
+        explicit = ambiguous.replace('all queries', 'scope:all queries')
+        self.assertFalse(any(x.field == 'sources[0].resource' for x in self.check(explicit, 'authoring')))
+
+    def test_log_counts_only_direct_flat_list_items(self):
+        header = '# Log\n## 2026-09-11\n'
+        for profile in ('conformance', 'authoring'):
+            for example in ['> - Quoted example\n', '- > Quoted example\n',
+                            '- \n  - Nested example\n']:
+                with self.subTest(profile=profile, example=example):
+                    self.assertTrue(self.errors(self.check(header + example, profile, 'log.md')))
+            self.assertEqual([], self.errors(self.check(
+                header + '- Actual change\n  - Additional detail\n', profile, 'log.md')))
+
+    def test_index_version_is_a_nonempty_string_and_unknown_versions_are_allowed(self):
+        for profile in ('conformance', 'authoring'):
+            for value in ['[]', '{}', '0.2', 'null', '"  "']:
+                with self.subTest(profile=profile, value=value):
+                    body = f'---\nokf_version: {value}\n---\n# Group\n- [Page](https://example.com)\n'
+                    self.assertEqual(['okf_version'],
+                                     [x.field for x in self.errors(self.check(body, profile, 'index.md'))])
+            body = '---\nokf_version: "future-version"\n---\n# Group\n- [Page](https://example.com)\n'
+            self.assertEqual([], self.errors(self.check(body, profile, 'index.md')))
+
+    def test_cli_footnote_diagnostics_are_deterministic_across_hash_seeds(self):
+        import os
+        import subprocess
+        self.write('concept.md', self.concept(body='[^zeta] [^alpha] [^middle]\n'))
+        outputs = []
+        for seed in ('1', '2', '3'):
+            result = subprocess.run(
+                [sys.executable, str(SCRIPT), str(self.root), '--profile', 'authoring'],
+                env={**os.environ, 'PYTHONHASHSEED': seed}, capture_output=True, text=True)
+            self.assertEqual(1, result.returncode)
+            outputs.append(result.stdout)
+            self.assertEqual(['footnotes.alpha', 'footnotes.middle', 'footnotes.zeta'],
+                             [line.split(': ')[1] for line in result.stdout.splitlines()
+                              if 'footnotes.' in line])
+        self.assertEqual(1, len(set(outputs)))

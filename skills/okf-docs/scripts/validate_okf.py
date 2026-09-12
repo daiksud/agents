@@ -106,6 +106,8 @@ class MarkdownDocument:
                 if not footnote_depth:
                     for item in items:
                         item['content'] |= bool(token.content.strip())
+                        # A root list item owns a paragraph whose inline level is 3.
+                        item['direct'] |= token.level == 3 and bool(token.content.strip())
                         item['links'] |= bool(links)
             if footnote_depth or token.type.startswith('footnote_reference_'):
                 continue
@@ -115,13 +117,16 @@ class MarkdownDocument:
                                 if c.type in ('text', 'code_inline'))
                 self.events.append(('heading', int(token.tag[1:]), title))
             elif token.type == 'list_item_open':
-                items.append({'content': False, 'links': False})
+                items.append({'content': False, 'links': False, 'direct': False})
             elif token.type == 'list_item_close':
                 item = items.pop()
                 self.events.append(('item', item['content'], item['links']))
+                if token.level == 1:
+                    self.events.append(('flat_item', item['direct'], item['links']))
             elif token.type in ('fence', 'code_block'):
                 for item in items:
                     item['content'] |= bool(token.content.strip())
+                    item['direct'] |= token.level == 2 and bool(token.content.strip())
                 if token.type == 'fence':
                     # The parser's map includes a closing marker only when one
                     # was consumed; implicit EOF/container closure has no extra line.
@@ -136,6 +141,8 @@ def reserved_issues(path, bundle, data, document, has_frontmatter, profile):
         issues.append(Issue(path, field, message, 'specification'))
 
     if path.name == 'index.md':
+        if 'okf_version' in data and not nonempty(data['okf_version']):
+            error('okf_version', 'must be a nonempty version string; unknown versions are allowed')
         if profile == 'authoring':
             concept_fields = {'type', 'title', 'description', 'resource', 'tags', 'sources',
                               'generated', 'verified', 'status', 'stale_after', 'usage_window',
@@ -177,7 +184,7 @@ def reserved_issues(path, bundle, data, document, has_frontmatter, profile):
                     dates.append(stamp)
                 except ValueError:
                     error('body', 'log date must be a real YYYY-MM-DD date')
-            elif kind == 'item' and first and dates:
+            elif kind == 'flat_item' and first and dates:
                 entries += 1
         if not dates or not entries:
             error('body', 'log requires date headings and list entries')
@@ -300,7 +307,7 @@ def metadata_issues(path, data, document):
     for key, count in definitions.items():
         if count > 1:
             error('footnotes.' + key, 'duplicate footnote definition')
-    for key in set(refs):
+    for key in sorted(refs):
         if key not in definitions:
             error('footnotes.' + key, 'missing footnote definition')
         # Without sources, explanatory Markdown footnotes remain valid.
@@ -361,10 +368,15 @@ def contract_issues(path, bundle, data, document):
         if not nonempty(value):
             error(field, 'must be a nonempty path or URL')
             return
-        if descriptor and re.search(r'\s', value) and not re.match(r'^(?:\.?\.?/|[A-Za-z][A-Za-z0-9+.-]*:)', value):
-            return
-        if descriptor and not ('/' in value or re.search(r'\.[a-zA-Z0-9]+(?:#.*)?$', value)):
-            return
+        if descriptor:
+            explicit_path = (re.match(r'^(?:\.?\.?/|[A-Za-z][A-Za-z0-9+.-]*:|[^\s/]+/)', value)
+                             or re.search(r'\.[a-zA-Z0-9]+(?:#.*)?$', value))
+            if not explicit_path:
+                if '/' in value:
+                    issues.append(Issue(path, field,
+                                        'ambiguous scope or path; use ./ for a local path or scope: for a scope',
+                                        'authoring', 'warning'))
+                return
         try:
             target = local_target(value, path, bundle)
         except ValueError:
