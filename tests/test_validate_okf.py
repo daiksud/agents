@@ -534,3 +534,12 @@ class ValidationTests(unittest.TestCase):
         self.assertEqual(2, result.returncode)
         self.assertIn('Python 3.10', result.stderr)
         self.assertNotIn('Traceback', result.stderr)
+
+    def test_gfm_table_cells_do_not_become_footnote_definitions(self):
+        body = 'Name | Value\n--- | ---\n[^missing]: note | value\n'
+        self.assertTrue(self.errors(self.check(self.concept(body=body), 'authoring')))
+
+    def test_fence_line_maps_count_markdown_newlines_only(self):
+        body = '# Computation\n```python\nprint("\u2028")\n```\n'
+        text = self.concept('runtime: python\n', body).replace('type: Reference','type: Attested Computation')
+        self.assertEqual([], self.errors(self.check(text, 'authoring')))

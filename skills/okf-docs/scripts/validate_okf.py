@@ -80,6 +80,7 @@ class MarkdownDocument:
 
     def __init__(self, body):
         parser = (MarkdownIt('commonmark')
+                  .enable(['table', 'strikethrough'])
                   .use(footnote_plugin, inline=False, move_to_end=False, always_match_refs=True)
                   .use(gfm_autolink_plugin))
         self.tokens = parser.parse(body)
@@ -124,7 +125,7 @@ class MarkdownDocument:
                 if token.type == 'fence':
                     # The parser's map includes a closing marker only when one
                     # was consumed; implicit EOF/container closure has no extra line.
-                    closed = token.map[1] - token.map[0] == len(token.content.splitlines()) + 2
+                    closed = token.map[1] - token.map[0] == token.content.count('\n') + 2
                     self.events.append(('fence', closed, bool(token.content.strip())))
 
 
