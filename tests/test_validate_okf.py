@@ -517,3 +517,20 @@ class ValidationTests(unittest.TestCase):
         self.assertEqual(2, result.returncode)
         self.assertIn('requirements.txt', result.stderr)
         self.assertNotIn('Traceback', result.stderr)
+
+    def test_unsupported_python_is_reported_before_loading_markdown_dependencies(self):
+        import subprocess
+        code = ('import builtins, runpy, sys\n'
+                'original = builtins.__import__\n'
+                'def reject_markdown(name, *args, **kwargs):\n'
+                '    if name == "markdown_it": raise AssertionError("unsupported dependency loaded")\n'
+                '    return original(name, *args, **kwargs)\n'
+                'builtins.__import__ = reject_markdown\n'
+                'sys.version_info = (3, 9, 0)\n'
+                'sys.argv = [sys.argv[1], sys.argv[2]]\n'
+                'runpy.run_path(sys.argv[0], run_name="__main__")\n')
+        result = subprocess.run([sys.executable, '-c', code, str(SCRIPT), str(self.root)],
+                                capture_output=True, text=True)
+        self.assertEqual(2, result.returncode)
+        self.assertIn('Python 3.10', result.stderr)
+        self.assertNotIn('Traceback', result.stderr)

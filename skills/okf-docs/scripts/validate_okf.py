@@ -16,6 +16,8 @@ except ImportError:
 
 
 try:
+    if sys.version_info < (3, 10):
+        raise ImportError('unsupported Python')
     from markdown_it import MarkdownIt
     from mdit_py_plugins.footnote import footnote_plugin
     from mdit_py_plugins.gfm_autolink import gfm_autolink_plugin
