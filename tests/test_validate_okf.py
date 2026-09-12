@@ -666,3 +666,10 @@ class ValidationTests(unittest.TestCase):
                       'computation: ""\n', 'executor: {resource: ""}\n']:
             with self.subTest(extra=extra):
                 self.assertTrue(self.errors(self.check(self.concept(extra), 'authoring')))
+
+    def test_yaml_keys_with_distinct_tags_are_not_duplicate_extensions(self):
+        extra = 'x-extension: {true: boolean, 1: integer, 1.0: float}\n'
+        for profile in ('conformance', 'authoring'):
+            self.assertEqual([], self.errors(self.check(self.concept(extra), profile)))
+            duplicate = 'x-extension: {1: first, 0x1: repeated_integer}\n'
+            self.assertTrue(self.errors(self.check(self.concept(duplicate), profile)))

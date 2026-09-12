@@ -50,11 +50,13 @@ if yaml is not None:
                 key = (merge_key if key_node.tag == 'tag:yaml.org,2002:merge'
                        else self.construct_object(key_node, deep=deep))
                 try:
-                    if key in seen:
+                    # YAML distinguishes bool/int/float keys even when Python equates them.
+                    identity = (key_node.tag, key)
+                    if identity in seen:
                         raise yaml.constructor.ConstructorError(
                             'while constructing a mapping', node.start_mark,
                             f'duplicate key: {"<< (merge)" if key is merge_key else key}', key_node.start_mark)
-                    seen.add(key)
+                    seen.add(identity)
                 except TypeError:
                     raise yaml.constructor.ConstructorError(
                         'while constructing a mapping', node.start_mark,
