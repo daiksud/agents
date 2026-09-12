@@ -1,0 +1,15 @@
+仮想作業。以下が対象全文。依頼: 「ストレジ」だけを「ストレージ」に修正し、差分と検証方針を示す。実行・編集・投稿は禁止。
+FILE docs/adr/storage.md
+---
+type: ADR
+title: 保存先
+description: 保存先の採用理由を記録する。
+x-record: {decision: D-3}
+sources: [{id: ops, resource: 'https://example.invalid/ops'}]
+verified: {by: 'human:aki', at: '2026-06-01T00:00:00Z'}
+---
+# 判断
+既存のストレジを使う。運用担当が保守できるため。[^ops]
+[^ops]: 運用合意
+SOURCE https://example.invalid/ops
+既存の保存先は現在の運用担当が保守できる。

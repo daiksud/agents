@@ -1,0 +1,21 @@
+仮想作業。計画承認済み。以下が変更対象全文。依頼: OpenAPI応答のcurrencyを必須JPYへ変更し、PR本文を変更内容に合わせる。変更後全文と必要なスキル・検証方針を示す。実行・投稿は禁止。
+FILE api/openapi.yaml
+openapi: 3.1.0
+info: {title: Quote API, version: '1.0'}
+paths:
+  /quote:
+    get:
+      responses:
+        '200':
+          description: 見積金額
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  amount: {type: integer}
+                required: [amount]
+GITHUB PR BODY
+見積応答の契約を更新します。
+検証は未実行です。
+追加の契約条件はない。実行コードの変更はない。

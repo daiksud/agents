@@ -1,0 +1,696 @@
+import importlib.util
+from pathlib import Path
+import sys
+import tempfile
+import unittest
+
+SCRIPT = Path(__file__).resolve().parents[1] / 'skills/okf-docs/scripts/validate_okf.py'
+spec = importlib.util.spec_from_file_location('validate_okf', SCRIPT)
+okf = importlib.util.module_from_spec(spec)
+sys.modules[spec.name] = okf
+spec.loader.exec_module(okf)
+
+
+class ValidationTests(unittest.TestCase):
+    def setUp(self):
+        temp = tempfile.TemporaryDirectory()
+        self.addCleanup(temp.cleanup)
+        self.root = Path(temp.name)
+
+    def write(self, name, text):
+        path = self.root / name
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(text, encoding='utf-8')
+        return path
+
+    def check(self, text, profile='conformance', name='concept.md', **kwargs):
+        return okf.validate_file(self.write(name, text), self.root, profile, **kwargs)
+
+    def errors(self, issues):
+        return [item for item in issues if item.severity == 'error']
+
+    def test_minimal_unknown_concept_and_authoring_requirements(self):
+        text = '---\ntype: Future Type\nx-extension: {anything: [1, 2]}\n---\n'
+        self.assertEqual([], self.errors(self.check(text)))
+        issues = self.errors(self.check(text, 'authoring'))
+        self.assertEqual({'title', 'description'}, {x.field for x in issues})
+        self.assertTrue(all(x.rule == 'authoring' for x in issues))
+
+    def test_frontmatter_structure(self):
+        for text in ['# No YAML', '---\ntype: [bad\n---\n',
+                     '---\n- item\n---\n', '---\ntype: 3\n---\n',
+                     '---\ntype: "  "\n---\n']:
+            with self.subTest(text=text):
+                self.assertTrue(self.errors(self.check(text)))
+
+    def test_reserved_files(self):
+        self.write('next/placeholder.txt', '')
+        for profile in ('conformance', 'authoring'):
+            for name, text in [
+                ('index.md', '---\nokf_version: "0.2"\n---\n# Group\n- [Next](next/) - Next\n'),
+                ('nested/index.md', '# Group\n- [Other](https://example.com)\n'),
+                ('log.md', '# History\n## 2026-09-11\n- Added.\n## 2026-09-10\n- Created.\n')]:
+                with self.subTest(profile=profile, name=name):
+                    self.assertEqual([], self.errors(self.check(text, profile, name)))
+        for name, text in [
+            ('nested/index.md', '---\nokf_version: "0.2"\n---\n# Group\n- [Next](next.md)\n'),
+            ('index.md', '---\ntype: Concept\n---\n# Group\n- [Next](next.md)\n'),
+            ('index.md', '# Group\nJust prose\n'),
+            ('log.md', '# History\n## 2026-02-30\n- Bad date\n'),
+            ('log.md', '# History\n## 2026-09-10\n- Old\n## 2026-09-11\n- New\n'),
+            ('log.md', '# History\n## Yesterday\n- Not ISO\n'),
+            ('log.md', '# History\n## 2026-09-11\nJust prose\n')]:
+            with self.subTest(name=name, text=text):
+                self.assertTrue(self.errors(self.check(text, name=name)))
+
+    def test_examples_do_not_become_reserved_structure(self):
+        text = '# History\n## 2026-09-11\n- Added.\n\n````md\n## 2000-99-99\n```\n````\n'
+        self.assertEqual([], self.errors(self.check(text, name='log.md')))
+        for text in ['```md\n# Group\n- [X](x.md)\n```\n',
+                     '    # Group\n    - [X](x.md)\n']:
+            self.assertTrue(self.errors(self.check(text, name='index.md')))
+
+    def concept(self, extra='', body='A fact.\n'):
+        return '---\ntype: Reference\ntitle: Fact\ndescription: A fact.\n' + extra + '---\n' + body
+
+    def test_sources_and_footnotes_are_keyed_not_positional(self):
+        sources = ('sources:\n  - {id: alpha, resource: "https://example.com/a"}\n'
+                   '  - {id: beta, resource: "all queries in project X"}\n')
+        body = 'A.[^alpha] B.[^beta]\n\n[^alpha]: First\n[^beta]: Second\n'
+        text = self.concept(sources, body)
+        self.assertEqual([], self.errors(self.check(text, 'authoring')))
+        reordered = text.replace('  - {id: alpha, resource: "https://example.com/a"}\n'
+                                '  - {id: beta, resource: "all queries in project X"}',
+                                '  - {id: beta, resource: "all queries in project X"}\n'
+                                '  - {id: alpha, resource: "https://example.com/a"}')
+        self.assertEqual([], self.errors(self.check(reordered, 'authoring')))
+        for bad in [text.replace('id: beta', 'id: alpha'),
+                    text.replace('resource: "https://example.com/a"', 'title: Missing'),
+                    text.replace('A.[^alpha]', 'A.[^missing]'),
+                    text.replace('[^alpha]: First\n', ''),
+                    text + '[^alpha]: Duplicate\n']:
+            with self.subTest(bad=bad):
+                self.assertTrue(self.errors(self.check(bad, 'authoring')))
+                self.assertEqual([], self.errors(self.check(bad)))
+
+    def test_examples_and_ordinary_footnotes(self):
+        body = ('A footnote.[^note]\n\n[^note]: An explanation, not an external claim.\n'
+                '````md\nExample.[^missing]\n[^fake]: Example\n```\n````\n'
+                '`[^inline]` and \\[^escaped].\n\n    [^indented]: Code\n')
+        self.assertEqual([], self.errors(self.check(self.concept(body=body), 'authoring')))
+        self.assertTrue(self.errors(self.check(self.concept(body='Fact.[^missing]\n'), 'authoring')))
+        # Without the blank line this is paragraph continuation, not a code block.
+        self.assertTrue(self.errors(self.check(self.concept(body=body.replace(
+            '\n\n    [^indented]', '\n    [^indented]')), 'authoring')))
+
+    def test_known_metadata_formats_and_optional_families(self):
+        valid = ('tags: [finance]\nstatus: stable\n'
+                 'generated: {by: writer/1, at: 2026-06-30T14:00:00Z}\n'
+                 'verified: {by: process:nightly, at: "2026-07-01T23:00:00+09:00"}\n'
+                 'sources:\n  - resource: all queries in project X\n'
+                 '    author: team:finance\n    usage_count: 0\n'
+                 '    last_modified: 2026-06-01T00:00:00Z\n'
+                 'usage_window: {from: 2026-06-01T00:00:00Z, to: 2026-07-01T00:00:00Z}\n')
+        self.assertEqual([], self.errors(self.check(self.concept(valid), 'authoring')))
+        for bad in ['tags: text\n', 'status: unknown\n', 'generated: {}\n',
+                    'verified: [{by: human:reader}]\n',
+                    'verified: {by: reader, at: 2026-07-01T00:00:00Z}\n',
+                    'generated: {by: writer/1, at: 2026-06-30T14:00:00}\n',
+                    'stale_after: 2026-09-23\n', 'sources: {}\n',
+                    'sources: [{resource: scope, usage_count: true}]\n',
+                    'usage_window: {from: 2026-07-01T00:00:00Z, to: 2026-06-01T00:00:00Z}\n']:
+            with self.subTest(bad=bad):
+                self.assertTrue(self.errors(self.check(self.concept(bad), 'authoring')))
+                self.assertEqual([], self.errors(self.check(self.concept(bad))))
+
+    def test_stale_boundary_verifier_mapping_and_read_only(self):
+        from datetime import datetime, timezone
+        now = datetime(2026, 9, 23, tzinfo=timezone.utc)
+        text = self.concept('stale_after: 2026-09-23T00:00:00Z\n'
+                            'verified: {by: human:reader, at: 2026-09-22T00:00:00Z}\n'
+                            'x-history: [{opaque: keep}]\n')
+        path = self.write('concept.md', text)
+        for profile in ('conformance', 'authoring'):
+            issues = okf.validate_file(path, self.root, profile, now=now)
+            self.assertEqual([], self.errors(issues))
+            self.assertIn('stale_after', [x.field for x in issues])
+            self.assertTrue(all(x.severity == 'warning' for x in issues))
+        self.assertEqual(text, path.read_text())
+        before = now.replace(day=22)
+        self.assertEqual([], self.check(text, now=before))
+        as_list = text.replace('verified: {', 'verified:\n  - {')
+        self.assertEqual(self.check(text, now=now), self.check(as_list, now=now))
+        self.assertIn('verified', [x.field for x in self.check(self.concept(), now=now)])
+
+    def test_paths_and_computation_contract(self):
+        self.write('references/run.py', '# not executed\n')
+        self.write('references/query.sql', 'SELECT :year\n')
+        self.write('nested/other.md', self.concept())
+        extra = ('runtime: python\nparameters: [{name: year, type: integer, required: true}]\n'
+                 'computation: /references/query.sql\n'
+                 'executor: {resource: ../references/run.py, receipt: [result]}\n'
+                 'attester: {resource: https://example.com/attester.py}\n')
+        text = self.concept(extra, '[Other](./other.md) [External](https://example.com/missing)\n')
+        text = text.replace('type: Reference', 'type: Attested Computation')
+        self.assertEqual([], self.errors(self.check(text, 'authoring', 'nested/calc.md')))
+        for bad in [text.replace('runtime: python\n', ''),
+                    text.replace('required: true', 'required: yes-please'),
+                    text.replace('parameters: [', 'parameters: [{name: year, type: string, required: false}, '),
+                    text.replace('/references/query.sql', '/references/missing.sql'),
+                    text.replace('../references/run.py', './missing.py'),
+                    text.replace('./other.md', '/missing.md')]:
+            with self.subTest(bad=bad):
+                self.assertTrue(self.errors(self.check(bad, 'authoring', 'nested/calc.md')))
+                self.assertEqual([], self.errors(self.check(bad, name='nested/calc.md')))
+
+    def test_inline_computation_is_a_single_fence_and_not_execution(self):
+        extra = ('runtime: python\nverified: {by: human:reader, at: 2026-09-11T00:00:00Z}\n')
+        text = self.concept(extra, '# Computation\n```python\nraise RuntimeError("do not run")\n```\n')
+        text = text.replace('type: Reference', 'type: Attested Computation')
+        self.assertEqual([], self.errors(self.check(text, 'authoring')))
+        for bad in [text.replace('# Computation', '# Example'),
+                    text + '\n```python\nprint(2)\n```\n',
+                    text.replace('runtime: python', 'runtime: python\ncomputation: https://example.com/code.py')]:
+            self.assertTrue(self.errors(self.check(bad, 'authoring')))
+        # Definition-only verification never becomes a per-run verdict.
+        self.assertFalse(any('attestation succeeded' in x.message for x in self.check(text)))
+
+    def test_links_in_examples_are_ignored_and_symlinks_not_followed(self):
+        body = '[Missing](/missing.md)\n```md\n[Example](/also-missing.md)\n```\n'
+        issues = self.errors(self.check(self.concept(body=body), 'authoring'))
+        self.assertEqual(1, len(issues))
+        self.assertEqual('links', issues[0].field)
+        self.assertEqual([], self.errors(self.check(self.concept(body=body))))
+        with tempfile.TemporaryDirectory() as outside:
+            external = Path(outside) / 'target.md'
+            external.write_text('secret-not-valid')
+            (self.root / 'escape.md').symlink_to(external)
+            issues = self.errors(self.check(self.concept(body='[Escape](escape.md)'), 'authoring'))
+            self.assertTrue(issues)
+            self.assertNotIn('secret-not-valid', str(issues))
+
+    def cli(self, *args, no_site=False):
+        import subprocess
+        return subprocess.run([sys.executable, *(['-S'] if no_site else []), str(SCRIPT),
+                               *map(str, args)], capture_output=True, text=True)
+
+    def test_cli_exit_codes_and_diagnostics(self):
+        self.write('concept.md', '---\ntype: Custom\n---\n')
+        result = self.cli(self.root)
+        self.assertEqual(0, result.returncode, result.stderr)
+        result = self.cli(self.root, 'concept.md', '--profile', 'authoring')
+        self.assertEqual(1, result.returncode)
+        for detail in ('concept.md', 'title', 'authoring', 'nonempty'):
+            self.assertIn(detail, result.stdout + result.stderr)
+        for args in [(), (self.root, '--profile', 'unknown'),
+                     (self.root, 'absent.md'), (self.root / 'absent',),
+                     (self.root, '../escape.md'), (self.root, 'folder')]:
+            self.assertEqual(2, self.cli(*args).returncode, str(args))
+        result = self.cli(self.root, no_site=True)
+        self.assertEqual(2, result.returncode)
+        self.assertIn('PyYAML', result.stderr)
+        self.assertNotIn('Traceback', result.stderr)
+
+    def test_cli_selection_and_symlink_boundary(self):
+        good = self.write('good.md', self.concept())
+        self.write('invalid.md', 'invalid')
+        self.assertEqual(0, self.cli(self.root, good).returncode)
+        self.assertEqual(1, self.cli(self.root).returncode)
+        (self.root / 'invalid.md').unlink()
+        with tempfile.TemporaryDirectory() as outside:
+            self.write('not-markdown.txt', 'anything')
+            foreign = Path(outside) / 'secret.md'
+            foreign.write_text('secret-invalid')
+            (self.root / 'external').symlink_to(Path(outside), target_is_directory=True)
+            (self.root / 'external.md').symlink_to(foreign)
+            result = self.cli(self.root)
+            self.assertEqual(0, result.returncode, result.stderr)
+            self.assertNotIn('secret-invalid', result.stdout + result.stderr)
+            self.assertEqual(2, self.cli(self.root, 'external.md').returncode)
+            self.assertEqual(2, self.cli(self.root, 'external/secret.md').returncode)
+        bad_utf8 = self.root / 'bad.md'
+        bad_utf8.write_bytes(b'\xff')
+        result = self.cli(self.root, 'bad.md')
+        self.assertEqual(1, result.returncode)
+        self.assertIn('UTF-8', result.stdout + result.stderr)
+
+    def test_invalid_dates_are_document_errors_not_environment_failures(self):
+        self.write('bad.md', self.concept('stale_after: 2026-13-30T00:00:00Z\n'))
+        self.assertEqual(1, self.cli(self.root, '--profile', 'authoring').returncode)
+        issues = self.errors(self.check(self.concept('resource: "https://[invalid"\n'), 'authoring'))
+        self.assertTrue(issues)
+
+    def test_scope_descriptors_are_not_paths_and_extensions_remain_opaque(self):
+        text = self.concept('sources: [{resource: "all queries in BigQuery project X/Y"}]\n'
+                            'x-future: {stale_after: not-a-date, verified: {custom: true}}\n')
+        self.assertEqual([], self.errors(self.check(text, 'authoring')))
+
+    def test_setext_index_headings_and_ordered_entries(self):
+        self.write('other.md', self.concept())
+        self.assertEqual([], self.errors(self.check('Group\n=====\n1. [Other](other.md)\n',
+                                                    name='index.md')))
+
+    def test_empty_or_unclosed_index_frontmatter_is_not_ignored(self):
+        for text in ['---\r\nokf_version: "0.2"\r\n# Group\r\n- [X](x)\r\n',
+                     '---\n---\n# Group\n- [X](x)\n']:
+            self.assertTrue(self.errors(self.check(text, name='index.md')))
+
+    def test_markdown_links_with_parentheses_and_reference_labels(self):
+        self.write('version(2).md', self.concept())
+        for body in ['[Version](version(2).md)\n',
+                     '[Version][POLICY]\n\n[policy]: version(2).md\n',
+                     '[Version](<version(2).md> "Title")\n']:
+            self.assertEqual([], self.errors(self.check(self.concept(body=body), 'authoring')))
+        self.assertTrue(self.errors(self.check(self.concept(body='[V][MISSING]\n\n[missing]: gone.md\n'), 'authoring')))
+
+    def test_quoted_code_examples_and_html_comments_do_not_create_footnotes(self):
+        body = ('A fact.\n\n> ```markdown\n> [^fake]\n> ```\n'
+                '<!-- [^comment] -->\n')
+        self.assertEqual([], self.errors(self.check(self.concept(body=body), 'authoring')))
+
+    def test_cli_profile_may_precede_file_selection(self):
+        self.write('good.md', self.concept())
+        self.assertEqual(0, self.cli(self.root, '--profile', 'authoring', 'good.md').returncode)
+
+    def test_authoring_rejects_concept_metadata_on_root_index(self):
+        text = '---\nokf_version: "0.2"\ntitle: Not a concept\nx-extension: kept\n---\n# Group\n- [X](https://example.com)\n'
+        self.assertEqual([], self.errors(self.check(text, name='index.md')))
+        issues = self.errors(self.check(text, 'authoring', 'index.md'))
+        self.assertEqual(['title'], [x.field for x in issues])
+        self.assertEqual(['authoring'], [x.rule for x in issues])
+        self.assertEqual([], self.errors(self.check(text.replace('title: Not a concept\n',''), 'authoring', 'index.md')))
+
+    def test_historical_verification_warning_is_authoring_only(self):
+        text = self.concept('generated: {by: writer/1, at: 2026-09-11T00:00:00Z}\n'
+                            'verified: {by: human:reader, at: 2026-09-10T00:00:00Z}\n')
+        self.assertEqual([], self.check(text))
+        warnings = self.check(text, 'authoring')
+        self.assertEqual(['verified'], [x.field for x in warnings])
+        self.assertTrue(all(x.rule == 'authoring' and x.severity == 'warning' for x in warnings))
+
+    def test_invalid_http_authority_and_nul_paths_are_document_errors(self):
+        for value in ['https://', 'https:///missing', 'https://user@', 'https://bad host/path']:
+            for extra in [f'resource: "{value}"\n',f'sources: [{{resource: "{value}"}}]\n']:
+                self.write('bad.md', self.concept(extra))
+                self.assertEqual(1, self.cli(self.root, '--profile', 'authoring').returncode, value)
+                self.assertEqual(0, self.cli(self.root).returncode)
+        self.write('bad.md', self.concept(body='[Reference](%00)\n'))
+        self.assertEqual(1, self.cli(self.root, '--profile', 'authoring').returncode)
+
+    def test_empty_inline_computation_is_not_a_definition(self):
+        for content in ['', '  \n\t\n']:
+            text = self.concept('runtime: python\n', '# Computation\n```python\n'+content+'\n```\n')
+            text = text.replace('type: Reference', 'type: Attested Computation')
+            self.assertTrue(self.errors(self.check(text, 'authoring')))
+            self.assertEqual([], self.errors(self.check(text)))
+
+    def test_cli_uses_one_time_for_all_documents(self):
+        from datetime import datetime, timezone
+        from unittest.mock import patch
+        from contextlib import redirect_stdout
+        import io
+        first = datetime(2026, 9, 22, 23, 59, 59, tzinfo=timezone.utc)
+        second = datetime(2026, 9, 23, tzinfo=timezone.utc)
+        for name in ['a.md', 'b.md']:
+            self.write(name, self.concept('stale_after: "2026-09-23T00:00:00Z"\n'))
+        class Clock(datetime):
+            calls = 0
+            @classmethod
+            def now(cls, tz=None):
+                cls.calls += 1
+                return first if cls.calls == 1 else second
+        output = io.StringIO()
+        with patch.object(okf, 'datetime', Clock), redirect_stdout(output):
+            self.assertEqual(0, okf.main([str(self.root)]))
+        self.assertEqual(1, Clock.calls)
+        self.assertNotIn('stale_after', output.getvalue())
+
+    def test_unrelated_example_does_not_change_computation_fence_state(self):
+        body = '# Computation\n```python\nprint(1)\n```\n# Examples\n```text\nExample continues to EOF\n'
+        text = self.concept('runtime: python\n', body).replace('type: Reference','type: Attested Computation')
+        self.assertEqual([], self.errors(self.check(text, 'authoring')))
+
+    def test_nested_list_links_are_not_indented_code(self):
+        for body in ['- Parent\n    - [Child](missing.md)\n',
+                     'Paragraph\n    continuation [Child](missing.md)\n']:
+            self.assertTrue(self.errors(self.check(self.concept(body=body), 'authoring')))
+        for body in ['- Parent\n\n      [Code](missing.md)\n',
+                     '> ```md\n> [Code](missing.md)\n> ```\n']:
+            self.assertEqual([], self.errors(self.check(self.concept(body=body), 'authoring')))
+
+    def test_escaped_and_nested_link_labels(self):
+        for label in [r'a\]b', 'a [nested] label']:
+            self.assertTrue(self.errors(self.check(self.concept(body=f'[{label}](missing.md)\n'), 'authoring')))
+        self.write('real.md', self.concept())
+        self.assertEqual([], self.errors(self.check(self.concept(body=r'[a\]b](real.md)'), 'authoring')))
+
+    def test_computation_local_reference_must_be_a_file(self):
+        (self.root / 'refs').mkdir()
+        text = self.concept('runtime: python\ncomputation: refs/\n').replace('type: Reference','type: Attested Computation')
+        self.assertTrue(self.errors(self.check(text, 'authoring')))
+        self.assertEqual([], self.errors(self.check(text)))
+
+    def test_yaml_duplicate_keys_are_errors_but_merge_overrides_are_valid(self):
+        for text in ['---\ntype: Wrong\ntype: Guide\n---\n',
+                     self.concept('x-extension: {key: first, key: second}\n')]:
+            for profile in ['conformance', 'authoring']:
+                self.assertTrue(self.errors(self.check(text, profile)))
+        text = self.concept('x-base: &base {key: first}\nx-extension: {<<: *base, key: override}\n')
+        self.assertEqual([], self.errors(self.check(text, 'authoring')))
+
+    def test_optional_datetimes_are_not_validated_by_yaml_resolution(self):
+        text = self.concept('stale_after: 2026-13-30T00:00:00Z\n')
+        self.assertEqual([], self.errors(self.check(text)))
+        self.assertTrue(self.errors(self.check(text, 'authoring')))
+        opaque = self.concept('x-extension: {date: 2026-13-30T00:00:00Z}\n')
+        self.assertEqual([], self.errors(self.check(opaque, 'authoring')))
+
+    def test_fence_on_list_marker_line_masks_its_contents(self):
+        body = '- ```markdown\n  [Example](missing.md)\n  [^fake]\n  ```\n'
+        self.assertEqual([], self.errors(self.check(self.concept(body=body), 'authoring')))
+
+    def test_index_uses_the_shared_escaped_label_parser(self):
+        self.write('page.md', self.concept())
+        text = '# Group\n- [a\\]b](page.md)\n'
+        for profile in ('conformance', 'authoring'):
+            self.assertEqual([], self.errors(self.check(text, profile, 'index.md')))
+
+    def test_reference_definition_target_can_be_on_next_line(self):
+        self.write('page.md', self.concept())
+        body = '[Page][target]\n\n[target]:\n  page.md\n'
+        self.assertEqual([], self.errors(self.check(self.concept(body=body), 'authoring')))
+        self.assertTrue(self.errors(self.check(self.concept(body=body.replace('page.md','missing.md')), 'authoring')))
+
+    def test_malformed_verification_does_not_suppress_unverified_warning(self):
+        for value in ['garbage', '[null]', '{x: y}', '{by: human:reader}']:
+            issues = self.check(self.concept(f'verified: {value}\n'))
+            self.assertEqual([], self.errors(issues))
+            self.assertTrue(any(x.field=='verified' and x.severity=='warning' for x in issues))
+
+    def test_comments_do_not_count_as_reserved_file_structure(self):
+        for name, body in [('index.md', '# Group\n- [Page](page.md)\n'),
+                           ('log.md', '# Log\n## 2026-09-11\n- Created\n')]:
+            self.assertTrue(self.errors(self.check('<!--\n'+body+'-->\n', name=name)))
+
+    def test_computation_ignores_comments_but_preserves_comment_text_in_code(self):
+        code = '# Computation\n```python\nprint("<!--")\n```\n'
+        text = self.concept('runtime: python\n', code).replace('type: Reference','type: Attested Computation')
+        self.assertEqual([], self.errors(self.check(text, 'authoring')))
+        hidden = self.concept('runtime: python\n', '<!--\n'+code+'-->\n').replace('type: Reference','type: Attested Computation')
+        self.assertTrue(self.errors(self.check(hidden, 'authoring')))
+
+    def test_links_respect_escaped_image_markers_and_first_reference_definition(self):
+        self.write('real.md', self.concept())
+        with self.subTest(marker='escaped'):
+            self.assertTrue(self.errors(self.check(self.concept(body=r'\![X](missing.md)'), 'authoring')))
+        self.assertEqual([], self.errors(self.check(self.concept(body=r'![X](missing.md)'), 'authoring')))
+        for first, second, broken in [('missing.md', 'real.md', True), ('real.md', 'missing.md', False)]:
+            body = f'[X][ref]\n\n[REF]: {first}\n[ref]: {second}\n'
+            with self.subTest(first=first):
+                self.assertEqual(broken, bool(self.errors(self.check(self.concept(body=body), 'authoring'))))
+
+    def test_long_unclosed_index_label_is_rejected_promptly(self):
+        import subprocess
+        self.write('index.md', '# Group\n- ' + '[' * 16000 + '\n')
+        result = subprocess.run([sys.executable, str(SCRIPT), str(self.root)],
+                                capture_output=True, text=True, timeout=3)
+        self.assertEqual(1, result.returncode)
+
+    def test_footnotes_are_visible_text_not_link_destinations_or_html_attributes(self):
+        self.write('report[^draft].md', self.concept())
+        for body in ['[Report](report[^draft].md)\n',
+                     '[Report][r]\n\n[r]:\n  report[^draft].md\n',
+                     '<span title="[^draft]">Report</span>\n',
+                     '<https://example.com/report[^draft]>\n']:
+            with self.subTest(body=body):
+                self.assertEqual([], self.errors(self.check(self.concept(body=body), 'authoring')))
+        for body in ['<span title="ok">Fact[^missing]</span>\n',
+                     '[Fact[^missing]](report[^draft].md)\n']:
+            self.assertTrue(self.errors(self.check(self.concept(body=body), 'authoring')))
+
+    def test_index_parent_heading_can_group_child_sections(self):
+        self.write('page.md', self.concept())
+        text = '# Bundle index\n## Guides\n- [Page](page.md)\n## References\n### Details\n- [Page](page.md)\n'
+        for profile in ('conformance', 'authoring'):
+            self.assertEqual([], self.errors(self.check(text, profile, 'index.md')))
+        for text in ['# Empty\n# Guides\n- [Page](page.md)\n',
+                     '# Index\n## Empty\n## Guides\n- [Page](page.md)\n']:
+            self.assertTrue(self.errors(self.check(text, name='index.md')))
+
+    def test_network_path_source_requires_an_explicit_scheme_in_authoring(self):
+        text = self.concept('sources: [{resource: "//example.com/policy"}]\n')
+        self.assertEqual([], self.errors(self.check(text)))
+        self.assertTrue(self.errors(self.check(text, 'authoring')))
+
+    def test_excessively_nested_yaml_is_a_document_error(self):
+        self.write('nested.md', '---\ntype: ' + '[' * 1200 + 'x' + ']' * 1200 + '\n---\n')
+        self.assertEqual(1, self.cli(self.root).returncode)
+
+    def test_many_distinct_footnotes_complete_promptly(self):
+        import subprocess
+        body = '\n'.join(f'[^note{i}]: Explanation' for i in range(40000))
+        self.write('large.md', self.concept(body=body))
+        result = subprocess.run([sys.executable, str(SCRIPT), str(self.root), '--profile', 'authoring'],
+                                capture_output=True, text=True, timeout=3)
+        self.assertEqual(0, result.returncode, result.stdout)
+
+    def test_inline_link_destinations_titles_and_html_attributes_are_not_links(self):
+        self.write('report[ref].md', self.concept())
+        for body in ['[Report](report[ref].md)\n',
+                     '[Report](<report[ref].md> "Title [ref]")\n',
+                     '<span title="[ref]">Text</span>\n']:
+            with self.subTest(body=body):
+                self.assertEqual([], self.errors(self.check(self.concept(body=body+'\n[ref]: missing.md\n'), 'authoring')))
+        index = '# Group\n- <span title="[ref]">No link</span>\n\n[ref]: report[ref].md\n'
+        for profile in ('conformance', 'authoring'):
+            self.assertTrue(self.errors(self.check(index, profile, 'index.md')))
+
+    def test_comment_marker_inside_inline_code_does_not_hide_later_links(self):
+        self.assertTrue(self.errors(self.check(self.concept(body='`<!--` [Target](missing.md)\n'), 'authoring')))
+
+    def test_computation_reuses_list_fence_structure(self):
+        for body in ['# Computation\n- ```python\n  print(1)\n  ```\n',
+                     '# Computation\n- Definition\n\n  ```python\n  print(1)\n  ```\n']:
+            text = self.concept('runtime: python\n', body).replace('type: Reference','type: Attested Computation')
+            with self.subTest(body=body):
+                self.assertEqual([], self.errors(self.check(text, 'authoring')))
+
+    def test_parser_handles_visible_markdown_boundaries(self):
+        self.write('real.md', self.concept())
+        for body in ['# Group\n<div>\n- [Fake](real.md)\n</div>\n',
+                     '# Group\n- [X](real.md garbage)\n']:
+            for profile in ('conformance', 'authoring'):
+                with self.subTest(body=body, profile=profile):
+                    self.assertTrue(self.errors(self.check(body, profile, 'index.md')))
+        for target in ['<https://example.com/page>', '<person@example.com>']:
+            with self.subTest(target=target):
+                self.assertEqual([], self.errors(self.check('# Group\n- '+target+'\n', 'authoring', 'index.md')))
+        with self.subTest(escaped_code=True):
+            self.assertTrue(self.errors(self.check(self.concept(body=r'\` [Target](missing.md) `'), 'authoring')))
+
+    def test_computation_uses_actual_parser_fence_boundaries(self):
+        for body, valid in [('# Computation\n`<!--`\n```python\nprint(1)\n```\n', True),
+                            ('# Computation\n- ```python\n  print(1)\nOutside list\n```\n', False)]:
+            text = self.concept('runtime: python\n', body).replace('type: Reference','type: Attested Computation')
+            with self.subTest(body=body):
+                self.assertEqual(valid, not self.errors(self.check(text, 'authoring')))
+
+    def test_unclosed_destinations_complete_promptly(self):
+        import subprocess
+        self.write('index.md', '# Group\n- ' + '[x](' * 6400 + '\n')
+        result = subprocess.run([sys.executable, str(SCRIPT), str(self.root)],
+                                capture_output=True, text=True, timeout=3)
+        self.assertEqual(1, result.returncode)
+
+    def test_missing_markdown_dependency_is_an_environment_error(self):
+        import subprocess
+        code = ('import builtins, runpy, sys\n'
+                'original = builtins.__import__\n'
+                'def without_markdown(name, *args, **kwargs):\n'
+                '    if name == "markdown_it": raise ImportError("not installed")\n'
+                '    return original(name, *args, **kwargs)\n'
+                'builtins.__import__ = without_markdown\n'
+                'sys.argv = [sys.argv[1], sys.argv[2]]\n'
+                'runpy.run_path(sys.argv[0], run_name="__main__")\n')
+        result = subprocess.run([sys.executable, '-c', code, str(SCRIPT), str(self.root)],
+                                capture_output=True, text=True)
+        self.assertEqual(2, result.returncode)
+        self.assertIn('requirements.txt', result.stderr)
+        self.assertNotIn('Traceback', result.stderr)
+
+    def test_unsupported_python_is_reported_before_loading_markdown_dependencies(self):
+        import subprocess
+        code = ('import builtins, runpy, sys\n'
+                'original = builtins.__import__\n'
+                'def reject_markdown(name, *args, **kwargs):\n'
+                '    if name == "markdown_it": raise AssertionError("unsupported dependency loaded")\n'
+                '    return original(name, *args, **kwargs)\n'
+                'builtins.__import__ = reject_markdown\n'
+                'sys.version_info = (3, 9, 0)\n'
+                'sys.argv = [sys.argv[1], sys.argv[2]]\n'
+                'runpy.run_path(sys.argv[0], run_name="__main__")\n')
+        result = subprocess.run([sys.executable, '-c', code, str(SCRIPT), str(self.root)],
+                                capture_output=True, text=True)
+        self.assertEqual(2, result.returncode)
+        self.assertIn('Python 3.10', result.stderr)
+        self.assertNotIn('Traceback', result.stderr)
+
+    def test_gfm_table_cells_do_not_become_footnote_definitions(self):
+        body = 'Name | Value\n--- | ---\n[^missing]: note | value\n'
+        self.assertTrue(self.errors(self.check(self.concept(body=body), 'authoring')))
+
+    def test_fence_line_maps_count_markdown_newlines_only(self):
+        body = '# Computation\n```python\nprint("\u2028")\n```\n'
+        text = self.concept('runtime: python\n', body).replace('type: Reference','type: Attested Computation')
+        self.assertEqual([], self.errors(self.check(text, 'authoring')))
+
+    def test_source_paths_with_spaces_are_not_scope_descriptors(self):
+        for resource in ['references/missing policy.md', 'missing policy.md',
+                         './references/missing policy.md', 'references/missing policy',
+                         './reference folder/missing policy']:
+            with self.subTest(resource=resource):
+                text = self.concept(f'sources: [{{resource: "{resource}"}}]\n')
+                self.assertEqual([], self.errors(self.check(text)))
+                self.assertEqual(['sources[0].resource'],
+                                 [x.field for x in self.errors(self.check(text, 'authoring'))])
+                self.write(resource, '')
+                self.assertEqual([], self.errors(self.check(text, 'authoring')))
+                (self.root / resource).unlink()
+        text = self.concept('sources: [{resource: "all queries in project X"}]\n')
+        self.assertEqual([], self.errors(self.check(text, 'authoring')))
+        ambiguous = self.concept('sources: [{resource: "all queries in project X/Y"}]\n')
+        issues = self.check(ambiguous, 'authoring')
+        self.assertEqual([], self.errors(issues))
+        self.assertTrue(any(x.field == 'sources[0].resource' and x.severity == 'warning' for x in issues))
+        explicit = ambiguous.replace('all queries', 'scope:all queries')
+        self.assertFalse(any(x.field == 'sources[0].resource' for x in self.check(explicit, 'authoring')))
+
+    def test_log_counts_only_direct_flat_list_items(self):
+        header = '# Log\n## 2026-09-11\n'
+        for profile in ('conformance', 'authoring'):
+            for example in ['> - Quoted example\n', '- > Quoted example\n',
+                            '- \n  - Nested example\n']:
+                with self.subTest(profile=profile, example=example):
+                    self.assertTrue(self.errors(self.check(header + example, profile, 'log.md')))
+            self.assertEqual([], self.errors(self.check(
+                header + '- Actual change\n  - Additional detail\n', profile, 'log.md')))
+
+    def test_index_version_is_a_nonempty_string_and_unknown_versions_are_allowed(self):
+        for profile in ('conformance', 'authoring'):
+            for value in ['[]', '{}', '0.2', 'null', '"  "']:
+                with self.subTest(profile=profile, value=value):
+                    body = f'---\nokf_version: {value}\n---\n# Group\n- [Page](https://example.com)\n'
+                    self.assertEqual(['okf_version'],
+                                     [x.field for x in self.errors(self.check(body, profile, 'index.md'))])
+            body = '---\nokf_version: "future-version"\n---\n# Group\n- [Page](https://example.com)\n'
+            self.assertEqual([], self.errors(self.check(body, profile, 'index.md')))
+
+    def test_cli_footnote_diagnostics_are_deterministic_across_hash_seeds(self):
+        import os
+        import subprocess
+        self.write('concept.md', self.concept(body='[^zeta] [^alpha] [^middle]\n'))
+        outputs = []
+        for seed in ('1', '2', '3'):
+            result = subprocess.run(
+                [sys.executable, str(SCRIPT), str(self.root), '--profile', 'authoring'],
+                env={**os.environ, 'PYTHONHASHSEED': seed}, capture_output=True, text=True)
+            self.assertEqual(1, result.returncode)
+            outputs.append(result.stdout)
+            self.assertEqual(['footnotes.alpha', 'footnotes.middle', 'footnotes.zeta'],
+                             [line.split(': ')[1] for line in result.stdout.splitlines()
+                              if 'footnotes.' in line])
+        self.assertEqual(1, len(set(outputs)))
+
+    def test_source_file_reference_keeps_query_and_fragment_out_of_path(self):
+        text = self.concept('sources: [{resource: "missing policy.md?revision=1#section"}]\n')
+        self.assertEqual(['sources[0].resource'],
+                         [x.field for x in self.errors(self.check(text, 'authoring'))])
+        self.write('missing policy.md', '')
+        self.assertEqual([], self.errors(self.check(text, 'authoring')))
+
+    def test_scope_query_or_fragment_does_not_become_a_file_extension(self):
+        for resource in ['all queries?format=policy.md', 'all queries#policy.md',
+                         'all queries?path=references/policy.md']:
+            with self.subTest(resource=resource):
+                text = self.concept(f'sources: [{{resource: "{resource}"}}]\n')
+                self.assertEqual([], self.errors(self.check(text, 'authoring')))
+
+    def test_inline_computation_requires_a_level_one_heading(self):
+        for level in range(1, 7):
+            body = '#' * level + ' Computation\n```python\nprint(1)\n```\n'
+            text = self.concept('runtime: python\n', body).replace('type: Reference', 'type: Attested Computation')
+            with self.subTest(level=level):
+                self.assertEqual(level == 1, not self.errors(self.check(text, 'authoring')))
+                self.assertEqual([], self.errors(self.check(text)))
+
+    def test_source_path_classification_uses_decoded_uri_path(self):
+        text = self.concept('sources: [{resource: "policy%2emd"}]\n')
+        self.assertEqual(['sources[0].resource'],
+                         [x.field for x in self.errors(self.check(text, 'authoring'))])
+        self.write('policy.md', '')
+        self.assertEqual([], self.errors(self.check(text, 'authoring')))
+
+    def test_log_entries_must_belong_to_the_date_section(self):
+        for profile in ('conformance', 'authoring'):
+            body = '# Log\n## 2026-09-11\n# Other section\n- Unrelated\n'
+            self.assertTrue(self.errors(self.check(body, profile, 'log.md')))
+            body = '# Log\n## 2026-09-11\n- Actual change\n# Other section\n- Unrelated\n'
+            self.assertEqual([], self.errors(self.check(body, profile, 'log.md')))
+            body += '## 2026-09-10\n- Earlier change\n'
+            self.assertEqual([], self.errors(self.check(body, profile, 'log.md')))
+
+    def test_local_file_links_preserve_directory_suffixes(self):
+        self.write('query.sql', 'SELECT 1\n')
+        (self.root / 'directory').mkdir()
+        for suffix in ('/', '%2F', '/.'):
+            value = 'query.sql' + suffix
+            for text in [self.concept(body=f'[File]({value})\n'),
+                         self.concept(f'computation: {value}\n')]:
+                with self.subTest(value=value, text=text):
+                    self.assertTrue(self.errors(self.check(text, 'authoring')))
+                    self.assertEqual([], self.errors(self.check(text)))
+        self.assertEqual([], self.errors(self.check(self.concept(body='[Directory](directory/)\n'), 'authoring')))
+        self.assertEqual([], self.errors(self.check(self.concept('computation: query.sql\n'), 'authoring')))
+
+    def test_quoted_merge_key_is_distinct_from_yaml_merge_directive(self):
+        extra = 'x-base: &base {key: value}\nx-extension: {"<<": literal, <<: *base}\n'
+        for profile in ('conformance', 'authoring'):
+            self.assertEqual([], self.errors(self.check(self.concept(extra), profile)))
+            duplicate = extra.replace('<<: *base}', '<<: *base, <<: *base}')
+            self.assertTrue(self.errors(self.check(self.concept(duplicate), profile)))
+
+    def test_empty_markdown_link_is_self_reference_but_metadata_cannot_be_empty(self):
+        self.assertEqual([], self.errors(self.check(self.concept(body='[Self]()\n'), 'authoring')))
+        self.assertEqual([], self.errors(self.check('# Index\n- [Self]()\n', 'authoring', 'index.md')))
+        for extra in ['resource: ""\n', 'sources: [{resource: ""}]\n',
+                      'computation: ""\n', 'executor: {resource: ""}\n']:
+            with self.subTest(extra=extra):
+                self.assertTrue(self.errors(self.check(self.concept(extra), 'authoring')))
+
+    def test_yaml_keys_with_distinct_tags_are_not_duplicate_extensions(self):
+        extra = 'x-extension: {true: boolean, 1: integer, 1.0: float}\n'
+        for profile in ('conformance', 'authoring'):
+            self.assertEqual([], self.errors(self.check(self.concept(extra), profile)))
+            duplicate = 'x-extension: {1: first, 0x1: repeated_integer}\n'
+            self.assertTrue(self.errors(self.check(self.concept(duplicate), profile)))
+
+    def test_large_float_keys_do_not_collapse_to_python_infinity(self):
+        for profile in ('conformance', 'authoring'):
+            extra = 'x-extension: {1.0e+999: first, 2.0e+999: second}\n'
+            self.assertEqual([], self.errors(self.check(self.concept(extra), profile)))
+            for mapping in ['{1.0e+999: first, 10.0e+998: same}',
+                            '{1:01.5: first, 61.5: same}', '{.nan: first, .NaN: same}']:
+                self.assertTrue(self.errors(self.check(self.concept('x-extension: ' + mapping + '\n'), profile)))
+            precise = 'x-extension: {1.0000000000000001: first, 1.0000000000000002: second}\n'
+            self.assertEqual([], self.errors(self.check(self.concept(precise), profile)))
+
+    def test_computation_requires_a_path_for_local_uri_references(self):
+        for resource in ['#missing', '?revision=1', '?revision=1#missing']:
+            text = self.concept(f'runtime: python\ncomputation: "{resource}"\n')
+            text = text.replace('type: Reference', 'type: Attested Computation')
+            with self.subTest(resource=resource):
+                self.assertEqual(['computation'],
+                                 [x.field for x in self.errors(self.check(text, 'authoring'))])
+                self.assertEqual([], self.errors(self.check(text)))
+        text = self.concept('computation: https://example.com\n')
+        self.assertEqual([], self.errors(self.check(text, 'authoring')))
