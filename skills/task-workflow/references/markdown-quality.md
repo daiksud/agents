@@ -2,6 +2,15 @@
 type: Instruction
 title: GitHub向けMarkdownの品質
 description: 共通rumdl設定、導入許可、GFMの構成、投稿前整形と投稿後確認の手順を定めます。
+sources:
+  - id: rumdl-getting-started-installation
+    resource: https://rumdl.dev/getting-started/installation/
+  - id: rumdl-md060
+    resource: https://rumdl.dev/md060/
+  - id: rumdl-md076
+    resource: https://rumdl.dev/md076/
+  - id: github-docs-global-settings-md
+    resource: https://github.com/rvben/rumdl/blob/main/docs/global-settings.md
 ---
 
 ## GitHub向けMarkdownの品質
@@ -25,7 +34,7 @@ Issue・PR本文・コメントを新規投稿・更新するとき、および�
 | 無効化 | MD013・MD033・MD034・MD041のみ。長い行、HTML、裸URL、先頭H1なしを許容する |
 | MD060 | 明示的に有効化し、compactで余分な列幅の空白を除去する |
 | MD076 | tightで単純な項目間空行を除去し、allow-loose-continuationで複数段落の構造を保持する |
-| その他 | MD003などは既定値を維持する。MD025の特別設定や一律除外を行わない |
+| その他 | MD003などは既定値を維持する。MD025は有効に保ち、以下の計算文書だけtitleの数え方を調整する |
 
 GitHub投稿本文には共通設定を明示指定する。リポジトリ文書では既存設定を確認し、プロジェクト固有の設定を無断で上書きしない。既存設定と共通方針に衝突がある場合は、変更計画に解消方法を含めて承認を得る。
 
@@ -54,11 +63,16 @@ GitHub投稿本文には共通設定を明示指定する。リポジトリ文�
 5. 保存済み本文を再取得して整形済みファイルと一致することを確認する。Issueでは[Issue保存後のブラウザ起動](planning.md#issue保存後のブラウザ起動)に従い、要求時だけ一度開く。GitHubのレンダリングで使用した見出し・表・Alerts・リンク・リストの表示を確認し、単純リストの不要な `li > p` と意図した複数段落を区別する。起動の有無によらず本文・表示を確認し、起動成功だけで目視確認済みとしない。
 6. 表示が不自然なら元ファイルを修正し、整形・チェック・投稿・再取得を繰り返す。APIのHTML確認だけの場合は画面を目視確認したと報告しない。
 
-リポジトリ文書も保存前に同じ整形・チェックを行い、frontmatter・見出し階層・相対リンク・feature文書のステップを確認する。OKFのtitleとH1がMD025で重複と判定される場合は本文の見出し階層を調整し、設定を無効化して回避しない。
+リポジトリ文書も保存前に同じ整形・チェックを行い、frontmatter・見出し階層・相対リンク・feature文書のステップを確認する。通常概念のtitleとH1がMD025で重複と判定される場合は本文の見出し階層を調整する。`type: Attested Computation` で本文に計算定義を置く場合は仕様が `# Computation` を要求するため、その文書だけ `--config 'MD025.front-matter-title = ""'` を既存設定に追加する。MD025自体と本文H1の重複検査は維持する。計算のH1をH2へ変えて回避しない。固有契約と検証手順は依存する [okf-docsの計算資料](../../okf-docs/references/computation.md) を確認する。
 
 ### 参考
 
-- [rumdlの導入方法](https://rumdl.dev/getting-started/installation/)
-- [MD060: compact形式](https://rumdl.dev/md060/)
-- [MD076: リスト項目間隔](https://rumdl.dev/md076/)
-- [共通設定の継承](https://github.com/rvben/rumdl/blob/main/docs/global-settings.md)
+- rumdlの導入方法[^rumdl-getting-started-installation]
+- MD060: compact形式[^rumdl-md060]
+- MD076: リスト項目間隔[^rumdl-md076]
+- 共通設定の継承[^github-docs-global-settings-md]
+
+[^rumdl-getting-started-installation]: [rumdlの導入方法](https://rumdl.dev/getting-started/installation/)。本文に記した参照範囲と採用判断の根拠。
+[^rumdl-md060]: [MD060: compact形式](https://rumdl.dev/md060/)。本文に記した参照範囲と採用判断の根拠。
+[^rumdl-md076]: [MD076: リスト項目間隔](https://rumdl.dev/md076/)。本文に記した参照範囲と採用判断の根拠。
+[^github-docs-global-settings-md]: [共通設定の継承](https://github.com/rvben/rumdl/blob/main/docs/global-settings.md)。本文に記した参照範囲と採用判断の根拠。

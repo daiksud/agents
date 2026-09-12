@@ -2,6 +2,9 @@
 type: Instruction
 title: インストラクションの作成・更新
 description: このディレクトリのインストラクションの形式、内容、確認方法を定めます。
+sources:
+  - id: github-ad30107c31c06aec8a7d5636e0d1058118604e6f-spec-md
+    resource: https://github.com/GoogleCloudPlatform/open-knowledge-format/blob/ad30107c31c06aec8a7d5636e0d1058118604e6f/SPEC.md
 ---
 
 ## インストラクションの作成・更新
@@ -11,13 +14,13 @@ description: このディレクトリのインストラクションの形式、�
 
 ### 形式
 
-- このディレクトリのMarkdownは [Open Knowledge Format（OKF）](https://github.com/GoogleCloudPlatform/knowledge-catalog/blob/main/okf/SPEC.md) v0.2の概念文書として扱う。
-- YAML frontmatterに `type: Instruction` と、先頭の見出しに一致する `title` を記載する。
+- このディレクトリの通常のMarkdownは Open Knowledge Format（OKF）[^github-ad30107c31c06aec8a7d5636e0d1058118604e6f-spec-md] v0.2の概念文書として扱う。
+- 通常概念には仕様必須の `type: Instruction` と、自作時の追加条件として先頭の見出しに一致する `title` を記載する。
 - ファイル名は対象を表す英単語を小文字のハイフン区切りにし、`.instructions.md` を付ける。
-- YAML front matter の `description` に、指示の対象と目的を一文で書く。
+- 自作する通常概念の `description` に、指示の対象と目的を一文で書く。`index.md`・`log.md` を作る場合は予約形式を使い、概念メタデータを要求しない。
 - 本文は日本語のMarkdownで書き、先頭の見出しにインストラクション名を付ける。
 - テンプレートから目的に必要な節だけを選び、未記入の欄や不要な節を残さない。
-- APM用の `description` や `applyTo` など既存のメタデータは保持する。
+- APM用の `description` や `applyTo`、未知メタデータと出典・確認履歴を保持する。出典付き更新と確認の扱いは [okf-docs](../../skills/okf-docs/SKILL.md) に従う。過去の確認を更新後内容の確認として主張しない。
 
 ### 共通指示と作業スキル
 
@@ -34,3 +37,5 @@ description: このディレクトリのインストラクションの形式、�
 ### 確認と見直し
 
 [適用前の確認](../../docs/templates/instructions.md#適用前の確認)と[運用中の見直し](../../docs/templates/instructions.md#運用中の見直し)に従う。手順・完了条件の検証方法と期待結果を明示し、代表的な依頼で判断を確認する。効果を確認できなかった場合は未確認として報告する。
+
+[^github-ad30107c31c06aec8a7d5636e0d1058118604e6f-spec-md]: [Open Knowledge Format（OKF）](https://github.com/GoogleCloudPlatform/open-knowledge-format/blob/ad30107c31c06aec8a7d5636e0d1058118604e6f/SPEC.md)。本文に記した参照範囲と採用判断の根拠。

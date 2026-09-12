@@ -2,6 +2,11 @@
 type: Guide
 title: 既存文書を使って仕様を明確にする
 description: 要求・制約・外部契約・受け入れ条件を既存文書の正本へ記録し、未確定事項と検証の対応を明確にする手順を示します。
+sources:
+  - id: github-create-specification-skill-md
+    resource: https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/skills/create-specification/SKILL.md
+  - id: github-instructions-spec-driven-workflow-v1-instructions-md
+    resource: https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/instructions/spec-driven-workflow-v1.instructions.md
 ---
 
 ## 既存文書を使って仕様を明確にする
@@ -15,7 +20,7 @@ description: 要求・制約・外部契約・受け入れ条件を既存文書�
 1. 対象リポジトリの用語集、feature、ADR、API文書、スキーマと関連テストを探し、今回の要求・契約の正本を特定する。矛盾していて優先関係が分からない場合は、判断権限を持つ人への質問として残す。
 2. 既存のふるまいはfeature、設計上の選択と理由はADR、APIやデータの契約は既存のAPI文書・スキーマへ記録する。同じ仕様を別文書へコピーせず、正本へのリンクと理解に必要な要約を置く。
 3. 正本がない場合だけ、文書の目的に合う既存分類へ追加する。共有するふるまいは `docs/behavior/`、設計判断は `docs/adr/` とし、その他はokf-docsの分類・配置規則を使う。全変更に `/spec/` や独立した全体仕様書を要求しない。
-4. 通常のMarkdown文書はOKFのtype・title・descriptionを付ける。OpenAPI・JSON Schema等の契約文書は既存の形式を保ち、OKFのヘッダーを付けない。用語は対象の `docs/glossary.md` と揃え、変更した語の意味と適用するモデルの境界を更新する。
+4. 通常のMarkdown概念にはOKF必須のtypeと、自作時の追加条件のtitle・descriptionを付ける。索引・履歴は予約形式を使う。OpenAPI・JSON Schema等の契約文書は既存の形式を保ち、OKFのヘッダーを付けない。用語は対象の `docs/glossary.md` と揃え、変更した語の意味と適用するモデルの境界を更新する。
 
 人が読む仕様と、OpenAPI等の機械可読な契約の両方がある場合は、各情報の正本と対応を示す。単独で理解できるだけの目的・前提・参照先を残すが、外部文脈をなくすために用語集やスキーマ全体を複製しない。リンク先の存在と版を確認し、取得不能な情報を確認済みとしない。
 
@@ -55,8 +60,11 @@ IssueにはADRの正本へのリンクと作業判断に必要な要約を置き
 
 ### 参照元と適用判断
 
-[GitHub awesome-copilotのCreate Specification](https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/skills/create-specification/SKILL.md)を2026-09-11に確認し、明示的な要求・契約・受け入れ条件の整理を要約・再構成した。
+GitHub awesome-copilotのCreate Specification[^github-create-specification-skill-md]を2026-09-11に確認し、明示的な要求・契約・受け入れ条件の整理を要約・再構成した。
 
 既存のOKF・feature・ADRを優先するため、参照元の `/spec/` 配置、固定ファイル名、全11節、独自frontmatterは採用しない。特定テストフレームワークや網羅率目標を例から共通要件へ変えない。これは本環境への適用判断であり、仕様書形式の普遍的な規格ではない。
 
-[GitHub awesome-copilotのSpec Driven Workflow v1](https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/instructions/spec-driven-workflow-v1.instructions.md)を2026-09-11に確認し、判断の理由と再検討条件を残す考え方を取り入れた。本環境では重要な設計判断に限定し、依存する前提と観測を対応づけて既存ADRへ記録する。全判断への固定テンプレート、固定3文書、全操作ログ、6段階の一律適用は採用しない。
+GitHub awesome-copilotのSpec Driven Workflow v1[^github-instructions-spec-driven-workflow-v1-instructions-md]を2026-09-11に確認し、判断の理由と再検討条件を残す考え方を取り入れた。本環境では重要な設計判断に限定し、依存する前提と観測を対応づけて既存ADRへ記録する。全判断への固定テンプレート、固定3文書、全操作ログ、6段階の一律適用は採用しない。
+
+[^github-create-specification-skill-md]: [GitHub awesome-copilotのCreate Specification](https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/skills/create-specification/SKILL.md)。本文に記した参照範囲と採用判断の根拠。
+[^github-instructions-spec-driven-workflow-v1-instructions-md]: [GitHub awesome-copilotのSpec Driven Workflow v1](https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/instructions/spec-driven-workflow-v1.instructions.md)。本文に記した参照範囲と採用判断の根拠。

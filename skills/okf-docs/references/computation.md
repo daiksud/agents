@@ -6,6 +6,8 @@ sources:
   - id: okf-spec
     resource: https://github.com/GoogleCloudPlatform/open-knowledge-format/blob/ad30107c31c06aec8a7d5636e0d1058118604e6f/SPEC.md
     title: Open Knowledge Format v0.2
+  - id: rumdl-md025
+    resource: https://github.com/rvben/rumdl/blob/993b5b10feca512e07d017ba4550fe690cd08c51/docs/md025.md
   - id: sample-attester
     resource: https://github.com/GoogleCloudPlatform/open-knowledge-format/blob/ad30107c31c06aec8a7d5636e0d1058118604e6f/bundles/acme_retail/attesters/sql_equality.py
     title: 参考SQL attester
@@ -45,6 +47,16 @@ attester:
 
 パスは契約ファイルの位置から解決する。`computation` ファイルと本文の計算フェンスを両方の正本にしない。実行に必要な能力や実在しない参照先が不足していれば未実装と明記し、このスキルだけを根拠にクラウド接続やランタイムを導入しない。[^okf-spec]
 
+## Markdownと契約を合わせて検証する
+
+本文に計算定義を置く場合は `title` と本文の `# Computation` を併記する。rumdlの既定MD025はfrontmatterのtitleもH1と数えるため、計算文書だけ次の指定を追加する。`front-matter-title = ""` はfrontmatterを別扱いにし、本文のH1重複検査を維持する。rumdl 0.2.69の設定定義に基づく本環境の選択であり、通常概念やGitHub投稿には適用しない。[^rumdl-md025]
+
+```sh
+rumdl check --config /path/to/rumdl.toml --config 'MD025.front-matter-title = ""' --deny-config-warnings /path/to/computation.md
+```
+
+整形するときも同じ設定に `--fix` を追加する。複数ファイルは計算文書とその他を分けて実行する。本文H1の重複を直す際も仕様の `# Computation` を残し、その配下のコードフェンスを確認する。authoring検査も続けて実行し、H2への誤変更や計算定義の不整合を検出する。rumdlだけの成功を契約の検証としない。
+
 ## 値の指定と定義変更
 
 計算を利用するエージェントが指定できるのは宣言済みパラメータの値だけであり、任意SQLの作成・書き換えではない。パラメータを束縛した実行成果物はconsumerが作り、attesterは同じ束縛を独立に再構成して実際の成果物と比較する。[^okf-spec]
@@ -72,4 +84,5 @@ attester:
 したがって、サンプルの成功だけでパラメータの正しさ・実際のジョブ実行・結果の真正性まで証明されたと主張しない。参考コードを本番attesterとして無条件に転用せず、必要な証拠の取得・束縛の再構成・比較対象・失敗条件を契約ごとに確認する。validatorの静的検査も実行証明の代わりにはならない。
 
 [^okf-spec]: 固定版SPEC §§10–12。§10.5はinformativeであり、運用上の確認項目は本環境の適用判断。
+[^rumdl-md025]: rumdl 0.2.69、MD025のFront Matter IntegrationとConfiguration examples。
 [^sample-attester]: 固定SHAのサンプル実装のdocstringと `attest`・`_canonicalize` を読んだ結果。実行基盤での有効性を実測した結果ではない。

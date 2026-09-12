@@ -2,6 +2,11 @@
 type: Guide
 title: Codexのコマンド事前許可
 description: 計画承認後の中断を減らすため、Codexのコマンド許可を準備して検証する方法を説明します。
+sources:
+  - id: learn-agent-configuration-rules
+    resource: https://learn.chatgpt.com/docs/agent-configuration/rules
+  - id: learn-docs-sandboxing
+    resource: https://learn.chatgpt.com/docs/sandboxing
 ---
 
 ## Codexのコマンド事前許可
@@ -78,5 +83,8 @@ codex execpolicy check --pretty --rules ~/.codex/rules/task-lifecycle.rules -- g
 
 ### 参考
 
-- [OpenAI：Rules](https://learn.chatgpt.com/docs/agent-configuration/rules) — ルールの配置、構文、読み込み、照合と検査方法。
-- [OpenAI：Sandbox](https://learn.chatgpt.com/docs/sandboxing) — 書き込み範囲と実行環境の制限。
+- OpenAI：Rules[^learn-agent-configuration-rules] — ルールの配置、構文、読み込み、照合と検査方法。
+- OpenAI：Sandbox[^learn-docs-sandboxing] — 書き込み範囲と実行環境の制限。
+
+[^learn-agent-configuration-rules]: [OpenAI：Rules](https://learn.chatgpt.com/docs/agent-configuration/rules)。本文に記した参照範囲と採用判断の根拠。
+[^learn-docs-sandboxing]: [OpenAI：Sandbox](https://learn.chatgpt.com/docs/sandboxing)。本文に記した参照範囲と採用判断の根拠。

@@ -2,11 +2,32 @@
 type: Guide
 title: 検証済みのスキルと共通指示を届ける
 description: 同じ候補SHAの配布検証、小さな統合、mainの復旧責任、計測と学習の手順を説明します。
+sources:
+  - id: continuousdelivery-foundations-configuration-management
+    resource: https://continuousdelivery.com/foundations/configuration-management/
+  - id: continuousdelivery-implementing-patterns
+    resource: https://continuousdelivery.com/implementing/patterns/
+  - id: continuousdelivery-foundations-test-automation
+    resource: https://continuousdelivery.com/foundations/test-automation/
+  - id: microsoft-producer-compile
+    resource: https://microsoft.github.io/apm/producer/compile/#global-compilation--g
+  - id: microsoft-author-primitives-skills
+    resource: https://microsoft.github.io/apm/producer/author-primitives/skills/
+  - id: continuousdelivery-foundations-continuous-integration
+    resource: https://continuousdelivery.com/foundations/continuous-integration/
+  - id: docs-request-a-code-review-use-code-review
+    resource: https://docs.github.com/en/copilot/how-tos/use-copilot-agents/request-a-code-review/use-code-review#mcp-servers-and-agent-skills
+  - id: learn-third-party-github
+    resource: https://learn.chatgpt.com/docs/third-party/github
+  - id: github-pull-34
+    resource: https://github.com/daiksud/agents/pull/34#issuecomment-5627514742
+  - id: chatgpt-tasks-task-e-6aa34c1893508327b2c83f674db370e8
+    resource: https://chatgpt.com/codex/cloud/tasks/task_e_6aa34c1893508327b2c83f674db370e8
 ---
 
 ## 検証済みのスキルと共通指示を届ける
 
-利用者が必要なときに導入できる状態を保つため、原本のGitコミットを配布候補として扱います。バイナリを再ビルドする製品ではないため、後段でも同じSHAのMarkdown・設定・同梱ファイルを検証します。[構成管理](https://continuousdelivery.com/foundations/configuration-management/)と[デプロイメントパイプライン](https://continuousdelivery.com/implementing/patterns/)に基づく構成です。
+利用者が必要なときに導入できる状態を保つため、原本のGitコミットを配布候補として扱います。バイナリを再ビルドする製品ではないため、後段でも同じSHAのMarkdown・設定・同梱ファイルを検証します。構成管理[^continuousdelivery-foundations-configuration-management]とデプロイメントパイプライン[^continuousdelivery-implementing-patterns]に基づく構成です。
 
 ### 検証と証跡
 
@@ -77,7 +98,7 @@ apm compile --global
 
 ### 欠陥から検証を改善する
 
-[継続的テストの原則](https://continuousdelivery.com/foundations/test-automation/)に従い、探索・受け入れ検証で見つかった欠陥を、再現可能な最も小さい検証に反映します。ドメイン判断・外部契約では共有仕様と再現テストの対応を確認し、正しい仕様を不要に書き換えません。速い単体テストを優先し、実際の接続・設定等が原因なら最小の有効な統合検証を使います。スキル判断は模擬評価で検証します。テスト層を選んだ理由と必要な受け入れ検証を残します。
+継続的テストの原則[^continuousdelivery-foundations-test-automation]に従い、探索・受け入れ検証で見つかった欠陥を、再現可能な最も小さい検証に反映します。ドメイン判断・外部契約では共有仕様と再現テストの対応を確認し、正しい仕様を不要に書き換えません。速い単体テストを優先し、実際の接続・設定等が原因なら最小の有効な統合検証を使います。スキル判断は模擬評価で検証します。テスト層を選んだ理由と必要な受け入れ検証を残します。
 
 スキルの模擬評価では、同じ入力・採点基準を使って変更前後を新しい独立した実行コンテキストで比較し、原回答・採点根拠・比較HTMLを保存します。形式検査・導入成功と判断品質を区別し、欠測を成功扱いしません。
 
@@ -109,7 +130,7 @@ apm compile --global
 
 構成・整形・保存後の本文と表示の確認は[GitHub向けMarkdownの品質](../../skills/task-workflow/references/markdown-quality.md)に従います。以下は本リポジトリで同じ検査を実行する設定とコマンドです。
 
-共通設定は `task-workflow` に同梱され、本リポジトリの `.rumdl.toml` も同じ設定を継承します。MD013・MD033・MD034・MD041のみを無効化し、MD060をcompact、MD076をtightにします。その他のルールは既定のままです。
+共通設定は `task-workflow` に同梱され、本リポジトリの `.rumdl.toml` も同じ設定を継承します。MD013・MD033・MD034・MD041のみを無効化し、MD060をcompact、MD076をtightにします。通常概念ではその他のルールは既定のままです。Attested Computationは [計算文書の検証](../../skills/okf-docs/references/computation.md#markdownと契約を合わせて検証する) に従い、MD025のtitleの扱いだけを限定して調整します。
 
 リポジトリ直下で、継承設定を明示して実行します。
 
@@ -122,14 +143,18 @@ rumdl check --config .rumdl.toml --deny-config-warnings <変更したMarkdownフ
 
 rumdlは自動インストールしません。未導入・旧版の場合は導入方法を示して事前許可を得ます。ダウンロードを伴う一時実行も同様です。未検証の投稿は保留します。
 
+原本リポジトリのBundleルートはリポジトリ直下です。`scripts/check_repository.py` は `docs/`・`skills/`・`.apm/` と `.github/skills/` のMarkdownに同梱validatorの `authoring` を適用します。`SKILL.md` はAgent Skillsの検査、`index.md`・`log.md` は予約形式、READMEと生成AGENTS.mdは既存の固有形式を保ちます。未知メタデータを削除せず、未検証・期限切れは注意として表示します。
+
+rumdlとリンク検査はこのリポジトリの公開品質条件です。外部Bundleの受け入れは `validate_okf.py <Bundle> <対象> --profile conformance` で別に判定します。CI成功は人間の内容確認や計算の実行証明を意味しません。
+
 ### 原本と配布の検証
 
 原本のYAML・JSON、ルールの移行漏れ、参照先、rumdlと `git diff --check` を確認します。
 配布は隔離したユーザースコープで、新規・再導入・旧構成からの更新、手書きAGENTS.md保護を確認します。
 各スキルの `evals/evals.json` は外部書き込みを行わず適用判断を確認する例です。時間・トークンの新旧比較結果ではありません。
 
-- [APM: グローバルコンパイル](https://microsoft.github.io/apm/producer/compile/#global-compilation--g)
-- [APM: スキルの作成と配布](https://microsoft.github.io/apm/producer/author-primitives/skills/)
+- APM: グローバルコンパイル[^microsoft-producer-compile]
+- APM: スキルの作成と配布[^microsoft-author-primitives-skills]
 
 ### ローカルとCIで同じ検査を実行
 
@@ -155,7 +180,7 @@ gh skill install . --from-local --all --dir "$exploration_dir"
 
 GitHub Actionsは全ブランチへのpush、main向けPR、mainへの統合後、手動実行で検査します。`static-checks` 成功後にUbuntu・macOSの `acceptance` を並列実行し、失敗をマージで持ち越しません。必須チェックの定義は [.github/required-checks.json](../../.github/required-checks.json) です。初回の実行成功後、管理者が既存ルールを保持してmainの必須チェックに反映し、ジョブ名の変更時も両方を更新します。
 
-[CIの実践](https://continuousdelivery.com/foundations/continuous-integration/)と[継続的テスト](https://continuousdelivery.com/foundations/test-automation/)に基づく基盤です。APMの導入・更新・復旧と固定候補の選び方は[配布ガイド](#検証と証跡)を参照します。
+CIの実践[^continuousdelivery-foundations-continuous-integration]と継続的テスト[^continuousdelivery-foundations-test-automation]に基づく基盤です。APMの導入・更新・復旧と固定候補の選び方は[配布ガイド](#検証と証跡)を参照します。
 
 ### GitHub上のレビュー用配置
 
@@ -175,10 +200,21 @@ gh skill install . --from-local code-review --dir /tmp/review-skill-install
 
 同期先は生成専用です。原本を編集して同期し、両方をコミットします。CIで内容差分・欠落・余分なファイルを検出します。レビュー依頼・指摘対応・完了判定は[task-workflow](../../skills/task-workflow/references/review-and-merge.md#代替レビュー)が担当します。
 
-[Copilot公式資料](https://docs.github.com/en/copilot/how-tos/use-copilot-agents/request-a-code-review/use-code-review#mcp-servers-and-agent-skills)に従い、実PRの指摘の出典またはセッションログで使用したスキルを確認します。[Codex公式資料](https://learn.chatgpt.com/docs/third-party/github)によるAGENTS.mdの案内も、実PRで読み込みを検証します。通常の `@codex review`、確認できなければ原本パスを付けた依頼を順に試し、ログまたは固有手順の根拠付き適用を確認します。後者のみ成功ならパス指定を標準にし、いずれも未確認なら連携未完了とします。結果と未確認範囲はPRに記録し、パス復唱やリアクションだけを成功の証拠にしません。
+Copilot公式資料[^docs-request-a-code-review-use-code-review]に従い、実PRの指摘の出典またはセッションログで使用したスキルを確認します。Codex公式資料[^learn-third-party-github]によるAGENTS.mdの案内も、実PRで読み込みを検証します。通常の `@codex review`、確認できなければ原本パスを付けた依頼を順に試し、ログまたは固有手順の根拠付き適用を確認します。後者のみ成功ならパス指定を標準にし、いずれも未確認なら連携未完了とします。結果と未確認範囲はPRに記録し、パス復唱やリアクションだけを成功の証拠にしません。
 
-標準の依頼は `@codex review` に「`skills/code-review/SKILL.md` を読んで適用してください」を添えます。[実PRの検証](https://github.com/daiksud/agents/pull/34#issuecomment-5627514742)では、明示パス指定時に[セッションログ](https://chatgpt.com/codex/cloud/tasks/task_e_6aa34c1893508327b2c83f674db370e8)で原本本文の読み取りを確認しました。ログの閲覧には権限が必要です。条件付き参照だけの通常依頼では読み取りの証拠を確認できていません。
+標準の依頼は `@codex review` に「`skills/code-review/SKILL.md` を読んで適用してください」を添えます。実PRの検証[^github-pull-34]では、明示パス指定時にセッションログ[^chatgpt-tasks-task-e-6aa34c1893508327b2c83f674db370e8]で原本本文の読み取りを確認しました。ログの閲覧には権限が必要です。条件付き参照だけの通常依頼では読み取りの証拠を確認できていません。
 
 レビュー連携を設定・変更した場合だけ、通常依頼と原本パス付き依頼の読み込みを検証します。先行レビューの終了を確認してから次を依頼し、ログのファイル読み取り、または固有の判断手順が具体的根拠に適用された結果を確認します。通常レビューに証明用の定型報告を要求しません。両方未確認なら連携未完了として記録します。
 
 APMのパッケージキャッシュにルートやディレクトリ別のAGENTS.mdが保存されることと、共通指示として実行時に適用されることを区別します。生成されたCodex・Copilotの本文は共通指示の原本と照合し、配布スキルにはローカル編集指示への依存がないことを確認します。
+
+[^continuousdelivery-foundations-configuration-management]: [構成管理](https://continuousdelivery.com/foundations/configuration-management/)。本文に記した参照範囲と採用判断の根拠。
+[^continuousdelivery-implementing-patterns]: [デプロイメントパイプライン](https://continuousdelivery.com/implementing/patterns/)。本文に記した参照範囲と採用判断の根拠。
+[^continuousdelivery-foundations-test-automation]: [継続的テストの原則](https://continuousdelivery.com/foundations/test-automation/)。本文に記した参照範囲と採用判断の根拠。
+[^microsoft-producer-compile]: [APM: グローバルコンパイル](https://microsoft.github.io/apm/producer/compile/#global-compilation--g)。本文に記した参照範囲と採用判断の根拠。
+[^microsoft-author-primitives-skills]: [APM: スキルの作成と配布](https://microsoft.github.io/apm/producer/author-primitives/skills/)。本文に記した参照範囲と採用判断の根拠。
+[^continuousdelivery-foundations-continuous-integration]: [CIの実践](https://continuousdelivery.com/foundations/continuous-integration/)。本文に記した参照範囲と採用判断の根拠。
+[^docs-request-a-code-review-use-code-review]: [Copilot公式資料](https://docs.github.com/en/copilot/how-tos/use-copilot-agents/request-a-code-review/use-code-review#mcp-servers-and-agent-skills)。本文に記した参照範囲と採用判断の根拠。
+[^learn-third-party-github]: [Codex公式資料](https://learn.chatgpt.com/docs/third-party/github)。本文に記した参照範囲と採用判断の根拠。
+[^github-pull-34]: [実PRの検証](https://github.com/daiksud/agents/pull/34#issuecomment-5627514742)。本文に記した参照範囲と採用判断の根拠。
+[^chatgpt-tasks-task-e-6aa34c1893508327b2c83f674db370e8]: [セッションログ](https://chatgpt.com/codex/cloud/tasks/task_e_6aa34c1893508327b2c83f674db370e8)。本文に記した参照範囲と採用判断の根拠。

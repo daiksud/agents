@@ -2,6 +2,15 @@
 type: Template
 title: インストラクションの汎用テンプレート
 description: 再利用できるインストラクションの記入欄、記入指針、確認項目を提供します。
+sources:
+  - id: docs-prompting-response-customization
+    resource: https://docs.github.com/en/copilot/concepts/prompting/response-customization
+  - id: learn-guides-best-practices
+    resource: https://learn.chatgpt.com/guides/best-practices
+  - id: code-en-best-practices
+    resource: https://code.claude.com/docs/en/best-practices
+  - id: github-instructions-instructions-instructions-md
+    resource: https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/instructions/instructions.instructions.md
 ---
 
 ## インストラクションの汎用テンプレート
@@ -15,7 +24,8 @@ description: 再利用できるインストラクションの記入欄、記入�
 
 以下の文章作法は、このリポジトリのAGENTS.md、共通指示、スキル本文の編集に使う。形式は対象の編集指示を優先し、下のOKFテンプレートをSKILL.mdや既存のfrontmatterなしAGENTS.mdへそのまま適用しない。
 
-- OKF対象の文書はOKF v0.2の形式にし、`type`・`title`・`description` を記載する。指示は `Instruction`、編集用テンプレートは `Template` を使用する。
+- OKFの通常概念には仕様必須の `type` と、自作時の追加条件の `title`・`description` を記載する。指示は `Instruction`、編集用テンプレートは `Template` を使用する。索引・履歴は予約形式とし、この概念用テンプレートを使わない。
+- 出典・確認履歴を持つ文書の更新は [okf-docs](../../skills/okf-docs/SKILL.md) に従う。外部の根拠を `sources` と安定ID脚注で結び、確認していない生成者・確認者・時刻・期限を補わない。
 - 一つの箇条書きには一つの指示を書く。短く、その指示だけで意味が通じる文にする。
 - 指示が読み込まれる場面に繰り返し役立つ基準を書く。個別タスクの目標・関連情報・制約・完了条件や進捗は依頼時に伝え、共通指示・AGENTS.md・スキル本文に残さない。
 - コードだけでは分からない背景や設計判断、標準と異なる規約、環境固有の注意点を優先する。
@@ -43,29 +53,29 @@ title: <インストラクション名>
 description: <この指示の対象と目的を一文で書く。>
 ---
 
-# <インストラクション名>
+## <インストラクション名>
 
-## 概要
+### 概要
 
 - <目的と目標を書く。>
 - <コードから読み取れない背景や、このプロジェクト固有の設計判断を書く。>
 
-## 適用範囲
+### 適用範囲
 
 - <この指示を適用するタスクや場面を書く。>
 - <対象外となる場面があれば、その条件を書く。>
 
-## 使用する技術（必要な場合）
+### 使用する技術（必要な場合）
 
 - <設定ファイルだけでは分からない技術の用途や、選択上の制約を書く。>
 - <作業に必要で、見落としやすいバージョンの制約や設定を書く。>
 
-## ディレクトリ構成（必要な場合）
+### ディレクトリ構成（必要な場合）
 
 - <作業先の判断に必要な主要ディレクトリだけを挙げ、パスと役割を書く。ファイルごとの一覧は作らない。>
 - <特定の場所に適用する指示があれば、その対象と指示ファイルのパスを書く。>
 
-## 実行と検証のコマンド（必要な場合）
+### 実行と検証のコマンド（必要な場合）
 
 - 準備: <依存関係の導入や初期設定のコマンドを書く。>
 - 起動: <プロジェクトを実行するコマンドを書く。>
@@ -75,36 +85,35 @@ description: <この指示の対象と目的を一文で書く。>
 - <上記のコマンドの実行ディレクトリや前提条件を書く。>
 - <必須の環境変数名や環境固有の注意点を書く。秘密値は記載しない。>
 
-## コーディング規約（必要な場合）
+### コーディング規約（必要な場合）
 
 - <標準的な慣習や自動設定だけでは伝わらない命名・フォーマット規約を書く。>
 - <このプロジェクトで従う実装上の慣習を書く。>
 
-## PRとレビュー（必要な場合）
+### PRとレビュー（必要な場合）
 
 - <PRの説明に含める内容を書く。>
 - <レビューを依頼する条件と、提出前に済ませる確認を書く。>
 - <差分を確認する観点を書く。例: 不具合、既存機能への影響、依頼との一致。>
 
-## 制約とその他のルール（必要な場合）
+### 制約とその他のルール（必要な場合）
 
 - <必ず守る具体的な行動や形式を書く。>
 - <条件によって行動が変わる場合は、その条件と行動を書く。>
 - <禁止事項があれば、対象と条件を明記する。>
 - <繰り返し起きる落とし穴や、直感に反する挙動と対処方法を書く。>
 
-## 手順（順序が必要な場合）
-
+### 手順（順序が必要な場合）
 
 1. <最初に行うことを書く。>
 2. <次に行うことを書く。>
 3. <結果の確認方法と、期待する状態を書く。>
 
-## 例外（必要な場合）
+### 例外（必要な場合）
 
 - <通常のルールを適用できない条件と、その場合の行動を書く。>
 
-## 完了条件（必要な場合）
+### 完了条件（必要な場合）
 
 - <完了と判断するために満たす、確認可能な条件を書く。>
 - <エージェントが実行・観察できる検証方法と、合否を判断する期待結果を書く。>
@@ -112,11 +121,11 @@ description: <この指示の対象と目的を一文で書く。>
 - <検証できない場合の対応と、報告する未確認事項を書く。>
 - <完了報告に添える検証の証拠を書く。例: 実行したコマンドと結果、画面の比較。>
 
-## 例（必要な場合）
+### 例（必要な場合）
 
 - <ルールに沿った具体例を書く。>
 
-## 関連資料（必要な場合）
+### 関連資料（必要な場合）
 
 - <詳細な指示を分けた場合は、そのファイルへのリンクと参照する条件を書く。>
 - <補足資料があれば、そのリンクと補足する内容を書く。>
@@ -130,7 +139,7 @@ description: <この指示の対象と目的を一文で書く。>
 
 ### 適用前の確認
 
-- 対象の形式規則を満たす。OKF文書はYAML frontmatterを解析でき、`type`・`title`・`description` が空でない。
+- 対象の形式規則を満たす。自作する通常概念はYAML frontmatterを解析でき、`type`・`title`・`description` が空でない。予約ファイルと固有形式は各形式を検査し、外部Bundleの適合判定に自作時の追加条件を流用しない。
 - `<…>` の記入欄が残っていない。
 - 各ルールについて、適用する条件と取るべき行動を読み取れる。
 - 既存の指示との重複や矛盾がない。
@@ -149,15 +158,20 @@ description: <この指示の対象と目的を一文で書く。>
 
 ### 参考
 
-- [GitHub Docs: About customizing GitHub Copilot responses](https://docs.github.com/en/copilot/concepts/prompting/response-customization)
+- GitHub Docs: About customizing GitHub Copilot responses[^docs-prompting-response-customization]
   — 短く自己完結した指示と、適用範囲を意識した記述の根拠。
-- [OpenAI: Best practices](https://learn.chatgpt.com/guides/best-practices)
+- OpenAI: Best practices[^learn-guides-best-practices]
   — 再利用する指示の範囲、計画・検証・レビュー、実際の問題に基づく改善の参考。
-- [Anthropic: Best practices for Claude Code](https://code.claude.com/docs/en/best-practices)
+- Anthropic: Best practices for Claude Code[^code-en-best-practices]
   — 指示に含める情報の選別と削減、挙動による効果確認、実行可能な検証の参考。
 
 ### 参照元と適用判断
 
-[GitHub awesome-copilotのCustom Instructions File Guidelines](https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/instructions/instructions.instructions.md)を2026-09-11に確認した。目的・適用範囲を示し、最小限の規則、具体的な条件と行動、必要な理由と例、実際の失敗に基づく見直しを使う。
+GitHub awesome-copilotのCustom Instructions File Guidelines[^github-instructions-instructions-instructions-md]を2026-09-11に確認した。目的・適用範囲を示し、最小限の規則、具体的な条件と行動、必要な理由と例、実際の失敗に基づく見直しを使う。
 
 本環境では既存のOKF・Agent Skills・AGENTS.mdの形式とAPMの配置を維持する。参照元の `.github/instructions/` 配置、`applyTo` 必須、固定章構成、すべての規則へのコード例は要求しない。共通指示には `applyTo` を付けず、仮想の失敗を埋めるための規則を増やさない。
+
+[^docs-prompting-response-customization]: [GitHub Docs: About customizing GitHub Copilot responses](https://docs.github.com/en/copilot/concepts/prompting/response-customization)。本文に記した参照範囲と採用判断の根拠。
+[^learn-guides-best-practices]: [OpenAI: Best practices](https://learn.chatgpt.com/guides/best-practices)。本文に記した参照範囲と採用判断の根拠。
+[^code-en-best-practices]: [Anthropic: Best practices for Claude Code](https://code.claude.com/docs/en/best-practices)。本文に記した参照範囲と採用判断の根拠。
+[^github-instructions-instructions-instructions-md]: [GitHub awesome-copilotのCustom Instructions File Guidelines](https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/instructions/instructions.instructions.md)。本文に記した参照範囲と採用判断の根拠。
