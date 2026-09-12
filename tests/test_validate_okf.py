@@ -673,3 +673,24 @@ class ValidationTests(unittest.TestCase):
             self.assertEqual([], self.errors(self.check(self.concept(extra), profile)))
             duplicate = 'x-extension: {1: first, 0x1: repeated_integer}\n'
             self.assertTrue(self.errors(self.check(self.concept(duplicate), profile)))
+
+    def test_large_float_keys_do_not_collapse_to_python_infinity(self):
+        for profile in ('conformance', 'authoring'):
+            extra = 'x-extension: {1.0e+999: first, 2.0e+999: second}\n'
+            self.assertEqual([], self.errors(self.check(self.concept(extra), profile)))
+            for mapping in ['{1.0e+999: first, 10.0e+998: same}',
+                            '{1:01.5: first, 61.5: same}', '{.nan: first, .NaN: same}']:
+                self.assertTrue(self.errors(self.check(self.concept('x-extension: ' + mapping + '\n'), profile)))
+            precise = 'x-extension: {1.0000000000000001: first, 1.0000000000000002: second}\n'
+            self.assertEqual([], self.errors(self.check(self.concept(precise), profile)))
+
+    def test_computation_requires_a_path_for_local_uri_references(self):
+        for resource in ['#missing', '?revision=1', '?revision=1#missing']:
+            text = self.concept(f'runtime: python\ncomputation: "{resource}"\n')
+            text = text.replace('type: Reference', 'type: Attested Computation')
+            with self.subTest(resource=resource):
+                self.assertEqual(['computation'],
+                                 [x.field for x in self.errors(self.check(text, 'authoring'))])
+                self.assertEqual([], self.errors(self.check(text)))
+        text = self.concept('computation: https://example.com\n')
+        self.assertEqual([], self.errors(self.check(text, 'authoring')))

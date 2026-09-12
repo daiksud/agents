@@ -3,6 +3,7 @@ import argparse
 from collections import Counter
 from dataclasses import dataclass
 from datetime import date, datetime, timezone
+from decimal import Decimal, DecimalException, localcontext
 from pathlib import Path
 import os
 import re
@@ -33,6 +34,26 @@ def require_environment():
                            'use the bundled requirements.txt; no packages were installed')
 
 
+def float_key_identity(spelling):
+    """Keep scalar precision when checking YAML keys, without expanding exponents."""
+    value = spelling.replace('_', '').lower()
+    if value.lstrip('+-') == '.nan':
+        return 'nan'
+    try:
+        if ':' not in value:
+            return Decimal(value.replace('.inf', 'inf'))
+        # YAML 1.1 base-60 notation has a finite decimal fraction.
+        with localcontext() as context:
+            context.prec = max(28, len(value) * 2)
+            result = Decimal(0)
+            for part in value.lstrip('+-').split(':'):
+                result = result * 60 + Decimal(part)
+            return -result if value.startswith('-') else result
+    except DecimalException:
+        # An implementation limit must not collapse unrelated opaque keys.
+        return ('spelling', value)
+
+
 if yaml is not None:
     class UniqueKeyLoader(yaml.SafeLoader):
         """Reject duplicate explicit keys before SafeLoader expands YAML merges."""
@@ -51,7 +72,9 @@ if yaml is not None:
                        else self.construct_object(key_node, deep=deep))
                 try:
                     # YAML distinguishes bool/int/float keys even when Python equates them.
-                    identity = (key_node.tag, key)
+                    canonical = (float_key_identity(key_node.value)
+                                 if key_node.tag == 'tag:yaml.org,2002:float' else key)
+                    identity = (key_node.tag, canonical)
                     if identity in seen:
                         raise yaml.constructor.ConstructorError(
                             'while constructing a mapping', node.start_mark,
@@ -372,6 +395,9 @@ def contract_issues(path, bundle, data, document):
             return
         try:
             parsed = urlsplit(value)
+            if require_file and not (parsed.path or parsed.scheme or parsed.netloc):
+                error(field, 'a local computation reference must include a file path')
+                return
             if descriptor:
                 resource_path = unquote(parsed.path)
                 explicit_path = (parsed.scheme or parsed.netloc
