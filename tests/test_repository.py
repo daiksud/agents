@@ -99,6 +99,19 @@ class MetadataTests(unittest.TestCase):
                 self.assertEqual(metadata_ok, not errors)
                 self.assertEqual(markdown_ok, check_markdown(self.root, [path]) == 0)
 
+    def test_external_computation_keeps_normal_title_check(self):
+        from scripts.check_repository import check_markdown
+        common = Path(__file__).resolve().parents[1] / 'skills/task-workflow/assets/rumdl.toml'
+        (self.root / '.rumdl.toml').write_text(f'extends = "{common}"\n')
+        (self.root / 'formula.py').write_text('print(1)\n')
+        text = ('---\ntype: Attested Computation\ntitle: Example\n'
+                'description: Example contract.\nruntime: python\n'
+                'computation: ../formula.py\n---\n\n# Notes\n\nA separate definition.\n')
+        self.assertEqual([], self.check('docs/external.md', text))
+        self.assertNotEqual(0, check_markdown(self.root, [self.root / 'docs/external.md']))
+        self.assertEqual([], self.check('docs/external.md', text.replace('# Notes', '## Notes')))
+        self.assertEqual(0, check_markdown(self.root, [self.root / 'docs/external.md']))
+
     def test_eval_contract(self):
         data = {'skill_name': 'sample', 'evals': [
             {'id': 1, 'prompt': 'Review.', 'expected_output': 'Find defect.', 'files': []}]}

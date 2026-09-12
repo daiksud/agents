@@ -104,7 +104,8 @@ def check_markdown(root, paths):
             data = yaml.load(match[1], Loader=okf.UniqueKeyLoader) if match else None
             computation = (okf_target(path.relative_to(root))
                            and path.name not in {'index.md', 'log.md'}
-                           and isinstance(data, dict) and data.get('type') == 'Attested Computation')
+                           and isinstance(data, dict) and data.get('type') == 'Attested Computation'
+                           and 'computation' not in data)
         except (ValueError, yaml.YAMLError, OSError, RecursionError):
             pass  # Metadata validation reports malformed documents separately.
         groups[computation].append(path)
