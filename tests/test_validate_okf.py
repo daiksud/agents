@@ -96,9 +96,12 @@ class ValidationTests(unittest.TestCase):
     def test_examples_and_ordinary_footnotes(self):
         body = ('A footnote.[^note]\n\n[^note]: An explanation, not an external claim.\n'
                 '````md\nExample.[^missing]\n[^fake]: Example\n```\n````\n'
-                '`[^inline]` and \\[^escaped].\n    [^indented]: Code\n')
+                '`[^inline]` and \\[^escaped].\n\n    [^indented]: Code\n')
         self.assertEqual([], self.errors(self.check(self.concept(body=body), 'authoring')))
         self.assertTrue(self.errors(self.check(self.concept(body='Fact.[^missing]\n'), 'authoring')))
+        # Without the blank line this is paragraph continuation, not a code block.
+        self.assertTrue(self.errors(self.check(self.concept(body=body.replace(
+            '\n\n    [^indented]', '\n    [^indented]')), 'authoring')))
 
     def test_known_metadata_formats_and_optional_families(self):
         valid = ('tags: [finance]\nstatus: stable\n'
@@ -471,3 +474,46 @@ class ValidationTests(unittest.TestCase):
             text = self.concept('runtime: python\n', body).replace('type: Reference','type: Attested Computation')
             with self.subTest(body=body):
                 self.assertEqual([], self.errors(self.check(text, 'authoring')))
+
+    def test_parser_handles_visible_markdown_boundaries(self):
+        self.write('real.md', self.concept())
+        for body in ['# Group\n<div>\n- [Fake](real.md)\n</div>\n',
+                     '# Group\n- [X](real.md garbage)\n']:
+            for profile in ('conformance', 'authoring'):
+                with self.subTest(body=body, profile=profile):
+                    self.assertTrue(self.errors(self.check(body, profile, 'index.md')))
+        for target in ['<https://example.com/page>', '<person@example.com>']:
+            with self.subTest(target=target):
+                self.assertEqual([], self.errors(self.check('# Group\n- '+target+'\n', 'authoring', 'index.md')))
+        with self.subTest(escaped_code=True):
+            self.assertTrue(self.errors(self.check(self.concept(body=r'\` [Target](missing.md) `'), 'authoring')))
+
+    def test_computation_uses_actual_parser_fence_boundaries(self):
+        for body, valid in [('# Computation\n`<!--`\n```python\nprint(1)\n```\n', True),
+                            ('# Computation\n- ```python\n  print(1)\nOutside list\n```\n', False)]:
+            text = self.concept('runtime: python\n', body).replace('type: Reference','type: Attested Computation')
+            with self.subTest(body=body):
+                self.assertEqual(valid, not self.errors(self.check(text, 'authoring')))
+
+    def test_unclosed_destinations_complete_promptly(self):
+        import subprocess
+        self.write('index.md', '# Group\n- ' + '[x](' * 6400 + '\n')
+        result = subprocess.run([sys.executable, str(SCRIPT), str(self.root)],
+                                capture_output=True, text=True, timeout=3)
+        self.assertEqual(1, result.returncode)
+
+    def test_missing_markdown_dependency_is_an_environment_error(self):
+        import subprocess
+        code = ('import builtins, runpy, sys\n'
+                'original = builtins.__import__\n'
+                'def without_markdown(name, *args, **kwargs):\n'
+                '    if name == "markdown_it": raise ImportError("not installed")\n'
+                '    return original(name, *args, **kwargs)\n'
+                'builtins.__import__ = without_markdown\n'
+                'sys.argv = [sys.argv[1], sys.argv[2]]\n'
+                'runpy.run_path(sys.argv[0], run_name="__main__")\n')
+        result = subprocess.run([sys.executable, '-c', code, str(SCRIPT), str(self.root)],
+                                capture_output=True, text=True)
+        self.assertEqual(2, result.returncode)
+        self.assertIn('requirements.txt', result.stderr)
+        self.assertNotIn('Traceback', result.stderr)

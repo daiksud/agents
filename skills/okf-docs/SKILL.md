@@ -36,7 +36,16 @@ description: 要求・外部契約・受け入れ条件の仕様を含む文書�
 
 ## 検証
 
-同梱の [validate_okf.py](scripts/validate_okf.py) はPython 3とPyYAMLを使用する。既存の実行環境を確認し、利用できるPythonコマンドを使う。検査は依存の自動インストール、ファイルの書き換え、ネットワーク取得を行わない。
+同梱の [validate_okf.py](scripts/validate_okf.py) はPython 3.10以上を使用する。[requirements.txt](scripts/requirements.txt)にPyYAML、markdown-it-py、mdit-py-pluginsとその依存mdurlの検証対象版を固定している。既存の実行環境を確認し、利用できるPythonコマンドを使う。検査は依存の自動インストール、ファイルの書き換え、ネットワーク取得を行わない。
+
+依存が不足する場合は検査を未実行として、隔離venvでの環境準備を提案する。ダウンロード・インストールが既に承認された範囲なら進め、未承認なら導入対象と理由を示して承認を得る。検査成功のために無断でグローバル環境を変更しない。承認後の準備例は以下のとおり。
+
+```sh
+python3 -m venv /path/to/project/.venv-okf
+/path/to/project/.venv-okf/bin/python -m pip install -r /path/to/okf-docs/scripts/requirements.txt
+```
+
+準備した環境のPythonで検査を実行する。以下の `python3` はそのコマンドに置き換える。
 
 ```sh
 python3 /path/to/okf-docs/scripts/validate_okf.py /path/to/project/docs

@@ -15,6 +15,22 @@ except ImportError:
     yaml = None
 
 
+try:
+    from markdown_it import MarkdownIt
+    from mdit_py_plugins.footnote import footnote_plugin
+    from mdit_py_plugins.gfm_autolink import gfm_autolink_plugin
+except ImportError:
+    MarkdownIt = None
+
+
+def require_environment():
+    if sys.version_info < (3, 10):
+        raise RuntimeError('Python 3.10 or newer is required')
+    if yaml is None or MarkdownIt is None:
+        raise RuntimeError('PyYAML, markdown-it-py and mdit-py-plugins are required; '
+                           'use the bundled requirements.txt; no packages were installed')
+
+
 if yaml is not None:
     class UniqueKeyLoader(yaml.SafeLoader):
         """Reject duplicate explicit keys before SafeLoader expands YAML merges."""
@@ -57,73 +73,65 @@ def nonempty(value):
     return isinstance(value, str) and bool(value.strip())
 
 
-def structure_lines(body, *, preserve_fences=False):
-    """Normalize containers; optionally retain real fences for contract checks."""
-    fence, list_indents, paragraph = None, [], False
-    for raw in body.expandtabs(4).splitlines():
-        quoted, quote_depth = raw, 0
-        while re.match(r'^ {0,3}>', quoted):
-            quoted = re.sub(r'^ {0,3}> ?', '', quoted, count=1)
-            quote_depth += 1
-        if fence:
-            char, length, depth, base = fence
-            if quote_depth >= depth:
-                content = raw
-                for _ in range(depth):
-                    content = re.sub(r'^ {0,3}> ?', '', content, count=1)
-                if not content.strip() or len(content) - len(content.lstrip()) >= base:
-                    marker = re.match(r'^ {0,3}(`{3,}|~{3,})\s*$', content[base:])
-                    if marker and marker[1][0] == char and len(marker[1]) >= length:
-                        fence = None
-                    yield content[base:] if preserve_fences else ''
-                    continue
-            fence = None  # Leaving a list/quote ends its fenced block.
-        line = quoted
-        indent = len(line) - len(line.lstrip())
-        if line.strip():
-            while list_indents and indent < list_indents[-1]:
-                list_indents.pop()
-        base = list_indents[-1] if list_indents else 0
-        content = line[base:]
-        item = re.match(r'^( {0,3})(?:[-+*]|\d+[.)])( +)', content)
-        fence_content = content[item.end():] if item else content
-        marker = re.match(r'^ {0,3}(`{3,}|~{3,})(.*)$', fence_content)
-        if marker and not (marker[1][0] == '`' and '`' in marker[2]):
-            if item:
-                base += item.end()
-                list_indents.append(base)
-            fence = (marker[1][0], len(marker[1]), quote_depth, base)
-            paragraph = False
-            yield fence_content if preserve_fences else ''
-            continue
-        if item:
-            list_indents.append(base + item.end())
-            paragraph = False
-        elif not content.strip():
-            paragraph = False
-        elif content.startswith('    ') and not paragraph:
-            yield ''
-            continue
-        else:
-            paragraph = not bool(re.match(r'^ {0,3}(?:#|[-=]{3,}\s*$)', content))
-        # Keep quote markers so quoted headings/definitions are not root structure.
-        yield ('> ' * quote_depth) + content
+class MarkdownDocument:
+    """One syntax tree shared by every OKF body check; never render or execute it."""
+
+    def __init__(self, body):
+        parser = (MarkdownIt('commonmark')
+                  .use(footnote_plugin, inline=False, move_to_end=False, always_match_refs=True)
+                  .use(gfm_autolink_plugin))
+        self.tokens = parser.parse(body)
+        self.definitions = Counter()
+        self.refs = set()
+        self.links = []
+        self.events = []
+        items, footnote_depth = [], 0
+        for number, token in enumerate(self.tokens):
+            if token.type == 'footnote_reference_open':
+                self.definitions[token.meta['label']] += 1
+                footnote_depth += 1
+            elif token.type == 'footnote_reference_close':
+                footnote_depth -= 1
+            elif token.type == 'inline':
+                links = []
+                for child in token.children or []:
+                    if child.type == 'link_open':
+                        links.append(child.attrGet('href'))
+                    elif child.type == 'footnote_ref':
+                        self.refs.add(child.meta['label'])
+                self.links.extend(links)
+                if not footnote_depth:
+                    for item in items:
+                        item['content'] |= bool(token.content.strip())
+                        item['links'] |= bool(links)
+            if footnote_depth or token.type.startswith('footnote_reference_'):
+                continue
+            if token.type == 'heading_open' and token.level == 0:
+                inline = self.tokens[number + 1]
+                title = ''.join(c.content for c in inline.children or []
+                                if c.type in ('text', 'code_inline'))
+                self.events.append(('heading', int(token.tag[1:]), title))
+            elif token.type == 'list_item_open':
+                items.append({'content': False, 'links': False})
+            elif token.type == 'list_item_close':
+                item = items.pop()
+                self.events.append(('item', item['content'], item['links']))
+            elif token.type in ('fence', 'code_block'):
+                for item in items:
+                    item['content'] |= bool(token.content.strip())
+                if token.type == 'fence':
+                    # The parser's map includes a closing marker only when one
+                    # was consumed; implicit EOF/container closure has no extra line.
+                    closed = token.map[1] - token.map[0] == len(token.content.splitlines()) + 2
+                    self.events.append(('fence', closed, bool(token.content.strip())))
 
 
-def reserved_issues(path, bundle, data, body, has_frontmatter, profile):
+def reserved_issues(path, bundle, data, document, has_frontmatter, profile):
     issues = []
 
     def error(field, message):
         issues.append(Issue(path, field, message, 'specification'))
 
-    content = prose(body, remove_escapes=False)
-    lines = content.splitlines()
-    definitions = reference_definitions(content)
-    for i, line in enumerate(lines):
-        if i and re.fullmatch(r' {0,3}(?:=+|-+)\s*', line) and lines[i - 1].strip():
-            if not re.match(r'^ {0,3}(?:#|[-+*]\s|\d+[.)]\s)', lines[i - 1]):
-                lines[i - 1] = ('# ' if line.lstrip().startswith('=') else '## ') + lines[i - 1].strip()
-                lines[i] = ''
     if path.name == 'index.md':
         if profile == 'authoring':
             concept_fields = {'type', 'title', 'description', 'resource', 'tags', 'sources',
@@ -135,16 +143,14 @@ def reserved_issues(path, bundle, data, body, has_frontmatter, profile):
                                 or 'okf_version' not in data or 'type' in data):
             error('frontmatter', 'only a bundle-root index may declare okf_version; not a concept')
         sections, entries = [], 0
-        for line in lines:
-            heading = re.match(r'^ {0,3}(#{1,6})\s+\S', line)
-            if heading:
-                level = len(heading[1])
+        for kind, first, second in document.events:
+            if kind == 'heading':
+                level = first
                 while sections and sections[-1][0] >= level:
                     if not sections.pop()[1]:
                         error('body', 'index section must contain linked list entries')
                 sections.append([level, 0])
-            elif (sections and re.match(r'^ {0,3}(?:[-+*]|\d+[.)])\s+', line)
-                  and any(linked_paths(line, definitions=definitions))):
+            elif kind == 'item' and sections and second:
                 entries += 1
                 for section in sections:
                     section[1] += 1
@@ -154,22 +160,21 @@ def reserved_issues(path, bundle, data, body, has_frontmatter, profile):
         if has_frontmatter:
             error('frontmatter', 'log has no concept frontmatter')
         dates, entries = [], 0
-        for line in lines:
-            heading = re.match(r'^ {0,3}##\s+(.+?)(?:\s+#+)?\s*$', line)
-            if heading:
+        for kind, first, second in document.events:
+            if kind == 'heading' and first == 2:
                 if dates and not entries:
                     error('body', 'each log date needs list entries')
                 entries = 0
                 try:
-                    if not re.fullmatch(r'\d{4}-\d{2}-\d{2}', heading[1]):
+                    if not re.fullmatch(r'\d{4}-\d{2}-\d{2}', second):
                         raise ValueError()
-                    stamp = date.fromisoformat(heading[1])
+                    stamp = date.fromisoformat(second)
                     if dates and stamp >= dates[-1]:
                         error('body', 'log dates must be distinct and newest first')
                     dates.append(stamp)
                 except ValueError:
                     error('body', 'log date must be a real YYYY-MM-DD date')
-            elif re.match(r'^ {0,3}[-+*]\s+\S', line) and dates:
+            elif kind == 'item' and first and dates:
                 entries += 1
         if not dates or not entries:
             error('body', 'log requires date headings and list entries')
@@ -189,15 +194,7 @@ def timestamp(value):
     return parsed if parsed.utcoffset() is not None else None
 
 
-def prose(body, *, remove_escapes=True):
-    text = '\n'.join(structure_lines(body))
-    # Matched code spans only; an unmatched backtick remains prose.
-    text = re.sub(r'(`+)(?!`)(.+?)(?<!`)\1(?!`)', '', text, flags=re.S)
-    text = re.sub(r'<!--.*?(?:-->|\Z)', '', text, flags=re.S)
-    return re.sub(r'\\[\\`*{}\[\]()#+.!_>~-]', '', text) if remove_escapes else text
-
-
-def metadata_issues(path, data, body):
+def metadata_issues(path, data, document):
     issues = []
 
     def error(field, message):
@@ -296,9 +293,7 @@ def metadata_issues(path, data, body):
                 error(field + '.usage_count', 'must be a nonnegative integer')
             if 'usage_window' not in source and 'usage_window' not in data:
                 error(field + '.usage_count', 'requires a source or shared usage_window')
-    content = footnote_content(body)
-    definitions = Counter(re.findall(r'^ {0,3}\[\^([^]\s]+)\]:', content, re.M))
-    refs = re.findall(r'\[\^([^]\s]+)\](?!:)', content)
+    definitions, refs = document.definitions, document.refs
     for key, count in definitions.items():
         if count > 1:
             error('footnotes.' + key, 'duplicate footnote definition')
@@ -353,177 +348,7 @@ def local_target(value, path, bundle):
             else path.parent / relative)
 
 
-def markdown_destination(text):
-    if text.startswith('<'):
-        end = text.find('>')
-        return text[1:end] if end >= 0 else ''
-    result, depth, escaped = [], 0, False
-    for char in text:
-        if escaped:
-            result.append(char)
-            escaped = False
-            continue
-        if char == '\\':
-            escaped = True
-            continue
-        if char == ')' and depth == 0 or char.isspace() and depth == 0:
-            break
-        if char == '(':
-            depth += 1
-        elif char == ')':
-            depth -= 1
-        result.append(char)
-    return ''.join(result)
-
-
-def bracket_label(text, start):
-    """Read a Markdown label, respecting escaped and nested brackets."""
-    depth, result, i = 1, [], start + 1
-    while i < len(text):
-        char = text[i]
-        if char == '\\' and i + 1 < len(text):
-            result.append(text[i + 1])
-            i += 2
-            continue
-        if char == '[':
-            depth += 1
-        elif char == ']':
-            depth -= 1
-            if depth == 0:
-                return ''.join(result), i + 1
-        result.append(char)
-        i += 1
-    return None, start + 1
-
-
-def normalized_label(text):
-    return ' '.join(text.split()).casefold()
-
-
-def reference_definitions(content, *, mask=False):
-    definitions = {}
-    lines = content.splitlines()
-    hidden = set()
-    for number, line in enumerate(lines):
-        if line.startswith('    '):
-            continue
-        line = line.lstrip()
-        if line.startswith('[') and not line.startswith('[^'):
-            label, end = bracket_label(line, 0)
-            if label is not None and line[end:end + 1] == ':':
-                value = line[end + 1:].lstrip()
-                if not value and number + 1 < len(lines):
-                    value = lines[number + 1].lstrip()
-                target = markdown_destination(value)
-                if target:
-                    definitions.setdefault(normalized_label(label), target)
-                    hidden.add(number)
-                    if not line[end + 1:].strip():
-                        hidden.add(number + 1)
-    return ('\n'.join('' if i in hidden else line for i, line in enumerate(lines))
-            if mask else definitions)
-
-
-HTML_TOKEN = re.compile(r'''<(?:/?[A-Za-z][A-Za-z0-9-]*\b(?:[^'">]|"[^"]*"|'[^']*')*|[A-Za-z][A-Za-z0-9+.-]*:[^<>]*)>''')
-
-
-def inline_link_end(content, start):
-    """Find the end of a parenthesized destination and optional title."""
-    depth, quote, i = 1, None, start + 1
-    while i < len(content):
-        char = content[i]
-        if char == '\\':
-            i += 2
-            continue
-        if quote:
-            if char == quote:
-                quote = None
-        elif char == '<':
-            quote = '>'
-        elif char in '\"\'' and content[i - 1].isspace():
-            quote = char
-        elif char == '(':
-            depth += 1
-        elif char == ')':
-            depth -= 1
-            if not depth:
-                return i + 1
-        i += 1
-    return None
-
-
-def footnote_content(body):
-    """Retain visible labels/text, excluding destinations and HTML attributes."""
-    content = reference_definitions(prose(body, remove_escapes=False), mask=True)
-    content = HTML_TOKEN.sub('', content)
-    result, i = [], 0
-    while i < len(content):
-        if content[i] == '\\':
-            i += 2
-            continue
-        result.append(content[i])
-        if content[i:i + 2] == '](':
-            j = inline_link_end(content, i + 1)
-            if j is not None:
-                i = j
-                continue
-        i += 1
-    return ''.join(result)
-
-
-def linked_paths(body, *, definitions=None):
-    content = prose(body, remove_escapes=False)
-    if definitions is None:
-        definitions = reference_definitions(content)
-    content = reference_definitions(content, mask=True)
-    # Identify unmatched openings once; keep valid inner links discoverable.
-    stack, closed, escaped = [], set(), False
-    for position, char in enumerate(content):
-        if escaped:
-            escaped = False
-        elif char == '\\':
-            escaped = True
-        elif char == '[':
-            stack.append(position)
-        elif char == ']' and stack:
-            closed.add(stack.pop())
-    i = 0
-    while i < len(content):
-        if content[i] == '\\':
-            i += 2
-            continue
-        if content[i] == '<':
-            html = HTML_TOKEN.match(content, i)
-            if html:
-                i = html.end()
-                continue
-        if content[i] == '!' and i + 1 in closed:
-            _, i = bracket_label(content, i + 1)
-            continue
-        if content[i] != '[' or i not in closed:
-            i += 1
-            continue
-        label, end = bracket_label(content, i)
-        i = end
-        if label is None or label.startswith('^'):
-            continue
-        if content[end:end + 1] == '(':
-            stop = inline_link_end(content, end)
-            if stop is not None:
-                target = markdown_destination(content[end + 1:stop - 1].lstrip())
-                i = stop
-                if target:
-                    yield target
-        elif content[end:end + 1] != ':':
-            if content[end:end + 1] == '[':
-                reference, i = bracket_label(content, end)
-                label = reference or label
-            key = normalized_label(label)
-            if key in definitions:
-                yield definitions[key]
-
-
-def contract_issues(path, bundle, data, body):
+def contract_issues(path, bundle, data, document):
     issues = []
 
     def error(field, message):
@@ -553,7 +378,7 @@ def contract_issues(path, bundle, data, body):
             except (ValueError, RuntimeError):
                 error(field, 'invalid local path')
 
-    for value in linked_paths(body):
+    for value in document.links:
         link(value, 'links')
     if 'resource' in data and nonempty(data['resource']):
         link(data['resource'], 'resource')
@@ -602,56 +427,25 @@ def contract_issues(path, bundle, data, body):
     if 'computation' in data:
         link(data['computation'], 'computation', require_file=True)
     if is_computation:
-        # Count real fences under the conventional heading, before its next peer.
-        active, level, fence, count, has_content = False, 0, None, 0, False
-        comment = False
-        for line in structure_lines(body, preserve_fences=True):
-            if not fence:
-                visible = ''
-                while line:
-                    if comment:
-                        end = line.find('-->')
-                        if end < 0:
-                            line = ''
-                        else:
-                            line, comment = line[end + 3:], False
-                    else:
-                        start = line.find('<!--')
-                        if start < 0:
-                            visible += line
-                            break
-                        visible += line[:start]
-                        line, comment = line[start + 4:], True
-                line = visible
-            marker = re.match(r'^ {0,3}(`{3,}|~{3,})(.*)$', line)
-            if fence:
-                if marker and marker[1][0] == fence[0] and len(marker[1]) >= fence[1] and not marker[2].strip():
-                    fence = None
-                elif active and line.strip():
-                    has_content = True
-                continue
-            if marker:
-                fence = (marker[1][0], len(marker[1]))
-                if active:
-                    count += 1
-                continue
-            heading = re.match(r'^ {0,3}(#{1,6})\s+(.+?)(?:\s+#+)?\s*$', line)
-            if heading:
-                if heading[2] == 'Computation':
-                    active, level = True, len(heading[1])
-                elif len(heading[1]) <= level:
+        active, level, fences = False, 0, []
+        for kind, first, second in document.events:
+            if kind == 'heading':
+                if second == 'Computation':
+                    active, level = True, first
+                elif first <= level:
                     active = False
-        if 'computation' in data and count:
+            elif kind == 'fence' and active:
+                fences.append((first, second))
+        if 'computation' in data and fences:
             error('computation', 'choose a file or an inline Computation fence, not both')
-        elif 'computation' not in data and (count != 1 or (fence and active) or not has_content):
+        elif 'computation' not in data and (len(fences) != 1 or fences[0] != (True, True)):
             error('computation', 'requires one closed, nonempty fenced code block under Computation')
     return issues
 
 
 def validate_file(path, bundle, profile='conformance', *, now=None):
     path, bundle = Path(path), Path(bundle)
-    if yaml is None:
-        raise RuntimeError('PyYAML is required; use an existing environment with PyYAML installed')
+    require_environment()
     if profile not in ('conformance', 'authoring'):
         raise ValueError('unknown profile')
     try:
@@ -661,8 +455,9 @@ def validate_file(path, bundle, profile='conformance', *, now=None):
     match = re.match(r'\A---\r?\n(.*?)\r?\n---(?:\r?\n|\Z)', text, re.S)
     reserved = path.name in {'index.md', 'log.md'}
     if not match and reserved and not re.match(r'\A---(?:\r?\n|\Z)', text):
-        return (reserved_issues(path, bundle, {}, text, False, profile)
-                + (contract_issues(path, bundle, {}, text) if profile == 'authoring' else []))
+        document = MarkdownDocument(text)
+        return (reserved_issues(path, bundle, {}, document, False, profile)
+                + (contract_issues(path, bundle, {}, document) if profile == 'authoring' else []))
     if not match:
         return [Issue(path, 'frontmatter', 'missing YAML frontmatter', 'specification')]
     try:
@@ -671,9 +466,10 @@ def validate_file(path, bundle, profile='conformance', *, now=None):
         return [Issue(path, 'frontmatter', str(error), 'specification')]
     if not isinstance(data, dict):
         return [Issue(path, 'frontmatter', 'must be a mapping', 'specification')]
+    document = MarkdownDocument(text[match.end():]) if reserved or profile == 'authoring' else None
     if reserved:
-        return (reserved_issues(path, bundle, data, text[match.end():], True, profile)
-                + (contract_issues(path, bundle, {}, text[match.end():]) if profile == 'authoring' else []))
+        return (reserved_issues(path, bundle, data, document, True, profile)
+                + (contract_issues(path, bundle, {}, document) if profile == 'authoring' else []))
     issues = []
     if not nonempty(data.get('type')):
         issues.append(Issue(path, 'type', 'must be a nonempty string', 'specification'))
@@ -681,8 +477,8 @@ def validate_file(path, bundle, profile='conformance', *, now=None):
         for field in ('title', 'description'):
             if not nonempty(data.get(field)):
                 issues.append(Issue(path, field, 'must be a nonempty string', 'authoring'))
-        issues.extend(metadata_issues(path, data, text[match.end():]))
-        issues.extend(contract_issues(path, bundle, data, text[match.end():]))
+        issues.extend(metadata_issues(path, data, document))
+        issues.extend(contract_issues(path, bundle, data, document))
     issues.extend(state_issues(path, data, now or datetime.now(timezone.utc), profile))
     return issues
 
@@ -723,10 +519,8 @@ def main(argv=None):
     parser.add_argument('files', nargs='*', help='Markdown files relative to Bundle; default: all')
     parser.add_argument('--profile', choices=('conformance', 'authoring'), default='conformance')
     args = parser.parse_intermixed_args(argv)
-    if yaml is None:
-        print('environment: PyYAML is required; no packages were installed', file=sys.stderr)
-        return 2
     try:
+        require_environment()
         bundle = Path(os.path.abspath(args.bundle))
         now = datetime.now(timezone.utc)
         paths = selected_files(bundle, args.files)
