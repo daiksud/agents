@@ -607,3 +607,25 @@ class ValidationTests(unittest.TestCase):
                          [x.field for x in self.errors(self.check(text, 'authoring'))])
         self.write('missing policy.md', '')
         self.assertEqual([], self.errors(self.check(text, 'authoring')))
+
+    def test_scope_query_or_fragment_does_not_become_a_file_extension(self):
+        for resource in ['all queries?format=policy.md', 'all queries#policy.md',
+                         'all queries?path=references/policy.md']:
+            with self.subTest(resource=resource):
+                text = self.concept(f'sources: [{{resource: "{resource}"}}]\n')
+                self.assertEqual([], self.errors(self.check(text, 'authoring')))
+
+    def test_inline_computation_requires_a_level_one_heading(self):
+        for level in range(1, 7):
+            body = '#' * level + ' Computation\n```python\nprint(1)\n```\n'
+            text = self.concept('runtime: python\n', body).replace('type: Reference', 'type: Attested Computation')
+            with self.subTest(level=level):
+                self.assertEqual(level == 1, not self.errors(self.check(text, 'authoring')))
+                self.assertEqual([], self.errors(self.check(text)))
+
+    def test_source_path_classification_uses_decoded_uri_path(self):
+        text = self.concept('sources: [{resource: "policy%2emd"}]\n')
+        self.assertEqual(['sources[0].resource'],
+                         [x.field for x in self.errors(self.check(text, 'authoring'))])
+        self.write('policy.md', '')
+        self.assertEqual([], self.errors(self.check(text, 'authoring')))

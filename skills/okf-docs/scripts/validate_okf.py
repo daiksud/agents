@@ -339,11 +339,8 @@ def state_issues(path, data, now, profile):
     return issues
 
 
-def local_target(value, path, bundle):
-    """Return local target or None for external URLs and scope descriptors."""
-    if not nonempty(value):
-        return None
-    parsed = urlsplit(value)
+def local_target(parsed, path, bundle):
+    """Resolve a parsed URI without interpreting query or fragment as a path."""
     if parsed.netloc and not parsed.scheme:
         raise ValueError('external URL requires an explicit scheme')
     if parsed.scheme.lower() in ('http', 'https'):
@@ -368,17 +365,20 @@ def contract_issues(path, bundle, data, document):
         if not nonempty(value):
             error(field, 'must be a nonempty path or URL')
             return
-        if descriptor:
-            explicit_path = (re.match(r'^(?:\.?\.?/|[A-Za-z][A-Za-z0-9+.-]*:|[^\s/]+/)', value)
-                             or re.search(r'\.[a-zA-Z0-9]+(?:[?#].*)?$', value))
-            if not explicit_path:
-                if '/' in value:
-                    issues.append(Issue(path, field,
-                                        'ambiguous scope or path; use ./ for a local path or scope: for a scope',
-                                        'authoring', 'warning'))
-                return
         try:
-            target = local_target(value, path, bundle)
+            parsed = urlsplit(value)
+            if descriptor:
+                resource_path = unquote(parsed.path)
+                explicit_path = (parsed.scheme or parsed.netloc
+                                 or re.match(r'^(?:\.?\.?/|[^\s/]+/)', resource_path)
+                                 or re.search(r'\.[a-zA-Z0-9]+$', resource_path))
+                if not explicit_path:
+                    if '/' in value or parsed.query or parsed.fragment:
+                        issues.append(Issue(path, field,
+                                            'ambiguous scope or path; use ./ for a local path or scope: for a scope',
+                                            'authoring', 'warning'))
+                    return
+            target = local_target(parsed, path, bundle)
         except ValueError:
             error(field, 'malformed path or URL')
             return
@@ -445,7 +445,7 @@ def contract_issues(path, bundle, data, document):
         active, level, fences = False, 0, []
         for kind, first, second in document.events:
             if kind == 'heading':
-                if second == 'Computation':
+                if first == 1 and second == 'Computation':
                     active, level = True, first
                 elif first <= level:
                     active = False
