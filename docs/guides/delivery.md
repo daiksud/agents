@@ -77,7 +77,7 @@ apm compile --global
 
 [小さな統合単位と活動日](../../skills/task-workflow/references/planning.md#小さな統合単位と活動日)に従い、Issueへ開始日時・次の統合単位・検証を記録します。活動日の毎日の統合、原則1活動日以内のブランチを目安とし、超過時の理由と次の単位を更新します。
 
-マージ後は[main確認](../../skills/task-workflow/references/review-and-merge.md#統合後mainの確認と復旧)と[作業環境整理](../../skills/task-workflow/references/review-and-merge.md#マージ後の作業環境の整理)まで担当します。本リポジトリではmainのSHAと必要チェックに加えて、両OSartifactの候補・依存・配布ハッシュを照合し、正常なmain・同期・ブランチ整理の後に完了を記録します。承認・レビュー・CIを省略せず、他プロジェクト向けの[CI未設定の例外](../../skills/task-workflow/references/review-and-merge.md#ci未設定の場合)を本リポジトリへ適用しません。
+マージ後は[main確認](../../skills/task-workflow/references/review-and-merge.md#統合後mainの確認と復旧)と[作業環境整理](../../skills/task-workflow/references/review-and-merge.md#マージ後の作業環境の整理)まで担当します。本リポジトリではmainのSHAと必要チェックに加えて、両OSartifactの候補・依存・配布ハッシュを照合し、正常なmain・同期・ブランチ整理の後に完了を記録します。必要な承認・レビュー・CIを省略せず、他プロジェクト向けの[CI未設定の例外](../../skills/task-workflow/references/review-and-merge.md#ci未設定の場合)を本リポジトリへ適用しません。
 
 ### 計測の定義
 
@@ -141,7 +141,7 @@ rumdl check --config .rumdl.toml --deny-config-warnings <変更したMarkdownフ
 
 投稿用の一時本文や配布先での実行は[GitHub向けMarkdownの品質](../../skills/task-workflow/references/markdown-quality.md)に従って設定を明示指定します。`okf-docs` は既存の依存スキル `task-workflow` に同梱された設定・資料を参照するため、両スキルを導入します。
 
-rumdlは自動インストールしません。未導入・旧版の場合は導入方法を示して事前許可を得ます。ダウンロードを伴う一時実行も同様です。未検証の投稿は保留します。
+rumdl未導入・旧版の場合は、[検証環境の準備](../../skills/task-workflow/references/planning.md#検証環境の準備)に従い、既知の必要版を隔離環境へ用意します。グローバル設定変更・追加権限・費用発生は確認し、未検証の投稿は保留します。
 
 原本リポジトリのBundleルートはリポジトリ直下です。`scripts/check_repository.py` は `docs/`・`skills/`・`.apm/` と `.github/skills/` のMarkdownに同梱validatorの `authoring` を適用します。`SKILL.md` はAgent Skillsの検査、`index.md`・`log.md` は予約形式、READMEと生成AGENTS.mdは既存の固有形式を保ちます。未知メタデータを削除せず、未検証・期限切れは注意として表示します。
 
@@ -158,7 +158,7 @@ rumdlとリンク検査はこのリポジトリの公開品質条件です。外
 
 ### ローカルとCIで同じ検査を実行
 
-Python 3.12、GitHub CLI 2.100.0を使います。依存ツールの導入を承認した環境で、リポジトリ直下から実行します。
+Python 3.12、GitHub CLI 2.100.0を使います。既存環境を確認し、必要な固定依存を隔離した専用環境へ準備して、リポジトリ直下から実行します。導入の境界は[検証環境の準備](../../skills/task-workflow/references/planning.md#検証環境の準備)に従います。
 
 ```bash
 python3 -m venv .venv
