@@ -629,3 +629,40 @@ class ValidationTests(unittest.TestCase):
                          [x.field for x in self.errors(self.check(text, 'authoring'))])
         self.write('policy.md', '')
         self.assertEqual([], self.errors(self.check(text, 'authoring')))
+
+    def test_log_entries_must_belong_to_the_date_section(self):
+        for profile in ('conformance', 'authoring'):
+            body = '# Log\n## 2026-09-11\n# Other section\n- Unrelated\n'
+            self.assertTrue(self.errors(self.check(body, profile, 'log.md')))
+            body = '# Log\n## 2026-09-11\n- Actual change\n# Other section\n- Unrelated\n'
+            self.assertEqual([], self.errors(self.check(body, profile, 'log.md')))
+            body += '## 2026-09-10\n- Earlier change\n'
+            self.assertEqual([], self.errors(self.check(body, profile, 'log.md')))
+
+    def test_local_file_links_preserve_directory_suffixes(self):
+        self.write('query.sql', 'SELECT 1\n')
+        (self.root / 'directory').mkdir()
+        for suffix in ('/', '%2F', '/.'):
+            value = 'query.sql' + suffix
+            for text in [self.concept(body=f'[File]({value})\n'),
+                         self.concept(f'computation: {value}\n')]:
+                with self.subTest(value=value, text=text):
+                    self.assertTrue(self.errors(self.check(text, 'authoring')))
+                    self.assertEqual([], self.errors(self.check(text)))
+        self.assertEqual([], self.errors(self.check(self.concept(body='[Directory](directory/)\n'), 'authoring')))
+        self.assertEqual([], self.errors(self.check(self.concept('computation: query.sql\n'), 'authoring')))
+
+    def test_quoted_merge_key_is_distinct_from_yaml_merge_directive(self):
+        extra = 'x-base: &base {key: value}\nx-extension: {"<<": literal, <<: *base}\n'
+        for profile in ('conformance', 'authoring'):
+            self.assertEqual([], self.errors(self.check(self.concept(extra), profile)))
+            duplicate = extra.replace('<<: *base}', '<<: *base, <<: *base}')
+            self.assertTrue(self.errors(self.check(self.concept(duplicate), profile)))
+
+    def test_empty_markdown_link_is_self_reference_but_metadata_cannot_be_empty(self):
+        self.assertEqual([], self.errors(self.check(self.concept(body='[Self]()\n'), 'authoring')))
+        self.assertEqual([], self.errors(self.check('# Index\n- [Self]()\n', 'authoring', 'index.md')))
+        for extra in ['resource: ""\n', 'sources: [{resource: ""}]\n',
+                      'computation: ""\n', 'executor: {resource: ""}\n']:
+            with self.subTest(extra=extra):
+                self.assertTrue(self.errors(self.check(self.concept(extra), 'authoring')))

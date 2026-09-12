@@ -45,15 +45,15 @@ if yaml is not None:
         }
 
         def construct_mapping(self, node, deep=False):
-            seen = set()
+            seen, merge_key = set(), object()
             for key_node, _ in node.value:
-                key = ('<<' if key_node.tag == 'tag:yaml.org,2002:merge'
+                key = (merge_key if key_node.tag == 'tag:yaml.org,2002:merge'
                        else self.construct_object(key_node, deep=deep))
                 try:
                     if key in seen:
                         raise yaml.constructor.ConstructorError(
                             'while constructing a mapping', node.start_mark,
-                            f'duplicate key: {key}', key_node.start_mark)
+                            f'duplicate key: {"<< (merge)" if key is merge_key else key}', key_node.start_mark)
                     seen.add(key)
                 except TypeError:
                     raise yaml.constructor.ConstructorError(
@@ -169,12 +169,14 @@ def reserved_issues(path, bundle, data, document, has_frontmatter, profile):
     else:
         if has_frontmatter:
             error('frontmatter', 'log has no concept frontmatter')
-        dates, entries = [], 0
+        dates, entries, active = [], 0, False
         for kind, first, second in document.events:
-            if kind == 'heading' and first == 2:
-                if dates and not entries:
+            if kind == 'heading' and first <= 2:
+                if active and not entries:
                     error('body', 'each log date needs list entries')
-                entries = 0
+                active, entries = False, 0
+                if first != 2:
+                    continue
                 try:
                     if not re.fullmatch(r'\d{4}-\d{2}-\d{2}', second):
                         raise ValueError()
@@ -182,11 +184,12 @@ def reserved_issues(path, bundle, data, document, has_frontmatter, profile):
                     if dates and stamp >= dates[-1]:
                         error('body', 'log dates must be distinct and newest first')
                     dates.append(stamp)
+                    active = True
                 except ValueError:
                     error('body', 'log date must be a real YYYY-MM-DD date')
-            elif kind == 'flat_item' and first and dates:
+            elif kind == 'flat_item' and first and active:
                 entries += 1
-        if not dates or not entries:
+        if not dates or (active and not entries):
             error('body', 'log requires date headings and list entries')
     return issues
 
@@ -388,13 +391,16 @@ def contract_issues(path, bundle, data, document):
                     error(field, f'reference leaves the Bundle: {value}')
                 elif not target.exists():
                     error(field, f'local reference does not exist: {value}')
+                elif re.search(r'/(?:\.)?$', unquote(parsed.path)) and not target.is_dir():
+                    error(field, 'a trailing directory separator must reference a directory')
                 elif require_file and not target.is_file():
                     error(field, 'computation must reference a regular file')
             except (ValueError, RuntimeError):
                 error(field, 'invalid local path')
 
     for value in document.links:
-        link(value, 'links')
+        if value != '':  # Empty Markdown destinations refer to the current document.
+            link(value, 'links')
     if 'resource' in data and nonempty(data['resource']):
         link(data['resource'], 'resource')
     sources = data.get('sources', [])
