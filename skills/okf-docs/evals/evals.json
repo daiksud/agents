@@ -267,6 +267,31 @@
         "docsをBundle root、how-to/setup.mdを対象とするauthoring検査とrumdl・関連リンク・差分確認を計画する",
         "依存の不要な再導入や仕様監査・計算資料の一律読み込みを要求せず、未実行を成功としない"
       ]
+    },
+    {
+      "id": 27,
+      "prompt": "読み取り専用の模擬評価。実環境の編集・投稿・導入・ブランチ操作・テスト実行は禁止。指定された共通指示・対象スキル・必要な同梱資料と以下の仮想資料だけを使い、未実行を実施済みと報告しない。成果物案は回答内に示す。\n\nCLIの使い方を説明する通常のOKF文書を作成して。確定仕様: tool invite --email <address>で招待を作成する。説明用コマンド例を1つ載せる。読者は初めて使う開発者で、会社や担当者の紹介は不要。背景情報としてローカル設定には運営会社Hoshizora Labs、担当者Mina Aoki、mina@hoshizora.internalがあるが、本文の仕様値ではない。下書きには「## this 招待」「依頼どおり招待機能の説明を追加しました」「tool invite --email mina@hoshizora.internal」とある。プロジェクトのdocs/how-to/invite.mdに置く完成本文案と保存前の検証を示して。計画は保存・確認・提示済み。",
+      "expected_output": "完成本文から応答文と見出しの足場語thisを除き、会話を知らない読者向けに招待の使い方を直接説明する。説明例に架空のメールを使い、背景の人名・組織名・内部メールを流用しない。実際のCLI契約tool invite --email <address>を保持し、OKFのtype/title/descriptionを付ける。保存前に本文・差分とOKF authoring・rumdl・関連リンクの検証を計画し、未実行を成功や人間の確認としない。",
+      "files": [],
+      "expectations": [
+        "完成本文から応答文と見出しの足場語thisを除き、会話を知らない読者向けに招待の使い方を直接説明する",
+        "説明例に架空のメールを使い、背景の人名・組織名・内部メールを流用しない",
+        "実際のCLI契約tool invite --email <address>を保持し、OKFのtype/title/descriptionを付ける",
+        "保存前に本文・差分とOKF authoring・rumdl・関連リンクの検証を計画し、未実行を成功や人間の確認としない"
+      ]
+    },
+    {
+      "id": 28,
+      "prompt": "読み取り専用の模擬評価。実環境の編集・投稿・導入・ブランチ操作・テスト実行は禁止。指定された共通指示・対象スキル・必要な同梱資料と以下の仮想資料だけを使い、未実行を実施済みと報告しない。成果物案は回答内に示す。\n\n依頼由来の文章を整える作業。計画は保存・確認・提示済み。次の5成果物について残す内容と削る内容、必要な本文案を示して。1: ADRはtype: Decision、title: 保存期間、description: 保管期限の理由、sources: [{id: policy, resource: https://example.com/policy}]、x-owner: records、verified: {by: human:editor, at: \"2026-09-10T09:00:00+09:00\"}を持つ。本文は「注文記録は監査に必要なため7年間保持する。[^policy]」と脚注「[^policy]: 保存方針。」で、末尾に「依頼どおり更新しました」がある。削るのは末尾だけで契約・設計判断は変更しない。2: READMEの引用例へ「as requested」を原文どおり挿入する明示依頼。3: 作成するプロンプトテンプレートは「入力の<対象>を要約する」が意図した本文。4: CHANGELOGの「Added --verbose flag as requested」は利用者向けの変更記録。5: Issueの計画・承認欄には「利用者が7年間保持する計画の実装を承認した」とある。7年とsource URLは成果物に必要な指定値である。",
+      "expected_output": "ADR末尾の応答文だけを除き、監査という設計理由・7年・source IDとURL・脚注・x-owner・既存verifiedを保持する。編集実況の除去だけで確認日時を更新せず、新たな人間の確認を主張しない。明示された原文転記のas requestedと、プロンプトテンプレート本文の指示・<対象>を保持する。CHANGELOGはAdded --verbose flagという事実を保持しas requestedだけを除く。Issueの計画・実際の承認記録を保持し、固有形式へOKFを付けず、実データ・契約値を架空化しない。",
+      "files": [],
+      "expectations": [
+        "ADR末尾の応答文だけを除き、監査という設計理由・7年・source IDとURL・脚注・x-owner・既存verifiedを保持する",
+        "編集実況の除去だけで確認日時を更新せず、新たな人間の確認を主張しない",
+        "明示された原文転記のas requestedと、プロンプトテンプレート本文の指示・<対象>を保持する",
+        "CHANGELOGはAdded --verbose flagという事実を保持しas requestedだけを除く",
+        "Issueの計画・実際の承認記録を保持し、固有形式へOKFを付けず、実データ・契約値を架空化しない"
+      ]
     }
   ]
 }

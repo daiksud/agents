@@ -33,6 +33,10 @@ sources:
     resource: https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/instructions/self-explanatory-code-commenting.instructions.md
   - id: github-instructions-qa-engineering-best-practices-instructions-md
     resource: https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/instructions/qa-engineering-best-practices.instructions.md
+  - id: context-engineering
+    resource: https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/instructions/context-engineering.instructions.md
+  - id: taming-copilot
+    resource: https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/instructions/taming-copilot.instructions.md
 ---
 
 ## 設計・共有理解・テストの出典
@@ -63,6 +67,13 @@ sources:
 | Self-explanatory Code Commenting[^github-instructions-self-explanatory-code-commenting-instructions-md] | 命名・構造を優先し、理由と見えない契約を残す。公開契約の説明を理由以外というだけで削除しない |
 | QA Engineering Best Practices[^github-instructions-qa-engineering-best-practices-instructions-md] | 状態分離、UIの状態待ち、代表負荷での検証を使う。固定比率・網羅率・再試行回数・特定ツールは義務化しない |
 
+2026-09-13に確認した以下の指示例も、同じ固定コミットから要約・再構成した。
+
+| 資料 | 取り込む内容と調整 |
+| --- | --- |
+| Context Engineering[^context-engineering] | 意味のある名前・パス・定数、関連情報を見つけやすい配置、境界の型・公開契約、複雑な流れの説明を使う。既存配置と言語慣習を優先し、局所的な型推論の禁止、一律のindexファイル・内部公開・IDE操作は要求しない |
+| Taming Copilot[^taming-copilot] | 標準機能・既存依存を先に検討し、必要な変更を既存構造へ統合する。必要な契約・異常系・TDDを省かず、最短コードやユーザーが列挙したファイルだけを変更範囲の基準にしない |
+
 [^cucumber-docs-bdd]: [Behaviour-Driven Development](https://cucumber.io/docs/bdd/)。本文に記した参照範囲と採用判断の根拠。
 [^cucumber-bdd-examples]: [Examples](https://cucumber.io/docs/bdd/examples/)。本文に記した参照範囲と採用判断の根拠。
 [^cucumber-bdd-better-gherkin]: [Writing better Gherkin](https://cucumber.io/docs/bdd/better-gherkin/)。本文に記した参照範囲と採用判断の根拠。
@@ -78,3 +89,5 @@ sources:
 [^github-instructions-oop-design-patterns-instructions-md]: [OOP Design Patterns](https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/instructions/oop-design-patterns.instructions.md)。本文に記した参照範囲と採用判断の根拠。
 [^github-instructions-self-explanatory-code-commenting-instructions-md]: [Self-explanatory Code Commenting](https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/instructions/self-explanatory-code-commenting.instructions.md)。本文に記した参照範囲と採用判断の根拠。
 [^github-instructions-qa-engineering-best-practices-instructions-md]: [QA Engineering Best Practices](https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/instructions/qa-engineering-best-practices.instructions.md)。本文に記した参照範囲と採用判断の根拠。
+[^context-engineering]: [Context Engineering](https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/instructions/context-engineering.instructions.md)。命名・配置・型・公開境界とコメントの設計へ適用する。
+[^taming-copilot]: [Taming Copilot](https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/instructions/taming-copilot.instructions.md)。標準機能・既存依存と最小の構造を選ぶ判断へ適用する。
