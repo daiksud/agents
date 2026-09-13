@@ -9,6 +9,10 @@ sources:
     resource: https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/agents/research-technical-spike.agent.md
   - id: github-context-map-skill-md
     resource: https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/skills/context-map/SKILL.md
+  - id: context-engineering
+    resource: https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/instructions/context-engineering.instructions.md
+  - id: taming-copilot
+    resource: https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/instructions/taming-copilot.instructions.md
 ---
 
 ## 計画と実行範囲
@@ -43,12 +47,15 @@ Issueへ計画を保存する前に、実際のファイルと根拠から次を
 - 変更対象を検索し、各ファイルの役割と必要な変更を確認する。
 - 対象が直接依存する先と対象の参照元を調べ、更新が必要かと影響を確認する。文書ではリンク先・リンク元と関連指示の整合も対象にする。
 - 関連テストを読み、どの振る舞いを確認できるか、変更後に追加・更新・実行する検証を整理する。テストの存在を検証成功とは扱わない。
-- 類似する既存の実装・記述を探し、参考にするパターンと採用理由を示す。
+- 仕様・契約・設定の正本を特定し、類似する既存の実装・記述を探す。参考にするパターンの具体的な参照先と、今回の境界・要求に合う採用理由を示す。[^context-engineering]
+- バージョンに依存する判断では、設定・lockファイル・実装から対象の版を確認し、その版に対応する公式資料と照合する。最新資料や記憶をそのまま対象版の根拠にせず、照合できない点は未確認として残す。[^taming-copilot]
 - 公開APIの互換性、データ移行、設定変更など、変更に関係するリスクを根拠とともに確認する。
 
 結果は参照したファイルや調査範囲とともに、既存Issueの計画・検証・リスクに組み込む。小さな変更は短い記述でよく、固定の表・空欄・専用ファイルを要求しない。見つからない・読めない事項は「影響なし」と断定せず、未確認の範囲と確認方法を残し、重要なものは[重要な未確認事項の検証](#重要な未確認事項の検証)へつなぐ。
 
 マップは[着手と計画](#着手と計画)の計画記録に含め、別の承認待ちを追加しない。確認が必要な変更は同手順に従う。
+
+ブランチ切り替えや関連変更で調査の前提が変わった場合は、判断に使うファイル・参照版を必要な範囲で読み直し、計画の根拠を更新する。開いたタブや過去の要約だけで最新状態を把握したとみなさない。変更はファイル数で区切らず、関連する契約・実装・テストを検証可能な単位で進める。[^context-engineering]
 
 ### 重要な未確認事項の検証
 
@@ -84,6 +91,10 @@ GitHub awesome-copilotのSpec Driven Workflow v1[^github-instructions-spec-drive
 
 GitHub awesome-copilotのcontext-map[^github-context-map-skill-md]を2026-09-11に確認し、変更対象・依存・テスト・参考パターン・リスクの調査観点を要約・再構成した。本環境では文書のリンク・関連指示と参照元への影響も含め、既存Issueの計画へ組み込む。固定の表やチェックリスト、独立したマップのレビュー待ちは導入せず、確認を既存の計画承認に統合する。
 
+Context Engineering[^context-engineering]とTaming Copilot[^taming-copilot]を2026-09-13に確認し、具体的な参考パターンと対象版の根拠、前提が変わった際の再確認を既存の調査へ統合した。IDEのタブ・カーソル操作、`COPILOT.md` の新設、1ファイルずつの変更や全ツール前の宣言は共通要件にしない。
+
+[^context-engineering]: [Context Engineering](https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/instructions/context-engineering.instructions.md)。関連情報・参考パターンとコンテキストの更新を本環境の調査へ適用する。
+[^taming-copilot]: [Taming Copilot](https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/instructions/taming-copilot.instructions.md)。版に依存する情報をツールで確認する考え方を対象版の照合へ適用する。
 [^github-instructions-spec-driven-workflow-v1-instructions-md]: [GitHub awesome-copilotのSpec Driven Workflow v1](https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/instructions/spec-driven-workflow-v1.instructions.md)。本文に記した参照範囲と採用判断の根拠。
 [^github-agents-research-technical-spike-agent-md]: [Technical spike research mode](https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/agents/research-technical-spike.agent.md)。本文に記した参照範囲と採用判断の根拠。
 [^github-context-map-skill-md]: [GitHub awesome-copilotのcontext-map](https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/skills/context-map/SKILL.md)。本文に記した参照範囲と採用判断の根拠。
