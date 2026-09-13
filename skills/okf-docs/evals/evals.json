@@ -270,7 +270,7 @@
     },
     {
       "id": 27,
-      "prompt": "読み取り専用の模擬評価。実環境の編集・投稿・導入・ブランチ操作・テスト実行は禁止。指定された共通指示・対象スキル・必要な同梱資料と以下の仮想資料だけを使い、未実行を実施済みと報告しない。成果物案は回答内に示す。\n\nCLIの使い方を説明する通常のOKF文書を作成して。確定仕様: tool invite --email <address>で招待を作成する。説明用コマンド例を1つ載せる。読者は初めて使う開発者で、会社や担当者の紹介は不要。背景情報としてローカル設定には運営会社Hoshizora Labs、担当者Mina Aoki、mina@hoshizora.internalがあるが、本文の仕様値ではない。下書きには「## this 招待」「依頼どおり招待機能の説明を追加しました」「tool invite --email mina@hoshizora.internal」とある。プロジェクトのdocs/how-to/invite.mdに置く完成本文案と保存前の検証を示して。計画は保存・確認・提示済み。",
+      "prompt": "読み取り専用の模擬評価。実環境の編集・投稿・導入・ブランチ操作・テスト実行は禁止。指定された共通指示・対象スキル・必要な同梱資料と以下の仮想資料だけを使い、未実行を実施済みと報告しない。成果物案は回答内に示す。\n\nCLIの使い方を説明する通常のOKF文書を作成して。確定仕様: tool invite --email <address>で招待を作成する。説明用コマンド例を1つ載せる。読者は初めて使う開発者で、会社や担当者の紹介は不要。背景情報としてローカル設定には運営会社Hoshizora Labs、担当者Mina Aoki、mina@hoshizora.internalがあるが、本文の仕様値ではない。下書きには「## this 招待」「依頼どおり招待機能の説明を追加しました」「tool invite --email mina@hoshizora.internal」とある。プロジェクトのdocs/how-to/invite.mdに置く完成本文案と保存前の検証を示して。計画は保存・確認・提示済み。\n既存docs/index.mdには、この新規文書への相対リンク [招待](how-to/invite.md) がある。保存前の検証に、この参照元と作成先の対応も含めてください。",
       "expected_output": "完成本文から応答文と見出しの足場語thisを除き、会話を知らない読者向けに招待の使い方を直接説明する。説明例に架空のメールを使い、背景の人名・組織名・内部メールを流用しない。実際のCLI契約tool invite --email <address>を保持し、OKFのtype/title/descriptionを付ける。保存前に本文・差分とOKF authoring・rumdl・関連リンクの検証を計画し、未実行を成功や人間の確認としない。",
       "files": [],
       "expectations": [
