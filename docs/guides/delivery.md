@@ -121,6 +121,7 @@ apm compile --global
 | `skills/bdd-tdd/` | 設計確認、小さな変更への分割、BDD・ATDD・TDD、検証 |
 | `skills/code-review/` | 将来の変更への耐性を最優先に、欠陥・回帰も根拠から評価する読み取り専用レビュー |
 | `skills/okf-docs/` | OKF v0.2に従う文書の作成・更新・検証 |
+| `skills/github-actions/` | GitHub Actionsの設計・安全性・効率改善・Action内部ランタイム更新の判断と検証 |
 
 共通指示には `applyTo` を付けません。詳細手順はスキルと同梱資料に置きます。各SKILL.mdを工程別の入口にし、task-workflowは計画・Issue記録・ブランチ、bdd-tddは設計・共有仕様・テスト、okf-docsは形式・出典・検証へ分けます。参照を移した場合はリンク元と導入後の同梱資料も確認します。[インストラクションのテンプレート](../templates/instructions.md)と[スキルの編集指示](../../skills/AGENTS.md)を参照します。スキルの作成・改善には外部依存の `skill-creator` を使います。
 

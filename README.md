@@ -14,6 +14,8 @@ gh skill install daiksud/agents --all --agent codex --scope user
 
 各スキルの `SKILL.md` から、計画・Issue記録・ブランチ準備、設計・共有仕様・テスト、文書検証など、現在の工程に対応する資料を参照します。feature文書だけの作成では形式資料を使い、コード実装のTDD工程は開始しません。
 
+[github-actions](skills/github-actions/SKILL.md)は、GitHub Actionsの設計・安全性・効率改善・Action内部ランタイム更新を扱います。依頼に該当する参照資料だけを読み、監査のみと修正依頼を区別します。変更の進行は`task-workflow`、コード変更の検証は`bdd-tdd`、文書作成は`okf-docs`、読み取り専用レビューは`code-review`を併用します。これらの依存スキルは上記の`--all`で一緒に導入できます。
+
 `okf-docs`の検査スクリプトにはPython 3.10以上と同梱requirements.txtの依存が必要です。スキルの配布はPython依存を自動導入しません。外部Bundleの受け入れは `conformance`、自作の公開前検査は `authoring` を使います。[検査環境の準備](skills/okf-docs/references/validation.md)に従って利用する環境を確認してください。
 
 ## グローバル導入
