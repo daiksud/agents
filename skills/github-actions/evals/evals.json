@@ -230,7 +230,7 @@
     {
       "id": 19,
       "prompt": "新しいPR workflowを設計してください。対象はGitHub.comのpublic repositoryです。管理者はGitHub-hostedのubuntu-slimとwindows-latest labelが利用可能と確認しています。管理者は対象repositoryのrunner groupとrepository accessも確認し、これらのlabelに一致する候補は標準GitHub-hosted runnersだけで、同名custom labelを持つeligible self-hosted runnerはないと確認しています。Linux jobではruffとpytestを実行します。別jobはWindows APIを必要とし、run commandはPowerShell構文（$PSVersionTable、Get-ChildItem）です。runnerとshellの設定例、選定理由を示してください。",
-      "expected_output": "Linux jobにはubuntu-slim、Windows API jobにはwindows-latestを選ぶ。管理者がrunner groupとrepository accessを確認し、両labelの候補が標準GitHub-hostedのみでeligible self-hosted runnerがないfixtureも選定理由に反映する。workflow-level permissionsをcontents: readに限定し、workflowトップレベルにdefaults.run.shell: bashを設定し、PowerShell commandを実行するWindows jobではjob-level defaults.run.shell: pwshまたは必要なstepのshell: pwshを明示する。ubuntu-slim優先はスキル独自方針と説明し、WindowsとPowerShellの要件を例外理由として記録する。",
+      "expected_output": "workflow triggerにon: pull_requestを設定し、Linux jobにはubuntu-slim、Windows API jobにはwindows-latestを選ぶ。管理者がrunner groupとrepository accessを確認し、両labelの候補が標準GitHub-hostedのみでeligible self-hosted runnerがないfixtureも選定理由に反映する。workflow-level permissionsをcontents: readに限定し、workflowトップレベルにdefaults.run.shell: bashを設定し、PowerShell commandを実行するWindows jobではjob-level defaults.run.shell: pwshまたは必要なstepのshell: pwshを明示する。ubuntu-slim優先はスキル独自方針と説明し、WindowsとPowerShellの要件を例外理由として記録する。",
       "files": [],
       "expectations": [
         "Linuxのruff/pytest jobにubuntu-slimを選ぶ",
@@ -240,20 +240,22 @@
         "PowerShell構文を実行するjobまたはstepにpwshを明示する",
         "ubuntu-slim優先はこのスキル独自方針であると区別する",
         "runner groupとrepository accessの確認によりeligible self-hosted runnerが候補から除外されているfixtureを選定理由に反映する",
-        "PR由来codeを実行するlint/test workflowのpermissionsをcontents: readなど必要最小限に限定する例を示す"
+        "PR由来codeを実行するlint/test workflowのpermissionsをcontents: readなど必要最小限に限定する例を示す",
+        "PR workflowをon: pull_requestで起動するYAMLを示す"
       ]
     },
     {
       "id": 20,
-      "prompt": "既存のGitHub Actions workflowをレビューしてください。対象はGitHub.comのpublic repositoryで、jobはruns-on: ubuntu-slimを使います。管理者はprovider、runner group、repository accessを確認し、同名custom labelのeligible self-hosted runnerがないと確認しています。workflowトップレベルにdefaults.run.shell: bashがあり、jobはAlpine containerで動きます。このcontainerにはPOSIX shとapkがあり、Bashはありませんがapk addでBashを追加できます。先頭のrun stepにshell指定なしでapk add --no-cache bashがあり、後続stepではBash構文を実行します。最小のYAML調整と理由を提案してください。ファイルは変更しないでください。",
-      "expected_output": "provider、runner group、repository accessを確認済みで同名self-hosted候補がないubuntu-slimを選ぶ前提を選定理由へ反映し、workflowトップレベルのdefaults.run.shell: bashを維持し、Bashを導入するstepだけshell: shを明示する。workflow-level Bashは導入前のstepにも適用されるため、shell未指定時のfallbackに任せられないと説明し、後続stepは導入後のBash既定値を利用できると示す。レビュー依頼の境界を守る。",
+      "prompt": "既存のGitHub Actions workflowをレビューしてください。対象はGitHub.comのpublic repositoryで、jobはruns-on: ubuntu-slimを使います。管理者はprovider、runner group、repository accessを確認し、同名custom labelのeligible self-hosted runnerがないと確認しています。workflowトップレベルにdefaults.run.shell: bashがあり、jobはAlpine containerで動きます。container imageはalpine:3.20というmutable tagで、verified digestは提示されていません。このcontainerにはPOSIX shとapkがあり、Bashはありませんがapk addでBashを追加できます。先頭のrun stepにshell指定なしでapk add --no-cache bashがあり、後続stepではBash構文を実行します。最小のYAML調整と理由を提案してください。ファイルは変更しないでください。",
+      "expected_output": "provider、runner group、repository accessを確認済みで同名self-hosted候補がないubuntu-slimを選ぶ前提を選定理由へ反映し、mutableなalpine:3.20 tagにverified digestがなくdigest固定方針を満たさない未解決制約として記録し、workflowトップレベルのdefaults.run.shell: bashを維持し、Bashを導入するstepだけshell: shを明示する。workflow-level Bashは導入前のstepにも適用されるため、shell未指定時のfallbackに任せられないと説明し、後続stepは導入後のBash既定値を利用できると示す。レビュー依頼の境界を守る。",
       "files": [],
       "expectations": [
         "workflowトップレベルのdefaults.run.shell: bashを維持する",
         "Bash導入stepのみにshell: shを明示する",
         "Bash既定値は導入stepにも適用されるためshの明示が必要と説明し、後続stepは導入後のBashを使うことを示す",
         "例外を導入stepに限定し、ファイルを変更しない",
-        "provider、runner group、repository accessのfixtureにより同名custom labelのeligible self-hosted runnerがないことを選定理由に反映する"
+        "provider、runner group、repository accessのfixtureにより同名custom labelのeligible self-hosted runnerがないことを選定理由に反映する",
+        "Alpine imageのmutable tagとverified digest不在を未解決制約として記録し、digestを推測して固定しない"
       ]
     },
     {
