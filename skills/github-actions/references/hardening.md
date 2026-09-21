@@ -26,7 +26,7 @@ sources:
 - 組織・リポジトリの既定値、workflow/jobの `permissions`、fork設定、再利用先を調べる。`GITHUB_TOKEN` の権限はトリガー名だけで確定しない。`permissions: {}` または必要なread権限を基準に、書き込みは必要なジョブへ限定する。明示時に未指定のscopeはnoneとなり、`id-token` はwrite/noneである。[^github-syntax]
 - Secretは実際に渡しているジョブ・Action・再利用先まで追う。マスクを漏洩防止の保証にせず、context全体・認証済み設定・変換した秘密値をログやartifactへ出さない。不要なcheckout認証の永続化は `persist-credentials: false` を検討し、保存先や挙動は対象Action版で確認する。[^github-secure-use]
 - クラウドが対応し信頼条件を管理できる場合はOIDCで長期鍵を減らす。必要ジョブだけ `id-token: write` とし、実際のclaims、audience・subject、repository、branch/environmentとクラウド側のrole権限を照合する。固定のsubject例を全リポジトリに当てはめない。[^github-oidc]
-- fork PRでもself-hosted runnerの永続状態、ホスト資格情報、ネットワーク、共有ストレージは別のリスクとなる。Secretが渡らないことだけで安全としない。使い捨てrunner登録だけで実行ホストの清浄性を保証せず、隔離と消去の実態を確認する。
+- `runs-on` のlabel名だけではrunner providerを特定できない。対象labelに一致するGitHub-hosted・self-hosted runner、runner group、repository accessを確認し、同じcustom labelを持つpersistent self-hosted runnerが候補になる場合は実際のroutingを確かめる。fork PRの未信頼codeではself-hosted runnerの永続状態、ホスト資格情報、内部network、共有workspaceが別のリスクとなる。Secretが渡らないことだけで安全とせず、使い捨てrunner登録だけでも実行ホストの清浄性を保証せず、隔離と消去の実態を確認する。
 
 ### 外部入力と実行コード
 

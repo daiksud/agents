@@ -73,6 +73,7 @@ sources:
 2026-09-21にGitHub-hosted runner一覧、Single-CPU runnerの制約、`defaults.run.shell` のworkflow syntaxを確認した。これらの数値・機能は変更されるため、runnerを選ぶ時点で対象環境のrunner labelと最新の公式仕様を確認する。
 
 - `ubuntu-slim` はGitHub-hostedの標準runner一覧にあり、2026-09-21時点のSingle-CPU資料ではjob上限は15分、実行環境は非特権containerで、filesystem mount、Docker-in-Docker、一部の低レベルkernel機能は利用できない。これらはGitHub全体のrunner選択要件ではなく、実際の可否を判断する仕様である。[Public runner一覧][^github-hosted-runners-public]、[Single-CPU runner][^github-single-cpu-runners]
+- `runs-on` はrunner label・groupで対象を選び、両方を指定した場合はどちらも一致するrunnerだけが候補となる。self-hosted runnerにはcustom labelを追加でき、runner groupはlarger runnerまたはself-hosted runnerで構成される。従って、label名だけでは候補がGitHub-hostedかself-hostedかを確認できない場合がある。対象設定でprovider、groupとrepository accessを確認する。[Runner選定][^github-runner-selection]、[self-hosted label][^github-self-hosted-labels]、[runner group][^github-runner-groups]
 - Linux/macOSでshellを省略すると `bash -e {0}` が使われ、Bashがないときは `sh -e {0}` がfallbackとなる。`shell: bash` を明示すると `bash --noprofile --norc -eo pipefail {0}` が使われる。[Workflow syntax][^github-workflow-default-shell] Bashの`pipefail`はpipeline内で最後に非0を返したcommandの状態をpipelineへ返す。[Bash Reference Manual][^bash-reference-pipelines] Bashの`-e`は`if`条件と`&&`・`||` listの非最終commandでは失敗だけで直ちにshellを終了しないが、最後の`&&`・`||`の後のcommandにはこの例外が適用されない。[Bash Reference Manual][^bash-reference-set-builtin] 既存workflowを明示Bashへ切り替える場合は、pipelineのstatusと周囲の分岐・handlerの両方を確認し、途中commandの非0を意図的に許容する場合は、その終了状態だけを明示して他の失敗を保つ。
 - job `container`内のshell既定値は`sh`であり、workflowやjobの`defaults.run.shell`、またはstepの`shell`で上書きできる。workflow-level `bash` defaultを使うなら、job containerにBashがあるかを確認する。[Job container syntax][^github-job-container-shell]
 - Actions runnerの実装は、shell省略時にBashを探してから`sh`へfallbackし、shellが明示されている場合はそのshellを選ぶ。2026-09-21に確認した固定commitの実装では、この選択が別の分岐になっている。[ScriptHandler.cs][^actions-runner-shell-handler]
@@ -87,6 +88,9 @@ sources:
 [^copilot-license]: GitHub awesome-copilotのMIT License、上記固定版。
 [^github-hosted-runners-public]: [Standard GitHub-hosted runners for public repositories](https://docs.github.com/en/actions/reference/runners/github-hosted-runners#standard-github-hosted-runners-for-public-repositories)。本文に記したrunner labelと仕様の参照元。
 [^github-single-cpu-runners]: [Single-CPU runners](https://docs.github.com/en/actions/reference/runners/github-hosted-runners#single-cpu-runners)。本文に記した15分上限と非特権container制約の参照元。
+[^github-runner-selection]: [Choosing the runner for a job](https://docs.github.com/en/actions/how-tos/write-workflows/choose-where-workflows-run/choose-the-runner-for-a-job)。`runs-on` のlabel・group選択と複合条件の参照元。
+[^github-self-hosted-labels]: [Using labels with self-hosted runners](https://docs.github.com/en/actions/how-tos/manage-runners/self-hosted-runners/apply-labels)。self-hosted runnerへのcustom label付与の参照元。
+[^github-runner-groups]: [Runner groups](https://docs.github.com/en/actions/concepts/runners/runner-groups)。runner groupの用途と構成対象の参照元。
 [^github-workflow-default-shell]: [Workflow syntax: `defaults.run.shell`](https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax#defaultsrun)。本文に記したshell既定値と実行commandの参照元。
 [^bash-reference-pipelines]: [GNU Bash Reference Manual: Pipelines](https://www.gnu.org/software/bash/manual/html_node/Pipelines)。本文に記したpipefail有効時のpipeline statusを説明する。
 [^bash-reference-set-builtin]: [GNU Bash Reference Manual: The Set Builtin](https://www.gnu.org/software/bash/manual/html_node/The-Set-Builtin.html)。`-e` の条件文脈における例外を説明する。

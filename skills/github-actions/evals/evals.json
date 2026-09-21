@@ -133,7 +133,7 @@
     {
       "id": 13,
       "prompt": "別のPython repositoryにPR workflowを追加する相談です。対象はGitHub.comのGitHub-hosted runnersで、管理者はubuntu-slim labelが利用可能と確認しています。projectはPython 3.12を使い、既存のrequirements-ci.txtにruffとpytestのversionが固定されています。workflowはPRで実行し、checkout、Pythonと依存関係の準備、ruffとpytestの実行を含めてください。jobは約6分で、Dockerやmount、特殊OS・architectureは不要です。runnerとshellを設定した完全なYAML案と選定理由を示してください。",
-      "expected_output": "対象環境でubuntu-slim labelが利用可能なことを踏まえてこのrunnerを第一候補にし、workflowトップレベルのdefaults.run.shellにbashを指定する。workflowはon: pull_requestで起動し、permissionsはcontents: readに限定する。checkoutとPython 3.12のsetupを含め、外部Actionは照合済みの完全commit SHAと一致するversion commentで固定する。既存のrequirements-ci.txtから依存を導入してから、run stepでruff checkとpytestの両方を実行する。ubuntu-slim優先はこのスキル独自方針と説明し、公式資料を参照して制約を確認する。",
+      "expected_output": "対象環境でubuntu-slim labelが利用可能なことを踏まえてこのrunnerを第一候補にし、workflowトップレベルのdefaults.run.shellにbashを指定する。workflowはon: pull_requestで起動し、permissionsはcontents: readに限定する。checkout後に認証済みGit操作が不要ならpersist-credentials: falseを指定する。Python 3.12のsetupを含め、外部Actionは照合済みの完全commit SHAと一致するversion commentで固定する。既存のrequirements-ci.txtから依存を導入してから、run stepでruff checkとpytestの両方を実行する。ubuntu-slim優先はこのスキル独自方針と説明し、公式資料を参照して制約を確認する。",
       "files": [],
       "expectations": [
         "軽量なLinux jobにruns-on: ubuntu-slimを選ぶ",
@@ -145,6 +145,7 @@
         "workflowでPython 3.12を選び、setup-python Actionを照合済みの完全commit SHAで固定する",
         "workflowのtriggerにon: pull_requestを指定する",
         "workflow permissionsをcontents: readに限定する",
+        "後続に認証済みGit操作が不要ならcheckoutのpersist-credentialsをfalseにする",
         "ruffとpytestの実行前に、既存のrequirements-ci.txtからCI依存を導入する",
         "生成したYAMLのrun stepでruff checkとpytestの両方を実行する"
       ]
@@ -241,14 +242,15 @@
     },
     {
       "id": 21,
-      "prompt": "既存のGitHub Actions workflowをレビューしてください。対象はGitHub.comのGitHub-hosted runnersで、管理者はubuntu-slim labelが利用可能と確認しています。workflowトップレベルにdefaults.run.shellはありません。Linux jobのrun stepではgrep -F 'TODO' notes.txt | wc -lを実行し、TODOがない場合はgrepの終了コード1を許容して0を出力しstep成功とする既存契約があります。notes.txtが読めないなどgrepが終了コード2になる場合はstepを失敗させたいです。Issueのworkflow-level defaults.run.shell: bash方針を適用するときの最小変更と確認点を提案してください。ファイルは変更しないでください。",
-      "expected_output": "workflowトップレベルにdefaults.run.shell: bashを追加し、対象環境で確認済みのubuntu-slimを選ぶ。明示Bashはpipefailによりgrep終了コード1でpipelineを失敗させることを説明し、grepの終了コード1だけを明示的に許容して0を出し、終了コード2など他の失敗は維持するcommand例を示す。公式資料を参照し、レビューのみを守る。",
+      "prompt": "既存のGitHub Actions workflowをレビューしてください。対象はGitHub.comのGitHub-hosted runnersで、管理者はubuntu-slim labelが利用可能と確認しています。workflowトップレベルにdefaults.run.shellはありません。Linux jobのrun stepではgrep -F 'TODO' notes.txt | wc -lを実行し、TODOがない場合はgrepの終了コード1を許容してstdoutにcountを1行だけ出力しstep成功とする既存契約があります。no-match handlerからcountを重ねて出力してはいけません。notes.txtが読めないなどgrepが終了コード2になる場合はstepを失敗させたいです。Issueのworkflow-level defaults.run.shell: bash方針を適用するときの最小変更と確認点を提案してください。ファイルは変更しないでください。",
+      "expected_output": "workflowトップレベルにdefaults.run.shell: bashを追加し、対象環境で確認済みのubuntu-slimを選ぶ。明示Bashはpipefailによりgrep終了コード1でpipelineを失敗させることを説明し、grepの終了コード1だけを明示的に許容する。wcが出す0のcountをstdoutに1行だけ残し、no-match handlerから重ねて出力せず、終了コード2など他の失敗は維持するcommand例を示す。公式資料を参照し、レビューのみを守る。",
       "files": [],
       "expectations": [
         "workflowトップレベルにdefaults.run.shell: bashを追加する",
         "対象環境で利用可能と確認済みのubuntu-slimを選ぶ",
         "明示Bashのpipefailによりgrep終了コード1がpipeline失敗へ変わることを指摘する",
         "grepの終了コード1だけを許容し、終了コード2などの他の失敗を保って0を出す例を示す",
+        "TODOなしの場合、stdoutに0を1行だけ出し、no-match handlerでcountを二重出力しない",
         "公式workflow shell資料を参照し、ファイルを変更しない"
       ]
     },
@@ -278,6 +280,20 @@
         "成功という既存契約を保つ局所対応を示し、他の失敗を一律に無視しない",
         "GitHub workflow syntaxとBash pipeline/errexit仕様を公式資料で示す",
         "レビュー依頼の境界を守りファイルを変更しない"
+      ]
+    },
+    {
+      "id": 24,
+      "prompt": "PRでworkflowをレビューしています。対象はGitHub.comで、管理者は標準GitHub-hostedのubuntu-slim labelが利用可能と確認しています。fork PRからの未信頼なtest codeがこのjobで実行されます。workflowはruns-on: ubuntu-slimを指定していますが、organizationには同じubuntu-slim custom labelを持ち、このrepositoryから利用可能なpersistent self-hosted runnerもあります。そのrunnerはinternal serviceへ接続でき、workspaceをjob間で再利用します。runner groupによる明示的な制限はありません。現在の設定がGitHub-hosted runnerに限定されるか評価し、ubuntu-slim優先方針を保ちながら必要な最小の対応を提案してください。ファイルは変更しないでください。",
+      "expected_output": "runs-onのubuntu-slim labelだけではGitHub-hosted runnerを保証せず、同じcustom labelを持つ利用可能なself-hosted runnerも候補になることを指摘する。fork PRの未信頼codeがpersistent self-hosted runnerのworkspaceやinternal networkへ到達する安全性リスクを説明し、label/group・repository accessの実際のroutingを確認する。self-hosted runnerとのlabel overlapまたはaccessを解消しGitHub-hosted targetだけが選ばれると確認できるまで、このjobを安全なubuntu-slim executionとして扱わない。条件を満たせばGitHub-hosted ubuntu-slimを維持し、満たせなければ制約と必要なadmin判断を記録する。GitHub公式のrunner selection、self-hosted label/group資料を示し、レビューのみを守る。",
+      "files": [],
+      "expectations": [
+        "ubuntu-slim labelだけではGitHub-hosted runnerを保証せず、同名custom labelのself-hosted runnerも候補と識別する",
+        "runner provider、runner group、repository accessをlabel名と分けて確認する",
+        "fork PRの未信頼codeがpersistent self-hosted runnerの共有workspaceやinternal networkへ到達するriskを説明する",
+        "label overlapまたはself-hosted accessを解消・隔離するまでGitHub-hosted ubuntu-slimとして適合扱いせず、解決後はubuntu-slim優先を維持する",
+        "GitHub公式のrunner selection、self-hosted custom-label/group資料を示す",
+        "読み取り専用レビューを守りファイルを変更しない"
       ]
     }
   ]
