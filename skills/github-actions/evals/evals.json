@@ -155,13 +155,14 @@
     },
     {
       "id": 14,
-      "prompt": "次のworkflowをレビューしてください。対象はGitHub.comのGitHub-hosted runnersで、管理者はubuntu-slimとubuntu-latestのlabelが利用可能と確認しています。runnerはubuntu-latestで、Ubuntu上のruffとpytestだけを実行し、所要時間は約6分です。run stepごとにshell: bashを指定していますが、workflowトップレベルのdefaults.run.shellはありません。設定ファイルは変更せず、指摘と修正案を示してください。",
-      "expected_output": "ubuntu-slim labelが利用可能と確認済みで、処理に制約が示されていないため、ubuntu-latestではなくubuntu-slimを選ぶよう提案する。またstepごとのshell指定ではworkflowトップレベルの必須設定を満たさないと指摘し、defaults.run.shell: bashを提案する。ubuntu-slim優先はこのスキル方針でGitHub共通の必須要件ではないと説明し、レビューだけでファイルは変更しない。",
+      "prompt": "次のworkflowをレビューしてください。対象はGitHub.comのpublic repositoryで、管理者はGitHub-hostedのubuntu-slimとubuntu-latest labelが利用可能と確認しています。runnerはubuntu-latestで、Ubuntu上のruffとpytestだけを実行し、所要時間は約6分です。同じworkflow・同じ依存関係とテスト量を使い、対象repositoryのubuntu-slim labelで代表的な実行を10回行いました。すべて完了し、最も遅い実行は9分20秒で、timeoutはありませんでした。ubuntu-slimの公式job timeoutは15分です。run stepごとにshell: bashを指定していますが、workflowトップレベルのdefaults.run.shellはありません。設定ファイルは変更せず、指摘と修正案を示してください。",
+      "expected_output": "同じworkflowとテスト量でubuntu-slim上の10回がすべて成功し、最遅9分20秒という提示された実測値を根拠に、15分上限に対し5分40秒の余裕があると説明してubuntu-slimを選ぶ。ubuntu-latest上の約6分は対象runnerの測定の代用にしない。stepごとのshell指定では要件を満たさないと指摘し、workflowトップレベルにdefaults.run.shell: bashを提案する。runner時間・shell既定値の公式資料を示し、ubuntu-slim優先はスキル独自方針でGitHub共通の必須要件ではないと説明し、レビューのみでファイルは変更しない。",
       "files": [],
       "expectations": [
-        "制約のないubuntu-latestを指摘し、利用可能と確認済みのubuntu-slimを提案する",
-        "ubuntu-slim labelが対象環境で利用可能と確認済みであることを選定理由に反映する",
+        "対象runner上の10回の実測が最遅9分20秒で、15分上限に余裕をもって収まる提示された実測値を根拠にubuntu-slimを提案する",
+        "ubuntu-slimとubuntu-latest labelが対象のGitHub.com public repositoryで利用可能と確認済みであることを選定理由に反映する",
         "個別stepのshell指定はworkflowトップレベルのdefaults.run.shell: bashを満たさないと指摘する",
+        "GitHub公式runner資料とdefaults.run.shellの資料を示す",
         "レビュー依頼の境界を守ってファイルを変更しない",
         "ubuntu-slim優先はこのスキル独自の方針でGitHub共通の必須要件ではないと説明する"
       ]
@@ -169,14 +170,14 @@
     {
       "id": 15,
       "prompt": "対象はGitHub.com上のprivate repositoryです。管理者はこのrepositoryと利用planで標準GitHub-hostedのubuntu-slimとubuntu-latest labelが利用可能と確認しています。コンテナイメージを作るCI jobではDocker-in-Dockerとfilesystem mountが必要で、integration stepは通常25分かかります。どのrunnerを選び、その例外理由をどう記録すべきか提案してください。",
-      "expected_output": "対象はGitHub.comのprivate repositoryなので、public repository向けではなくprivate repository向けの標準runner表を確認し、対象planでの利用可否を反映する。その表ではubuntu-latestは2 CPU/8 GB、ubuntu-slimは1 CPU/5 GBとして記載されている。ubuntu-slimは非特権containerでDocker-in-Dockerとfilesystem mountを使えず、job timeoutも15分のため、25分の要件を満たさない。利用可能と管理者が確認したubuntu-latestを選び、これらの機能と時間制約を具体的な例外理由としてworkflow commentまたは変更説明に記録する。ubuntu-slim優先はスキル独自方針と説明し、private runner tableとsingle-CPU runner制約の公式資料をリンクする。",
+      "expected_output": "対象はGitHub.comのprivate repositoryなので、公開状態とplanに合うprivate repository向けrunner表を参照し、確認済みのubuntu-latestを選ぶ。ubuntu-slimは非特権containerでDocker-in-Dockerとfilesystem mountを使えない。single-CPU runnerの公式資料で現行job timeoutを確認し、25分のintegration stepと比較して時間上の制約も説明する。workflow commentまたは変更説明には、必要な機能と実行時間を具体的な例外理由として記録する。private runner表とsingle-CPU制約の公式資料をリンクし、ubuntu-slim優先はスキル独自方針と説明する。",
       "files": [],
       "expectations": [
-        "GitHub.comのprivate repositoryであることを反映し、public向けではなくprivate向け標準runner表を参照する",
+        "GitHub.comのprivate repositoryであることを反映し、private向け標準runner表を参照する",
         "対象planとrepositoryでrunner labelが利用可能という確認を選定理由に反映する",
-        "ubuntu-slimの15分上限と25分のintegration stepの不一致を説明する",
+        "single-CPU runnerの公式資料で現行job timeoutを確認し、25分のintegration stepとの時間適合を説明する",
         "ubuntu-slimでDocker-in-Dockerとfilesystem mountを使えない理由を説明する",
-        "確認済みのubuntu-latestを選び、private向けrunner表の2 CPU/8 GB仕様を参照する",
+        "確認済みのubuntu-latestを選び、private向けrunner表を参照するが固定CPU・RAM数値を正解条件にしない",
         "具体的な要件と制約をrunner例外の理由としてworkflow commentまたは変更説明に記録する",
         "private向けrunner表とsingle-CPU runnerの公式資料を示し、public表の仕様をprivate repositoryへ流用しない",
         "ubuntu-slim優先はスキル独自方針と区別する"
