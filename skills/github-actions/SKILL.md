@@ -33,7 +33,8 @@ description: GitHub Actionsのワークフローを設計・変更・調査・�
    - `ubuntu-slim` が利用可能でも、必要な処理を実現できない場合に限り別のrunnerを使う。慣習、既存例の踏襲、高性能への単なる希望は例外理由にしない。例外時は公式の[GitHub-hosted runner一覧](https://docs.github.com/en/actions/reference/runners/github-hosted-runners#standard-github-hosted-runners-for-public-repositories)と[`ubuntu-slim`の制約](https://docs.github.com/en/actions/reference/runners/github-hosted-runners#single-cpu-runners)を確認し、満たせない要件と具体的な制約をワークフローのコメントか変更説明に記録する。
    - `ubuntu-slim` の優先順位はこのスキル独自の方針であり、GitHub共通の必須要件ではない。runnerの選定理由を説明するときは、この方針とGitHub公式仕様を区別する。日付付きの仕様確認値は[出典と適用判断](references/sources.md)に記録する。
    - workflowトップレベルに `defaults.run.shell: bash` を必ず指定する。stepごとの `shell: bash` だけでこの要件を満たした扱いにしない。
-   - Bash既定値が適用される各jobの実行環境でBashが使えるかを確認する。job containerにBashがない場合は、可能ならimageに追加する。追加できずjobのcommandがPOSIX互換なら、workflowトップレベルの既定値を残したうえで、そのjobだけ`defaults.run.shell`を実在するshellへ変更し、例外理由を記録する。Bash固有のcommandが必要でBashを提供できない場合は、shell方針とjob要件のどちらを優先するかユーザーに確認する。
+   - Bash既定値が適用される各jobの実行環境にBashがあるか、各commandがBashと互換かを確認する。Bashがないself-hosted runnerやjob containerでは、可能ならBashを導入する。
+   - Bashを用意できずjobのcommandがPOSIX互換なら、workflowトップレベルのBash既定値を残したうえで、そのjobだけ`defaults.run.shell: sh`を明示し、不在を理由として記録する。PowerShellなど別shellを契約とするjobやstepでは、トップレベルの既定値を残し、そのjobの`defaults.run.shell`または該当stepの`shell`を契約に合う利用可能なshellへ上書きし、具体的な要件を記録する。これらは実行環境またはcommandの互換性から必要となる場合の局所例外とする。Bash固有のcommandが必要でBashを提供できない場合は、shell方針とjob要件のどちらを優先するかユーザーに確認する。
    - 明示した`bash`とshell未指定では実行commandが異なる。fallbackを含む詳細は[Workflow syntax: `defaults.run.shell`](https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax#defaultsrun)と[出典と適用判断](references/sources.md)で確認する。
 
    ```yaml

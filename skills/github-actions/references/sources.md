@@ -72,7 +72,8 @@ sources:
 - Linux/macOSでshellを省略すると `bash -e {0}` が使われ、Bashがないときは `sh -e {0}` がfallbackとなる。`shell: bash` を明示すると `bash --noprofile --norc -eo pipefail {0}` が使われる。[Workflow syntax][^github-workflow-default-shell]
 - job `container`内のshell既定値は`sh`であり、workflowやjobの`defaults.run.shell`、またはstepの`shell`で上書きできる。workflow-level `bash` defaultを使うなら、job containerにBashがあるかを確認する。[Job container syntax][^github-job-container-shell]
 - Actions runnerの実装は、shell省略時にBashを探してから`sh`へfallbackし、shellが明示されている場合はそのshellを選ぶ。2026-09-21に確認した固定commitの実装では、この選択が別の分岐になっている。[ScriptHandler.cs][^actions-runner-shell-handler]
-- jobの`container`を使う場合は、そのcontainer内にBashがあるかを確認する。Bashがない場合は、Bash対応imageを選ぶか、Bashをimageへ含める。どちらもできずjobの処理がPOSIX互換なら、workflow全体のBash既定値は保ったうえで、該当jobに限る`defaults.run.shell: sh`を明示し、具体的な制約を記録する。Bash固有の構文が必要でBashを提供できない場合は、shell方針とjob要件のどちらを優先するかユーザーに確認する。
+- Bash既定値が適用される各runner・containerの実行環境でBashの有無とcommandの互換性を確認する。Bashがないself-hosted runnerやcontainerでは、可能ならBashを導入する。導入できず処理がPOSIX互換なら、workflow全体のBash既定値を保ち、該当jobに限って`defaults.run.shell: sh`を明示して不在を理由に記録する。
+- PowerShellなど別shellをcommandの契約とするjobやstepでは、workflow全体のBash既定値を保ち、job-level `defaults.run.shell`またはstep-level `shell`を契約に合う利用可能なshellへ上書きして、その具体的な要件を記録する。Bash固有の構文が必要でBashを提供できない場合は、shell方針とjob要件のどちらを優先するかユーザーに確認する。[Workflow syntax][^github-workflow-default-shell]
 - GHESやself-hosted runnerのlabelはGitHub-hosted一覧から推測しない。対象環境の登録済みlabelを確認し、`ubuntu-slim`が利用できない場合は、その事実をrunner選択の具体的な制約として扱う。
 
 [^copilot-cicd]: GitHub awesome-copilotのCI/CD Best Practices Instructions、上記固定版。
@@ -84,4 +85,4 @@ sources:
 [^github-single-cpu-runners]: [Single-CPU runners](https://docs.github.com/en/actions/reference/runners/github-hosted-runners#single-cpu-runners)。本文に記した15分上限と非特権container制約の参照元。
 [^github-workflow-default-shell]: [Workflow syntax: `defaults.run.shell`](https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax#defaultsrun)。本文に記したshell既定値と実行commandの参照元。
 [^github-job-container-shell]: [Workflow syntax: `jobs.<job_id>.container`](https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax#jobsjob_idcontainer)。本文に記したcontainer内shell既定値の参照元。
-[^actions-runner-shell-handler]: [Actions runner `ScriptHandler.cs`](https://github.com/actions/runner/blob/80bb1fb827fa44d489263061e71ef4adba7ad8cd/src/Runner.Worker/Handlers/ScriptHandler.cs#L1082-L1111)（shell未指定時のfallbackと明示shellの解決）、[container内のshell選択](https://github.com/actions/runner/blob/80bb1fb827fa44d489263061e71ef4adba7ad8cd/src/Runner.Worker/Handlers/ScriptHandler.cs#L1277-L1300)。この実装snapshotは2026-09-21に確認した。実際のrunner・containerは対象環境で再確認する。
+[^actions-runner-shell-handler]: [Actions runner `ScriptHandler.cs`](https://github.com/actions/runner/blob/80bb1fb827fa44d489263061e71ef4adba7ad8cd/src/Runner.Worker/Handlers/ScriptHandler.cs#L187-L203)（shell未指定時のOS別選択とLinux/macOSでのBashからshへの探索）、[明示shellの解決](https://github.com/actions/runner/blob/80bb1fb827fa44d489263061e71ef4adba7ad8cd/src/Runner.Worker/Handlers/ScriptHandler.cs#L205-L233)。この実装snapshotは2026-09-21に確認した。実際のrunner・containerは対象環境で再確認する。
