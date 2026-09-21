@@ -269,8 +269,8 @@
     },
     {
       "id": 22,
-      "prompt": "既存のGitHub Actions workflowをレビューしてください。対象はGitHub.comのGitHub-hosted runnersで、管理者はubuntu-slim labelが利用可能と確認しています。Linux jobはruns-on: ubuntu-slimを使い、job-levelまたはstep-levelのshell overrideはありません。workflowトップレベルにdefaults.run.shellはありません。Linux jobには2つのrun stepがあります。1つ目はgrep -F 'TODO' notes.txt | wc -lをif条件に置き、else branchはpipeline status 1ならno-matchをstderrに記録して成功を返し、他のstatusでは失敗します。wcのstdout countは維持し、余分な0は出しません。2つ目は同じpipelineを|| handlerで処理し、status 1のときだけno-matchをstderrに記録して成功扱い、他のstatusは失敗させます。両handlerの契約は既存要件です。no-match時はstdoutに1行のcountを出し、読取エラーは失敗させる必要があります。Issueのworkflow-level defaults.run.shell: bash方針を適用するとき、何を確認し最小でどう変更すべきか提案してください。ファイルは変更しないでください。",
-      "expected_output": "workflowトップレベルにdefaults.run.shell: bashを追加し、対象環境で利用可能と確認済みのubuntu-slimを維持する。明示Bashではpipefailがpipeline statusを変えるが、if条件や|| listでは-eが直ちにstepを終了させないため、既存handlerにstatusが渡ると説明する。handlerがstatus 1をstderr通知と成功に処理し、wcのstdout countを1行だけ保ち、他のstatusを失敗させることを確認し、自動step失敗と決めつけたり不要なshell例外を追加しない。公式資料を示し、レビューのみを守る。",
+      "prompt": "既存のGitHub Actions workflowをレビューしてください。対象はGitHub.comのGitHub-hosted runnersで、管理者はubuntu-slim labelが利用可能と確認しています。管理者は対象repositoryのrunner groupとrepository accessを確認し、このlabelの候補は標準GitHub-hosted runnerだけで、同名custom labelを持つeligible self-hosted runnerはないと確認しています。Linux jobはruns-on: ubuntu-slimを使い、job-levelまたはstep-levelのshell overrideはありません。workflowトップレベルにdefaults.run.shellはありません。Linux jobには2つのrun stepがあります。1つ目はgrep -F 'TODO' notes.txt | wc -lをif条件に置き、else branchはpipeline status 1ならno-matchをstderrに記録して成功を返し、他のstatusでは失敗します。wcのstdout countは維持し、余分な0は出しません。2つ目は同じpipelineを|| handlerで処理し、status 1のときだけno-matchをstderrに記録して成功扱い、他のstatusは失敗させます。両handlerの契約は既存要件です。no-match時はstdoutに1行のcountを出し、読取エラーは失敗させる必要があります。Issueのworkflow-level defaults.run.shell: bash方針を適用するとき、何を確認し最小でどう変更すべきか提案してください。ファイルは変更しないでください。",
+      "expected_output": "workflowトップレベルにdefaults.run.shell: bashを追加し、対象環境で利用可能と確認済みのubuntu-slimを維持する。provider、runner group、repository accessを確認し、同名custom labelのeligible self-hosted runnerがないfixtureを選定理由に反映する。明示Bashではpipefailがpipeline statusを変えるが、if条件や|| listでは-eが直ちにstepを終了させないため、既存handlerにstatusが渡ると説明する。handlerがstatus 1をstderr通知と成功に処理し、wcのstdout countを1行だけ保ち、他のstatusを失敗させることを確認し、自動step失敗と決めつけたり不要なshell例外を追加しない。公式資料を示し、レビューのみを守る。",
       "files": [],
       "expectations": [
         "workflowトップレベルにdefaults.run.shell: bashを追加する",
@@ -278,7 +278,8 @@
         "pipefailでpipeline statusは変わるが、if条件や|| list内のpipelineは-eで直ちにstep終了するとは限らないと説明する",
         "既存handlerがstatus 1をstderr通知と成功に処理し、wcのstdout countを1行だけ保ち、読取エラーなど他の失敗を維持するか確認する",
         "既存handlerが契約を満たす場合に不要なshell例外やworkflow編集を勧めない",
-        "GitHub workflow syntaxとBashのpipefail/errexit仕様を公式資料で示す"
+        "GitHub workflow syntaxとBashのpipefail/errexit仕様を公式資料で示す",
+        "provider、runner group、repository accessのfixtureにより同名custom labelのeligible self-hosted runnerが除外されていることを選定理由に反映する"
       ]
     },
     {
