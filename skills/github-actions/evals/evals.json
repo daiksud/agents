@@ -132,22 +132,25 @@
     },
     {
       "id": 13,
-      "prompt": "別のPython repositoryにPR workflowを追加する相談です。対象はGitHub.comのGitHub-hosted runnersで、管理者はubuntu-slim labelが利用可能と確認しています。projectはPython 3.12を使い、既存のrequirements-ci.txtにruffとpytestのversionが固定されています。workflowはPRで実行し、checkout、Pythonと依存関係の準備、ruffとpytestの実行を含めてください。jobは約6分で、Dockerやmount、特殊OS・architectureは不要です。runnerとshellを設定した完全なYAML案と選定理由を示してください。",
-      "expected_output": "対象環境でubuntu-slim labelが利用可能なことを踏まえてこのrunnerを第一候補にし、workflowトップレベルのdefaults.run.shellにbashを指定する。workflowはon: pull_requestで起動し、permissionsはcontents: readに限定する。checkout後に認証済みGit操作が不要ならpersist-credentials: falseを指定する。Python 3.12のsetupを含め、外部Actionは照合済みの完全commit SHAと一致するversion commentで固定する。既存のrequirements-ci.txtから依存を導入してから、run stepでruff checkとpytestの両方を実行する。ubuntu-slim優先はこのスキル独自方針と説明し、公式資料を参照して制約を確認する。",
+      "prompt": "別のPython repositoryにPR workflowを追加する相談です。対象はGitHub.comのpublic repositoryで、管理者はGitHub-hostedのubuntu-slimとubuntu-latest labelが利用可能と確認しています。projectはPython 3.12を使い、既存のrequirements-ci.txtにruffとpytestのversionが固定されています。代表的な実行はubuntu-latest上で約6分ですが、ubuntu-slim上の実測はありません。公式資料ではubuntu-slimのjob timeoutは15分です。必須PRチェックとして切り替える前の性能適合確認と、未計測時の扱いを含めてください。Actionの検証済みfixtureはactions/checkout v7.0.1 -> 3d3c42e5aac5ba805825da76410c181273ba90b1、actions/setup-python v7.0.0 -> 5fda3b95a4ea91299a34e894583c3862153e4b97です。この対応だけを使ってください。workflowはPRで実行し、checkout、Pythonと依存関係の準備、ruffとpytestの実行を含めてください。runnerとshellを設定した完全なYAML案と選定理由を示してください。",
+      "expected_output": "ubuntu-slimを第一候補として扱うが、ubuntu-latest上の約6分という実績をubuntu-slimでの時間根拠にしない。ubuntu-slim上の代表的なjobを必須チェックへ切り替える前に計測し、変動の余裕を持って15分以内に完了するか確認する。未計測なら切り替えを条件付きの提案とし、測定できるまで既知のubuntu-latestを維持するか、必須化前の試行を提案する。上限を余裕をもって満たせないと分かった場合は具体的な時間制約を理由にubuntu-latestを選ぶ。YAMLはworkflow-level defaults.run.shell: bash、on: pull_request、permissions: contents: readを含み、checkoutではpersist-credentials: falseを使う。checkoutとsetup-pythonのversionおよび完全SHAは、promptのfixtureにあるv7.0.1/3d3c42e5aac5ba805825da76410c181273ba90b1とv7.0.0/5fda3b95a4ea91299a34e894583c3862153e4b97をそれぞれ正確に対応させる。Python 3.12を設定し、requirements-ci.txtを導入してからruff checkとpytestを実行する。ubuntu-slim優先はスキル独自の方針と説明し、公式の公開repository向けrunner表とsingle-CPU制約を参照する。",
       "files": [],
       "expectations": [
-        "軽量なLinux jobにruns-on: ubuntu-slimを選ぶ",
+        "ubuntu-slimを第一候補とし、計測前は性能適合を断定しない",
+        "ubuntu-latest上の約6分をubuntu-slimの実行時間の証拠として扱わない",
+        "15分上限に対してubuntu-slim上の代表的な実行を測定し、余裕を含めて判定する",
+        "未計測なら切り替えを条件付きとし、測定までubuntu-latestを維持するか必須化前の試行を提案する",
+        "実測で上限を余裕をもって満たせない場合は時間制約を例外理由としてubuntu-latestを選ぶ",
         "workflowトップレベルにdefaults.run.shell: bashを指定する",
-        "ubuntu-slim優先はこのスキル独自の方針でGitHub共通の必須要件ではないと説明する",
-        "runnerの制約とdefaults.run.shellについてGitHub公式資料を示す",
-        "ubuntu-slim labelが対象環境で利用可能と確認済みであることを選定理由に反映する",
-        "workflowにcheckoutを含め、actions/checkoutを照合済みの完全commit SHAで固定する",
-        "workflowでPython 3.12を選び、setup-python Actionを照合済みの完全commit SHAで固定する",
-        "workflowのtriggerにon: pull_requestを指定する",
-        "workflow permissionsをcontents: readに限定する",
+        "workflowはon: pull_requestで起動し、permissionsをcontents: readに限定する",
+        "checkoutとsetup-pythonを含み、requirements-ci.txtの依存導入前にPython 3.12を設定する",
+        "checkoutのversionと完全SHAをfixtureどおりv7.0.1と3d3c42e5aac5ba805825da76410c181273ba90b1に対応させる",
+        "setup-pythonのversionと完全SHAをfixtureどおりv7.0.0と5fda3b95a4ea91299a34e894583c3862153e4b97に対応させる",
         "後続に認証済みGit操作が不要ならcheckoutのpersist-credentialsをfalseにする",
-        "ruffとpytestの実行前に、既存のrequirements-ci.txtからCI依存を導入する",
-        "生成したYAMLのrun stepでruff checkとpytestの両方を実行する"
+        "ruffとpytestの実行前に既存のrequirements-ci.txtからCI依存を導入する",
+        "生成したYAMLのrun stepでruff checkとpytestの両方を実行する",
+        "ubuntu-slim優先はスキル独自方針と説明し、公式資料を示す",
+        "ubuntu-slimとubuntu-latest labelが対象のGitHub.com public repositoryで利用可能と確認済みであることを選定理由に反映する"
       ]
     },
     {
@@ -165,15 +168,18 @@
     },
     {
       "id": 15,
-      "prompt": "GitHub.comのGitHub-hosted runnersを使っています。管理者は対象環境でubuntu-slimとubuntu-latestのlabelが利用可能と確認しています。コンテナイメージを作るCI jobではDocker-in-Dockerとfilesystem mountが必要です。integration stepは通常25分かかります。どのrunnerを選び、その例外理由をどう記録すべきか提案してください。",
-      "expected_output": "ubuntu-slimの非特権containerではDocker-in-Dockerとmountを使えず、job timeoutも15分なので要件を満たせないと公式資料で確認する。対象環境で利用可能と確認済みのubuntu-latestを選び、その具体的な制約と理由をworkflowコメントまたは変更説明に記録する。",
+      "prompt": "対象はGitHub.com上のprivate repositoryです。管理者はこのrepositoryと利用planで標準GitHub-hostedのubuntu-slimとubuntu-latest labelが利用可能と確認しています。コンテナイメージを作るCI jobではDocker-in-Dockerとfilesystem mountが必要で、integration stepは通常25分かかります。どのrunnerを選び、その例外理由をどう記録すべきか提案してください。",
+      "expected_output": "対象はGitHub.comのprivate repositoryなので、public repository向けではなくprivate repository向けの標準runner表を確認し、対象planでの利用可否を反映する。その表ではubuntu-latestは2 CPU/8 GB、ubuntu-slimは1 CPU/5 GBとして記載されている。ubuntu-slimは非特権containerでDocker-in-Dockerとfilesystem mountを使えず、job timeoutも15分のため、25分の要件を満たさない。利用可能と管理者が確認したubuntu-latestを選び、これらの機能と時間制約を具体的な例外理由としてworkflow commentまたは変更説明に記録する。ubuntu-slim優先はスキル独自方針と説明し、private runner tableとsingle-CPU runner制約の公式資料をリンクする。",
       "files": [],
       "expectations": [
-        "Docker-in-Dockerとfilesystem mountがubuntu-slimでサポートされないことを説明する",
-        "15分のjob timeoutが25分のintegration要件を満たさないと説明する",
-        "対象環境で利用可能と確認済みのubuntu-latestを選び、具体的な例外理由を記録する",
-        "ubuntu-latest labelが対象環境で利用可能と確認済みであることを選定理由に反映する",
-        "公式runner資料へのリンクを示す"
+        "GitHub.comのprivate repositoryであることを反映し、public向けではなくprivate向け標準runner表を参照する",
+        "対象planとrepositoryでrunner labelが利用可能という確認を選定理由に反映する",
+        "ubuntu-slimの15分上限と25分のintegration stepの不一致を説明する",
+        "ubuntu-slimでDocker-in-Dockerとfilesystem mountを使えない理由を説明する",
+        "確認済みのubuntu-latestを選び、private向けrunner表の2 CPU/8 GB仕様を参照する",
+        "具体的な要件と制約をrunner例外の理由としてworkflow commentまたは変更説明に記録する",
+        "private向けrunner表とsingle-CPU runnerの公式資料を示し、public表の仕様をprivate repositoryへ流用しない",
+        "ubuntu-slim優先はスキル独自方針と区別する"
       ]
     },
     {

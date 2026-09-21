@@ -30,8 +30,11 @@ description: GitHub Actionsのワークフローを設計・変更・調査・�
 5. 目的を満たす最小の変更と検証を選ぶ。手動承認、特定のブランチ戦略、大規模マトリクス、Canaryを一律に要求しない。
 6. ワークフローの設計・変更・レビューでは、runnerとshellを次の方針で確認する。
    - runnerを選ぶ前に、対象環境がその`runs-on` labelを提供しているか、labelに一致する候補のprovider（GitHub-hosted / self-hosted）、runner group、repository accessを確認する。label名だけでproviderを推測しない。同じcustom labelを持つself-hosted runnerが候補に入る場合は、特にPR由来codeの実行について[安全性](references/hardening.md)の共有状態・network・host credentialの境界を確認し、GitHub-hosted runnerだと確認できるまでlabelだけで選定を確定しない。
-   - `ubuntu-slim` が利用可能でも、必要な処理を実現できない場合に限り別のrunnerを使う。慣習、既存例の踏襲、高性能への単なる希望は例外理由にしない。例外時は公式の[GitHub-hosted runner一覧](https://docs.github.com/en/actions/reference/runners/github-hosted-runners#standard-github-hosted-runners-for-public-repositories)と[`ubuntu-slim`の制約](https://docs.github.com/en/actions/reference/runners/github-hosted-runners#single-cpu-runners)を確認し、満たせない要件と具体的な制約をワークフローのコメントか変更説明に記録する。
-   - `ubuntu-slim` の優先順位はこのスキル独自の方針であり、GitHub共通の必須要件ではない。runnerの選定理由を説明するときは、この方針とGitHub公式仕様を区別する。日付付きの仕様確認値は[出典と適用判断](references/sources.md)に記録する。
+   - `ubuntu-slim` が利用可能でも、必要な処理を実現できない場合に限り別のrunnerを使う。慣習、既存例の踏襲、高性能への単なる希望は例外理由にしない。
+   - 実行時間が要件になる場合は、対象runner上の実測と15分上限を照合し、別runnerでの時間だけを根拠に適合を断定しない。未計測なら必須チェック化の前に代表的なjobを試し、適合確認まで選定を条件付きにする。
+   - 例外時はGitHub.comかGHESか、repositoryの公開状態とplanを確認する。GitHub.comでは該当する[public repository向けrunner一覧](https://docs.github.com/en/actions/reference/runners/github-hosted-runners#standard-github-hosted-runners-for-public-repositories)または[private repository向けrunner一覧](https://docs.github.com/en/actions/reference/runners/github-hosted-runners#standard-github-hosted-runners-for-private-repositories)を参照し、GHESではGitHub.comの一覧を適用せず対象環境のrunner inventoryを確認する。
+   - `ubuntu-slim` の制約を照合し、満たせない要件と具体的な制約をワークフローのコメントか変更説明に記録する。[公式の制約](https://docs.github.com/en/actions/reference/runners/github-hosted-runners#single-cpu-runners)は判断時点で確認する。
+   - runnerの選定理由を回答・記録するときは、`ubuntu-slim` 優先がこのスキル独自の方針で、GitHub共通の必須要件ではないことを明示し、runnerの提供条件・制約などのGitHub公式仕様と分けて説明する。日付付きの仕様確認値は[出典と適用判断](references/sources.md)に記録する。
    - workflowトップレベルに `defaults.run.shell: bash` を必ず指定する。stepごとの `shell: bash` だけでこの要件を満たした扱いにしない。
    - Bash既定値が適用される各jobの実行環境にBashがあるか、各commandがBashと互換かを確認する。Bashがないself-hosted runnerやjob containerでは、可能ならBash入りrunner・imageを用意する。既存のshellからpackageを導入するstepを使う場合は、そのstepに導入前から利用できるshell（例: `sh`）を明示する。workflow-levelの`bash`既定値は導入stepにも適用される。
    - Bashを用意できずjobのcommandがPOSIX互換なら、workflowトップレベルのBash既定値を残したうえで、そのjobだけ`defaults.run.shell: sh`を明示し、不在を理由として記録する。PowerShellなど別shellを契約とするjobやstepでは、トップレベルの既定値を残し、そのjobの`defaults.run.shell`または該当stepの`shell`を契約に合う利用可能なshellへ上書きし、具体的な要件を記録する。これらは実行環境またはcommandの互換性から必要となる場合の局所例外とする。Bash固有のcommandが必要でBashを提供できない場合は、shell方針とjob要件のどちらを優先するかユーザーに確認する。
