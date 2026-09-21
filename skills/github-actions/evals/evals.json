@@ -146,11 +146,12 @@
     },
     {
       "id": 14,
-      "prompt": "次のworkflowをレビューしてください。runnerはubuntu-latestで、Ubuntu上のruffとpytestだけを実行し、所要時間は約6分です。run stepごとにshell: bashを指定していますが、workflowトップレベルのdefaults.run.shellはありません。設定ファイルは変更せず、指摘と修正案を示してください。",
-      "expected_output": "具体的な制約が示されていないubuntu-latestの選択を指摘し、ubuntu-slimを候補にする。またstepごとのshell指定ではworkflowトップレベルの必須設定を満たさないと指摘し、defaults.run.shell: bashを提案する。レビューだけでファイルは変更しない。",
+      "prompt": "次のworkflowをレビューしてください。対象はGitHub.comのGitHub-hosted runnersで、管理者はubuntu-slimとubuntu-latestのlabelが利用可能と確認しています。runnerはubuntu-latestで、Ubuntu上のruffとpytestだけを実行し、所要時間は約6分です。run stepごとにshell: bashを指定していますが、workflowトップレベルのdefaults.run.shellはありません。設定ファイルは変更せず、指摘と修正案を示してください。",
+      "expected_output": "ubuntu-slim labelが利用可能と確認済みで、処理に制約が示されていないため、ubuntu-latestではなくubuntu-slimを選ぶよう提案する。またstepごとのshell指定ではworkflowトップレベルの必須設定を満たさないと指摘し、defaults.run.shell: bashを提案する。ubuntu-slim優先はこのスキル方針でGitHub共通の必須要件ではないと説明し、レビューだけでファイルは変更しない。",
       "files": [],
       "expectations": [
-        "具体的な要件上の制約がないubuntu-latestを指摘しubuntu-slimを提案する",
+        "制約のないubuntu-latestを指摘し、利用可能と確認済みのubuntu-slimを提案する",
+        "ubuntu-slim labelが対象環境で利用可能と確認済みであることを選定理由に反映する",
         "個別stepのshell指定はworkflowトップレベルのdefaults.run.shell: bashを満たさないと指摘する",
         "レビュー依頼の境界を守ってファイルを変更しない",
         "ubuntu-slim優先はこのスキル独自の方針でGitHub共通の必須要件ではないと説明する"
@@ -242,6 +243,20 @@
         "明示Bashのpipefailによりgrep終了コード1がpipeline失敗へ変わることを指摘する",
         "grepの終了コード1だけを許容し、終了コード2などの他の失敗を保って0を出す例を示す",
         "公式workflow shell資料を参照し、ファイルを変更しない"
+      ]
+    },
+    {
+      "id": 22,
+      "prompt": "既存のGitHub Actions workflowをレビューしてください。対象はGitHub.comのGitHub-hosted runnersで、管理者はubuntu-slim labelが利用可能と確認しています。Linux jobはruns-on: ubuntu-slimを使い、job-levelまたはstep-levelのshell overrideはありません。workflowトップレベルにdefaults.run.shellはありません。Linux jobには2つのrun stepがあります。1つ目はgrep -F 'TODO' notes.txt | wc -lをif条件に置き、else branchはpipeline status 1ならno-matchをstderrに記録して成功を返し、他のstatusでは失敗します。wcのstdout countは維持し、余分な0は出しません。2つ目は同じpipelineを|| handlerで処理し、status 1のときだけno-matchをstderrに記録して成功扱い、他のstatusは失敗させます。両handlerの契約は既存要件です。no-match時はstdoutに1行のcountを出し、読取エラーは失敗させる必要があります。Issueのworkflow-level defaults.run.shell: bash方針を適用するとき、何を確認し最小でどう変更すべきか提案してください。ファイルは変更しないでください。",
+      "expected_output": "workflowトップレベルにdefaults.run.shell: bashを追加し、対象環境で利用可能と確認済みのubuntu-slimを維持する。明示Bashではpipefailがpipeline statusを変えるが、if条件や|| listでは-eが直ちにstepを終了させないため、既存handlerにstatusが渡ると説明する。handlerがstatus 1をstderr通知と成功に処理し、wcのstdout countを1行だけ保ち、他のstatusを失敗させることを確認し、自動step失敗と決めつけたり不要なshell例外を追加しない。公式資料を示し、レビューのみを守る。",
+      "files": [],
+      "expectations": [
+        "workflowトップレベルにdefaults.run.shell: bashを追加する",
+        "対象環境で利用可能と確認済みのubuntu-slimを維持する",
+        "pipefailでpipeline statusは変わるが、if条件や|| list内のpipelineは-eで直ちにstep終了するとは限らないと説明する",
+        "既存handlerがstatus 1をstderr通知と成功に処理し、wcのstdout countを1行だけ保ち、読取エラーなど他の失敗を維持するか確認する",
+        "既存handlerが契約を満たす場合に不要なshell例外やworkflow編集を勧めない",
+        "GitHub workflow syntaxとBashのpipefail/errexit仕様を公式資料で示す"
       ]
     }
   ]
