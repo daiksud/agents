@@ -217,6 +217,18 @@
         "PowerShell構文を実行するjobまたはstepにpwshを明示する",
         "ubuntu-slim優先はこのスキル独自方針であると区別する"
       ]
+    },
+    {
+      "id": 20,
+      "prompt": "既存のGitHub Actions workflowをレビューしてください。workflowトップレベルにdefaults.run.shell: bashがあり、jobはAlpine containerで動きます。このcontainerにはPOSIX shとapkがあり、Bashはありませんがapk addでBashを追加できます。先頭のrun stepにshell指定なしでapk add --no-cache bashがあり、後続stepではBash構文を実行します。最小のYAML調整と理由を提案してください。ファイルは変更しないでください。",
+      "expected_output": "workflowトップレベルのdefaults.run.shell: bashを維持し、Bashを導入するstepだけshell: shを明示する。workflow-level Bashは導入前のstepにも適用されるため、shell未指定時のfallbackに任せられないと説明し、後続stepは導入後のBash既定値を利用できると示す。レビュー依頼の境界を守る。",
+      "files": [],
+      "expectations": [
+        "workflowトップレベルのdefaults.run.shell: bashを維持する",
+        "Bash導入stepのみにshell: shを明示する",
+        "Bash既定値は導入stepにも適用されるためshの明示が必要と説明し、後続stepは導入後のBashを使うことを示す",
+        "例外を導入stepに限定し、ファイルを変更しない"
+      ]
     }
   ]
 }

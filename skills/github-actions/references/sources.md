@@ -72,7 +72,7 @@ sources:
 - Linux/macOSでshellを省略すると `bash -e {0}` が使われ、Bashがないときは `sh -e {0}` がfallbackとなる。`shell: bash` を明示すると `bash --noprofile --norc -eo pipefail {0}` が使われる。[Workflow syntax][^github-workflow-default-shell]
 - job `container`内のshell既定値は`sh`であり、workflowやjobの`defaults.run.shell`、またはstepの`shell`で上書きできる。workflow-level `bash` defaultを使うなら、job containerにBashがあるかを確認する。[Job container syntax][^github-job-container-shell]
 - Actions runnerの実装は、shell省略時にBashを探してから`sh`へfallbackし、shellが明示されている場合はそのshellを選ぶ。2026-09-21に確認した固定commitの実装では、この選択が別の分岐になっている。[ScriptHandler.cs][^actions-runner-shell-handler]
-- Bash既定値が適用される各runner・containerの実行環境でBashの有無とcommandの互換性を確認する。Bashがないself-hosted runnerやcontainerでは、可能ならBashを導入する。導入できず処理がPOSIX互換なら、workflow全体のBash既定値を保ち、該当jobに限って`defaults.run.shell: sh`を明示して不在を理由に記録する。
+- Bash既定値が適用される各runner・containerの実行環境でBashの有無とcommandの互換性を確認する。Bashがないself-hosted runnerやcontainerでは、可能ならBash入りrunner・imageを用意する。package導入を行うstepには、workflow-levelのBash既定値がそのstepにも適用されるため、導入前から利用できるshell（例: `sh`）をstep-levelで明示する。導入できず処理がPOSIX互換なら、workflow全体のBash既定値を保ち、該当jobに限って`defaults.run.shell: sh`を明示して不在を理由に記録する。[Workflow syntax][^github-workflow-default-shell]
 - PowerShellなど別shellをcommandの契約とするjobやstepでは、workflow全体のBash既定値を保ち、job-level `defaults.run.shell`またはstep-level `shell`を契約に合う利用可能なshellへ上書きして、その具体的な要件を記録する。Bash固有の構文が必要でBashを提供できない場合は、shell方針とjob要件のどちらを優先するかユーザーに確認する。[Workflow syntax][^github-workflow-default-shell]
 - GHESやself-hosted runnerのlabelはGitHub-hosted一覧から推測しない。対象環境の登録済みlabelを確認し、`ubuntu-slim`が利用できない場合は、その事実をrunner選択の具体的な制約として扱う。
 
