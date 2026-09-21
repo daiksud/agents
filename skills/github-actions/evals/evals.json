@@ -132,8 +132,8 @@
     },
     {
       "id": 13,
-      "prompt": "別のPython repositoryにPR workflowを追加する相談です。対象はGitHub.comのpublic repositoryで、管理者はGitHub-hostedのubuntu-slimとubuntu-latest labelが利用可能と確認しています。projectはPython 3.12を使い、既存のrequirements-ci.txtにruffとpytestのversionが固定されています。代表的な実行はubuntu-latest上で約6分ですが、ubuntu-slim上の実測はありません。公式資料ではubuntu-slimのjob timeoutは15分です。必須PRチェックとして切り替える前の性能適合確認と、未計測時の扱いを含めてください。Actionの検証済みfixtureはactions/checkout v7.0.1 -> 3d3c42e5aac5ba805825da76410c181273ba90b1、actions/setup-python v7.0.0 -> 5fda3b95a4ea91299a34e894583c3862153e4b97です。この対応だけを使ってください。workflowはPRで実行し、checkout、Pythonと依存関係の準備、ruffとpytestの実行を含めてください。runnerとshellを設定した完全なYAML案と選定理由を示してください。",
-      "expected_output": "ubuntu-slimを第一候補として扱うが、ubuntu-latest上の約6分という実績をubuntu-slimでの時間根拠にしない。ubuntu-slim上の代表的なjobを必須チェックへ切り替える前に計測し、変動の余裕を持って15分以内に完了するか確認する。未計測なら切り替えを条件付きの提案とし、測定できるまで既知のubuntu-latestを維持するか、必須化前の試行を提案する。上限を余裕をもって満たせないと分かった場合は具体的な時間制約を理由にubuntu-latestを選ぶ。YAMLはworkflow-level defaults.run.shell: bash、on: pull_request、permissions: contents: readを含み、checkoutではpersist-credentials: falseを使う。checkoutとsetup-pythonのversionおよび完全SHAは、promptのfixtureにあるv7.0.1/3d3c42e5aac5ba805825da76410c181273ba90b1とv7.0.0/5fda3b95a4ea91299a34e894583c3862153e4b97をそれぞれ正確に対応させる。Python 3.12を設定し、requirements-ci.txtを導入してからruff checkとpytestを実行する。ubuntu-slim優先はスキル独自の方針と説明し、公式の公開repository向けrunner表とsingle-CPU制約を参照する。",
+      "prompt": "別のPython repositoryにPR workflowを追加する相談です。対象はGitHub.comのpublic repositoryで、管理者はGitHub-hostedのubuntu-slimとubuntu-latest labelが利用可能と確認しています。管理者は対象repositoryのrunner groupとrepository accessを調べ、これらのlabelに一致する候補は標準GitHub-hosted runnersだけで、同名custom labelを持つeligible self-hosted runnerはないと確認しています。projectはPython 3.12を使い、既存のrequirements-ci.txtにruffとpytestのversionが固定されています。代表的な実行はubuntu-latest上で約6分ですが、ubuntu-slim上の実測はありません。公式資料ではubuntu-slimのjob timeoutは15分です。必須PRチェックとして切り替える前の性能適合確認と、未計測時の扱いを含めてください。Actionの検証済みfixtureはactions/checkout v7.0.1 -> 3d3c42e5aac5ba805825da76410c181273ba90b1、actions/setup-python v7.0.0 -> 5fda3b95a4ea91299a34e894583c3862153e4b97です。この対応だけを使ってください。workflowはPRで実行し、checkout、Pythonと依存関係の準備、ruffとpytestの実行を含めてください。runnerとshellを設定した完全なYAML案と選定理由を示してください。",
+      "expected_output": "管理者が対象repositoryのrunner groupとrepository accessを確認し、同じlabelを持つeligible self-hosted runnerが候補にないことを反映したうえで、ubuntu-slimを第一候補にする。ubuntu-latest上の約6分という実績だけをubuntu-slimの時間根拠にせず、必須PRチェックへ切り替える前に対象runner上で代表的なjobを計測し、変動の余裕を持って15分以内に完了するか確認する。未計測なら切り替えを条件付きの提案とし、測定できるまで既知のubuntu-latestを維持するか、必須化前の試行を提案する。上限を余裕をもって満たせないと分かった場合は具体的な時間制約を理由にubuntu-latestを選ぶ。YAMLはworkflow-level defaults.run.shell: bash、on: pull_request、permissions: contents: readを含み、checkoutではpersist-credentials: falseを使う。checkoutとsetup-pythonのversionおよび完全SHAはpromptのfixtureどおり正確に対応させ、Python 3.12を設定しrequirements-ci.txtから依存を導入してruff checkとpytestを実行する。ubuntu-slim優先はスキル独自方針と説明し、公式runner・shell資料を示す。",
       "files": [],
       "expectations": [
         "ubuntu-slimを第一候補とし、計測前は性能適合を断定しない",
@@ -150,7 +150,8 @@
         "ruffとpytestの実行前に既存のrequirements-ci.txtからCI依存を導入する",
         "生成したYAMLのrun stepでruff checkとpytestの両方を実行する",
         "ubuntu-slim優先はスキル独自方針と説明し、公式資料を示す",
-        "ubuntu-slimとubuntu-latest labelが対象のGitHub.com public repositoryで利用可能と確認済みであることを選定理由に反映する"
+        "ubuntu-slimとubuntu-latest labelが対象のGitHub.com public repositoryで利用可能と確認済みであることを選定理由に反映する",
+        "provider、runner group、repository accessの確認により同名custom labelのeligible self-hosted runnerが除外されているfixtureを選定理由に反映する"
       ]
     },
     {
