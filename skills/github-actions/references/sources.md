@@ -17,6 +17,12 @@ sources:
     resource: https://docs.github.com/en/actions/reference/runners/github-hosted-runners#standard-github-hosted-runners-for-public-repositories
   - id: github-single-cpu-runners
     resource: https://docs.github.com/en/actions/reference/runners/github-hosted-runners#single-cpu-runners
+  - id: github-runner-selection
+    resource: https://docs.github.com/en/actions/how-tos/write-workflows/choose-where-workflows-run/choose-the-runner-for-a-job
+  - id: github-self-hosted-labels
+    resource: https://docs.github.com/en/actions/how-tos/manage-runners/self-hosted-runners/apply-labels
+  - id: github-runner-groups
+    resource: https://docs.github.com/en/actions/concepts/runners/runner-groups
   - id: github-workflow-default-shell
     resource: https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax#defaultsrun
   - id: github-job-container-shell
