@@ -133,7 +133,7 @@
     {
       "id": 13,
       "prompt": "別のPython repositoryにPR workflowを追加する相談です。対象はGitHub.comのGitHub-hosted runnersで、管理者はubuntu-slim labelが利用可能と確認しています。projectはPython 3.12を使い、既存のrequirements-ci.txtにruffとpytestのversionが固定されています。workflowはPRで実行し、checkout、Pythonと依存関係の準備、ruffとpytestの実行を含めてください。jobは約6分で、Dockerやmount、特殊OS・architectureは不要です。runnerとshellを設定した完全なYAML案と選定理由を示してください。",
-      "expected_output": "対象環境でubuntu-slim labelが利用可能なことを踏まえてこのrunnerを第一候補にし、workflowトップレベルのdefaults.run.shellにbashを指定する。workflowにcheckoutとPython 3.12のsetupを含め、外部Actionは照合済みの完全commit SHAと一致するversion commentで固定する。既存のrequirements-ci.txtから依存を導入してから、run stepでruff checkとpytestの両方を実行する。ubuntu-slim優先はこのスキル独自方針と説明し、公式資料を参照して制約を確認する。",
+      "expected_output": "対象環境でubuntu-slim labelが利用可能なことを踏まえてこのrunnerを第一候補にし、workflowトップレベルのdefaults.run.shellにbashを指定する。workflowはon: pull_requestで起動し、permissionsはcontents: readに限定する。checkoutとPython 3.12のsetupを含め、外部Actionは照合済みの完全commit SHAと一致するversion commentで固定する。既存のrequirements-ci.txtから依存を導入してから、run stepでruff checkとpytestの両方を実行する。ubuntu-slim優先はこのスキル独自方針と説明し、公式資料を参照して制約を確認する。",
       "files": [],
       "expectations": [
         "軽量なLinux jobにruns-on: ubuntu-slimを選ぶ",
@@ -143,6 +143,8 @@
         "ubuntu-slim labelが対象環境で利用可能と確認済みであることを選定理由に反映する",
         "workflowにcheckoutを含め、actions/checkoutを照合済みの完全commit SHAで固定する",
         "workflowでPython 3.12を選び、setup-python Actionを照合済みの完全commit SHAで固定する",
+        "workflowのtriggerにon: pull_requestを指定する",
+        "workflow permissionsをcontents: readに限定する",
         "ruffとpytestの実行前に、既存のrequirements-ci.txtからCI依存を導入する",
         "生成したYAMLのrun stepでruff checkとpytestの両方を実行する"
       ]
