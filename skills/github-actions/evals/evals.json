@@ -202,26 +202,28 @@
     },
     {
       "id": 17,
-      "prompt": "このworkflowはGitHub Enterprise Serverで動きます。管理者は利用可能なrunner labelがself-hosted、linux、x64だけで、GitHub-hostedのubuntu-slim labelはないと確認しました。jobはruffとpytestのみを約6分実行し、Bashはrunnerに入っています。runnerとshellの設定、選定理由を提案してください。ファイルは変更しないでください。",
-      "expected_output": "対象環境でubuntu-slimが利用できないと確認し、利用可能なself-hosted/linux/x64 labelを指定する。runner例外はlabelの不在として記録する。workflowトップレベルにdefaults.run.shell: bashを設定し、ubuntu-slim優先はこのスキル独自方針でGitHub共通の必須要件ではないと説明する。",
+      "prompt": "このworkflowはGitHub Enterprise Serverで動きます。管理者は利用可能なrunner labelがself-hosted、linux、x64だけで、GitHub-hostedのubuntu-slim labelはないと確認しました。管理者は利用可能なself-hosted runner groupが対象repositoryへ公開され、repository accessも確認済みと確認しました。jobはruffとpytestのみを約6分実行し、Bashはrunnerに入っています。runnerとshellの設定、選定理由を提案してください。ファイルは変更しないでください。",
+      "expected_output": "対象環境でubuntu-slimが利用できないと確認し、利用可能なself-hosted/linux/x64 labelを指定し、runner groupとrepository accessの確認結果を選定理由へ反映する。runner例外はlabelの不在として記録する。workflowトップレベルにdefaults.run.shell: bashを設定し、ubuntu-slim優先はこのスキル独自方針でGitHub共通の必須要件ではないと説明する。",
       "files": [],
       "expectations": [
         "対象環境にubuntu-slim labelがないことを受け、利用可能なself-hosted/linux/x64 labelを選ぶ",
         "runner例外理由を対象環境でlabelが利用できないこととして記録する",
         "workflowトップレベルにdefaults.run.shell: bashを指定する",
-        "ubuntu-slim優先はスキル方針でありGitHub共通の必須要件ではないと説明する"
+        "ubuntu-slim優先はスキル方針でありGitHub共通の必須要件ではないと説明する",
+        "runner groupとrepository accessが対象repositoryからself-hosted runnerを利用可能にしているfixtureを選定理由へ反映する"
       ]
     },
     {
       "id": 18,
-      "prompt": "既存のGitHub Actions workflowをレビューしてください。Linux jobのruns-on label self-hosted、linux、x64は対象環境で登録済みです。このrunnerにはPOSIX shはありますがBashはなく、Bashを追加することもできません。workflowトップレベルにはdefaults.run.shell: bashがあり、jobのcommandはPOSIX互換のprintfとtestだけです。最小のYAML調整と理由を提案してください。ファイルは変更しないでください。",
-      "expected_output": "workflowトップレベルのdefaults.run.shell: bashを残し、対象jobだけdefaults.run.shell: shを明示する。明示bashでは未指定時のsh fallbackにならず、このrunnerにBashがないことを例外理由に記録する。読み取り専用レビューを守る。",
+      "prompt": "既存のGitHub Actions workflowをレビューしてください。対象はGitHub Enterprise Serverで、管理者はubuntu-slimが利用できず、self-hosted/linux/x64 runner groupが対象repositoryへ公開されrepository accessも確認済みとしています。Linux jobのruns-on label self-hosted、linux、x64は対象環境で登録済みです。このrunnerにはPOSIX shはありますがBashはなく、Bashを追加することもできません。workflowトップレベルにはdefaults.run.shell: bashがあり、jobのcommandはPOSIX互換のprintfとtestだけです。最小のYAML調整と理由を提案してください。ファイルは変更しないでください。",
+      "expected_output": "workflowトップレベルのdefaults.run.shell: bashを残し、対象jobだけdefaults.run.shell: shを明示する。self-hosted/linux/x64 runner groupとrepository accessが利用可能であること、ubuntu-slimが利用できないことを選定理由に記録する。明示bashでは未指定時のsh fallbackにならず、このrunnerにBashがないことを例外理由に記録する。読み取り専用レビューを守る。",
       "files": [],
       "expectations": [
         "workflowトップレベルのdefaults.run.shell: bashを残す",
         "対象jobに限ってdefaults.run.shell: shを明示する",
         "未指定時のsh fallbackに依存せずBashがないことを例外理由として記録する",
-        "既存runner labelを維持し、ファイルを変更しない"
+        "既存runner labelを維持し、ファイルを変更しない",
+        "ubuntu-slimが利用できず、確認済みのself-hosted runner groupとrepository accessを維持するfixtureを選定理由に反映する"
       ]
     },
     {

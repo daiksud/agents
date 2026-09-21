@@ -48,7 +48,8 @@ description: GitHub Actionsのワークフローを設計・変更・調査・�
 
    jobs:
      check:
-       # Use this label when it is available in the target environment.
+       # Confirm provider, runner group, and repository access before selecting this label.
+       # Label availability alone does not identify a GitHub-hosted runner.
        runs-on: ubuntu-slim
        steps:
          - name: Check shell
