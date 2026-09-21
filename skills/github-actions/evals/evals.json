@@ -158,13 +158,14 @@
     },
     {
       "id": 15,
-      "prompt": "コンテナイメージを作るCI jobではDocker-in-Dockerとfilesystem mountが必要です。integration stepは通常25分かかります。どのrunnerを選び、その例外理由をどう記録すべきか提案してください。",
-      "expected_output": "ubuntu-slimの非特権containerではDocker-in-Dockerとmountを使えず、job timeoutも15分なので要件を満たせないと公式資料で確認する。要件を満たせる別runnerを選び、その具体的な制約と理由をworkflowコメントまたは変更説明に記録する。",
+      "prompt": "GitHub.comのGitHub-hosted runnersを使っています。管理者は対象環境でubuntu-slimとubuntu-latestのlabelが利用可能と確認しています。コンテナイメージを作るCI jobではDocker-in-Dockerとfilesystem mountが必要です。integration stepは通常25分かかります。どのrunnerを選び、その例外理由をどう記録すべきか提案してください。",
+      "expected_output": "ubuntu-slimの非特権containerではDocker-in-Dockerとmountを使えず、job timeoutも15分なので要件を満たせないと公式資料で確認する。対象環境で利用可能と確認済みのubuntu-latestを選び、その具体的な制約と理由をworkflowコメントまたは変更説明に記録する。",
       "files": [],
       "expectations": [
         "Docker-in-Dockerとfilesystem mountがubuntu-slimでサポートされないことを説明する",
         "15分のjob timeoutが25分のintegration要件を満たさないと説明する",
-        "要件を満たせる別runnerを選び、具体的な例外理由を記録する",
+        "対象環境で利用可能と確認済みのubuntu-latestを選び、具体的な例外理由を記録する",
+        "ubuntu-latest labelが対象環境で利用可能と確認済みであることを選定理由に反映する",
         "公式runner資料へのリンクを示す"
       ]
     },
@@ -228,6 +229,19 @@
         "Bash導入stepのみにshell: shを明示する",
         "Bash既定値は導入stepにも適用されるためshの明示が必要と説明し、後続stepは導入後のBashを使うことを示す",
         "例外を導入stepに限定し、ファイルを変更しない"
+      ]
+    },
+    {
+      "id": 21,
+      "prompt": "既存のGitHub Actions workflowをレビューしてください。対象はGitHub.comのGitHub-hosted runnersで、管理者はubuntu-slim labelが利用可能と確認しています。workflowトップレベルにdefaults.run.shellはありません。Linux jobのrun stepではgrep -F 'TODO' notes.txt | wc -lを実行し、TODOがない場合はgrepの終了コード1を許容して0を出力しstep成功とする既存契約があります。notes.txtが読めないなどgrepが終了コード2になる場合はstepを失敗させたいです。Issueのworkflow-level defaults.run.shell: bash方針を適用するときの最小変更と確認点を提案してください。ファイルは変更しないでください。",
+      "expected_output": "workflowトップレベルにdefaults.run.shell: bashを追加し、対象環境で確認済みのubuntu-slimを選ぶ。明示Bashはpipefailによりgrep終了コード1でpipelineを失敗させることを説明し、grepの終了コード1だけを明示的に許容して0を出し、終了コード2など他の失敗は維持するcommand例を示す。公式資料を参照し、レビューのみを守る。",
+      "files": [],
+      "expectations": [
+        "workflowトップレベルにdefaults.run.shell: bashを追加する",
+        "対象環境で利用可能と確認済みのubuntu-slimを選ぶ",
+        "明示Bashのpipefailによりgrep終了コード1がpipeline失敗へ変わることを指摘する",
+        "grepの終了コード1だけを許容し、終了コード2などの他の失敗を保って0を出す例を示す",
+        "公式workflow shell資料を参照し、ファイルを変更しない"
       ]
     }
   ]
