@@ -7,6 +7,12 @@ sources:
     resource: https://github.com/github/awesome-copilot/tree/4f4796f0bf30e105700f97ed8408c12b6aa95e06/skills/github-actions-hardening
   - id: github-secure-use
     resource: https://docs.github.com/en/actions/reference/security/secure-use
+  - id: github-runner-selection
+    resource: https://docs.github.com/en/actions/how-tos/write-workflows/choose-where-workflows-run/choose-the-runner-for-a-job
+  - id: github-self-hosted-labels
+    resource: https://docs.github.com/en/actions/how-tos/manage-runners/self-hosted-runners/apply-labels
+  - id: github-runner-groups
+    resource: https://docs.github.com/en/actions/concepts/runners/runner-groups
   - id: github-syntax
     resource: https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax
   - id: github-events
@@ -26,7 +32,7 @@ sources:
 - 組織・リポジトリの既定値、workflow/jobの `permissions`、fork設定、再利用先を調べる。`GITHUB_TOKEN` の権限はトリガー名だけで確定しない。`permissions: {}` または必要なread権限を基準に、書き込みは必要なジョブへ限定する。明示時に未指定のscopeはnoneとなり、`id-token` はwrite/noneである。[^github-syntax]
 - Secretは実際に渡しているジョブ・Action・再利用先まで追う。マスクを漏洩防止の保証にせず、context全体・認証済み設定・変換した秘密値をログやartifactへ出さない。不要なcheckout認証の永続化は `persist-credentials: false` を検討し、保存先や挙動は対象Action版で確認する。[^github-secure-use]
 - クラウドが対応し信頼条件を管理できる場合はOIDCで長期鍵を減らす。必要ジョブだけ `id-token: write` とし、実際のclaims、audience・subject、repository、branch/environmentとクラウド側のrole権限を照合する。固定のsubject例を全リポジトリに当てはめない。[^github-oidc]
-- `runs-on` のlabel名だけではrunner providerを特定できない。対象labelに一致するGitHub-hosted・self-hosted runner、runner group、repository accessを確認し、同じcustom labelを持つpersistent self-hosted runnerが候補になる場合は実際のroutingを確かめる。fork PRの未信頼codeではself-hosted runnerの永続状態、ホスト資格情報、内部network、共有workspaceが別のリスクとなる。Secretが渡らないことだけで安全とせず、使い捨てrunner登録だけでも実行ホストの清浄性を保証せず、隔離と消去の実態を確認する。
+- `runs-on` のlabel名だけではrunner providerを特定できない。対象labelに一致するGitHub-hosted・self-hosted runner、runner group、repository accessを確認し、同じcustom labelを持つpersistent self-hosted runnerが候補になる場合は実際のroutingを確かめる。[runner selection][^github-runner-selection]、[self-hosted custom labels][^github-self-hosted-labels]、[runner groups][^github-runner-groups]。fork PRの未信頼codeではself-hosted runnerの永続状態、ホスト資格情報、内部network、共有workspaceが別のリスクとなる。Secretが渡らないことだけで安全とせず、使い捨てrunner登録だけでも実行ホストの清浄性を保証せず、隔離と消去の実態を確認する。[secure use][^github-secure-use]
 
 ### 外部入力と実行コード
 
@@ -59,5 +65,8 @@ PRタイトル・本文・ブランチ名・コメント・dispatch入力等を 
 [^github-syntax]: Workflow syntax。実効権限の計算とscopeの正本。
 [^github-secure-use]: Secure use。入力処理、Secret、Action固定、runner隔離の根拠。
 [^github-oidc]: OIDC reference。実際のclaimsとクラウド側の信頼条件を照合する。
+[^github-runner-selection]: Choosing the runner for a job。`runs-on` のlabel・group選択と複合条件の根拠。
+[^github-self-hosted-labels]: Using labels with self-hosted runners。custom labelを設定できるrunner種別の根拠。
+[^github-runner-groups]: Runner groups。groupの用途と対象runnerの範囲。
 [^github-commands]: Workflow commands。複数行データと環境ファイルの取り扱いを確認する。
 [^github-events]: Events that trigger workflows。特権イベントと未信頼コード・artifactの境界を確認する。
