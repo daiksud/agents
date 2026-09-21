@@ -28,6 +28,26 @@ description: GitHub Actionsのワークフローを設計・変更・調査・�
 3. 変更のたびに、実効的な `permissions`、Secretの渡し先、実行コードの出所、runner、外部入力、参照するAction・成果物・キャッシュを確認する。トリガー名やforkであることだけで安全と判断しない。境界に触れる場合は安全性資料を読む。
 4. 外部Actionと外部再利用ワークフローは、対象リポジトリのリリースと照合した完全コミットSHAへ固定し、コメントの版との一致を確認する。例のSHAを推奨版として流用しない。コンテナ参照には検証済みdigestを使い、同一リポジトリの相対参照は対象checkoutの出所を確認する。
 5. 目的を満たす最小の変更と検証を選ぶ。手動承認、特定のブランチ戦略、大規模マトリクス、Canaryを一律に要求しない。
+6. ワークフローの設計・変更・レビューでは、runnerとshellを次の方針で確認する。
+   - `runs-on` は `ubuntu-slim` を第一選択とする。必要な処理を実現できない場合に限り、`ubuntu-latest` など別のrunnerを選ぶ。慣習、既存例の踏襲、高性能への単なる希望は例外理由にしない。
+   - 例外時は公式の[GitHub-hosted runner一覧](https://docs.github.com/en/actions/reference/runners/github-hosted-runners#standard-github-hosted-runners-for-public-repositories)と[`ubuntu-slim`の制約](https://docs.github.com/en/actions/reference/runners/github-hosted-runners#single-cpu-runners)を確認し、満たせない要件と具体的な制約をワークフローのコメントか変更説明に記録する。
+   - 2026-09-21時点の公式資料では、`ubuntu-slim` のjob実行上限は15分で、非特権containerではfilesystem mount、Docker-in-Docker、一部の低レベルkernel機能が使えない。
+   - `ubuntu-slim` の優先順位はこのスキル独自の方針であり、GitHub共通の必須要件ではない。runnerの選定理由を説明するときは、この方針とGitHub公式仕様を区別する。
+   - workflowトップレベルに `defaults.run.shell: bash` を必ず指定する。暗黙の既定shellに依存せず、stepごとの `shell: bash` だけでこの要件を満たした扱いにしない。
+   - Linux/macOSではshell未指定時は `bash -e {0}` が使われ、`bash` が見つからない場合は `sh -e {0}` にfallbackする。明示指定時は `bash --noprofile --norc -eo pipefail {0}` が使われる。詳しくは[Workflow syntax: `defaults.run.shell`](https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax#defaultsrun)を確認する。
+
+   ```yaml
+   defaults:
+     run:
+       shell: bash
+
+   jobs:
+     check:
+       runs-on: ubuntu-slim
+       steps:
+         - name: Check shell
+           run: printf '%s\n' "$BASH_VERSION"
+   ```
 
 ## 成果と確認
 

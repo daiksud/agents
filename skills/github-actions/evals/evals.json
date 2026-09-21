@@ -129,6 +129,42 @@
         "self-hostedの共有状態・内部ネットワーク・ホスト資格情報への影響を調べる",
         "監査のみの境界を守り、取得できない設定を確認済みにしない"
       ]
+    },
+    {
+      "id": 13,
+      "prompt": "小さなPython lint workflowをPRで追加したい。Ubuntu上でruffとpytestを実行するだけで、jobは約6分、Dockerやmount、特殊OS・architectureは不要です。runnerとshellを設定したYAML案と選定理由を示してください。",
+      "expected_output": "ubuntu-slimを第一候補にし、workflowトップレベルのdefaults.run.shellにbashを指定する。ubuntu-slimを優先する方針はこのスキル独自のものと説明し、公式資料を参照して制約を確認する。",
+      "files": [],
+      "expectations": [
+        "軽量なLinux jobにruns-on: ubuntu-slimを選ぶ",
+        "workflowトップレベルにdefaults.run.shell: bashを指定する",
+        "ubuntu-slim優先はこのスキル独自の方針でGitHub共通の必須要件ではないと説明する",
+        "runnerの制約とdefaults.run.shellについてGitHub公式資料を示す"
+      ]
+    },
+    {
+      "id": 14,
+      "prompt": "次のworkflowをレビューしてください。runnerはubuntu-latestで、Ubuntu上のruffとpytestだけを実行し、所要時間は約6分です。run stepごとにshell: bashを指定していますが、workflowトップレベルのdefaults.run.shellはありません。設定ファイルは変更せず、指摘と修正案を示してください。",
+      "expected_output": "具体的な制約が示されていないubuntu-latestの選択を指摘し、ubuntu-slimを候補にする。またstepごとのshell指定ではworkflowトップレベルの必須設定を満たさないと指摘し、defaults.run.shell: bashを提案する。レビューだけでファイルは変更しない。",
+      "files": [],
+      "expectations": [
+        "具体的な要件上の制約がないubuntu-latestを指摘しubuntu-slimを提案する",
+        "個別stepのshell指定はworkflowトップレベルのdefaults.run.shell: bashを満たさないと指摘する",
+        "レビュー依頼の境界を守ってファイルを変更しない",
+        "ubuntu-slim優先はこのスキル独自の方針でGitHub共通の必須要件ではないと説明する"
+      ]
+    },
+    {
+      "id": 15,
+      "prompt": "コンテナイメージを作るCI jobではDocker-in-Dockerとfilesystem mountが必要です。integration stepは通常25分かかります。どのrunnerを選び、その例外理由をどう記録すべきか提案してください。",
+      "expected_output": "ubuntu-slimの非特権containerではDocker-in-Dockerとmountを使えず、job timeoutも15分なので要件を満たせないと公式資料で確認する。要件を満たせる別runnerを選び、その具体的な制約と理由をworkflowコメントまたは変更説明に記録する。",
+      "files": [],
+      "expectations": [
+        "Docker-in-Dockerとfilesystem mountがubuntu-slimでサポートされないことを説明する",
+        "15分のjob timeoutが25分のintegration要件を満たさないと説明する",
+        "要件を満たせる別runnerを選び、具体的な例外理由を記録する",
+        "公式runner資料へのリンクを示す"
+      ]
     }
   ]
 }
