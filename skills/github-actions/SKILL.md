@@ -36,7 +36,7 @@ description: GitHub Actionsのワークフローを設計・変更・調査・�
    - Bash既定値が適用される各jobの実行環境にBashがあるか、各commandがBashと互換かを確認する。Bashがないself-hosted runnerやjob containerでは、可能ならBash入りrunner・imageを用意する。既存のshellからpackageを導入するstepを使う場合は、そのstepに導入前から利用できるshell（例: `sh`）を明示する。workflow-levelの`bash`既定値は導入stepにも適用される。
    - Bashを用意できずjobのcommandがPOSIX互換なら、workflowトップレベルのBash既定値を残したうえで、そのjobだけ`defaults.run.shell: sh`を明示し、不在を理由として記録する。PowerShellなど別shellを契約とするjobやstepでは、トップレベルの既定値を残し、そのjobの`defaults.run.shell`または該当stepの`shell`を契約に合う利用可能なshellへ上書きし、具体的な要件を記録する。これらは実行環境またはcommandの互換性から必要となる場合の局所例外とする。Bash固有のcommandが必要でBashを提供できない場合は、shell方針とjob要件のどちらを優先するかユーザーに確認する。
    - 明示した`bash`とshell未指定では実行commandが異なる。fallbackを含む詳細は[Workflow syntax: `defaults.run.shell`](https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax#defaultsrun)と[出典と適用判断](references/sources.md)で確認する。
-   - 既存workflowの未指定shellを明示的なBashへ変える場合、`pipefail`でpipelineの終了状態がどう変わるか確認する。未処理のpipelineは、非0状態が`-e`へ伝わるとstepが終了する。一方、pipelineが`if`条件や`&&`・`||` listにあるとBashの`-e`例外が適用されるため、分岐やhandlerが期待どおりの状態を処理するか確認する。途中commandの非0を意図的に許容する場合は、その終了状態だけをcommand内で明示し、他の失敗は維持する。job・step単位のshell上書きを使う場合は、既存のjob契約から必要となる理由を記録する。
+   - 既存workflowの未指定shellを明示的なBashへ変える場合、`pipefail`でpipelineの終了状態がどう変わるか確認する。未処理のpipelineは、非0状態が`-e`へ伝わるとstepが終了する。pipelineが`if`条件にある場合や、`&&`・`||` listの非最終commandである場合は`-e`の例外が適用される。一方、最後の`&&`・`||`の後にあるpipelineは例外にならず、失敗すればstepを終了し得るため、分岐やhandlerが期待どおりの状態を処理するか、list内での位置も含めて確認する。途中commandの非0を意図的に許容する場合は、その終了状態だけをcommand内で明示し、他の失敗は維持する。job・step単位のshell上書きを使う場合は、既存のjob契約から必要となる理由を記録する。
 
    ```yaml
    defaults:

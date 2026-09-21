@@ -132,8 +132,8 @@
     },
     {
       "id": 13,
-      "prompt": "GitHub.comのGitHub-hosted runnersを使うリポジトリで、小さなPython lint workflowをPRで追加したい。管理者は対象環境でubuntu-slim labelが利用可能と確認しています。Ubuntu上でruffとpytestを実行するだけで、jobは約6分、Dockerやmount、特殊OS・architectureは不要です。runnerとshellを設定したYAML案と選定理由を示してください。",
-      "expected_output": "対象環境でubuntu-slim labelが利用可能なことを踏まえてこのrunnerを第一候補にし、workflowトップレベルのdefaults.run.shellにbashを指定する。生成したYAMLのrun stepでruff checkとpytestの両方を実行する。ubuntu-slimを優先する方針はこのスキル独自のものと説明し、公式資料を参照して制約を確認する。",
+      "prompt": "別のPython repositoryにPR workflowを追加する相談です。対象はGitHub.comのGitHub-hosted runnersで、管理者はubuntu-slim labelが利用可能と確認しています。projectはPython 3.12を使い、既存のrequirements-ci.txtにruffとpytestのversionが固定されています。workflowはPRで実行し、checkout、Pythonと依存関係の準備、ruffとpytestの実行を含めてください。jobは約6分で、Dockerやmount、特殊OS・architectureは不要です。runnerとshellを設定した完全なYAML案と選定理由を示してください。",
+      "expected_output": "対象環境でubuntu-slim labelが利用可能なことを踏まえてこのrunnerを第一候補にし、workflowトップレベルのdefaults.run.shellにbashを指定する。workflowにcheckoutとPython 3.12のsetupを含め、外部Actionは照合済みの完全commit SHAと一致するversion commentで固定する。既存のrequirements-ci.txtから依存を導入してから、run stepでruff checkとpytestの両方を実行する。ubuntu-slim優先はこのスキル独自方針と説明し、公式資料を参照して制約を確認する。",
       "files": [],
       "expectations": [
         "軽量なLinux jobにruns-on: ubuntu-slimを選ぶ",
@@ -141,6 +141,9 @@
         "ubuntu-slim優先はこのスキル独自の方針でGitHub共通の必須要件ではないと説明する",
         "runnerの制約とdefaults.run.shellについてGitHub公式資料を示す",
         "ubuntu-slim labelが対象環境で利用可能と確認済みであることを選定理由に反映する",
+        "workflowにcheckoutを含め、actions/checkoutを照合済みの完全commit SHAで固定する",
+        "workflowでPython 3.12を選び、setup-python Actionを照合済みの完全commit SHAで固定する",
+        "ruffとpytestの実行前に、既存のrequirements-ci.txtからCI依存を導入する",
         "生成したYAMLのrun stepでruff checkとpytestの両方を実行する"
       ]
     },
@@ -172,13 +175,15 @@
     },
     {
       "id": 16,
-      "prompt": "PRでworkflowをレビューしています。workflowトップレベルにdefaults.run.shell: bashがあり、job alpine-checkはcontainer: alpine:3.21を使います。このimageは変更できず、BashはなくPOSIX shだけが利用可能です。stepはPOSIX互換のprintfとtestだけです。レビュー指摘と必要なYAML調整を示してください。ファイルは変更しないでください。",
-      "expected_output": "workflowトップレベルのBash既定値は保ち、BashがないAlpine jobにはjob-level defaults.run.shell: shを例外として設定する。省略時のsh fallbackを明示bashに期待せず、例外理由を記録する。読み取り専用レビューを守る。",
+      "prompt": "PRでworkflowをレビューしています。対象はGitHub.comのGitHub-hosted runnersで、管理者はubuntu-24.04 labelが利用可能と確認しています。workflowトップレベルにdefaults.run.shell: bashがあり、job alpine-checkはruns-on: ubuntu-24.04とcontainer: alpine:3.21を使います。container: alpine:3.21はmutable tagで、release contract上このtaskではtag/referenceを変更できません。verified digestも提示されていません。BashはなくPOSIX shだけが利用可能で、stepはPOSIX互換のprintfとtestだけです。レビュー指摘と必要なYAML調整、満たせない制約があれば示してください。ファイルは変更しないでください。",
+      "expected_output": "workflowトップレベルのBash既定値は保ち、BashがないAlpine jobにはjob-level defaults.run.shell: shを例外として設定する。明示bashでは未指定時のsh fallbackにならないことを説明する。またcontainer: alpine:3.21は検証済みdigest固定という既存方針を満たさず、reference変更が範囲外でdigestも未提示のため、完全適合とは扱えない制約として記録し、変更範囲または例外の合意を求める。読み取り専用レビューを守る。",
       "files": [],
       "expectations": [
         "トップレベルのdefaults.run.shell: bashを維持し、workflow全体の既定値を満たす",
         "job containerにBashがないことをshell選定上の不適合として検出する",
         "POSIX互換jobだけjob-level defaults.run.shell: shを使う明示例外を提案して理由を記録する",
+        "対象環境でubuntu-24.04 labelが利用可能と確認済みであることを受け止める",
+        "mutableなcontainer tagとdigest固定方針の矛盾を検出し、範囲外制約を適合扱いしない",
         "明示bashが省略時のsh fallbackに置き換わると誤認せず、ファイルを変更しない"
       ]
     },
@@ -257,6 +262,20 @@
         "既存handlerがstatus 1をstderr通知と成功に処理し、wcのstdout countを1行だけ保ち、読取エラーなど他の失敗を維持するか確認する",
         "既存handlerが契約を満たす場合に不要なshell例外やworkflow編集を勧めない",
         "GitHub workflow syntaxとBashのpipefail/errexit仕様を公式資料で示す"
+      ]
+    },
+    {
+      "id": 23,
+      "prompt": "既存のGitHub Actions workflowをレビューしてください。対象はGitHub.comのGitHub-hosted runnersで、管理者はubuntu-slim labelが利用可能と確認しています。workflowトップレベルにdefaults.run.shellはありません。Linux jobのrun commandはtrue && false | trueです。このstepの既存契約は成功で、pipelineの最後のcommandが成功すれば先行commandの非0を許容します。Issueのworkflow-level defaults.run.shell: bash方針を適用してもこの契約を維持する最小変更を提案してください。ファイルは変更しないでください。",
+      "expected_output": "workflowトップレベルにdefaults.run.shell: bashを追加し、利用可能と確認済みのubuntu-slimを選ぶ。明示Bashのpipefailでfalse | true pipelineは非0となり、このpipelineは&& listの最終commandなので-e例外の対象外となってstepが失敗し得ることを説明する。既存契約を保つため、このpipelineの意図した非0だけを局所的に許容するcommand調整または理由付きshell例外を提案し、他の失敗を広く無視しない。公式資料を示し、レビューだけでファイルは変更しない。",
+      "files": [],
+      "expectations": [
+        "workflowトップレベルにdefaults.run.shell: bashを追加する",
+        "利用可能と確認済みのubuntu-slimを選ぶ",
+        "pipefailでpipelineが非0になり、&& listの最終commandは-e例外の対象外と説明する",
+        "成功という既存契約を保つ局所対応を示し、他の失敗を一律に無視しない",
+        "GitHub workflow syntaxとBash pipeline/errexit仕様を公式資料で示す",
+        "レビュー依頼の境界を守りファイルを変更しない"
       ]
     }
   ]
