@@ -171,8 +171,8 @@
     },
     {
       "id": 15,
-      "prompt": "対象はGitHub.com上のprivate repositoryです。管理者はこのrepositoryと利用planで標準GitHub-hostedのubuntu-slimとubuntu-latest labelが利用可能と確認しています。コンテナイメージを作るCI jobではDocker-in-Dockerとfilesystem mountが必要で、integration stepは通常25分かかります。どのrunnerを選び、その例外理由をどう記録すべきか提案してください。",
-      "expected_output": "対象はGitHub.comのprivate repositoryなので、公開状態とplanに合うprivate repository向けrunner表を参照し、確認済みのubuntu-latestを選ぶ。ubuntu-slimは非特権containerでDocker-in-Dockerとfilesystem mountを使えない。single-CPU runnerの公式資料で現行job timeoutを確認し、25分のintegration stepと比較して時間上の制約も説明する。workflow commentまたは変更説明には、必要な機能と実行時間を具体的な例外理由として記録する。private runner表とsingle-CPU制約の公式資料をリンクし、ubuntu-slim優先はスキル独自方針と説明する。",
+      "prompt": "対象はGitHub.com上のprivate repositoryです。管理者はこのrepositoryと利用planで標準GitHub-hostedのubuntu-slimとubuntu-latest labelが利用可能と確認しています。管理者は対象repositoryのrunner groupとrepository accessも確認し、両labelの候補は標準GitHub-hosted runnersだけで、同名custom labelを持つeligible self-hosted runnerはないと確認しています。コンテナイメージを作るCI jobではDocker-in-Dockerとfilesystem mountが必要で、integration stepは通常25分かかります。どのrunnerを選び、その例外理由をどう記録すべきか提案してください。",
+      "expected_output": "対象はGitHub.comのprivate repositoryなので、公開状態とplanに合うprivate repository向けrunner表を参照し、runner group/accessの確認と同名self-hosted候補の不在を選定根拠に反映して、確認済みのubuntu-latestを選ぶ。ubuntu-slimは非特権containerでDocker-in-Dockerとfilesystem mountを使えない。single-CPU runnerの公式資料で現行job timeoutを確認し、25分のintegration stepと比較して時間上の制約も説明する。workflow commentまたは変更説明には、必要な機能と実行時間を具体的な例外理由として記録する。private runner表とsingle-CPU制約の公式資料をリンクし、ubuntu-slim優先はスキル独自方針と説明する。",
       "files": [],
       "expectations": [
         "GitHub.comのprivate repositoryであることを反映し、private向け標準runner表を参照する",
@@ -182,7 +182,8 @@
         "確認済みのubuntu-latestを選び、private向けrunner表を参照するが固定CPU・RAM数値を正解条件にしない",
         "具体的な要件と制約をrunner例外の理由としてworkflow commentまたは変更説明に記録する",
         "private向けrunner表とsingle-CPU runnerの公式資料を示し、public表の仕様をprivate repositoryへ流用しない",
-        "ubuntu-slim優先はスキル独自方針と区別する"
+        "ubuntu-slim優先はスキル独自方針と区別する",
+        "provider、runner group、repository accessのfixtureにより同名custom labelのeligible self-hosted runnerが除外されていることを選定理由に反映する"
       ]
     },
     {
@@ -253,7 +254,7 @@
     {
       "id": 21,
       "prompt": "既存のGitHub Actions workflowをレビューしてください。対象はGitHub.comのGitHub-hosted runnersで、管理者はubuntu-slim labelが利用可能と確認しています。workflowトップレベルにdefaults.run.shellはありません。Linux jobのrun stepではgrep -F 'TODO' notes.txt | wc -lを実行し、TODOがない場合はgrepの終了コード1を許容してstdoutにcountを1行だけ出力しstep成功とする既存契約があります。no-match handlerからcountを重ねて出力してはいけません。notes.txtが読めないなどgrepが終了コード2になる場合はstepを失敗させたいです。Issueのworkflow-level defaults.run.shell: bash方針を適用するときの最小変更と確認点を提案してください。ファイルは変更しないでください。",
-      "expected_output": "workflowトップレベルにdefaults.run.shell: bashを追加し、対象環境で確認済みのubuntu-slimを選ぶ。明示Bashはpipefailによりgrep終了コード1でpipelineを失敗させることを説明し、grepの終了コード1だけを明示的に許容する。wcが出す0のcountをstdoutに1行だけ残し、no-match handlerから重ねて出力せず、終了コード2など他の失敗は維持するcommand例を示す。公式資料を参照し、レビューのみを守る。",
+      "expected_output": "workflowトップレベルにdefaults.run.shell: bashを追加し、対象環境で確認済みのubuntu-slimを選ぶ。明示Bashはpipefailによりgrepのstatus 1がpipeline statusへ伝わることを説明し、status 1だけを局所的に許容する一方でstatus 2などの失敗を維持するcommand例を示す。no-match時にはwcのcount 0をstdoutに1行だけ残し、handlerから重複出力しない。GitHub Workflow syntaxとGNU Bash Reference ManualのPipelines資料を示し、レビューのみを守る。",
       "files": [],
       "expectations": [
         "workflowトップレベルにdefaults.run.shell: bashを追加する",
@@ -261,7 +262,8 @@
         "明示Bashのpipefailによりgrep終了コード1がpipeline失敗へ変わることを指摘する",
         "grepの終了コード1だけを許容し、終了コード2などの他の失敗を保って0を出す例を示す",
         "TODOなしの場合、stdoutに0を1行だけ出し、no-match handlerでcountを二重出力しない",
-        "公式workflow shell資料を参照し、ファイルを変更しない"
+        "公式workflow shell資料を参照し、ファイルを変更しない",
+        "pipefailによるpipeline statusの説明に、GitHub workflow shell資料と別にGNU Bash Reference ManualのPipelines公式資料を示す"
       ]
     },
     {

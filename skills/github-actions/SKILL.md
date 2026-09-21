@@ -30,8 +30,8 @@ description: GitHub Actionsのワークフローを設計・変更・調査・�
 5. 目的を満たす最小の変更と検証を選ぶ。手動承認、特定のブランチ戦略、大規模マトリクス、Canaryを一律に要求しない。
 6. ワークフローの設計・変更・レビューでは、runnerとshellを次の方針で確認する。
    - runnerを選ぶ前に、対象環境がその`runs-on` labelを提供しているか、labelに一致する候補のprovider（GitHub-hosted / self-hosted）、runner group、repository accessを確認する。label名だけでproviderを推測しない。同じcustom labelを持つself-hosted runnerが候補に入る場合は、特にPR由来codeの実行について[安全性](references/hardening.md)の共有状態・network・host credentialの境界を確認し、GitHub-hosted runnerだと確認できるまでlabelだけで選定を確定しない。
-   - `ubuntu-slim` が利用可能でも、必要な処理を実現できない場合に限り別のrunnerを使う。慣習、既存例の踏襲、高性能への単なる希望は例外理由にしない。
-   - 実行時間が要件になる場合は、対象runner上の実測と判断時点の公式資料に記載されたjob timeoutを照合し、別runnerでの時間だけを根拠に適合を断定しない。未計測なら必須チェック化の前に代表的なjobを試し、適合確認まで選定を条件付きにする。
+   - `ubuntu-slim` が利用可能でも、必要な処理を実現できないと確認した場合に限り恒久的に別のrunnerを使う。慣習、既存例の踏襲、高性能への単なる希望は例外理由にしない。
+   - 実行時間が要件になる場合は、対象runner上の実測と判断時点の公式資料に記載されたjob timeoutを照合し、別runnerでの時間だけを根拠に適合を断定しない。未計測なら既存の必須jobがあれば維持し、新候補は非必須のtrialで代表的なjobを試す。これは適合確認までの暫定運用で、恒久的なrunner例外として説明しない。
    - 例外時はGitHub.comかGHESか、repositoryの公開状態とplanを確認する。GitHub.comでは該当する[public repository向けrunner一覧](https://docs.github.com/en/actions/reference/runners/github-hosted-runners#standard-github-hosted-runners-for-public-repositories)または[private repository向けrunner一覧](https://docs.github.com/en/actions/reference/runners/github-hosted-runners#standard-github-hosted-runners-for-private-repositories)を参照し、GHESではGitHub.comの一覧を適用せず対象環境のrunner inventoryを確認する。
    - `ubuntu-slim` の制約を照合し、満たせない要件と具体的な制約をワークフローのコメントか変更説明に記録する。[公式の制約](https://docs.github.com/en/actions/reference/runners/github-hosted-runners#single-cpu-runners)は判断時点で確認する。
    - runnerの選定理由を回答・記録するときは、`ubuntu-slim` 優先がこのスキル独自の方針で、GitHub共通の必須要件ではないことを明示し、runnerの提供条件・制約などのGitHub公式仕様と分けて説明する。日付付きの仕様確認値は[出典と適用判断](references/sources.md)に記録する。
