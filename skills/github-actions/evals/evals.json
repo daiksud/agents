@@ -188,8 +188,8 @@
     },
     {
       "id": 16,
-      "prompt": "PRでworkflowをレビューしています。対象はGitHub.comのGitHub-hosted runnersで、管理者はubuntu-24.04 labelが利用可能と確認しています。workflowトップレベルにdefaults.run.shell: bashがあり、job alpine-checkはruns-on: ubuntu-24.04とcontainer: alpine:3.21を使います。container: alpine:3.21はmutable tagで、release contract上このtaskではtag/referenceを変更できません。verified digestも提示されていません。BashはなくPOSIX shだけが利用可能で、stepはPOSIX互換のprintfとtestだけです。レビュー指摘と必要なYAML調整、満たせない制約があれば示してください。ファイルは変更しないでください。",
-      "expected_output": "workflowトップレベルのBash既定値は保ち、BashがないAlpine jobにはjob-level defaults.run.shell: shを例外として設定する。明示bashでは未指定時のsh fallbackにならないことを説明する。またcontainer: alpine:3.21は検証済みdigest固定という既存方針を満たさず、reference変更が範囲外でdigestも未提示のため、完全適合とは扱えない制約として記録し、変更範囲または例外の合意を求める。読み取り専用レビューを守る。",
+      "prompt": "PRでworkflowをレビューしています。対象はGitHub.comのGitHub-hosted runnersで、管理者はubuntu-24.04 labelが利用可能と確認しています。管理者は対象repositoryのrunner groupとrepository accessを確認し、このlabelの候補は標準GitHub-hosted runnerだけで、同名custom labelを持つeligible self-hosted runnerはないと確認しています。workflowトップレベルにdefaults.run.shell: bashがあり、job alpine-checkはruns-on: ubuntu-24.04とcontainer: alpine:3.21を使います。container: alpine:3.21はmutable tagで、release contract上このtaskではtag/referenceを変更できません。verified digestも提示されていません。BashはなくPOSIX shだけが利用可能で、stepはPOSIX互換のprintfとtestだけです。レビュー指摘と必要なYAML調整、満たせない制約があれば示してください。ファイルは変更しないでください。",
+      "expected_output": "workflowトップレベルのBash既定値は保ち、provider・runner group・repository accessのfixtureを選定理由へ反映し、BashがないAlpine jobにはjob-level defaults.run.shell: shを例外として設定する。明示bashでは未指定時のsh fallbackにならないことを説明する。またcontainer: alpine:3.21は検証済みdigest固定という既存方針を満たさず、reference変更が範囲外でdigestも未提示のため、完全適合とは扱えない制約として記録し、変更範囲または例外の合意を求める。読み取り専用レビューを守る。",
       "files": [],
       "expectations": [
         "トップレベルのdefaults.run.shell: bashを維持し、workflow全体の既定値を満たす",
@@ -197,7 +197,8 @@
         "POSIX互換jobだけjob-level defaults.run.shell: shを使う明示例外を提案して理由を記録する",
         "対象環境でubuntu-24.04 labelが利用可能と確認済みであることを受け止める",
         "mutableなcontainer tagとdigest固定方針の矛盾を検出し、範囲外制約を適合扱いしない",
-        "明示bashが省略時のsh fallbackに置き換わると誤認せず、ファイルを変更しない"
+        "明示bashが省略時のsh fallbackに置き換わると誤認せず、ファイルを変更しない",
+        "provider、runner group、repository accessのfixtureにより同名custom labelのeligible self-hosted runnerが除外されていることを選定理由に反映する"
       ]
     },
     {
@@ -229,7 +230,7 @@
     {
       "id": 19,
       "prompt": "新しいPR workflowを設計してください。対象はGitHub.comのpublic repositoryです。管理者はGitHub-hostedのubuntu-slimとwindows-latest labelが利用可能と確認しています。管理者は対象repositoryのrunner groupとrepository accessも確認し、これらのlabelに一致する候補は標準GitHub-hosted runnersだけで、同名custom labelを持つeligible self-hosted runnerはないと確認しています。Linux jobではruffとpytestを実行します。別jobはWindows APIを必要とし、run commandはPowerShell構文（$PSVersionTable、Get-ChildItem）です。runnerとshellの設定例、選定理由を示してください。",
-      "expected_output": "Linux jobにはubuntu-slim、Windows API jobにはwindows-latestを選ぶ。管理者がrunner groupとrepository accessを確認し、両labelの候補が標準GitHub-hostedのみでeligible self-hosted runnerがないfixtureも選定理由に反映する。workflowトップレベルにdefaults.run.shell: bashを設定し、PowerShell commandを実行するWindows jobではjob-level defaults.run.shell: pwshまたは必要なstepのshell: pwshを明示する。ubuntu-slim優先はスキル独自方針と説明し、WindowsとPowerShellの要件を例外理由として記録する。",
+      "expected_output": "Linux jobにはubuntu-slim、Windows API jobにはwindows-latestを選ぶ。管理者がrunner groupとrepository accessを確認し、両labelの候補が標準GitHub-hostedのみでeligible self-hosted runnerがないfixtureも選定理由に反映する。workflow-level permissionsをcontents: readに限定し、workflowトップレベルにdefaults.run.shell: bashを設定し、PowerShell commandを実行するWindows jobではjob-level defaults.run.shell: pwshまたは必要なstepのshell: pwshを明示する。ubuntu-slim優先はスキル独自方針と説明し、WindowsとPowerShellの要件を例外理由として記録する。",
       "files": [],
       "expectations": [
         "Linuxのruff/pytest jobにubuntu-slimを選ぶ",
@@ -238,7 +239,8 @@
         "workflowトップレベルにdefaults.run.shell: bashを指定する",
         "PowerShell構文を実行するjobまたはstepにpwshを明示する",
         "ubuntu-slim優先はこのスキル独自方針であると区別する",
-        "runner groupとrepository accessの確認によりeligible self-hosted runnerが候補から除外されているfixtureを選定理由に反映する"
+        "runner groupとrepository accessの確認によりeligible self-hosted runnerが候補から除外されているfixtureを選定理由に反映する",
+        "PR由来codeを実行するlint/test workflowのpermissionsをcontents: readなど必要最小限に限定する例を示す"
       ]
     },
     {
