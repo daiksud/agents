@@ -225,8 +225,8 @@
     },
     {
       "id": 19,
-      "prompt": "新しいPR workflowを設計してください。管理者はGitHub-hostedのubuntu-slimとwindows-latest labelが利用可能と確認しています。Linux jobではruffとpytestを実行します。別jobはWindows APIを必要とし、run commandはPowerShell構文（$PSVersionTable、Get-ChildItem）です。runnerとshellの設定例、選定理由を示してください。",
-      "expected_output": "Linux jobにはubuntu-slimを選び、YAML内でruff checkとpytestの両方を実行する。Windows API jobにはwindows-latestを必要条件に基づいて選ぶ。workflowトップレベルにdefaults.run.shell: bashを設定し、PowerShell commandを実行するWindows jobではjob-level defaults.run.shell: pwshまたは必要なstepのshell: pwshを明示する。ubuntu-slim優先はスキル独自方針と説明し、WindowsとPowerShellの要件を例外理由として記録する。",
+      "prompt": "新しいPR workflowを設計してください。対象はGitHub.comのpublic repositoryです。管理者はGitHub-hostedのubuntu-slimとwindows-latest labelが利用可能と確認しています。管理者は対象repositoryのrunner groupとrepository accessも確認し、これらのlabelに一致する候補は標準GitHub-hosted runnersだけで、同名custom labelを持つeligible self-hosted runnerはないと確認しています。Linux jobではruffとpytestを実行します。別jobはWindows APIを必要とし、run commandはPowerShell構文（$PSVersionTable、Get-ChildItem）です。runnerとshellの設定例、選定理由を示してください。",
+      "expected_output": "Linux jobにはubuntu-slim、Windows API jobにはwindows-latestを選ぶ。管理者がrunner groupとrepository accessを確認し、両labelの候補が標準GitHub-hostedのみでeligible self-hosted runnerがないfixtureも選定理由に反映する。workflowトップレベルにdefaults.run.shell: bashを設定し、PowerShell commandを実行するWindows jobではjob-level defaults.run.shell: pwshまたは必要なstepのshell: pwshを明示する。ubuntu-slim優先はスキル独自方針と説明し、WindowsとPowerShellの要件を例外理由として記録する。",
       "files": [],
       "expectations": [
         "Linuxのruff/pytest jobにubuntu-slimを選ぶ",
@@ -234,7 +234,8 @@
         "Windows API jobにwindows-latestを選び、その必要要件を理由として記録する",
         "workflowトップレベルにdefaults.run.shell: bashを指定する",
         "PowerShell構文を実行するjobまたはstepにpwshを明示する",
-        "ubuntu-slim優先はこのスキル独自方針であると区別する"
+        "ubuntu-slim優先はこのスキル独自方針であると区別する",
+        "runner groupとrepository accessの確認によりeligible self-hosted runnerが候補から除外されているfixtureを選定理由に反映する"
       ]
     },
     {
