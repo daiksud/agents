@@ -29,12 +29,12 @@ description: GitHub Actionsのワークフローを設計・変更・調査・�
 4. 外部Actionと外部再利用ワークフローは、対象リポジトリのリリースと照合した完全コミットSHAへ固定し、コメントの版との一致を確認する。例のSHAを推奨版として流用しない。コンテナ参照には検証済みdigestを使い、同一リポジトリの相対参照は対象checkoutの出所を確認する。
 5. 目的を満たす最小の変更と検証を選ぶ。手動承認、特定のブランチ戦略、大規模マトリクス、Canaryを一律に要求しない。
 6. ワークフローの設計・変更・レビューでは、runnerとshellを次の方針で確認する。
-   - `runs-on` は `ubuntu-slim` を第一選択とする。必要な処理を実現できない場合に限り、`ubuntu-latest` など別のrunnerを選ぶ。慣習、既存例の踏襲、高性能への単なる希望は例外理由にしない。
-   - 例外時は公式の[GitHub-hosted runner一覧](https://docs.github.com/en/actions/reference/runners/github-hosted-runners#standard-github-hosted-runners-for-public-repositories)と[`ubuntu-slim`の制約](https://docs.github.com/en/actions/reference/runners/github-hosted-runners#single-cpu-runners)を確認し、満たせない要件と具体的な制約をワークフローのコメントか変更説明に記録する。
-   - 2026-09-21時点の公式資料では、`ubuntu-slim` のjob実行上限は15分で、非特権containerではfilesystem mount、Docker-in-Docker、一部の低レベルkernel機能が使えない。
-   - `ubuntu-slim` の優先順位はこのスキル独自の方針であり、GitHub共通の必須要件ではない。runnerの選定理由を説明するときは、この方針とGitHub公式仕様を区別する。
-   - workflowトップレベルに `defaults.run.shell: bash` を必ず指定する。暗黙の既定shellに依存せず、stepごとの `shell: bash` だけでこの要件を満たした扱いにしない。
-   - Linux/macOSではshell未指定時は `bash -e {0}` が使われ、`bash` が見つからない場合は `sh -e {0}` にfallbackする。明示指定時は `bash --noprofile --norc -eo pipefail {0}` が使われる。詳しくは[Workflow syntax: `defaults.run.shell`](https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax#defaultsrun)を確認する。
+   - runnerを選ぶ前に、対象環境がその`runs-on` labelを提供しているか確認する。`ubuntu-slim` が利用可能なら第一選択とし、利用できない環境では登録済みrunnerから選んでlabelの不在を具体的な制約として記録する。GHESやself-hosted runnerにGitHub-hosted labelがあると推測しない。
+   - `ubuntu-slim` が利用可能でも、必要な処理を実現できない場合に限り別のrunnerを使う。慣習、既存例の踏襲、高性能への単なる希望は例外理由にしない。例外時は公式の[GitHub-hosted runner一覧](https://docs.github.com/en/actions/reference/runners/github-hosted-runners#standard-github-hosted-runners-for-public-repositories)と[`ubuntu-slim`の制約](https://docs.github.com/en/actions/reference/runners/github-hosted-runners#single-cpu-runners)を確認し、満たせない要件と具体的な制約をワークフローのコメントか変更説明に記録する。
+   - `ubuntu-slim` の優先順位はこのスキル独自の方針であり、GitHub共通の必須要件ではない。runnerの選定理由を説明するときは、この方針とGitHub公式仕様を区別する。日付付きの仕様確認値は[出典と適用判断](references/sources.md)に記録する。
+   - workflowトップレベルに `defaults.run.shell: bash` を必ず指定する。stepごとの `shell: bash` だけでこの要件を満たした扱いにしない。
+   - Bash既定値が適用される各jobの実行環境でBashが使えるかを確認する。job containerにBashがない場合は、可能ならimageに追加する。追加できずjobのcommandがPOSIX互換なら、workflowトップレベルの既定値を残したうえで、そのjobだけ`defaults.run.shell`を実在するshellへ変更し、例外理由を記録する。Bash固有のcommandが必要でBashを提供できない場合は、shell方針とjob要件のどちらを優先するかユーザーに確認する。
+   - 明示した`bash`とshell未指定では実行commandが異なる。fallbackを含む詳細は[Workflow syntax: `defaults.run.shell`](https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax#defaultsrun)と[出典と適用判断](references/sources.md)で確認する。
 
    ```yaml
    defaults:
@@ -43,6 +43,7 @@ description: GitHub Actionsのワークフローを設計・変更・調査・�
 
    jobs:
      check:
+       # Use this label when it is available in the target environment.
        runs-on: ubuntu-slim
        steps:
          - name: Check shell

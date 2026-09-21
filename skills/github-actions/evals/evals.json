@@ -165,6 +165,30 @@
         "要件を満たせる別runnerを選び、具体的な例外理由を記録する",
         "公式runner資料へのリンクを示す"
       ]
+    },
+    {
+      "id": 16,
+      "prompt": "PRでworkflowをレビューしています。workflowトップレベルにdefaults.run.shell: bashがあり、job alpine-checkはcontainer: alpine:3.21を使います。このimageは変更できず、BashはなくPOSIX shだけが利用可能です。stepはPOSIX互換のprintfとtestだけです。レビュー指摘と必要なYAML調整を示してください。ファイルは変更しないでください。",
+      "expected_output": "workflowトップレベルのBash既定値は保ち、BashがないAlpine jobにはjob-level defaults.run.shell: shを例外として設定する。省略時のsh fallbackを明示bashに期待せず、例外理由を記録する。読み取り専用レビューを守る。",
+      "files": [],
+      "expectations": [
+        "トップレベルのdefaults.run.shell: bashを維持し、workflow全体の既定値を満たす",
+        "job containerにBashがないことをshell選定上の不適合として検出する",
+        "POSIX互換jobだけjob-level defaults.run.shell: shを使う明示例外を提案して理由を記録する",
+        "明示bashが省略時のsh fallbackに置き換わると誤認せず、ファイルを変更しない"
+      ]
+    },
+    {
+      "id": 17,
+      "prompt": "このworkflowはGitHub Enterprise Serverで動きます。管理者は利用可能なrunner labelがself-hosted、linux、x64だけで、GitHub-hostedのubuntu-slim labelはないと確認しました。jobはruffとpytestのみを約6分実行し、Bashはrunnerに入っています。runnerとshellの設定、選定理由を提案してください。ファイルは変更しないでください。",
+      "expected_output": "対象環境でubuntu-slimが利用できないと確認し、利用可能なself-hosted/linux/x64 labelを指定する。runner例外はlabelの不在として記録する。workflowトップレベルにdefaults.run.shell: bashを設定し、ubuntu-slim優先はこのスキル独自方針でGitHub共通の必須要件ではないと説明する。",
+      "files": [],
+      "expectations": [
+        "対象環境にubuntu-slim labelがないことを受け、利用可能なself-hosted/linux/x64 labelを選ぶ",
+        "runner例外理由を対象環境でlabelが利用できないこととして記録する",
+        "workflowトップレベルにdefaults.run.shell: bashを指定する",
+        "ubuntu-slim優先はスキル方針でありGitHub共通の必須要件ではないと説明する"
+      ]
     }
   ]
 }
