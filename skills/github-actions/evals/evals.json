@@ -156,11 +156,12 @@
     },
     {
       "id": 14,
-      "prompt": "次のworkflowをレビューしてください。対象はGitHub.comのpublic repositoryで、管理者はGitHub-hostedのubuntu-slimとubuntu-latest labelが利用可能と確認しています。runnerはubuntu-latestで、Ubuntu上のruffとpytestだけを実行し、所要時間は約6分です。同じworkflow・同じ依存関係とテスト量を使い、対象repositoryのubuntu-slim labelで代表的な実行を10回行いました。すべて完了し、最も遅い実行は9分20秒で、timeoutはありませんでした。ubuntu-slimの公式job timeoutは15分です。run stepごとにshell: bashを指定していますが、workflowトップレベルのdefaults.run.shellはありません。設定ファイルは変更せず、指摘と修正案を示してください。",
-      "expected_output": "同じworkflowとテスト量でubuntu-slim上の10回がすべて成功し、最遅9分20秒という提示された実測値を根拠に、15分上限に対し5分40秒の余裕があると説明してubuntu-slimを選ぶ。ubuntu-latest上の約6分は対象runnerの測定の代用にしない。stepごとのshell指定では要件を満たさないと指摘し、workflowトップレベルにdefaults.run.shell: bashを提案する。runner時間・shell既定値の公式資料を示し、ubuntu-slim優先はスキル独自方針でGitHub共通の必須要件ではないと説明し、レビューのみでファイルは変更しない。",
+      "prompt": "次のworkflowをレビューしてください。対象はGitHub.comのpublic repositoryで、管理者はGitHub-hostedのubuntu-slimとubuntu-latest labelが利用可能と確認しています。管理者は対象repositoryのrunner groupとrepository accessも調べ、両labelに一致する候補は標準GitHub-hosted runnersだけで、同名custom labelを持つeligible self-hosted runnerはないと確認しています。runnerはubuntu-latestで、Ubuntu上のruffとpytestだけを実行し、所要時間は約6分です。同じworkflow・同じ依存関係とテスト量を使い、対象repositoryのubuntu-slim labelで代表的な実行を10回行いました。すべて完了し、最も遅い実行は9分20秒で、timeoutはありませんでした。ubuntu-slimの公式job timeoutは15分です。run stepごとにshell: bashを指定していますが、workflowトップレベルのdefaults.run.shellはありません。設定ファイルは変更せず、指摘と修正案を示してください。",
+      "expected_output": "提示された10回のubuntu-slim実測は最遅9分20秒で15分上限に5分40秒の余裕があるため、対象runner上の計測を根拠にubuntu-slimを選ぶ。管理者がrunner groupとrepository accessを確認し、同名custom labelのeligible self-hosted runnerを除外しているfixtureも選定理由に反映する。ubuntu-latest上の約6分を測定の代用にしない。stepごとのshell指定はworkflow-levelのdefaults.run.shell: bashを満たさないと指摘し、トップレベルに設定する。公式runner・shell資料を示し、レビューのみを守り、ubuntu-slim優先はスキル独自方針と説明する。",
       "files": [],
       "expectations": [
         "対象runner上の10回の実測が最遅9分20秒で、15分上限に余裕をもって収まる提示された実測値を根拠にubuntu-slimを提案する",
+        "provider、runner group、repository accessの確認により同名custom labelのeligible self-hosted runnerが除外されているfixtureを反映する",
         "ubuntu-slimとubuntu-latest labelが対象のGitHub.com public repositoryで利用可能と確認済みであることを選定理由に反映する",
         "個別stepのshell指定はworkflowトップレベルのdefaults.run.shell: bashを満たさないと指摘する",
         "GitHub公式runner資料とdefaults.run.shellの資料を示す",
