@@ -48,12 +48,13 @@
     {
       "id": 5,
       "prompt": "既存の修正Issueで承認された範囲はGitHub ActionsのPRタイトルの安全な表示のみ。調査・計画記録は完了。対象run: echo \"${{ github.event.pull_request.title }}\" を修正してテストする場合、どの差分・確認が必要か具体案を出して。この評価では実ファイルもGitHubも変更しない。",
-      "expected_output": "監査専用の編集禁止を修正依頼へ一律適用せずtask-workflowの既存承認へ接続する。envと固定formatの引用付き変数を使う具体的差分を示す。危険文字列を隔離して検証する案を示し、無関係な変更を追加しない。",
+      "expected_output": "監査専用の編集禁止を修正依頼へ一律適用せずtask-workflowの既存承認へ接続する。envと固定formatの引用付き変数を使う具体的差分を示す。危険文字列を隔離して検証する案を示し、無関係な変更を追加しない。承認範囲に含まれないworkflow-level shell変更は別変更として報告・提案する。",
       "files": [],
       "expectations": [
         "監査専用の編集禁止を修正依頼へ一律適用せずtask-workflowの既存承認へ接続する",
         "envと固定formatの引用付き変数を使う具体的差分を示す",
-        "危険文字列を隔離して検証する案を示し、無関係な変更を追加しない"
+        "危険文字列を隔離して検証する案を示し、無関係な変更を追加しない",
+        "承認範囲に含まれないworkflow-level shell変更を追加せず、必要なら別変更として報告・提案する"
       ]
     },
     {
@@ -229,8 +230,8 @@
     },
     {
       "id": 19,
-      "prompt": "新しいPR workflowを設計してください。対象はGitHub.comのpublic repositoryです。管理者はGitHub-hostedのubuntu-slimとwindows-latest labelが利用可能と確認しています。管理者は対象repositoryのrunner groupとrepository accessも確認し、これらのlabelに一致する候補は標準GitHub-hosted runnersだけで、同名custom labelを持つeligible self-hosted runnerはないと確認しています。Linux jobではruffとpytestを実行します。別jobはWindows APIを必要とし、run commandはPowerShell構文（$PSVersionTable、Get-ChildItem）です。runnerとshellの設定例、選定理由を示してください。",
-      "expected_output": "workflow triggerにon: pull_requestを設定し、Linux jobにはubuntu-slim、Windows API jobにはwindows-latestを選ぶ。管理者がrunner groupとrepository accessを確認し、両labelの候補が標準GitHub-hostedのみでeligible self-hosted runnerがないfixtureも選定理由に反映する。workflow-level permissionsをcontents: readに限定し、workflowトップレベルにdefaults.run.shell: bashを設定し、PowerShell commandを実行するWindows jobではjob-level defaults.run.shell: pwshまたは必要なstepのshell: pwshを明示する。ubuntu-slim優先はスキル独自方針と説明し、WindowsとPowerShellの要件を例外理由として記録する。",
+      "prompt": "新しいPR workflowを設計してください。対象はGitHub.comのpublic repositoryです。管理者はGitHub-hostedのubuntu-slimとwindows-latest labelが利用可能と確認しています。管理者は対象repositoryのrunner groupとrepository accessも確認し、これらのlabelに一致する候補は標準GitHub-hosted runnersだけで、同名custom labelを持つeligible self-hosted runnerはないと確認しています。Linux jobではruffとpytestを実行します。既存のrequirements-ci.txtにruffとpytestのversionが固定されています。PR jobはcheckout、CI依存の準備、ruff、pytestを含める必要があります。別jobはWindows APIを必要とし、run commandはPowerShell構文（$PSVersionTable、Get-ChildItem）です。runnerとshellの設定例、選定理由を示してください。",
+      "expected_output": "workflow triggerにon: pull_requestを設定し、検証済みSHAのcheckoutとpersist-credentials: falseを含め、requirements-ci.txtから固定CI依存を導入してからruff/pytestを実行する。Linux jobにはubuntu-slim、Windows API jobにはwindows-latestを選ぶ。管理者がrunner groupとrepository accessを確認し、両labelの候補が標準GitHub-hostedのみでeligible self-hosted runnerがないfixtureも選定理由に反映する。workflow-level permissionsをcontents: readに限定し、workflowトップレベルにdefaults.run.shell: bashを設定し、PowerShell commandを実行するWindows jobではjob-level defaults.run.shell: pwshまたは必要なstepのshell: pwshを明示する。ubuntu-slim優先はスキル独自方針と説明し、WindowsとPowerShellの要件を例外理由として記録する。",
       "files": [],
       "expectations": [
         "Linuxのruff/pytest jobにubuntu-slimを選ぶ",
@@ -241,7 +242,10 @@
         "ubuntu-slim優先はこのスキル独自方針であると区別する",
         "runner groupとrepository accessの確認によりeligible self-hosted runnerが候補から除外されているfixtureを選定理由に反映する",
         "PR由来codeを実行するlint/test workflowのpermissionsをcontents: readなど必要最小限に限定する例を示す",
-        "PR workflowをon: pull_requestで起動するYAMLを示す"
+        "PR workflowをon: pull_requestで起動するYAMLを示す",
+        "検証済みのcheckout Actionを完全SHAと版コメントで固定する",
+        "checkoutで後続の認証済みGit操作が不要ならpersist-credentials: falseを指定する",
+        "既存のrequirements-ci.txtから固定済みruff/pytestを導入してからruff checkとpytestを実行する"
       ]
     },
     {
