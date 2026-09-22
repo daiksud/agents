@@ -230,8 +230,8 @@
     },
     {
       "id": 19,
-      "prompt": "新しいPR workflowを設計してください。対象はGitHub.comのpublic repositoryです。管理者はGitHub-hostedのubuntu-slimとwindows-latest labelが利用可能と確認しています。管理者は対象repositoryのrunner groupとrepository accessも確認し、これらのlabelに一致する候補は標準GitHub-hosted runnersだけで、同名custom labelを持つeligible self-hosted runnerはないと確認しています。Linux jobではruffとpytestを実行します。既存のrequirements-ci.txtにruffとpytestのversionが固定されています。PR jobはcheckout、CI依存の準備、ruff、pytestを含める必要があります。別jobはWindows APIを必要とし、run commandはPowerShell構文（$PSVersionTable、Get-ChildItem）です。runnerとshellの設定例、選定理由を示してください。",
-      "expected_output": "workflow triggerにon: pull_requestを設定し、検証済みSHAのcheckoutとpersist-credentials: falseを含め、requirements-ci.txtから固定CI依存を導入してからruff/pytestを実行する。Linux jobにはubuntu-slim、Windows API jobにはwindows-latestを選ぶ。管理者がrunner groupとrepository accessを確認し、両labelの候補が標準GitHub-hostedのみでeligible self-hosted runnerがないfixtureも選定理由に反映する。workflow-level permissionsをcontents: readに限定し、workflowトップレベルにdefaults.run.shell: bashを設定し、PowerShell commandを実行するWindows jobではjob-level defaults.run.shell: pwshまたは必要なstepのshell: pwshを明示する。ubuntu-slim優先はスキル独自方針と説明し、WindowsとPowerShellの要件を例外理由として記録する。",
+      "prompt": "新しいPR workflowを設計してください。対象はGitHub.comのpublic repositoryです。管理者はGitHub-hostedのubuntu-slimとwindows-latest labelが利用可能と確認しています。管理者は対象repositoryのrunner groupとrepository accessも確認し、これらのlabelに一致する候補は標準GitHub-hosted runnersだけで、同名custom labelを持つeligible self-hosted runnerはないと確認しています。Linux jobではruffとpytestを実行します。既存のrequirements-ci.txtにruffとpytestのversionが固定されています。PR jobはcheckout、CI依存の準備、ruff、pytestを含める必要があります。checkoutの検証済みfixtureはactions/checkout v7.0.1 -> 3d3c42e5aac5ba805825da76410c181273ba90b1で、この対応だけを使ってください。別jobはWindows APIを必要とし、run commandはPowerShell構文（$PSVersionTable、Get-ChildItem）です。runnerとshellの設定例、選定理由を示してください。",
+      "expected_output": "workflow triggerにon: pull_requestを設定し、fixtureどおりactions/checkout v7.0.1を完全SHA 3d3c42e5aac5ba805825da76410c181273ba90b1で固定したcheckoutとpersist-credentials: falseを含め、requirements-ci.txtから固定CI依存を導入してからruff/pytestを実行する。Linux jobにはubuntu-slim、Windows API jobにはwindows-latestを選ぶ。管理者がrunner groupとrepository accessを確認し、両labelの候補が標準GitHub-hostedのみでeligible self-hosted runnerがないfixtureも選定理由に反映する。workflow-level permissionsをcontents: readに限定し、workflowトップレベルにdefaults.run.shell: bashを設定し、PowerShell commandを実行するWindows jobではjob-level defaults.run.shell: pwshまたは必要なstepのshell: pwshを明示する。ubuntu-slim優先はスキル独自方針と説明し、WindowsとPowerShellの要件を例外理由として記録する。",
       "files": [],
       "expectations": [
         "Linuxのruff/pytest jobにubuntu-slimを選ぶ",
@@ -245,7 +245,8 @@
         "PR workflowをon: pull_requestで起動するYAMLを示す",
         "検証済みのcheckout Actionを完全SHAと版コメントで固定する",
         "checkoutで後続の認証済みGit操作が不要ならpersist-credentials: falseを指定する",
-        "既存のrequirements-ci.txtから固定済みruff/pytestを導入してからruff checkとpytestを実行する"
+        "既存のrequirements-ci.txtから固定済みruff/pytestを導入してからruff checkとpytestを実行する",
+        "checkoutのversionと完全SHAをfixtureどおりv7.0.1と3d3c42e5aac5ba805825da76410c181273ba90b1に対応させる"
       ]
     },
     {
@@ -295,12 +296,11 @@
     },
     {
       "id": 23,
-      "prompt": "既存のGitHub Actions workflowをレビューしてください。対象はGitHub.comのGitHub-hosted runnersで、管理者はubuntu-slim labelが利用可能と確認しています。管理者は対象repositoryのrunner groupとrepository accessを確認し、このlabelの候補は標準GitHub-hosted runnerだけで、同名custom labelを持つeligible self-hosted runnerはないと確認しています。workflowトップレベルにdefaults.run.shellはありません。Linux jobのrun commandはtrue && false | trueです。このstepの既存契約は成功で、pipelineの最後のcommandが成功すれば先行commandの非0を許容します。Issueのworkflow-level defaults.run.shell: bash方針を適用してもこの契約を維持する最小変更を提案してください。ファイルは変更しないでください。",
-      "expected_output": "workflowトップレベルにdefaults.run.shell: bashを追加し、利用可能と確認済みのubuntu-slimを選ぶ。provider、runner group、repository accessを確認し、同名custom labelのeligible self-hosted runnerがないfixtureを選定理由に反映する。明示Bashのpipefailでfalse | true pipelineは非0となり、このpipelineは&& listの最終commandなので-e例外の対象外となってstepが失敗し得ることを説明する。既存契約を保つため、このpipelineの意図した非0だけを局所的に許容するcommand調整または理由付きshell例外を提案し、他の失敗を広く無視しない。公式資料を示し、レビューだけでファイルは変更しない。",
+      "prompt": "既存のGitHub Actions workflowをレビューしてください。対象はGitHub.comのGitHub-hosted runnersで、管理者はubuntu-slim labelが利用可能と確認しています。管理者は対象repositoryのrunner groupとrepository accessを確認し、このlabelの候補は標準GitHub-hosted runnerだけで、同名custom labelを持つeligible self-hosted runnerはないと確認しています。workflowトップレベルにdefaults.run.shellはありません。Linux jobは現在runs-on: ubuntu-slimで、Issueの承認範囲はworkflow-level defaults.run.shell: bashの追加だけで、runner変更は含みません。Linux jobのrun commandはtrue && false | trueです。このstepの既存契約は成功で、pipelineの最後のcommandが成功すれば先行commandの非0を許容します。Issueのworkflow-level defaults.run.shell: bash方針を適用してもこの契約を維持する最小変更を提案してください。ファイルは変更しないでください。",
+      "expected_output": "workflowトップレベルにdefaults.run.shell: bashを追加し、既存のruns-on: ubuntu-slimを維持する（runner変更は承認範囲外）。provider、runner group、repository accessを確認し、同名custom labelのeligible self-hosted runnerがないfixtureを選定理由に反映する。明示Bashのpipefailでfalse | true pipelineは非0となり、このpipelineは&& listの最終commandなので-e例外の対象外となってstepが失敗し得ることを説明する。既存契約を保つため、このpipelineの意図した非0だけを局所的に許容するcommand調整または理由付きshell例外を提案し、他の失敗を広く無視しない。公式資料を示し、レビューだけでファイルは変更しない。",
       "files": [],
       "expectations": [
         "workflowトップレベルにdefaults.run.shell: bashを追加する",
-        "利用可能と確認済みのubuntu-slimを選ぶ",
         "pipefailでpipelineが非0になり、&& listの最終commandは-e例外の対象外と説明する",
         "成功という既存契約を保つ局所対応を示し、他の失敗を一律に無視しない",
         "GitHub workflow syntaxとBash pipeline/errexit仕様を公式資料で示す",
