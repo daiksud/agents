@@ -13,6 +13,28 @@ sources:
     resource: https://github.com/github/awesome-copilot/blob/4f4796f0bf30e105700f97ed8408c12b6aa95e06/skills/github-actions-runtime-upgrade-conventions/SKILL.md
   - id: copilot-license
     resource: https://github.com/github/awesome-copilot/blob/4f4796f0bf30e105700f97ed8408c12b6aa95e06/LICENSE
+  - id: github-hosted-runners-public
+    resource: https://docs.github.com/en/actions/reference/runners/github-hosted-runners#standard-github-hosted-runners-for-public-repositories
+  - id: github-hosted-runners-private
+    resource: https://docs.github.com/en/actions/reference/runners/github-hosted-runners#standard-github-hosted-runners-for-private-repositories
+  - id: github-single-cpu-runners
+    resource: https://docs.github.com/en/actions/reference/runners/github-hosted-runners#single-cpu-runners
+  - id: github-runner-selection
+    resource: https://docs.github.com/en/actions/how-tos/write-workflows/choose-where-workflows-run/choose-the-runner-for-a-job
+  - id: github-self-hosted-labels
+    resource: https://docs.github.com/en/actions/how-tos/manage-runners/self-hosted-runners/apply-labels
+  - id: github-runner-groups
+    resource: https://docs.github.com/en/actions/concepts/runners/runner-groups
+  - id: github-workflow-default-shell
+    resource: https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax#defaultsrun
+  - id: github-job-container-shell
+    resource: https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax#jobsjob_idcontainer
+  - id: bash-reference-pipelines
+    resource: https://www.gnu.org/software/bash/manual/html_node/Pipelines
+  - id: bash-reference-set-builtin
+    resource: https://www.gnu.org/software/bash/manual/html_node/The-Set-Builtin.html
+  - id: actions-runner-shell-handler
+    resource: https://github.com/actions/runner/blob/80bb1fb827fa44d489263061e71ef4adba7ad8cd/src/Runner.Worker/Handlers/ScriptHandler.cs
 ---
 
 ## 取り込み元と帰属
@@ -54,8 +76,34 @@ sources:
 - 権限、fork、runner、OIDCを変えるときは[安全性](hardening.md)の公式仕様と実際の設定・claimsを確認する。subject形式やcredential保存場所を固定の前提にしない。
 - Action更新時は[ランタイム更新](runtime-upgrades.md)に従い、そのリリースのmetadata・release notes・完全SHAを照合する。確認日だけを最新版・互換性の証明にしない。
 
+## Runnerとshellの公式仕様
+
+2026-09-22にGitHub.comのpublic/private repository向けGitHub-hosted runner一覧、Single-CPU runnerの制約、`defaults.run.shell` のworkflow syntaxを確認した。private向け一覧では`ubuntu-latest`の標準runnerが2 CPU/8 GB、public向け一覧では4 CPU/16 GBと記載されていた。数値・機能・利用条件は変更されるため、runnerを選ぶ時点で対象repositoryの公開状態、plan、runner labelと最新の公式仕様を確認する。GHESのrunner inventoryは別途対象環境で確認する。
+
+2026-09-22に[Runner選定][^github-runner-selection]、[self-hosted label][^github-self-hosted-labels]、[runner group][^github-runner-groups]資料を確認した。確認範囲は `runs-on` のlabel/group条件、self-hosted custom labelの設定、runner groupの対象であり、特定organizationやrepositoryの実際のrunner inventory/accessは確認していない。jobを選ぶ時点で対象設定を確認する。
+
+- `ubuntu-slim` はGitHub.comのpublic/private repository向け標準runner一覧にあり、2026-09-22時点では1 CPU/5 GB、job上限15分、非特権containerとして記載されていた。filesystem mount、Docker-in-Docker、一部の低レベルkernel機能は利用できない。これらはGitHub全体のrunner選択要件ではなく、実際の可否を判断する仕様である。[Public runner一覧][^github-hosted-runners-public]、[private runner一覧][^github-hosted-runners-private]、[Single-CPU runner][^github-single-cpu-runners]
+- `runs-on` はrunner label・groupで対象を選び、両方を指定した場合はどちらも一致するrunnerだけが候補となる。self-hosted runnerにはcustom labelを追加でき、runner groupはlarger runnerまたはself-hosted runnerで構成される。従って、label名だけでは候補がGitHub-hostedかself-hostedかを確認できない場合がある。対象設定でprovider、groupとrepository accessを確認する。[Runner選定][^github-runner-selection]、[self-hosted label][^github-self-hosted-labels]、[runner group][^github-runner-groups]
+- Linux/macOSでshellを省略すると `bash -e {0}` が使われ、Bashがないときは `sh -e {0}` がfallbackとなる。`shell: bash` を明示すると `bash --noprofile --norc -eo pipefail {0}` が使われる。[Workflow syntax][^github-workflow-default-shell] Bashの`pipefail`はpipeline内で最後に非0を返したcommandの状態をpipelineへ返す。[Bash Reference Manual][^bash-reference-pipelines] Bashの`-e`は`if`条件と`&&`・`||` listの非最終commandでは失敗だけで直ちにshellを終了しないが、最後の`&&`・`||`の後のcommandにはこの例外が適用されない。[Bash Reference Manual][^bash-reference-set-builtin] 既存workflowを明示Bashへ切り替える場合は、pipelineのstatusと周囲の分岐・handlerの両方を確認し、途中commandの非0を意図的に許容する場合は、その終了状態だけを明示して他の失敗を保つ。
+- job `container`内のshell既定値は`sh`であり、workflowやjobの`defaults.run.shell`、またはstepの`shell`で上書きできる。workflow-level `bash` defaultを使うなら、job containerにBashがあるかを確認する。[Job container syntax][^github-job-container-shell]
+- Actions runnerの実装は、shell省略時にBashを探してから`sh`へfallbackし、shellが明示されている場合はそのshellを選ぶ。2026-09-21に確認した固定commitの実装では、この選択が別の分岐になっている。[ScriptHandler.cs][^actions-runner-shell-handler]
+- Bash既定値が適用される各runner・containerの実行環境でBashの有無とcommandの互換性を確認する。Bashがないself-hosted runnerやcontainerでは、可能ならBash入りrunner・imageを用意する。package導入を行うstepには、workflow-levelのBash既定値がそのstepにも適用されるため、導入前から利用できるshell（例: `sh`）をstep-levelで明示する。導入できず処理がPOSIX互換なら、workflow全体のBash既定値を保ち、該当jobに限って`defaults.run.shell: sh`を明示して不在を理由に記録する。[Workflow syntax][^github-workflow-default-shell]
+- PowerShellなど別shellをcommandの契約とするjobやstepでは、workflow全体のBash既定値を保ち、job-level `defaults.run.shell`またはstep-level `shell`を契約に合う利用可能なshellへ上書きして、その具体的な要件を記録する。Bash固有の構文が必要でBashを提供できない場合は、shell方針とjob要件のどちらを優先するかユーザーに確認する。[Workflow syntax][^github-workflow-default-shell]
+- GHESやself-hosted runnerのlabelはGitHub-hosted一覧から推測しない。対象環境の登録済みlabelを確認し、`ubuntu-slim`が利用できない場合は、その事実をrunner選択の具体的な制約として扱う。
+
 [^copilot-cicd]: GitHub awesome-copilotのCI/CD Best Practices Instructions、上記固定版。
 [^copilot-efficiency]: GitHub Actions Efficiencyと同梱4資料、上記固定版。
 [^copilot-hardening]: GitHub Actions Hardeningと同梱参照資料、上記固定版。
 [^copilot-runtime]: GitHub Actions Runtime Upgrade Conventions、上記固定版。
 [^copilot-license]: GitHub awesome-copilotのMIT License、上記固定版。
+[^github-runner-selection]: [Choosing the runner for a job](https://docs.github.com/en/actions/how-tos/write-workflows/choose-where-workflows-run/choose-the-runner-for-a-job)。`runs-on` のlabel・group選択と複合条件の参照元。
+[^github-self-hosted-labels]: [Using labels with self-hosted runners](https://docs.github.com/en/actions/how-tos/manage-runners/self-hosted-runners/apply-labels)。self-hosted runnerへのcustom label付与の参照元。
+[^github-runner-groups]: [Runner groups](https://docs.github.com/en/actions/concepts/runners/runner-groups)。runner groupの用途と構成対象の参照元。
+[^github-hosted-runners-public]: [Standard GitHub-hosted runners for public repositories](https://docs.github.com/en/actions/reference/runners/github-hosted-runners#standard-github-hosted-runners-for-public-repositories)。public repository向けrunner labelと仕様の参照元。
+[^github-hosted-runners-private]: [Standard GitHub-hosted runners for private repositories](https://docs.github.com/en/actions/reference/runners/github-hosted-runners#standard-github-hosted-runners-for-private-repositories)。private repository向けrunner label、仕様と利用条件の参照元。
+[^github-single-cpu-runners]: [Single-CPU runners](https://docs.github.com/en/actions/reference/runners/github-hosted-runners#single-cpu-runners)。本文に記した15分上限と非特権container制約の参照元。
+[^github-workflow-default-shell]: [Workflow syntax: `defaults.run.shell`](https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax#defaultsrun)。本文に記したshell既定値と実行commandの参照元。
+[^bash-reference-pipelines]: [GNU Bash Reference Manual: Pipelines](https://www.gnu.org/software/bash/manual/html_node/Pipelines)。本文に記したpipefail有効時のpipeline statusを説明する。
+[^bash-reference-set-builtin]: [GNU Bash Reference Manual: The Set Builtin](https://www.gnu.org/software/bash/manual/html_node/The-Set-Builtin.html)。`-e` の条件文脈における例外を説明する。
+[^github-job-container-shell]: [Workflow syntax: `jobs.<job_id>.container`](https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax#jobsjob_idcontainer)。本文に記したcontainer内shell既定値の参照元。
+[^actions-runner-shell-handler]: [Actions runner `ScriptHandler.cs`](https://github.com/actions/runner/blob/80bb1fb827fa44d489263061e71ef4adba7ad8cd/src/Runner.Worker/Handlers/ScriptHandler.cs#L187-L203)（shell未指定時のOS別選択とLinux/macOSでのBashからshへの探索）、[明示shellの解決](https://github.com/actions/runner/blob/80bb1fb827fa44d489263061e71ef4adba7ad8cd/src/Runner.Worker/Handlers/ScriptHandler.cs#L205-L233)。この実装snapshotは2026-09-21に確認した。実際のrunner・containerは対象環境で再確認する。

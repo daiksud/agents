@@ -28,6 +28,33 @@ description: GitHub Actionsのワークフローを設計・変更・調査・�
 3. 変更のたびに、実効的な `permissions`、Secretの渡し先、実行コードの出所、runner、外部入力、参照するAction・成果物・キャッシュを確認する。トリガー名やforkであることだけで安全と判断しない。境界に触れる場合は安全性資料を読む。
 4. 外部Actionと外部再利用ワークフローは、対象リポジトリのリリースと照合した完全コミットSHAへ固定し、コメントの版との一致を確認する。例のSHAを推奨版として流用しない。コンテナ参照には検証済みdigestを使い、同一リポジトリの相対参照は対象checkoutの出所を確認する。
 5. 目的を満たす最小の変更と検証を選ぶ。手動承認、特定のブランチ戦略、大規模マトリクス、Canaryを一律に要求しない。
+6. ワークフローの設計・変更・レビューでは、runnerとshellを次の方針で確認する。
+   - runnerを選ぶ前に、対象環境がその`runs-on` labelを提供しているか、labelに一致する候補のprovider（GitHub-hosted / self-hosted）、runner group、repository accessを確認する。label名だけでproviderを推測しない。同じcustom labelを持つself-hosted runnerが候補に入る場合は、特にPR由来codeの実行について[安全性](references/hardening.md)の共有状態・network・host credentialの境界を確認し、GitHub-hosted runnerだと確認できるまでlabelだけで選定を確定しない。
+   - `ubuntu-slim` が利用可能でも、必要な処理を実現できないと確認した場合に限り恒久的に別のrunnerを使う。慣習、既存例の踏襲、高性能への単なる希望は例外理由にしない。
+   - 実行時間が要件になる場合は、対象runner上の実測と判断時点の公式資料に記載されたjob timeoutを照合し、別runnerでの時間だけを根拠に適合を断定しない。未計測なら既存の必須jobがあれば維持し、新候補は非必須のtrialで代表的なjobを試す。これは適合確認までの暫定運用で、恒久的なrunner例外として説明しない。
+   - 例外時はGitHub.comかGHESか、repositoryの公開状態とplanを確認する。GitHub.comでは該当する[public repository向けrunner一覧](https://docs.github.com/en/actions/reference/runners/github-hosted-runners#standard-github-hosted-runners-for-public-repositories)または[private repository向けrunner一覧](https://docs.github.com/en/actions/reference/runners/github-hosted-runners#standard-github-hosted-runners-for-private-repositories)を参照し、GHESではGitHub.comの一覧を適用せず対象環境のrunner inventoryを確認する。
+   - `ubuntu-slim` の制約を照合し、満たせない要件と具体的な制約をワークフローのコメントか変更説明に記録する。[公式の制約](https://docs.github.com/en/actions/reference/runners/github-hosted-runners#single-cpu-runners)は判断時点で確認する。
+   - runnerの選定理由を回答・記録するときは、`ubuntu-slim` 優先がこのスキル独自の方針で、GitHub共通の必須要件ではないことを明示し、runnerの提供条件・制約などのGitHub公式仕様と分けて説明する。日付付きの仕様確認値は[出典と適用判断](references/sources.md)に記録する。
+   - 新規workflow、またはworkflow-level shell移行が承認範囲に含まれる設計・変更では、workflowトップレベルに `defaults.run.shell: bash` を必ず指定する。stepごとの `shell: bash` だけでこの要件を満たした扱いにしない。既存workflowの限定的な修正でshell移行が承認範囲に含まれない場合は、既存shellを変更せず、shell方針の適用を別変更として報告・提案する。
+   - Bash既定値が適用される各jobの実行環境にBashがあるか、各commandがBashと互換かを確認する。Bashがないself-hosted runnerやjob containerでは、可能ならBash入りrunner・imageを用意する。既存のshellからpackageを導入するstepを使う場合は、そのstepに導入前から利用できるshell（例: `sh`）を明示する。workflow-levelの`bash`既定値は導入stepにも適用される。
+   - Bashを用意できずjobのcommandがPOSIX互換なら、workflowトップレベルのBash既定値を残したうえで、そのjobだけ`defaults.run.shell: sh`を明示し、不在を理由として記録する。PowerShellなど別shellを契約とするjobやstepでは、トップレベルの既定値を残し、そのjobの`defaults.run.shell`または該当stepの`shell`を契約に合う利用可能なshellへ上書きし、具体的な要件を記録する。これらは実行環境またはcommandの互換性から必要となる場合の局所例外とする。Bash固有のcommandが必要でBashを提供できない場合は、shell方針とjob要件のどちらを優先するかユーザーに確認する。
+   - 明示した`bash`とshell未指定では実行commandが異なる。fallbackを含む詳細は[Workflow syntax: `defaults.run.shell`](https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax#defaultsrun)と[出典と適用判断](references/sources.md)で確認する。
+   - 既存workflowの未指定shellを明示的なBashへ変える場合、`pipefail`によるpipeline statusと既存handler・出力契約への影響を確認する。Bashの`errexit`条件文脈、pipelineのlist内位置、statusの詳細は[出典と適用判断](references/sources.md)で照合し、回答でこれらの仕様を根拠として述べる場合は同資料の該当する公式出典へのリンクを示す。意図した非0だけを局所的に扱い、他の失敗は維持する。job・step単位のshell上書きを使う場合は、既存のjob契約から必要となる理由を記録する。
+
+   ```yaml
+   defaults:
+     run:
+       shell: bash
+
+   jobs:
+     check:
+       # Confirm provider, runner group, and repository access before selecting this label.
+       # Label availability alone does not identify a GitHub-hosted runner.
+       runs-on: ubuntu-slim
+       steps:
+         - name: Check shell
+           run: printf '%s\n' "$BASH_VERSION"
+   ```
 
 ## 成果と確認
 
