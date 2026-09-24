@@ -1,6 +1,6 @@
 ---
 name: engineering-assessment
-description: DevOps・Lean・CI/CD・BDD/ATDD/TDD・DDD・チームトポロジーの現状診断・導入計画をIssueへ記録する。通常の修正、個別レビュー、概念説明、導入実装には使わない。
+description: DevOps・Lean・CI/CD・BDD/ATDD/TDD・DDD・チームトポロジーについて、リポジトリや開発プロセスの現状診断、改善提案、導入計画を依頼されたときに使う。証拠に基づく計画をIssueへ記録する。通常の修正、個別コードレビュー、概念説明、導入実装には使わない。
 ---
 
 # 開発実践を診断し、導入を計画する

@@ -19,13 +19,14 @@ sources:
 
 | 条件 | 配布先 |
 | --- | --- |
-| 変更・成果物作成、Issue・PR対応 | `~/.agents/skills/task-workflow/SKILL.md` |
+| リポジトリの変更・成果物作成、Issue・PRの作成・更新、変更作業の完了 | `~/.agents/skills/task-workflow/SKILL.md` |
 | コードの追加・変更・修正 | `~/.agents/skills/bdd-tdd/SKILL.md` |
 | コードレビューの実行時だけ | `~/.agents/skills/code-review/SKILL.md` |
 | 文書の作成・更新 | `~/.agents/skills/okf-docs/SKILL.md` |
 | 開発実践の現状診断・導入計画を依頼されたとき | `~/.agents/skills/engineering-assessment/SKILL.md` |
+| GitHub Actionsのworkflow設計・変更・失敗調査・レビュー・効率改善 | `~/.agents/skills/github-actions/SKILL.md` |
 
-相談・比較・説明・読み取り調査だけにはIssue・PR・マージを要求しない。調査から変更へ進む前に対応スキルを読む。文書は `okf-docs` に従い、OKF v0.2の通常概念・索引/履歴と固有形式を区別し、出典・未知メタデータ・確認履歴を保持する。
+相談・比較・説明・読み取り調査だけにはIssue・PR・マージを要求しない。読み取り専用のコードレビューは `code-review` を使い、GitHub Actions workflowのレビューでは `github-actions` も併用する。レビューだけの依頼に `task-workflow` を加えず、変更・投稿・マージを求める作業で併用する。調査から変更へ進む前に対応スキルを読む。文書は `okf-docs` に従い、OKF v0.2の通常概念・索引/履歴と固有形式を区別し、出典・未知メタデータ・確認履歴を保持する。
 
 ### 目的・目標・手段
 

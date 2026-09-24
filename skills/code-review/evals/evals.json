@@ -4,7 +4,7 @@
     {
       "id": 1,
       "prompt": "読み取り専用模擬評価。実環境の変更・送信は禁止。PR差分をレビューして。仕様: 有効期限ちょうどは利用不可。token.py:8 が return now < expires から return now <= expires に変更。呼び出し元 authorize(now, token) はこの戻り値がTrueなら許可する。既存テストは now=9,expires=10 と now=11,expires=10 のみ。",
-      "expected_output": "期限ちょうどを許可する回帰をtoken.py:8の条件・呼び出し元・影響・修正方向とともに重要度付きで1件指摘する。 未提供のSHAやテスト実行結果を確認済みとしない。",
+      "expected_output": "この読み取り専用PRレビューではcode-reviewだけを適用し、task-workflowや実装スキルを起動しない。期限ちょうどを許可する回帰をtoken.py:8の条件・呼び出し元・影響・修正方向とともに重要度付きで1件指摘する。未提供のSHAやテスト実行結果を確認済みとしない。",
       "files": []
     },
     {

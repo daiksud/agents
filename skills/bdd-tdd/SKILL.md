@@ -1,6 +1,6 @@
 ---
 name: bdd-tdd
-description: コード変更をBDD・ATDD・TDDで実装・検証する。技術処理にもTDDを適用する。相談・調査・文書のみには使わない。
+description: コードの追加・変更、バグ修正、リファクタリングを依頼されたときに使い、BDD・ATDD・TDDで実装と検証を進める。技術処理にもTDDを適用する。コードを変更しない相談・調査・文書作成だけには使わず、コード変更ではtask-workflowと併用する。
 ---
 
 # BDD・ATDD・TDDで実装する

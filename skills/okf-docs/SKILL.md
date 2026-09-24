@@ -1,6 +1,6 @@
 ---
 name: okf-docs
-description: 文書・仕様・ADRを作成・更新し、OKF v0.2と固有形式を区別して検証する。docs外のOpenAPI・JSON Schemaも対象。読み取り・説明だけには使わない。
+description: Markdown文書、仕様、feature文書、ADR、OpenAPI、JSON Schemaなどを作成・更新する依頼で使う。OKF v0.2と各固有形式を区別して作成・検証する。既存文書を読むだけの依頼や概念説明だけには使わない。
 ---
 
 # OKFで文書を作成する

@@ -26,9 +26,10 @@
     {
       "id": 3,
       "prompt": "GitHub ActionsのPR待ちを減らす案だけ欲しい。直近10回では並列lint 2分、test 12分（setup 1分/test 11分）、build 4分。全て必須。ランナー待ちは未取得。pushとpull_requestで同じheadに2runある。提案候補は全ジョブを直列に統合、workflowにpaths: [src/**]、Windowsマトリクス削除（対応方針は未文書化）、本番deployもcancel-in-progress: true。",
-      "expected_output": "重複実行や長いtestを根拠に少数の改善を選び、全必須チェックを維持する。経過時間・総使用時間・回避実行を分け、待ちや改善量の欠測を捏造しない。pathスキップによる必須チェック、未文書化Windows削除、本番キャンセルを無条件に採用しない。",
+      "expected_output": "github-actionsだけを適用し、変更用のtask-workflow・bdd-tddを起動しない。重複実行や長いtestを根拠に少数の改善を選び、全必須チェックを維持する。経過時間・総使用時間・回避実行を分け、待ちや改善量の欠測を捏造しない。pathスキップによる必須チェック、未文書化Windows削除、本番キャンセルを無条件に採用しない。",
       "files": [],
       "expectations": [
+        "github-actionsだけを適用し変更用skillを起動しない",
         "重複実行や長いtestを根拠に少数の改善を選び、全必須チェックを維持する",
         "経過時間・総使用時間・回避実行を分け、待ちや改善量の欠測を捏造しない",
         "pathスキップによる必須チェック、未文書化Windows削除、本番キャンセルを無条件に採用しない"
@@ -319,6 +320,17 @@
         "label overlapまたはself-hosted accessを解消・隔離するまでGitHub-hosted ubuntu-slimとして適合扱いせず、解決後はubuntu-slim優先を維持する",
         "GitHub公式のrunner selection、self-hosted custom-label/group資料を示す",
         "読み取り専用レビューを守りファイルを変更しない"
+      ]
+    },
+    {
+      "id": 25,
+      "prompt": "GitHub ActionsのCIが失敗しているので原因を調べて修正して。失敗runでは.github/workflows/ci.ymlのnpm testからsrc/cart.tsの回帰が検出された。読み取り専用模擬評価として、実ファイルやGitHubは変更せず、使うSkillと進め方を示して。",
+      "expected_output": "GitHub Actionsの失敗調査・workflow文脈にはgithub-actionsを使い、変更作業の計画と完了にはtask-workflow、アプリコードの修正と検証にはbdd-tddを併用する。レビュー依頼ではないためcode-reviewは起動しない。runのSHA・ログ・再現テストを確認し、模擬評価では編集やGitHub操作を行わない。",
+      "files": [],
+      "expectations": [
+        "github-actions、task-workflow、アプリコード変更に必要なbdd-tddを併用する",
+        "レビュー依頼ではないためcode-reviewを起動しない",
+        "模擬評価の読み取り専用制約を守る"
       ]
     }
   ]

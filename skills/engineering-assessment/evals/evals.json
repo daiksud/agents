@@ -66,10 +66,11 @@
     },
     {
       "id": 7,
-      "prompt": "acme/shop のBDD・ATDD・TDD・DDDを診断して。日本語feature、受け入れテスト、用語集があり全テストは成功。履歴はスカッシュ済みで、誰といつ条件を確認したか、テストの失敗を先に見たかは不明。目的は仕様の認識違いを減らすこと。未実践の部分の導入計画を提案して。",
-      "expected_output": "成果物だけで共同理解・実装前合意・テスト先行の有無を断定しない。関係者や直近作業の確認、ルール・例・質問を使う小さな改善を示す。",
+      "prompt": "このリポジトリのDevOps・DDD・TDDの現状を診断して導入計画を作り、Issueへ記録して。acme/shopには日本語feature、受け入れテスト、用語集があり全テストは成功。履歴はスカッシュ済みで、誰といつ条件を確認したか、テストの失敗を先に見たかは不明。目的は仕様の認識違いを減らすこと。",
+      "expected_output": "engineering-assessmentで現状を診断し、Issue記録にはtask-workflowを併用する。成果物だけで共同理解・実装前合意・テスト先行の有無を断定せず、DevOps・DDD・TDDの関係者確認と証拠の不足を区別し、小さな導入計画を示す。コード・CI・組織の変更やPR作成へ進まない。",
       "files": [],
       "expectations": [
+        "engineering-assessmentで診断し、Issue記録にはtask-workflowを併用する",
         "成果物だけで共同理解・実装前合意・テスト先行の有無を断定しない",
         "関係者や直近作業の確認、ルール・例・質問を使う小さな改善を示す"
       ]
@@ -96,12 +97,12 @@
     },
     {
       "id": 10,
-      "prompt": "CIとCDの違いを概念として説明して。特定リポジトリの診断やファイル変更は頼んでいない。",
-      "expected_output": "engineering-assessmentの全面診断やIssue作成を開始しない。CIとCDの違いを説明する。",
+      "prompt": "DDDって何？特定リポジトリの現状診断や導入計画は求めていない。",
+      "expected_output": "engineering-assessmentの診断・計画やIssue作成を開始せず、DDDの概念を説明する。",
       "files": [],
       "expectations": [
-        "engineering-assessmentの全面診断やIssue作成を開始しない",
-        "CIとCDの違いを説明する"
+        "engineering-assessmentの診断・計画やIssue作成を開始しない",
+        "DDDの概念を説明する"
       ]
     },
     {

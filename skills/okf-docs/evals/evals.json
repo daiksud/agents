@@ -3,7 +3,7 @@
   "evals": [
     {
       "id": 1,
-      "prompt": "Issue本文提示・計画承認済み。rumdlは導入済み。docsの設計判断に、採用した認証方式を記録して。",
+      "prompt": "Issue本文提示・計画承認済み。rumdlは導入済み。docs/adr/authentication.mdに認証方式の採用理由を記録するADRを書いて。",
       "expected_output": "task-workflowとokf-docsを読み、docs/adrに1概念のOKF文書を作成する。type/title/description、確認済みの根拠、リンクを検証する。 task-workflowの共通Markdown品質手順に従い文書全体を整形・チェックする。",
       "files": []
     },

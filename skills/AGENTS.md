@@ -5,6 +5,10 @@ description: このリポジトリのスキルを作成・更新するときの�
 sources:
   - id: agentskills-specification
     resource: https://agentskills.io/specification
+  - id: github-copilot-add-skills
+    resource: https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/customize-cloud-agent/add-skills
+  - id: github-copilot-cli-reference
+    resource: https://docs.github.com/en/copilot/reference/copilot-cli-reference/cli-command-reference
 ---
 
 ## スキルの作成・更新
@@ -25,7 +29,11 @@ sources:
 - 原本は `skills/<name>/SKILL.md` に置く。`gh skill` の標準探索を維持するため、隠しディレクトリに移さない。
 - `SKILL.md` は Agent Skills仕様[^agentskills-specification]に従い、YAML frontmatterに `name` と `description` を記載する。
 - `name` はディレクトリ名と一致させ、小文字英数字とハイフンで1〜64文字とする。先頭・末尾のハイフンと連続するハイフンは使わない。
-- `description` は1〜1024文字の範囲で、実際に担当する依頼と紛らわしい対象外を短く具体的に書く。関連する話題への言及だけを発火条件にせず、過剰な強調や工程の説明を入れない。
+- `description` は1〜1024文字とし、CopilotがSkillを選ぶ際の判断材料として使う。GitHub公式資料では、Copilotはユーザーのpromptとdescriptionを基に利用を判断し、選んだ後に `SKILL.md` 本文を読み込む。CLIのfrontmatter仕様はdescriptionを「何をするか・いつ使うか」と定義し、1024文字を上限とする[^github-copilot-add-skills] [^github-copilot-cli-reference]。
+- descriptionには、担当する内容（What）だけでなく、どのような依頼で使うか（When）を実際のユーザー依頼に近い言葉で書く。似ていて誤選択しやすい対象外（Exclusions）も短く示し、適用判断に必要な条件を本文だけへ置かない。
+- 機能一覧や工程説明を詰め込むより、選択判断に役立つ依頼表現と境界を優先する。話題語に触れただけで発火させず、過剰な強調や工程の説明を入れない。
+- What / When / Exclusionsをdescriptionで明確にすること、APM経由の配布を維持することはこのリポジトリの運用方針であり、GitHub公式仕様の要件とは区別する。descriptionや一覧の確認はrouting判断の実動作確認とは区別する。
+- Copilot CLIでは `copilot skill list --json` で登録Skillとdescriptionを確認できる。対話CLIでは `/skills list` と `/skills info <name>` で一覧と個別情報を確認する[^github-copilot-cli-reference]。
 - 既存スキルの更新では、依頼に必要な変更がない限り名前と適用範囲を保持する。
 - 本文と説明は日本語を基本とし、コマンド・識別子・固有名詞は元の表記を保つ。
 - このAGENTS.mdと同梱する通常概念はOKF v0.2に従う。仕様必須の `type` に加え、自作時の追加条件として `title`・`description` を記載する。`index.md`・`log.md` は予約形式とし、`SKILL.md` のfrontmatterはAgent Skills仕様を用いる。
@@ -61,3 +69,5 @@ sources:
 - スキルの構成や導入方法を変更した場合はREADMEの案内を更新する。検証とレビューの結果はIssue・PRに記録する。
 
 [^agentskills-specification]: [Agent Skills仕様](https://agentskills.io/specification)。本文に記した参照範囲と採用判断の根拠。
+[^github-copilot-add-skills]: [GitHub CopilotのAgent Skills](https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/customize-cloud-agent/add-skills)。promptとdescriptionによる選択、選択後の本文読み込みに関する公式説明。
+[^github-copilot-cli-reference]: [GitHub Copilot CLI command reference](https://docs.github.com/en/copilot/reference/copilot-cli-reference/cli-command-reference)。Skill descriptionの要件・上限とCLIでの一覧・情報確認方法。
