@@ -4,7 +4,7 @@
     {
       "id": 1,
       "prompt": "HTTPクライアントのタイムアウト処理を修正して。ドメインの判断は変わらない。",
-      "expected_output": "task-workflowとbdd-tddを読む。技術処理の具体的仕様をテストに記述してレッド・グリーン・リファクタリングを行い、feature文書は作らない。",
+      "expected_output": "task-workflowとbdd-tddを読み、技術処理の具体的仕様をテストに記述してレッド・グリーン・リファクタリングを行い、feature文書は作らない。",
       "files": []
     },
     {

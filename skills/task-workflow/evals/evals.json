@@ -3,8 +3,8 @@
   "evals": [
     {
       "id": 1,
-      "prompt": "AGENTS.mdとスキルの違いを比較して説明して。ファイル変更は不要。",
-      "expected_output": "読み取りのみの相談としてIssue・PRを作成せず回答する。",
+      "prompt": "READMEを読んで内容を説明して。あわせてAGENTS.mdとスキルの違いも知りたい。ファイル変更は不要。",
+      "expected_output": "読み取りと概念説明だけに留め、task-workflow・okf-docsを起動せずIssue・PRを作成しない。",
       "files": []
     },
     {

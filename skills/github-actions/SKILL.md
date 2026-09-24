@@ -1,6 +1,6 @@
 ---
 name: github-actions
-description: GitHub Actionsのワークフローを設計・変更・調査・レビューし、安全性、CI効率、Actionの内部ランタイム更新を扱う。Issue・PR操作全般、アプリ実装、CI/CDの概念説明だけには使わない。
+description: GitHub Actionsのworkflow作成・変更、CI失敗の原因調査と修正、workflowレビュー、CI高速化・安全性改善、Action内部ランタイム更新を依頼されたときに使う。.github/workflowsやActions設定が対象。変更の進行はtask-workflow、アプリのコード修正はbdd-tdd、レビューはcode-reviewと併用する。Issue・PR操作だけ、アプリ実装だけ、CI/CDの概念説明だけには使わない。
 ---
 
 # GitHub Actionsを設計・検証する
