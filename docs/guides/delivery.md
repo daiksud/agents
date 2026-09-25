@@ -115,7 +115,14 @@ apm compile --global
 
 | 原本 | 役割 |
 | --- | --- |
-| `.apm/instructions/core.instructions.md` | 常時適用する設計原則、変更保護、スキルの読み込み条件と完了条件 |
+| `.apm/instructions/skill-routing.instructions.md` | 作業に合うスキルの読み込み条件 |
+| `.apm/instructions/decision-making.instructions.md` | 目的・目標・手段・スタンダードと判断の前提 |
+| `.apm/instructions/development.instructions.md` | 共有理解、テスト先行と小さな反復 |
+| `.apm/instructions/domain-modeling.instructions.md` | 用語、モデルの境界と依存 |
+| `.apm/instructions/collaboration.instructions.md` | 継続Navigator、共有ToDo、段階確認と停止条件 |
+| `.apm/instructions/delivery.instructions.md` | 価値の流れ、小さな統合とmainの健全性 |
+| `.apm/instructions/change-safety.instructions.md` | 承認・権限・変更保護 |
+| `.apm/instructions/quality.instructions.md` | 成果物と検証の品質、未確認範囲の報告 |
 | `skills/task-workflow/` | Issue記録、実装時の計画からレビュー・スカッシュマージまでの作業手順 |
 | `skills/engineering-assessment/` | 開発実践の証拠に基づく診断と段階的な導入計画。Issue記録で完了 |
 | `skills/bdd-tdd/` | 設計確認、小さな変更への分割、BDD・ATDD・TDD、検証 |
@@ -150,7 +157,7 @@ rumdlとリンク検査はこのリポジトリの公開品質条件です。外
 
 ### 原本と配布の検証
 
-原本のYAML・JSON、ルールの移行漏れ、参照先、rumdlと `git diff --check` を確認します。
+原本のYAML・JSON、ルールの移行漏れ、参照先、rumdlと `git diff --check` を確認します。APM検証では `*.instructions.md` の原本集合とキャッシュ集合を照合し、各本文がCodex・Copilot双方の生成AGENTS.mdに含まれることを確認します。旧単一Instruction構成も同じ検証経路で復旧を確認します。
 配布は隔離したユーザースコープで、新規・再導入・旧構成からの更新、手書きAGENTS.md保護を確認します。
 各スキルの `evals/evals.json` は外部書き込みを行わず適用判断を確認する例です。時間・トークンの新旧比較結果ではありません。
 
