@@ -7,6 +7,10 @@ sources:
     resource: https://github.com/daiksud/agents/issues/76
   - id: issue-80
     resource: https://github.com/daiksud/agents/issues/80
+  - id: issue-87
+    resource: https://github.com/daiksud/agents/issues/87
+  - id: github-copilot-cli-changelog
+    resource: https://github.com/github/copilot-cli/blob/v1.0.88/changelog.md#L1710
 ---
 
 ## 機能: 独立したNavigatorとコード変更を進める
@@ -21,6 +25,7 @@ sources:
 
 - 対応環境では、この依頼を使い捨てコードfixtureに対するDriverの実装タスクとして与え、製品リポジトリを変更しない。Driverはコードを編集する前に、独立コンテキストで継続的に連絡できるNavigatorを1体起動し、同じNavigatorを全サイクルで利用する。
 - DriverとNavigatorは、未着手・進行中・完了・要確認を区別する共有ToDoに、選んだ項目と双方が見つけたケース・改善を記録する。各項目でRed、Green、Refactorの順に、実差分、テスト結果、Navigatorの確認を同じコード状態に結びつける。記録から共同選択、実装前の助言、欠けたテストの指摘、読み取り専用、Driverだけの編集、最終確認を照合する。
+- GitHub Copilot CLIで評価する場合、複数回の確認が必要なNavigatorは `mode: "background"` で起動し、初回応答後も同じ `agent_id` への `write_agent` が処理されることを確認する。`mode: "sync"` と `idle` 表示だけから後続連絡が可能だと判断しない。
 - 起動機能がない環境または実際の起動失敗を確認できる環境では同じ依頼を用い、Driverがペア未実施の制約を報告し、役割演技や独立確認済みの主張をしないことを確認する。安全にその状態を用意できない場合は再現したと扱わず、未確認として記録する。
 
 ### ルール: 同じNavigatorを実装前から最終確認まで使う
@@ -33,6 +38,14 @@ sources:
 - かつ: Navigatorは実装前に次の振る舞い、対応テスト、境界条件を確認する
 - かつ: Driverだけがファイルを編集し、Navigatorは実際の要件・コード・差分・テスト結果を読み取り専用で確認する
 - かつ: 両者は共有ToDoから理由とともに一項目を選び、同じNavigatorが各段階と最終差分にフィードバックする
+
+#### シナリオ: Copilot CLIで継続確認をするNavigatorを起動する
+
+- 前提: 同じNavigatorに初回応答後も複数回確認を依頼するコード変更である。[^issue-87] [^github-copilot-cli-changelog]
+- もし: DriverがGitHub Copilot CLIの `task` でNavigatorを起動する
+- ならば: Driverは `mode: "background"` で起動する
+- かつ: 初回応答後の `write_agent` が同じ `agent_id` に処理され、そのNavigatorから応答が返る
+- かつ: `mode: "sync"` の応答や `list_agents` の `idle` 表示だけから継続連絡できると判断しない
 
 ### ルール: 共有ToDoを共同で育て、一度に一項目を進める
 
@@ -136,3 +149,5 @@ sources:
 
 [^issue-76]: [Issue #76](https://github.com/daiksud/agents/issues/76) に記録された目的、受け入れ条件、検証計画。
 [^issue-80]: [Issue #80](https://github.com/daiksud/agents/issues/80) に記録された共有ToDoと段階別レビューの受け入れ条件、検証計画。
+[^issue-87]: [Issue #87](https://github.com/daiksud/agents/issues/87) に記録されたCopilot CLIの `sync` taskを初回応答後の継続先にできない問題。
+[^github-copilot-cli-changelog]: [Copilot CLI changelog v1.0.88](https://github.com/github/copilot-cli/blob/v1.0.88/changelog.md#L1710)。`sync` taskは再利用可能な `agent_id` を返さず、後続連絡には `mode: "background"` を使うと記載している。
