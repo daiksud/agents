@@ -239,6 +239,12 @@
       "prompt": "読み取り専用の模擬評価。実際の編集・投稿・実行は禁止。指定Skillと必要な同梱資料から判断と手順を示し、未実行を成功としない。\n\nCopilot CLIでコード変更を開始し、初回助言後も同じNavigatorにRed/Green/Refactorの確認を依頼する。起動時と初回応答後に何を確認するか。",
       "expected_output": "software-developmentのcopilot-cli-pairing.mdを読み、最初からmode: backgroundで起動して同じagent_idへwrite_agentで後続確認を送る。依頼が処理され同じNavigatorから応答が返ることを確認する。syncやidle表示だけでは継続可能と判断せず、継続不能時は共通の停止条件に従う。",
       "files": []
+    },
+    {
+      "id": 38,
+      "prompt": "読み取り専用模擬評価。編集・投稿・実行は禁止。\n\ngh skill install --allだけでこのパッケージを導入し、共通Instructionsは未導入。同梱Skill資料だけを根拠に、XPの5価値とコード変更での行動の対応を説明して。資料にない定義を一般知識で補わず、欠けている場合は未確認と示して。",
+      "expected_output": "software-developmentのdesign.mdとsources.mdから5価値の具体的対応とJeffriesの出典へ到達する。Courageを承認や検証の省略にせず、Respectで判断権限・知識・時間を尊重する。存在しない共通Instructionsを読めたことにしない。",
+      "files": []
     }
   ]
 }

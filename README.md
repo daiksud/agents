@@ -22,6 +22,20 @@ gh skill install daiksud/agents --all --agent codex --scope user
 
 `okf-docs`の検査スクリプトにはPython 3.10以上と同梱requirements.txtの依存が必要です。スキルの配布はPython依存を自動導入しません。外部Bundleの受け入れは `conformance`、自作の公開前検査は `authoring` を使います。[検査環境の準備](skills/okf-docs/references/validation.md)に従って利用する環境を確認してください。
 
+### gh skillの更新と廃止Skillの退避
+
+`gh skill install --all --force` は既存Skillを上書きしますが、名前が変わった旧Skillは削除しません。APMが管理する導入先では、下記のAPM更新手順を使います。
+
+1. `gh skill list --agent codex --scope user --json skillName,sourceURL,path` で実際の導入先と出所を確認します。他のagent・scope・`--dir` を使った場合はその導入先も確認します。
+2. `daiksud/agents` 由来か、独自変更や追加ファイルがあるかを確認し、必要な内容をSkill探索先の外へバックアップします。所有元・独自変更を判断できないものを上書き・退避しません。
+3. 上書きする対象を確認したうえで `gh skill install daiksud/agents --all --force --agent codex --scope user` を実行し、新しいSkillと同梱依存が揃うことを確認します。
+4. 下表の旧Skillが残っている場合は、確認した出所のディレクトリだけを、すべてのSkill探索先の外へ丸ごと退避します。単に `SKILL.md` を書き換えたり、探索先の中で名前を変えたりせず、独自ファイルもバックアップへ保持します。他のSkillは移動しません。
+5. 同じ `gh skill list` で旧名が発見されず、新しいSkillが利用できることを確認します。確認できない間は移行完了としません。
+
+| 廃止した入口 | 移行先 |
+| --- | --- |
+| `bdd-tdd` | 仕様の発見は `behavior-specification`、コード変更は `software-development` |
+
 ## グローバル導入
 
 APM 0.30.0で検証済みです。Codex・Copilot向けの標準手順は次です。

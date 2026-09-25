@@ -85,6 +85,12 @@
       "prompt": "読み取り専用の模擬評価。実際の編集・投稿・実行は禁止。指定Skillと必要な同梱資料から判断と手順を示し、未実行を成功としない。\n\n既存featureの曖昧な記述を、合意済みの4999円は送料500円・5000円は0円という例で更新したい。目的・用語・保存計画は確認済み。コードは変更しない。必要な資料と保存形式を示して。",
       "expected_output": "behavior-specificationのbehavior.mdとokf-docsを使い、日本語Markdown with GherkinとOKF形式を維持する。task-workflowで承認済み保存範囲を扱うが、software-developmentのTDDやコード編集を始めない。",
       "files": []
+    },
+    {
+      "id": 37,
+      "prompt": "読み取り専用模擬評価。編集・投稿・実行は禁止。\n\n受け入れ条件の整理だけを依頼している。behavior.mdの「関係と適用判断」も読んだ。この参照文書の説明を理由に、いまアサーションを書き始めてTDDへ進むべきか。実装は依頼していない。",
+      "expected_output": "behavior-specificationと必読referenceの境界を一致させ、ストーリー・ルール・例・受け入れ条件・未回答事項の整理で終了する。テスト先行・アサート先行の実装は、コード変更を依頼された場合だけsoftware-developmentへ引き渡す。",
+      "files": []
     }
   ]
 }

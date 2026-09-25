@@ -3,6 +3,8 @@ type: Reference
 title: 設計とテストの出典
 description: 実装・設計・テストの出典、既存の確認履歴と採用判断を保持します。
 sources:
+  - id: ron-jeffries-xp
+    resource: https://ronjeffries.com/xprog/what-is-extreme-programming/
   - id: fowler-beck-design-rules
     resource: https://martinfowler.com/bliki/BeckDesignRules.html
   - id: fowler-yagni
@@ -39,6 +41,10 @@ sources:
 | Jez Humble, Continuous Testing[^continuousdelivery-foundations-test-automation]、Architecture[^continuousdelivery-implementing-architecture] | 日付なし | 速いフィードバック、探索、テスト可能性、段階的な設計改善 |
 | Eric Evans, DDD Reference[^www-05-ddd-reference-2015-03-pdf] | 2015年3月、冊子39–41頁等 | Bounded Context、Ubiquitous Language、Context Map |
 
+### XPの価値の採用判断
+
+2026-09-25にRon JeffriesのWhat is Extreme Programming?[^ron-jeffries-xp]を確認した。Communication・Simplicity・Feedback・Courage・Respectを、実際の期待値の共有、現在の要求に合う構造、短い検証、必要な設計改善、判断権限と持続可能な働き方へ適用する。会議の固定形式、チーム編成、原典の効果数値を共通要件にしない。エージェントの権限・承認・公開・レビュー条件は本環境の契約として維持する。
+
 ### Simple DesignとYAGNIの採用判断
 
 2026-09-25にMartin FowlerのBeck Design Rules[^fowler-beck-design-rules]とYagni[^fowler-yagni]を確認した。現在のテスト・契約、意図の明瞭さ、同じルールの重複、必要な要素から設計を判断する。仮想の将来機能を先取りせず、実際のフィードバックで小さく改善する。明瞭さと重複の間に機械的な優先順位や点数を付けず、必要なテスト・Refactor・CIを省略しない。アサートファーストと同じNavigatorの段階確認は本環境の方針で、XP原典の要件として帰属させない。
@@ -64,6 +70,7 @@ sources:
 [^continuousdelivery-foundations-test-automation]: [Continuous Testing](https://continuousdelivery.com/foundations/test-automation/)。本文に記した参照範囲と採用判断の根拠。
 [^continuousdelivery-implementing-architecture]: [Architecture](https://continuousdelivery.com/implementing/architecture/)。本文に記した参照範囲と採用判断の根拠。
 [^www-05-ddd-reference-2015-03-pdf]: [DDD Reference](https://www.domainlanguage.com/wp-content/uploads/2016/05/DDD_Reference_2015-03.pdf)。本文に記した参照範囲と採用判断の根拠。
+[^ron-jeffries-xp]: [What is Extreme Programming?](https://ronjeffries.com/xprog/what-is-extreme-programming/)。5価値と実践を状況に合わせて適用する考え方。
 [^fowler-beck-design-rules]: [Beck Design Rules](https://martinfowler.com/bliki/BeckDesignRules.html)。Kent Beck本人のレビューを受けたFowlerの定式化。
 [^fowler-yagni]: [Yagni](https://martinfowler.com/bliki/Yagni.html)。未要求の機能と現在の変更を支える健全性を区別する。
 [^github-instructions-oop-design-patterns-instructions-md]: [OOP Design Patterns](https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/instructions/oop-design-patterns.instructions.md)。本文に記した参照範囲と採用判断の根拠。
