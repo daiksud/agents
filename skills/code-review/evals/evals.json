@@ -158,6 +158,16 @@
       "expectations": [
         "明示的な投稿禁止を候補Issueの例外より優先する"
       ]
+    },
+    {
+      "id": 24,
+      "prompt": "読み取り専用の模擬評価。実際の投稿・編集は禁止。CopilotのGitHubレビュー環境では `.github/skills/code-review/SKILL.md` だけが利用でき、`task-workflow` とそのIssue記録資料は参照できない。レビュー中にユーザー本人が複数プロジェクトで使えるトレードオフ判断を理由付きで示した。候補Issueの扱いを示して。",
+      "expected_output": "code-reviewだけからIssue手順を推測して投稿せず、判断と理由を候補として示し、未記録であることをDriverまたはユーザーへ伝える。レビュー対象の評価は読み取り専用で続ける。",
+      "files": [],
+      "expectations": [
+        "task-workflowが利用できない配布先ではIssueを推測で投稿せず未記録を引き継ぐ",
+        "レビュー対象の評価を読み取り専用で続ける"
+      ]
     }
   ]
 }
