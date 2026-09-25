@@ -7,6 +7,8 @@ sources:
     resource: https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/instructions/exclude-prompt-data.instructions.md
   - id: taming-copilot
     resource: https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/instructions/taming-copilot.instructions.md
+  - id: github-copilot-cli-changelog
+    resource: https://github.com/github/copilot-cli/blob/v1.0.88/changelog.md#L1710
 ---
 
 ## 共通の作業原則
@@ -79,6 +81,8 @@ TDDでは、テスト項目を含むToDoリストから一つずつ失敗・最�
 
 同じNavigatorを全サイクルで継続して利用する。途中で応答不能・再開不能・必要な履歴の喪失により継続できなくなった場合は、確認済み範囲と未確認範囲を区別してユーザーへ報告し、確認を必要とする後続のコード変更を止める。新しいエージェントを同じNavigatorの継続として扱わない。
 
+GitHub Copilot CLIで後続の連絡が必要なNavigatorは、最初の `task` を `mode: "background"` で起動する。`mode: "sync"` は一度の応答で完了する依頼に限り、応答後に `idle` と表示されても `write_agent` の送信先にできるとは判断しない。[^github-copilot-cli-changelog]
+
 実装前に、Driverは元の依頼、受け入れ条件、作業範囲、適用される指示、関連コードをNavigatorに共有する。両者は小さな振る舞い、境界条件、異常系、保護する既存の振る舞い、必要な設計改善を、双方が確認できる共有ToDoリストに記録する。専用ツールや固定ファイル名は要求しない。未着手・進行中・完了と要確認の未合意要件を区別し、学習して見つけたケース・テスト不足・改善は、DriverとNavigatorのどちらが気づいても直ちに追加する。Navigatorの提案はDriverがリストへ反映し、Navigatorが反映を確認する。ToDoへの追加やペア内の合意を、ユーザーの要件変更や範囲拡大の承認とみなさない。
 
 着手時と各ToDoの完了後に、両者はリストを確認して理由とともに次の一項目を選ぶ。一度に進行中にする項目は原則一つとし、大きすぎれば小さな振る舞いへ分割する。選択・分割を途中で変える場合も理由を共有して再相談する。別の振る舞いはリストへ残して現在の実装へ無条件に詰め込まない。ただし、現在の段階を成立させる修正や既存の振るまいの回帰は、別ToDoへ記録するだけで先送りしない。Navigatorは説明だけに頼らず元の要件と対象を確認し、候補のテスト、境界条件、設計上の懸念を返す。Driverだけで次の項目を決めて実装を先行させない。
@@ -128,5 +132,6 @@ PR側の成功だけで完了にせず、統合後mainの必要検証・同期�
 
 検証不能・権限不足・外部制約は成功とせず、完了範囲・未完了範囲・再開条件を報告する。
 
+[^github-copilot-cli-changelog]: [Copilot CLI changelog v1.0.88](https://github.com/github/copilot-cli/blob/v1.0.88/changelog.md#L1710)。`sync` taskは再利用可能な `agent_id` を返さず、後続連絡には `mode: "background"` を使うと記載している。
 [^exclude-prompt-data]: [Exclude Prompt Data](https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/instructions/exclude-prompt-data.instructions.md)。成果物と依頼への応答を区別する考え方を適用し、必要な理由・出典と成果物として指定された内容を保持する。
 [^taming-copilot]: [Taming Copilot](https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/instructions/taming-copilot.instructions.md)。既存構造を尊重する最小変更を適用し、必要な関連変更・異常系・検証を含める。参照元の指示優先順位や回答形式の一律制限は採用しない。
