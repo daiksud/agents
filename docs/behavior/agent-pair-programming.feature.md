@@ -44,7 +44,7 @@ sources:
 - 前提: 同じNavigatorに初回応答後も複数回確認を依頼するコード変更である。[^issue-87] [^github-copilot-cli-changelog]
 - もし: DriverがGitHub Copilot CLIの `task` でNavigatorを起動する
 - ならば: Driverは `mode: "background"` で起動する
-- かつ: 初回応答後も同じ `agent_id` へ `write_agent` を送り継続する
+- かつ: 初回応答後の `write_agent` が同じ `agent_id` に処理され、そのNavigatorから応答が返る
 - かつ: `mode: "sync"` の応答や `list_agents` の `idle` 表示だけから継続連絡できると判断しない
 
 ### ルール: 共有ToDoを共同で育て、一度に一項目を進める
