@@ -24,7 +24,7 @@ sources:
 
 ### 共通指示と作業スキル
 
-- グローバルAGENTS.mdの原本は `core.instructions.md` とし、`applyTo` を付けない。
+- グローバルAGENTS.mdの原本はこのディレクトリの `*.instructions.md` とし、関心事ごとに分けて `applyTo` を付けない。
 - 作業別の詳細手順は `skills/` に置き、共通指示には読み込む条件とグローバル配布先を書く。グローバルコンパイルは相対リンクを書き換えないため、`~/.agents/skills/<name>/SKILL.md` を明記する。
 - スキルは `name` と `description` を持つ `SKILL.md` を入口とし、詳細資料を同梱する。
 - 生成されたAGENTS.mdを手動編集しない。公開版の導入・更新と、編集中の原本の検証を区別し、[保守ガイド](../../docs/guides/delivery.md#原本の編集と保守)に従う。

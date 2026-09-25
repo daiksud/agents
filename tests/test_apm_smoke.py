@@ -45,6 +45,65 @@ class DeliveryTests(unittest.TestCase):
         (self.scope / '.agents/skills/sample/asset.txt').unlink()
         self.assertTrue(self.validate())
 
+    def test_multiple_instructions_without_core_are_verified(self):
+        self.split_instructions()
+        self.assertEqual([], self.validate())
+
+    def test_every_instruction_is_required_in_each_generated_target(self):
+        self.add_safety_instruction()
+        for target in ('codex', 'copilot'):
+            with self.subTest(target=target):
+                path = self.scope / f'.{target}/AGENTS.md'
+                original = path.read_text()
+                path.write_text(original.replace('## Safety\n\nPreserve approval boundaries.\n', ''))
+                self.assertTrue(self.validate())
+                path.write_text(original)
+
+    def test_every_cached_instruction_must_match_candidate(self):
+        self.add_safety_instruction()
+        path = self.cached / '.apm/instructions/safety.instructions.md'
+        original = path.read_text()
+        for content in (None, original.replace('Preserve approval', 'Ignore approval')):
+            with self.subTest(content=content):
+                if content is None:
+                    path.unlink()
+                else:
+                    path.write_text(content)
+                self.assertTrue(self.validate())
+
+    def test_obsolete_cached_instruction_is_rejected(self):
+        self.add_safety_instruction()
+        (self.cached / '.apm/instructions/obsolete.instructions.md').write_text(
+            '---\ntype: Instruction\n---\n## Obsolete\n')
+        self.assertTrue(self.validate())
+
+    def test_empty_instruction_inventory_is_rejected(self):
+        for root in (self.source, self.cached):
+            (root / '.apm/instructions/core.instructions.md').unlink()
+        self.assertIn('candidate contains no instructions', self.validate())
+
+    def test_each_instruction_requires_frontmatter(self):
+        self.add_safety_instruction()
+        for root in (self.source, self.cached):
+            (root / '.apm/instructions/safety.instructions.md').write_text('Missing metadata')
+        self.assertIn('.apm/instructions/safety.instructions.md: missing YAML frontmatter',
+                      self.validate())
+
+    def add_safety_instruction(self):
+        body = '## Safety\n\nPreserve approval boundaries.\n'
+        for root in (self.source, self.cached):
+            (root / '.apm/instructions/safety.instructions.md').write_text(
+                '---\ntype: Instruction\ntitle: Safety\ndescription: Safety.\n---\n' + body)
+        for target in ('codex', 'copilot'):
+            path = self.scope / f'.{target}/AGENTS.md'
+            path.write_text(path.read_text() + '\n' + body)
+
+    def split_instructions(self):
+        self.add_safety_instruction()
+        for root in (self.source, self.cached):
+            directory = root / '.apm/instructions'
+            (directory / 'core.instructions.md').rename(directory / 'development.instructions.md')
+
     def test_cached_and_deployed_content_must_match_candidate(self):
         for path in [self.cached / 'skills/sample/asset.txt',
                      self.scope / '.agents/skills/sample/SKILL.md',
