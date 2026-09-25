@@ -9,6 +9,12 @@ sources:
 
 ## 責務・契約とコメントの設計
 
+### Simple DesignとYAGNI
+
+現在の契約とテストを満たすことを前提に、意図が伝わる構造、同じルールの重複、不要な要素を確かめる。将来使うかもしれないinterface、未使用のextension point、仮想要件向けconfiguration、未要求の一般化を追加しない。実際の呼び出し元・契約・変化の不足を説明できる場合に最小の構造を加える。[^practice-sources]
+
+YAGNIは必要な検証・リファクタリングを省く理由ではない。Greenで確認した設計改善を同じサイクルのRefactorで扱い、小さな変更を支えるコードの健全性を保つ。意図と重複の判断はモデルの意味に基づき、抽象型や行数を品質目標にしない。[^practice-sources]
+
 ### 責務・契約から設計を選ぶ
 
 アクターの目的、合意済みのルール・不変条件、モデルの境界を確認してから、現在の要求を満たす最小の構造を選ぶ。OOPは状態とふるまいをオブジェクトにまとめる設計手段であり、DDDの必須形式ではない。関数とデータで契約を明確に表現できる場合は、その構造を保つ。
@@ -50,4 +56,4 @@ GoFパターンは繰り返し現れる設計問題の解決形を共有する�
 
 設計の出典と採用判断は[一次資料](sources.md)に保持する。[^practice-sources]
 
-[^practice-sources]: DDD、OOP Design Patterns、Self-explanatory Code Commenting、Context Engineering、Taming Copilotの参照と適用判断。
+[^practice-sources]: Simple Design、YAGNI、DDD、OOP Design Patterns、Self-explanatory Code Commenting、Context Engineering、Taming Copilotの参照と適用判断。

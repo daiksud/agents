@@ -29,7 +29,7 @@ description: Markdown文書、仕様、feature文書、ADR、OpenAPI、JSON Sche
 
 - 文書は目的に合う既存分類へ追加する。設計判断は `docs/adr/`、ふるまいは `docs/behavior/`、その他は `docs/<分類>/<page-name>.md` とする。全体案内は `docs/<page-name>.md` に置ける。
 - 新しい分類は既存分類に収まらない場合に作る。索引・履歴を全ディレクトリへ一律に新設しない。
-- `*.feature.md` はOKF frontmatterと、依存スキル `bdd-tdd` の[共有仕様・形式資料](../bdd-tdd/references/behavior.md)のMarkdown with Gherkinで記述する。
+- `*.feature.md` はOKF frontmatterと、依存スキル `behavior-specification` の[共有仕様・形式資料](../behavior-specification/references/behavior.md)のMarkdown with Gherkinで記述する。
 - GitHub・APMで閲覧できるよう、同梱資料はファイル相対リンクで結ぶ。外部の出典は完全URLで記録し、導入先に原本リポジトリがあることを前提にしない。
 - 画像などMarkdownに含められない外部アセットは使用しない。これは本環境の文書作成方針であり、OKFの適合条件ではない。
 - 見出し・リスト・表・コードブロックを使い、判断に必要な構造を示す。空の節や装飾のための表は作らない。

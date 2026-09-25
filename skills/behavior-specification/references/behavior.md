@@ -13,7 +13,7 @@ sources:
 
 ## 共有理解とfeature文書
 
-文書だけの作成ではこの資料を形式・仕様の参考として使い、`bdd-tdd` の実装工程やTDDを開始しない。コード変更を伴う場合は[実装の入口](../SKILL.md)に従う。
+コードを書かない仕様整理・文書作成にもこの資料を使い、TDDを開始しない。コード変更を依頼された場合は、依存スキル [software-development](../../software-development/SKILL.md) に合意済み仕様を引き渡す。
 
 ### 共有理解と受け入れ条件（BDD・ATDD）
 

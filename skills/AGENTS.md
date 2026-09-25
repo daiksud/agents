@@ -22,7 +22,7 @@ sources:
 - 既存スキルの目的と適用範囲を確認し、新規作成と既存スキルの改善のどちらが必要か判断する。
 - 作成・改善の手順には、利用可能な `skill-creator` の `SKILL.md` を読んで適用する。APMの外部依存として導入する方法は[README](../README.md)を参照する。
 - 成果物や適用範囲を左右する不明点は、既存の指示と会話を確認したうえでユーザーに確認する。
-- Issue・PR・レビューの手順は `task-workflow`、文書の形式は `okf-docs`、実行コードの追加・変更は `bdd-tdd` に従う。
+- Issue・PR・レビューの手順は `task-workflow`、文書の形式は `okf-docs`、実行コードの追加・変更は `software-development` に従う。
 
 ### 配置と形式
 

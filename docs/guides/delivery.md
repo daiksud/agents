@@ -117,7 +117,7 @@ apm compile --global
 | --- | --- |
 | `.apm/instructions/skill-routing.instructions.md` | 作業に合うスキルの読み込み条件 |
 | `.apm/instructions/decision-making.instructions.md` | 目的・目標・手段・スタンダードと判断の前提 |
-| `.apm/instructions/development.instructions.md` | 共有理解、テスト先行と小さな反復 |
+| `.apm/instructions/development.instructions.md` | XPの価値、共有理解、テスト先行と小さな反復 |
 | `.apm/instructions/domain-modeling.instructions.md` | 用語、モデルの境界と依存 |
 | `.apm/instructions/collaboration.instructions.md` | 継続Navigator、共有ToDo、段階確認と停止条件 |
 | `.apm/instructions/delivery.instructions.md` | 価値の流れ、小さな統合とmainの健全性 |
@@ -125,12 +125,13 @@ apm compile --global
 | `.apm/instructions/quality.instructions.md` | 成果物と検証の品質、未確認範囲の報告 |
 | `skills/task-workflow/` | Issue記録、実装時の計画からレビュー・スカッシュマージまでの作業手順 |
 | `skills/engineering-assessment/` | 開発実践の証拠に基づく診断と段階的な導入計画。Issue記録で完了 |
-| `skills/bdd-tdd/` | 設計確認、小さな変更への分割、BDD・ATDD・TDD、検証 |
+| `skills/behavior-specification/` | ストーリー、BDD・ATDD、具体例・受け入れ仕様の発見と整理 |
+| `skills/software-development/` | Shared ToDo、TDD、Simple Design・YAGNIと小さな実装・検証 |
 | `skills/code-review/` | 将来の変更への耐性を最優先に、欠陥・回帰も根拠から評価する読み取り専用レビュー |
 | `skills/okf-docs/` | OKF v0.2に従う文書の作成・更新・検証 |
 | `skills/github-actions/` | GitHub Actionsの設計・安全性・効率改善・Action内部ランタイム更新の判断と検証 |
 
-共通指示には `applyTo` を付けません。詳細手順はスキルと同梱資料に置きます。各SKILL.mdを工程別の入口にし、task-workflowは計画・Issue記録・ブランチ、bdd-tddは設計・共有仕様・テスト、okf-docsは形式・出典・検証へ分けます。参照を移した場合はリンク元と導入後の同梱資料も確認します。[インストラクションのテンプレート](../templates/instructions.md)と[スキルの編集指示](../../skills/AGENTS.md)を参照します。スキルの作成・改善には外部依存の `skill-creator` を使います。
+共通指示には `applyTo` を付けません。詳細手順はスキルと同梱資料に置きます。各SKILL.mdを工程別の入口にし、task-workflowは計画・Issue記録・ブランチ、behavior-specificationは共有仕様、software-developmentは設計・実装・テスト、okf-docsは形式・出典・検証へ分けます。参照を移した場合はリンク元と導入後の同梱資料も確認します。[インストラクションのテンプレート](../templates/instructions.md)と[スキルの編集指示](../../skills/AGENTS.md)を参照します。スキルの作成・改善には外部依存の `skill-creator` を使います。
 
 原本を編集しても公開版やユーザースコープは更新されません。編集中の原本を適用するための自己更新は行わず、公開後の導入・更新は[README](../../README.md)の利用者向け操作として扱います。生成されたAGENTS.mdは直接編集しません。
 
@@ -160,6 +161,8 @@ rumdlとリンク検査はこのリポジトリの公開品質条件です。外
 原本のYAML・JSON、ルールの移行漏れ、参照先、rumdlと `git diff --check` を確認します。APM検証では `*.instructions.md` の原本集合とキャッシュ集合を照合し、各本文がCodex・Copilot双方の生成AGENTS.mdに含まれることを確認します。旧単一Instruction構成も同じ検証経路で復旧を確認します。
 配布は隔離したユーザースコープで、新規・再導入・旧構成からの更新、手書きAGENTS.md保護を確認します。
 各スキルの `evals/evals.json` は外部書き込みを行わず適用判断を確認する例です。時間・トークンの新旧比較結果ではありません。
+
+分割したevalの `source_id` は移行元のケースを識別する履歴であり、旧Skillの実行参照ではありません。同じ元ケースは一つの担当Skillへ置き、複数工程の期待は条件付きの引き渡しを含めて保持します。ペア作業の[受け入れ仕様](../behavior/agent-pair-programming.feature.md)と、[使い捨てfixture・手動評価](../../skills/software-development/evals/agent-pair-programming.md)、[Copilot CLI固有手順](../../skills/software-development/references/copilot-cli-pairing.md)を区別します。
 
 - APM: グローバルコンパイル[^microsoft-producer-compile]
 - APM: スキルの作成と配布[^microsoft-author-primitives-skills]
