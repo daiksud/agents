@@ -19,6 +19,8 @@ sources:
     resource: https://dora.dev/research/
   - id: dora-capabilities
     resource: https://dora.dev/capabilities/
+  - id: google-cloud-devops
+    resource: https://cloud.google.com/devops
 ---
 
 ## Engineering model
@@ -27,7 +29,7 @@ sources:
 
 既存の runtime Instruction / Skill は作業時の判断と実行手順を担う。この文書はそれらの上位に常時読み込ませるInstructionではなく、概念の分類、関係、配置判断を保守するときの正本として使う。
 
-本文は2026-09-27に一次・公式資料を再確認した。各体系の詳細、版差、採用判断は `skills/engineering-assessment/references/sources.md` で管理し、ここでは関係だけを要約する。
+本文は2026-09-27に一次・公式資料を再確認した。既存体系の詳細・版差・採用判断と、この単位で追加したDORA Capability Catalog / DevOps資料の確認記録は `skills/engineering-assessment/references/sources.md` で管理する。Core / Catalogの詳細mappingなど後続Unitへ延期した判断は、この文書の「後続の整理」で未実装として明示する。
 
 ### 分類は成熟度の階層ではない
 
@@ -73,7 +75,7 @@ ValueやPrincipleがPracticeの選択を導き、複数のPracticeがCapability�
 
 XPはCommunication・Simplicity・Feedback・Courage・Respectを開発判断へ結びつける。Leanは価値の流れ全体を見て局所最適を避ける。DDDはモデルと意味の境界を扱う。これらは互いを置き換えるものではない。[^ron-jeffries-xp][^lean-what-is-lean][^ddd-reference]
 
-Continuous Deliveryは変更を配布可能に保つsystem of workであり、CIやSmall Batchesなど複数のPracticeに支えられる。DevOpsは配布だけでなくproductionでの利用・運用・学習を含むend-to-end feedbackを扱う。[^continuous-delivery][^continuous-integration]
+Continuous Deliveryは変更を配布可能に保つsystem of workであり、CIやSmall Batchesなど複数のPracticeに支えられる。DevOpsは、開発と運用を近づけ、software stakeholdersのshared ownership、delivery velocity、service reliabilityを改善するorganizational / cultural movementとして扱う。本リポジトリではこのshared ownershipを、productionでの利用・運用・学習まで含むend-to-end feedbackの判断へ適用する。[^continuous-delivery][^continuous-integration][^google-cloud-devops]
 
 Team Topologiesは4つのteam typeを固定組織図として導入するためではなく、fast flow、cognitive load、team interaction、Conway's Lawを使って組織とsoftware architectureを継続的に見直すために使う。[^team-topologies]
 
@@ -125,18 +127,18 @@ Loosely Coupled Teams
 | Repository boundary | どのsource・history・automationを同じ管理単位にするか |
 | Team ownership boundary | 誰が継続的な意思決定・運用・改善責任を持つか |
 
-DDDは主にDomainとsemantic boundaryを発見する。DeliveryとarchitectureはChange・Runtime・Deploymentの依存を扱う。Team TopologiesはTeam ownershipとinteraction、cognitive loadを扱う。これらは関連するが同義ではない。[^ddd-reference][^team-topologies]
+DDDはDomainの問題範囲を理解し、モデルと言語の意味が通用するsemantic boundaryをBounded Contextとして明示する。DeliveryとarchitectureはChange・Runtime・Deploymentの依存を扱う。Team TopologiesはTeam ownershipとinteraction、cognitive loadを扱う。これらは関連するが同義ではない。[^ddd-reference][^team-topologies]
 
 望ましい場合には、
 
 ```text
-Domain / semantic boundary
+Bounded Context / semantic boundary
 ≈ Change boundary
 ≈ Deployment boundary
 ≈ Team ownership boundary
 ```
 
-のように整合することがある。ただし完全一致を原則にしない。Repository、Service、Bounded Context、Teamを機械的に1対1対応させず、実際のchange coupling、deployment dependency、cognitive load、operational responsibilityから関係を説明する。
+のように整合することがある。ただし完全一致を原則にしない。Domain boundaryは業務問題・知識の範囲であり、このalignment chainと同一視しない。Repository、Service、Bounded Context、Teamを機械的に1対1対応させず、実際のchange coupling、deployment dependency、cognitive load、operational responsibilityから関係を説明する。
 
 ### MicroservicesはArchitecture choiceである
 
@@ -144,7 +146,8 @@ MicroservicesはValue、Principle、Practice、Capabilityそのものではな�
 
 採否は少なくとも次を区別して調べる。
 
-- Domain / semantic boundaries
+- Domain boundary
+- Bounded Context / semantic boundaries
 - change coupling
 - independent deliveryの必要性
 - team ownershipとcommunication dependency
@@ -182,5 +185,6 @@ DDDを採用していること、Bounded Contextが存在すること、複数Te
 [^lean-what-is-lean]: [What is Lean? — Lean Enterprise Institute](https://www.lean.org/explore-lean/what-is-lean/)。顧客価値、流れ、人、継続的な実験の関係。2026-09-27確認。
 [^ddd-reference]: [Domain-Driven Design Reference — Eric Evans](https://www.domainlanguage.com/wp-content/uploads/2016/05/DDD_Reference_2015-03.pdf)。Ubiquitous Language、Bounded Context、Context Map等のモデル境界。既存固定資料を2026-09-27再確認。
 [^continuous-delivery]: [Continuous Delivery](https://continuousdelivery.com/)。配布可能な状態、小さい変更、共同責任と継続的なFeedback。2026-09-27確認。
+[^google-cloud-devops]: [DevOps — Google Cloud](https://cloud.google.com/devops)。DevOpsをsoftware stakeholdersのshared ownershipを含むorganizational / cultural movementとして説明する公式資料。2026-09-27確認。
 [^team-topologies]: [Team Topologies — Key Concepts](https://teamtopologies.com/key-concepts)。Team type、interaction、cognitive load、Conway's Lawをfast flowへ結びつける。2026-09-27確認。
 [^dora-research]: [DORA Research](https://dora.dev/research/)。Core Modelを繰り返し支持された研究上のcapability・metric・outcomeの関係として扱う。2026-09-27確認。
