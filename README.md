@@ -16,9 +16,25 @@ gh skill install daiksud/agents --all --agent codex --scope user
 
 各スキルの `SKILL.md` から、計画・Issue記録・ブランチ準備、設計・共有仕様・テスト、文書検証など、現在の工程に対応する資料を参照します。feature文書だけの作成では形式資料を使い、コード実装のTDD工程は開始しません。
 
-[github-actions](skills/github-actions/SKILL.md)は、GitHub Actionsの設計・安全性・効率改善・Action内部ランタイム更新を扱います。依頼に該当する参照資料だけを読み、監査のみと修正依頼を区別します。変更の進行は`task-workflow`、コード変更の検証は`bdd-tdd`、文書作成は`okf-docs`、読み取り専用レビューは`code-review`を併用します。これらの依存スキルは上記の`--all`で一緒に導入できます。
+[behavior-specification](skills/behavior-specification/SKILL.md)は、コードを書かない場合もストーリー・具体例・受け入れ条件を整理します。[software-development](skills/software-development/SKILL.md)は、合意済みの仕様からTDD・ペア協働・Simple Designで実装します。文書の保存には `okf-docs`、変更の計画とdeliveryには `task-workflow` を条件に応じて併用します。兄弟Skillの資料を使う場合は、上記の `--all` で依存も導入してください。
+
+[github-actions](skills/github-actions/SKILL.md)は、GitHub Actionsの設計・安全性・効率改善・Action内部ランタイム更新を扱います。依頼に該当する参照資料だけを読み、監査のみと修正依頼を区別します。変更の進行は`task-workflow`、コード変更の検証は`software-development`、文書作成は`okf-docs`、読み取り専用レビューは`code-review`を併用します。これらの依存スキルは上記の`--all`で一緒に導入できます。
 
 `okf-docs`の検査スクリプトにはPython 3.10以上と同梱requirements.txtの依存が必要です。スキルの配布はPython依存を自動導入しません。外部Bundleの受け入れは `conformance`、自作の公開前検査は `authoring` を使います。[検査環境の準備](skills/okf-docs/references/validation.md)に従って利用する環境を確認してください。
+
+### gh skillの更新と廃止Skillの退避
+
+`gh skill install --all --force` は既存Skillを上書きしますが、名前が変わった旧Skillは削除しません。APMが管理する導入先では、下記のAPM更新手順を使います。
+
+1. `gh skill list --agent codex --scope user --json skillName,sourceURL,path` で実際の導入先と出所を確認します。他のagent・scope・`--dir` を使った場合はその導入先も確認します。
+2. `daiksud/agents` 由来か、独自変更や追加ファイルがあるかを確認し、必要な内容をSkill探索先の外へバックアップします。所有元・独自変更を判断できないものを上書き・退避しません。
+3. 上書きする対象を確認したうえで `gh skill install daiksud/agents --all --force --agent codex --scope user` を実行し、新しいSkillと同梱依存が揃うことを確認します。
+4. 下表の旧Skillが残っている場合は、確認した出所のディレクトリだけを、すべてのSkill探索先の外へ丸ごと退避します。単に `SKILL.md` を書き換えたり、探索先の中で名前を変えたりせず、独自ファイルもバックアップへ保持します。他のSkillは移動しません。
+5. 同じ `gh skill list` で旧名が発見されず、新しいSkillが利用できることを確認します。確認できない間は移行完了としません。
+
+| 廃止した入口 | 移行先 |
+| --- | --- |
+| `bdd-tdd` | 仕様の発見は `behavior-specification`、コード変更は `software-development` |
 
 ## グローバル導入
 
@@ -48,7 +64,7 @@ apm compile --global
 
 ## 開発実践の診断と導入計画
 
-共通指示はDevOps・Lean・CI/CD・BDD/ATDD/TDD・DDD・チームトポロジーを日々の判断の軸にします。概念と本リポジトリでの名称は[用語集](docs/glossary.md)で確認できます。
+共通指示はXPの価値、DevOps・Lean・CI/CD・BDD/ATDD/TDD・DDD・チームトポロジーを日々の判断の軸にします。概念と本リポジトリでの名称は[用語集](docs/glossary.md)で確認できます。
 
 既存リポジトリへの導入を検討するときは、[engineering-assessment](skills/engineering-assessment/SKILL.md)へ「現状を診断し、段階的な導入計画をIssueにまとめて」と依頼します。実際の作業の証拠から優先順位と最初の小さな実験を示し、保存したIssueを提示して終了します。実装・組織変更は行わず、導入未実施のIssueは開いたまま残します。通常の修正や概念説明では全面診断を起動しません。
 

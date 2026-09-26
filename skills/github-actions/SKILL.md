@@ -1,6 +1,6 @@
 ---
 name: github-actions
-description: GitHub Actionsのworkflow作成・変更、CI失敗の原因調査と修正、workflowレビュー、CI高速化・安全性改善、Action内部ランタイム更新を依頼されたときに使う。.github/workflowsやActions設定が対象。変更の進行はtask-workflow、アプリのコード修正はbdd-tdd、レビューはcode-reviewと併用する。Issue・PR操作だけ、アプリ実装だけ、CI/CDの概念説明だけには使わない。
+description: GitHub Actionsのworkflow作成・変更、CI失敗の原因調査と修正、workflowレビュー、CI高速化・安全性改善、Action内部ランタイム更新を依頼されたときに使う。.github/workflowsやActions設定が対象。変更の進行はtask-workflow、アプリのコード修正はsoftware-development、レビューはcode-reviewと併用する。Issue・PR操作だけ、アプリ実装だけ、CI/CDの概念説明だけには使わない。
 ---
 
 # GitHub Actionsを設計・検証する
@@ -9,7 +9,7 @@ description: GitHub Actionsのworkflow作成・変更、CI失敗の原因調査�
 
 ## 依頼と参照資料
 
-最初に、依頼が設計・調査だけか、レビューか、変更まで含むかを確認する。変更の進行は依存スキル `task-workflow`、コード変更の検証は `bdd-tdd`、文書作成は `okf-docs`、読み取り専用レビューの進め方と指摘は `code-review` に従う。該当する依存が未導入なら利用環境で導入方法を確認する。相談・監査だけから編集・Issue投稿・PR作成・実行トリガーへ進まない。
+最初に、依頼が設計・調査だけか、レビューか、変更まで含むかを確認する。変更の進行は依存スキル `task-workflow`、コード変更の検証は `software-development`、文書作成は `okf-docs`、読み取り専用レビューの進め方と指摘は `code-review` に従う。該当する依存が未導入なら利用環境で導入方法を確認する。相談・監査だけから編集・Issue投稿・PR作成・実行トリガーへ進まない。
 
 作業に該当する資料だけを読む。複数の分野に関わる場合は組み合わせる。
 

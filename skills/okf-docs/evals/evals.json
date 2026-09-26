@@ -10,7 +10,7 @@
     {
       "id": 2,
       "prompt": "Issue本文提示・計画承認済み。rumdlは導入済み。ドメイン変更に伴うfeature文書を更新して。",
-      "expected_output": "okf-docsとbdd-tddの記法を確認し、OKF frontmatterと日本語Markdown with Gherkinを用いる。ルールの理解に意味を持つ具体値・入出力例はシナリオに含め、無関係なデータや内部実装の手順を省く。task-workflowの共通Markdown品質手順で文書全体を整形・チェックし、構造を確認する。",
+      "expected_output": "okf-docsとbehavior-specificationの記法を確認し、OKF frontmatterと日本語Markdown with Gherkinを用いる。ルールの理解に意味を持つ具体値・入出力例はシナリオに含め、無関係なデータや内部実装の手順を省く。task-workflowの共通Markdown品質手順で文書全体を整形・チェックし、構造を確認する。",
       "files": []
     },
     {
@@ -249,12 +249,12 @@
     {
       "id": 25,
       "prompt": "読み取り専用模擬評価。実際の編集・投稿・導入・ブランチ操作・テスト実行は禁止。対象スキルの本文と同梱資料から必要な参照先を選び、以下の仮想資料だけを根拠に判断と手順を示してください。未実行の操作を実施済みと報告しないでください。\n\nユーザーは国内配送モデルの送料無料条件を説明するfeature文書だけの更新を依頼した。コードとテストは変更しない。税込小計6,000円以上で送料0円、それ未満は500円というルールは合意済みで、用語集も同じ意味。既存のdocs/behavior/shipping.feature.mdが仕様の正本。Issueの計画保存・確認・提示済み。5,999円と6,000円の日本語シナリオを文案として示し、使う参照資料と検証を説明して。",
-      "expected_output": "okf-docsのspecification.mdと基本形式を使い、featureの日本語記法は依存するbdd-tddのreferences/behavior.mdを直接参照する。既存正本にOKF frontmatterと意味のある境界シナリオを保ち、文書形式と意味・参照・rumdl整形後のGherkin構造を確認する手順を示す。形式の参照だけでbdd-tddの実装ワークフローやTDD・コード変更を起動しない。",
+      "expected_output": "okf-docsのspecification.mdと基本形式を使い、featureの日本語記法は依存するbehavior-specificationのreferences/behavior.mdを直接参照する。既存正本にOKF frontmatterと意味のある境界シナリオを保ち、文書形式と意味・参照・rumdl整形後のGherkin構造を確認する手順を示す。形式の参照だけでsoftware-developmentの実装ワークフローやTDD・コード変更を起動しない。",
       "files": [],
       "expectations": [
-        "featureの記法はbdd-tddのreferences/behavior.mdを直接参照し、既存仕様の正本を保つ",
+        "featureの記法はbehavior-specificationのreferences/behavior.mdを直接参照し、既存仕様の正本を保つ",
         "日本語のルールと5,999円・6,000円のシナリオ、OKF形式と整形後の構造確認を維持する",
-        "文書のみの依頼でbdd-tddの実装ワークフロー・TDD・コード変更を始めない"
+        "文書のみの依頼でsoftware-developmentの実装ワークフロー・TDD・コード変更を始めない"
       ]
     },
     {

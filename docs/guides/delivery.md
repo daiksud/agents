@@ -117,7 +117,7 @@ apm compile --global
 | --- | --- |
 | `.apm/instructions/skill-routing.instructions.md` | 作業に合うスキルの読み込み条件 |
 | `.apm/instructions/decision-making.instructions.md` | 目的・目標・手段・スタンダードと判断の前提 |
-| `.apm/instructions/development.instructions.md` | 共有理解、テスト先行と小さな反復 |
+| `.apm/instructions/development.instructions.md` | XPの価値、共有理解、テスト先行と小さな反復 |
 | `.apm/instructions/domain-modeling.instructions.md` | 用語、モデルの境界と依存 |
 | `.apm/instructions/collaboration.instructions.md` | 継続Navigator、共有ToDo、段階確認と停止条件 |
 | `.apm/instructions/delivery.instructions.md` | 価値の流れ、小さな統合とmainの健全性 |
@@ -125,12 +125,13 @@ apm compile --global
 | `.apm/instructions/quality.instructions.md` | 成果物と検証の品質、未確認範囲の報告 |
 | `skills/task-workflow/` | Issue記録、実装時の計画からレビュー・スカッシュマージまでの作業手順 |
 | `skills/engineering-assessment/` | 開発実践の証拠に基づく診断と段階的な導入計画。Issue記録で完了 |
-| `skills/bdd-tdd/` | 設計確認、小さな変更への分割、BDD・ATDD・TDD、検証 |
+| `skills/behavior-specification/` | ストーリー、BDD・ATDD、具体例・受け入れ仕様の発見と整理 |
+| `skills/software-development/` | Shared ToDo、TDD、Simple Design・YAGNIと小さな実装・検証 |
 | `skills/code-review/` | 将来の変更への耐性を最優先に、欠陥・回帰も根拠から評価する読み取り専用レビュー |
 | `skills/okf-docs/` | OKF v0.2に従う文書の作成・更新・検証 |
 | `skills/github-actions/` | GitHub Actionsの設計・安全性・効率改善・Action内部ランタイム更新の判断と検証 |
 
-共通指示には `applyTo` を付けません。詳細手順はスキルと同梱資料に置きます。各SKILL.mdを工程別の入口にし、task-workflowは計画・Issue記録・ブランチ、bdd-tddは設計・共有仕様・テスト、okf-docsは形式・出典・検証へ分けます。参照を移した場合はリンク元と導入後の同梱資料も確認します。[インストラクションのテンプレート](../templates/instructions.md)と[スキルの編集指示](../../skills/AGENTS.md)を参照します。スキルの作成・改善には外部依存の `skill-creator` を使います。
+共通指示には `applyTo` を付けません。詳細手順はスキルと同梱資料に置きます。各SKILL.mdを工程別の入口にし、task-workflowは計画・Issue記録・ブランチ、behavior-specificationは共有仕様、software-developmentは設計・実装・テスト、okf-docsは形式・出典・検証へ分けます。参照を移した場合はリンク元と導入後の同梱資料も確認します。[インストラクションのテンプレート](../templates/instructions.md)と[スキルの編集指示](../../skills/AGENTS.md)を参照します。スキルの作成・改善には外部依存の `skill-creator` を使います。
 
 原本を編集しても公開版やユーザースコープは更新されません。編集中の原本を適用するための自己更新は行わず、公開後の導入・更新は[README](../../README.md)の利用者向け操作として扱います。生成されたAGENTS.mdは直接編集しません。
 
@@ -161,6 +162,8 @@ rumdlとリンク検査はこのリポジトリの公開品質条件です。外
 配布は隔離したユーザースコープで、新規・再導入・旧構成からの更新、手書きAGENTS.md保護を確認します。
 各スキルの `evals/evals.json` は外部書き込みを行わず適用判断を確認する例です。時間・トークンの新旧比較結果ではありません。
 
+分割したevalの `source_id` は移行元のケースを識別する履歴であり、旧Skillの実行参照ではありません。同じ元ケースは一つの担当Skillへ置き、複数工程の期待は条件付きの引き渡しを含めて保持します。ペア作業の[受け入れ仕様](../behavior/agent-pair-programming.feature.md)と、[使い捨てfixture・手動評価](../../skills/software-development/evals/agent-pair-programming.md)、[Copilot CLI固有手順](../../skills/software-development/references/copilot-cli-pairing.md)を区別します。
+
 - APM: グローバルコンパイル[^microsoft-producer-compile]
 - APM: スキルの作成と配布[^microsoft-author-primitives-skills]
 
@@ -177,7 +180,11 @@ python scripts/check_repository.py
 python scripts/skill_smoke.py
 ```
 
-静的検査は隠しディレクトリを含む原本のMarkdown・相対リンク・YAML・JSON・必須メタデータ・評価データを確認します。導入検証は一時ディレクトリで `gh skill` の列挙、新規導入、強制再導入と原本との内容一致を確認し、終了時に削除します。探索的に内容を読む場合は、次のコマンドで検証用ディレクトリを作れます。
+静的検査は隠しディレクトリを含む原本のMarkdown・相対リンク・YAML・JSON・必須メタデータ・評価データを確認します。導入検証は一時ディレクトリで `gh skill` の列挙、新規導入、強制再導入と原本との内容一致を確認します。固定baselineのGit履歴も必要です。旧版→新版の導入後、[READMEの移行手順](../../README.md#gh-skillの更新と廃止skillの退避)に沿って廃止した所有Skillだけを探索先外の一時backupへ退避し、旧名の不在、backup内容と無関係Skillの保持を照合します。検証用ディレクトリは終了時に削除し、実ユーザー環境へcleanupを適用しません。
+
+gh skillの移行fixtureは [skill_smoke.py](../../scripts/skill_smoke.py) の `SKILL_MIGRATION_BASELINE` で、Skill名変更前の6e09d5166a8f49aa3a71edc102446d92a59e939d に固定します。更新可能なAPM復旧用 `baseline_sha` から独立させ、復旧先を進めても旧名の退避・backup検証が消えないようにします。
+
+探索的に内容を読む場合は、次のコマンドで検証用ディレクトリを作れます。
 
 ```bash
 exploration_dir=$(mktemp -d)

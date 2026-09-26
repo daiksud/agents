@@ -1,26 +1,16 @@
 ---
 type: Reference
-title: 設計・共有理解・テストの出典
-description: 設計・共有仕様・テスト資料の一次出典、参照日と本環境への採用判断を保持します。
+title: 設計とテストの出典
+description: 実装・設計・テストの出典、既存の確認履歴と採用判断を保持します。
 sources:
-  - id: cucumber-docs-bdd
-    resource: https://cucumber.io/docs/bdd/
-  - id: cucumber-bdd-examples
-    resource: https://cucumber.io/docs/bdd/examples/
-  - id: cucumber-bdd-better-gherkin
-    resource: https://cucumber.io/docs/bdd/better-gherkin/
-  - id: cucumber-bdd-example-mapping
-    resource: https://cucumber.io/docs/bdd/example-mapping/
-  - id: cucumber-gherkin-reference
-    resource: https://cucumber.io/docs/gherkin/reference/
+  - id: ron-jeffries-xp
+    resource: https://ronjeffries.com/xprog/what-is-extreme-programming/
+  - id: fowler-beck-design-rules
+    resource: https://martinfowler.com/bliki/BeckDesignRules.html
+  - id: fowler-yagni
+    resource: https://martinfowler.com/bliki/Yagni.html
   - id: newsletter-p-canon-tdd
     resource: https://newsletter.kentbeck.com/p/canon-tdd
-  - id: agilealliance-glossary-atdd
-    resource: https://agilealliance.org/glossary/atdd/
-  - id: curiousduck-collections-2024-06-27-atdd
-    resource: https://curiousduck.io/posts/collections/2024-06-27-atdd/
-  - id: lizkeogh-20-acceptance-criteria-vs-scenarios
-    resource: https://lizkeogh.com/2011/06/20/acceptance-criteria-vs-scenarios/
   - id: continuousdelivery-foundations-test-automation
     resource: https://continuousdelivery.com/foundations/test-automation/
   - id: continuousdelivery-implementing-architecture
@@ -39,7 +29,7 @@ sources:
     resource: https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/instructions/taming-copilot.instructions.md
 ---
 
-## 設計・共有理解・テストの出典
+## 設計とテストの出典
 
 ### 一次資料
 
@@ -47,15 +37,17 @@ sources:
 
 | 著者・資料 | 日付・参照箇所 | 本スキルでの用途 |
 | --- | --- | --- |
-| Cucumber, Behaviour-Driven Development[^cucumber-docs-bdd] | ページ更新表示2026-09-10。概念の成立日ではない | 共有理解とDiscovery・Formulation・Automation |
-| Cucumber, Examples[^cucumber-bdd-examples]、Writing better Gherkin[^cucumber-bdd-better-gherkin] | 日付なし | 業務上意味のある具体性と宣言的な記述 |
-| Cucumber, Example Mapping[^cucumber-bdd-example-mapping]、Gherkin Reference[^cucumber-gherkin-reference] | 日付なし | ルール・例・質問の区別、RuleとScenario |
 | Kent Beck, Canon TDD[^newsletter-p-canon-tdd] | 2023-12-11 | テストリスト、一つずつの反復、期待値を弱めないこと |
-| Agile Alliance, Acceptance Test Driven Development[^agilealliance-glossary-atdd] | 日付なし | 実装前の受け入れテストと異なる観点の協働 |
-| Elisabeth Hendrickson, ATDD Revisited[^curiousduck-collections-2024-06-27-atdd] | 2024-06-27 | 2008年の実践の再評価、参加方法と自動化形式の適応 |
-| Liz Keogh, Acceptance Criteria vs. Scenarios[^lizkeogh-20-acceptance-criteria-vs-scenarios] | 2011-06-20 | 抽象的な条件と具体例の違い |
 | Jez Humble, Continuous Testing[^continuousdelivery-foundations-test-automation]、Architecture[^continuousdelivery-implementing-architecture] | 日付なし | 速いフィードバック、探索、テスト可能性、段階的な設計改善 |
 | Eric Evans, DDD Reference[^www-05-ddd-reference-2015-03-pdf] | 2015年3月、冊子39–41頁等 | Bounded Context、Ubiquitous Language、Context Map |
+
+### XPの価値の採用判断
+
+2026-09-25にRon JeffriesのWhat is Extreme Programming?[^ron-jeffries-xp]を確認した。Communication・Simplicity・Feedback・Courage・Respectを、実際の期待値の共有、現在の要求に合う構造、短い検証、必要な設計改善、判断権限と持続可能な働き方へ適用する。会議の固定形式、チーム編成、原典の効果数値を共通要件にしない。エージェントの権限・承認・公開・レビュー条件は本環境の契約として維持する。
+
+### Simple DesignとYAGNIの採用判断
+
+2026-09-25にMartin FowlerのBeck Design Rules[^fowler-beck-design-rules]とYagni[^fowler-yagni]を確認した。現在のテスト・契約、意図の明瞭さ、同じルールの重複、必要な要素から設計を判断する。仮想の将来機能を先取りせず、実際のフィードバックで小さく改善する。明瞭さと重複の間に機械的な優先順位や点数を付けず、必要なテスト・Refactor・CIを省略しない。アサートファーストと同じNavigatorの段階確認は本環境の方針で、XP原典の要件として帰属させない。
 
 ### 指示例の参照元と適用判断
 
@@ -74,18 +66,13 @@ sources:
 | Context Engineering[^context-engineering] | 意味のある名前・パス・定数、関連情報を見つけやすい配置、境界の型・公開契約、複雑な流れの説明を使う。既存配置と言語慣習を優先し、局所的な型推論の禁止、一律のindexファイル・内部公開・IDE操作は要求しない |
 | Taming Copilot[^taming-copilot] | 標準機能・既存依存を先に検討し、必要な変更を既存構造へ統合する。必要な契約・異常系・TDDを省かず、最短コードやユーザーが列挙したファイルだけを変更範囲の基準にしない |
 
-[^cucumber-docs-bdd]: [Behaviour-Driven Development](https://cucumber.io/docs/bdd/)。本文に記した参照範囲と採用判断の根拠。
-[^cucumber-bdd-examples]: [Examples](https://cucumber.io/docs/bdd/examples/)。本文に記した参照範囲と採用判断の根拠。
-[^cucumber-bdd-better-gherkin]: [Writing better Gherkin](https://cucumber.io/docs/bdd/better-gherkin/)。本文に記した参照範囲と採用判断の根拠。
-[^cucumber-bdd-example-mapping]: [Example Mapping](https://cucumber.io/docs/bdd/example-mapping/)。本文に記した参照範囲と採用判断の根拠。
-[^cucumber-gherkin-reference]: [Gherkin Reference](https://cucumber.io/docs/gherkin/reference/)。本文に記した参照範囲と採用判断の根拠。
 [^newsletter-p-canon-tdd]: [Canon TDD](https://newsletter.kentbeck.com/p/canon-tdd)。本文に記した参照範囲と採用判断の根拠。
-[^agilealliance-glossary-atdd]: [Acceptance Test Driven Development](https://agilealliance.org/glossary/atdd/)。本文に記した参照範囲と採用判断の根拠。
-[^curiousduck-collections-2024-06-27-atdd]: [ATDD Revisited](https://curiousduck.io/posts/collections/2024-06-27-atdd/)。本文に記した参照範囲と採用判断の根拠。
-[^lizkeogh-20-acceptance-criteria-vs-scenarios]: [Acceptance Criteria vs. Scenarios](https://lizkeogh.com/2011/06/20/acceptance-criteria-vs-scenarios/)。本文に記した参照範囲と採用判断の根拠。
 [^continuousdelivery-foundations-test-automation]: [Continuous Testing](https://continuousdelivery.com/foundations/test-automation/)。本文に記した参照範囲と採用判断の根拠。
 [^continuousdelivery-implementing-architecture]: [Architecture](https://continuousdelivery.com/implementing/architecture/)。本文に記した参照範囲と採用判断の根拠。
 [^www-05-ddd-reference-2015-03-pdf]: [DDD Reference](https://www.domainlanguage.com/wp-content/uploads/2016/05/DDD_Reference_2015-03.pdf)。本文に記した参照範囲と採用判断の根拠。
+[^ron-jeffries-xp]: [What is Extreme Programming?](https://ronjeffries.com/xprog/what-is-extreme-programming/)。5価値と実践を状況に合わせて適用する考え方。
+[^fowler-beck-design-rules]: [Beck Design Rules](https://martinfowler.com/bliki/BeckDesignRules.html)。Kent Beck本人のレビューを受けたFowlerの定式化。
+[^fowler-yagni]: [Yagni](https://martinfowler.com/bliki/Yagni.html)。未要求の機能と現在の変更を支える健全性を区別する。
 [^github-instructions-oop-design-patterns-instructions-md]: [OOP Design Patterns](https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/instructions/oop-design-patterns.instructions.md)。本文に記した参照範囲と採用判断の根拠。
 [^github-instructions-self-explanatory-code-commenting-instructions-md]: [Self-explanatory Code Commenting](https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/instructions/self-explanatory-code-commenting.instructions.md)。本文に記した参照範囲と採用判断の根拠。
 [^github-instructions-qa-engineering-best-practices-instructions-md]: [QA Engineering Best Practices](https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/instructions/qa-engineering-best-practices.instructions.md)。本文に記した参照範囲と採用判断の根拠。

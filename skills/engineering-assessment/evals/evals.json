@@ -108,11 +108,11 @@
     {
       "id": 11,
       "prompt": "acme/api のHTTPタイムアウト修正を実装して。既存Issueの計画を明示承認済みで、今回はタイムアウト処理と回帰テストだけが範囲。DevOpsやTDDという共通原則もある。どのスキルを使い、どこまで進めるか。",
-      "expected_output": "通常の修正からengineering-assessmentの全面診断・導入Issueを起動しない。承認済み範囲の実装をtask-workflowとbdd-tddへ引き継ぐ。",
+      "expected_output": "通常の修正からengineering-assessmentの全面診断・導入Issueを起動しない。承認済み範囲の実装をtask-workflowとsoftware-developmentへ引き継ぐ。",
       "files": [],
       "expectations": [
         "通常の修正からengineering-assessmentの全面診断・導入Issueを起動しない",
-        "承認済み範囲の実装をtask-workflowとbdd-tddへ引き継ぐ"
+        "承認済み範囲の実装をtask-workflowとsoftware-developmentへ引き継ぐ"
       ]
     },
     {

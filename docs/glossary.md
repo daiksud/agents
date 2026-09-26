@@ -3,6 +3,8 @@ type: Reference
 title: 開発実践と作業スキルの用語
 description: このパッケージで用いる開発実践と診断の用語、適用範囲、対応する名称を定義します。
 sources:
+  - id: xp-principles
+    resource: ../skills/software-development/references/sources.md
   - id: okf-v02
     resource: https://github.com/GoogleCloudPlatform/open-knowledge-format/blob/ad30107c31c06aec8a7d5636e0d1058118604e6f/SPEC.md
 ---
@@ -13,28 +15,31 @@ sources:
 
 | 用語 | この文脈での定義 | 適用境界 | コード・指示上の名称 |
 | --- | --- | --- | --- |
+| XP | Communication・Simplicity・Feedback・Courage・Respectを軸に、小さなテストと協働から設計を進化させる開発思想 | 開発判断と実装 | `development`、`software-development` |
+| Simple Design | 現在の契約を満たし、意図を伝え、同じルールの重複と不要な要素を減らす設計の判断基準 | 開発判断と設計・実装 | `software-development` の設計資料 |
+| YAGNI | 仮想の将来機能を先取りせず、現在必要な検証・設計改善を保つ判断 | 開発判断と設計・実装 | `software-development` の設計資料 |
 | DevOps | 開発から運用まで、利用者の成果と品質に対する責任・学習を共有する実践 | 開発実践の指示・診断 | deliveryのDevOps、`engineering-assessment` |
 | Lean | 利用者価値を起点に流れ・仕掛かり・待ち・手戻りを改善し、人を尊重して学ぶ考え方 | 開発実践の指示・診断 | deliveryのLean、`engineering-assessment` |
 | 継続的インテグレーション | 小さな変更の頻繁なmain統合、速い自動検証、失敗修復を続ける実践 | 開発実践の指示・診断 | CI、`task-workflow` |
 | 継続的デリバリー | 検証済みの変更を必要なときに安全に配布できる状態を維持する実践 | 開発実践の指示・診断 | CD、`engineering-assessment` |
 | 継続的デプロイメント | 検証を通った変更を自動的に本番へ配備する実践 | 開発実践の指示・診断 | Continuous Deployment（CDと区別） |
-| BDD | 具体例を使う共同の発見・定式化・自動化を通じて期待するふるまいの理解を深める実践 | 開発実践の指示・診断 | `bdd-tdd`、`*.feature.md` |
-| ATDD | 対応する実装に先立ち、受け入れ条件・テストを具体化する実践 | 開発実践の指示・診断 | `bdd-tdd` |
-| TDD | テスト項目を含むToDoから一つずつRed・最小のGreen・必要なRefactorを反復する設計・検証の実践 | 開発実践の指示・診断 | `bdd-tdd` |
+| BDD | 具体例を使う共同の発見・定式化・自動化を通じて期待するふるまいの理解を深める実践 | 開発実践の指示・診断 | `behavior-specification`、`*.feature.md` |
+| ATDD | 対応する実装に先立ち、受け入れ条件・テストを具体化する実践 | 開発実践の指示・診断 | `behavior-specification` |
+| TDD | テスト項目を含むToDoから一つずつRed・最小のGreen・必要なRefactorを反復する設計・検証の実践 | 開発実践の指示・診断 | `software-development` |
 | 共有ToDo | TDDの対象となる小さな振る舞い、境界・異常系、既存ふるまいの保護、設計改善を記録し、未着手・進行中・完了・要確認を区別するリスト | 同じNavigatorと継続して協働できるDriver/Navigatorのコード変更。専用ツール・固定ファイル名は要求しない | 共通インストラクションの共有ToDoリスト |
 | Driver | 2エージェントでのコード変更を進めるメインエージェント。共有ToDoをNavigatorと共同で選び、テスト・実装・統合を担い、作業対象を編集する唯一の役割 | 独立コンテキストを持つ同じNavigatorと継続的にフィードバックを交換できる環境でのコード変更 | 共通インストラクションのDriver |
 | Navigator | Driverと独立した実行コンテキストを持つ1体の読み取り専用サブエージェント。共有ToDo、要件・コード・差分・テスト結果を確認し、Red・Green・Refactorごとにフィードバックする | 独立コンテキストを持つ同じNavigatorと継続的にフィードバックを交換できる環境でのコード変更 | 共通インストラクションのNavigator |
-| ストーリーファースト | 設計より先に、誰が、どの状況で、完成後に何をできるかを語り、受け入れ条件へつなぐ本環境の方針 | システム・機能の構築。技術修正・整理では既存の目的・期待結果へ結ぶ | decision-makingの目的・目標・手段・スタンダード、`bdd-tdd` |
+| ストーリーファースト | 設計より先に、誰が、どの状況で、完成後に何をできるかを語り、受け入れ条件へつなぐ本環境の方針 | システム・機能の構築。技術修正・整理では既存の目的・期待結果へ結ぶ | decision-makingの目的・目標・手段・スタンダード、`behavior-specification` |
 | スタンダード | 複数のプロジェクトで目標を満たす手段を選ぶ際に繰り返し使う判断基準・優先順位。ユーザーの判断から抽出した候補はIssueへの記録だけでは採用されない | 共通作業原則の設計判断・候補Issueの記録 | decision-makingのスタンダード、`task-workflow` の共通スタンダード候補 |
-| テストファースト | 実装後の期待するふるまいを、対応する実装コードより先にテストで表現する本環境の方針 | コード変更。ふるまい不変の整理では十分な既存テストの成功を先に確認し、不足時は先に補う | developmentの共有理解と検証、`bdd-tdd` |
-| アサートファースト | 最後にパスすべきアサーションを最初に書き、必要な対象操作と準備を補う本環境の方針。実行順とは区別する | テストの作成 | `bdd-tdd` のレッド、テスト資料 |
-| DDD | 業務の知識、モデル、境界、共有された言語を軸に複雑さを扱う設計 | 開発実践の指示・診断 | domain-modelingのDDD、`bdd-tdd` |
-| OOP | 状態とふるまいをオブジェクトにまとめる設計手段。DDDの必須形式ではない | 設計・実装の指示 | Object-Oriented Programming、`bdd-tdd` |
-| SOLID | 責務・拡張・置換可能性・インターフェース・依存方向を点検する設計原則。抽象型やクラス数を目標にしない | 設計・実装の指示 | `bdd-tdd` の設計判断 |
-| GoFパターン | 繰り返し現れるオブジェクト設計の問題と解決形を共有する語彙。実際の要求に応じて選択する | 設計・実装の指示 | Strategy、Adapter、Builder等、`bdd-tdd` |
+| テストファースト | 実装後の期待するふるまいを、対応する実装コードより先にテストで表現する本環境の方針 | コード変更。ふるまい不変の整理では十分な既存テストの成功を先に確認し、不足時は先に補う | developmentの共有理解と検証、`software-development` |
+| アサートファースト | 最後にパスすべきアサーションを最初に書き、必要な対象操作と準備を補う本環境の方針。実行順とは区別する | テストの作成 | `software-development` のレッド、テスト資料 |
+| DDD | 業務の知識、モデル、境界、共有された言語を軸に複雑さを扱う設計 | 開発実践の指示・診断 | domain-modelingのDDD、`software-development` |
+| OOP | 状態とふるまいをオブジェクトにまとめる設計手段。DDDの必須形式ではない | 設計・実装の指示 | Object-Oriented Programming、`software-development` |
+| SOLID | 責務・拡張・置換可能性・インターフェース・依存方向を点検する設計原則。抽象型やクラス数を目標にしない | 設計・実装の指示 | `software-development` の設計判断 |
+| GoFパターン | 繰り返し現れるオブジェクト設計の問題と解決形を共有する語彙。実際の要求に応じて選択する | 設計・実装の指示 | Strategy、Adapter、Builder等、`software-development` |
 | 外部契約 | モデルやシステムの境界を越えて利用者に約束する入出力・失敗・副作用等の条件 | 仕様記述・検証の指示 | feature、API仕様、スキーマ、`okf-docs` |
 | 仕様の正本 | ある要求・契約を変更するときに基準として更新する記録。情報ごとに特定し他文書から参照する | 仕様記述の指示 | feature、ADR、API仕様、`okf-docs` |
-| 不安定なテスト | 同じ条件で結果が揺れるテスト。再試行成功と原因の解消を区別する | テスト・検証の指示 | flaky test、`bdd-tdd` |
+| 不安定なテスト | 同じ条件で結果が揺れるテスト。再試行成功と原因の解消を区別する | テスト・検証の指示 | flaky test、`software-development` |
 | サブドメイン | 業務上の問題領域の一部分 | 開発実践の指示・診断 | Subdomain |
 | 境界づけられたコンテキスト | 一つのモデルの意味が通用する明示的な範囲 | 開発実践の指示・診断 | Bounded Context |
 | ユビキタス言語 | 同じモデルの境界内で、会話・文書・コードを通じて使う共通の言語 | 開発実践の指示・診断 | Ubiquitous Language、導入先の `docs/glossary.md` |
@@ -44,6 +49,8 @@ sources:
 | 導入診断 | 証拠・不足・未確認・適用外を区別し、改善の優先順位を決める調査 | 診断スキル | `engineering-assessment` |
 | 導入計画 | 最初の小さな実験、依存・順序、期待する変化と検証・見直し条件を示す成果物 | 診断スキルとIssue記録 | `engineering-assessment`、`task-workflow` |
 | 導入未実施 | 診断・計画を記録したが、その変更は実行していない状態 | 診断スキルとIssue記録 | Issue本文の状態。自動で閉じない |
+
+Simple Design・YAGNIの定義と本環境への適用範囲は、一次資料と採用判断に従う。[^xp-principles]
 
 ### OKF文書検査の用語
 
@@ -59,4 +66,5 @@ sources:
 | 確認記録 | 文書の内容や計算定義を確認したActorと日時 | OKF文書検査 | `verified` |
 | 実行証明 | 許可された計算による単一実行の結果をreceiptから確認すること。静的検査の対象外 | OKF計算契約 | Attestation |
 
+[^xp-principles]: Simple Design・YAGNIの一次資料と本環境のテスト・設計改善への適用判断。
 [^okf-v02]: OKF v0.2 §§2、5、10–11。profile名は本パッケージの検査契約。

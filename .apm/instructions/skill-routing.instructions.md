@@ -13,7 +13,8 @@ description: 依頼と現在の工程に合う作業スキルを選びます。
 | 条件 | 配布先 |
 | --- | --- |
 | リポジトリの変更・成果物作成、Issue・PRの作成・更新、変更作業の完了 | `~/.agents/skills/task-workflow/SKILL.md` |
-| コードの追加・変更・修正 | `~/.agents/skills/bdd-tdd/SKILL.md` |
+| コードの追加・変更・修正・リファクタリング | `~/.agents/skills/software-development/SKILL.md` |
+| 利用者向けのふるまい・受け入れ条件の発見と仕様化 | `~/.agents/skills/behavior-specification/SKILL.md` |
 | コードレビューの実行時だけ | `~/.agents/skills/code-review/SKILL.md` |
 | 文書の作成・更新 | `~/.agents/skills/okf-docs/SKILL.md` |
 | 開発実践の現状診断・導入計画を依頼されたとき | `~/.agents/skills/engineering-assessment/SKILL.md` |
