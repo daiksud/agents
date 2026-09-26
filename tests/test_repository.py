@@ -258,6 +258,64 @@ class MetadataTests(unittest.TestCase):
         self.assertIn('issue-management', expected)
         self.assertIn('change-delivery', expected)
 
+    def test_code_review_prioritizes_current_simple_design_without_losing_real_risks(self):
+        root = Path(__file__).resolve().parents[1]
+        skill = (root / 'skills/code-review/SKILL.md').read_text(encoding='utf-8')
+        description = skill.split('---', 2)[1]
+        self.assertIn('現在の要求を満たす最もシンプルな設計', description)
+        self.assertIn('実際の変更', description)
+        self.assertIn('# 現在の要求を満たすシンプルな設計をレビューする', skill)
+        self.assertIn('## 現在の要求と安全な変更を評価する基準', skill)
+        for concern in ('早すぎる抽象化', '不要なinterface', '未使用extension point',
+                        '仮想的な将来要件のためのconfiguration', '未要求の一般化'):
+            with self.subTest(concern=concern):
+                self.assertIn(concern, skill)
+        self.assertIn('現在の欠陥・回帰も確認する', skill)
+        self.assertIn('現行の仕様・コード・呼び出し元などを根拠に', skill)
+        self.assertNotIn('変更耐性を最優先', skill)
+        self.assertNotIn('将来の変更への耐性を最も重要な評価軸', skill)
+        self.assertNotIn('正式な変更耐性の問題', skill)
+
+    def test_code_review_evals_distinguish_necessary_design_from_yagni(self):
+        root = Path(__file__).resolve().parents[1]
+        data = json.loads((root / 'skills/code-review/evals/evals.json').read_text(
+            encoding='utf-8'))
+        by_id = {case['id']: case for case in data['evals']}
+        self.assertTrue({1, 5, 6, 11, 19, 27, 28, 29} <= by_id.keys())
+        self.assertIn('token.py:8', by_id[1]['expected_output'])
+        self.assertIn('P1以上', by_id[5]['expected_output'])
+        self.assertIn('3.5rem', by_id[6]['expected_output'])
+        self.assertIn('正式な修正指摘なし', by_id[11]['expected_output'])
+        self.assertIn('正式な修正指摘', by_id[19]['expected_output'])
+        self.assertIn('interface', by_id[27]['prompt'])
+        self.assertIn('configuration', by_id[27]['prompt'])
+        self.assertIn('正式な修正指摘', by_id[27]['expected_output'])
+        self.assertIn('invoice.py:12', by_id[27]['expected_output'])
+        self.assertIn('検証負担', by_id[27]['expected_output'])
+        self.assertIn('二つの実装', by_id[28]['prompt'])
+        self.assertIn('抽象化だけを理由に指摘しない', by_id[28]['expected_output'])
+        self.assertIn('追従漏れ', by_id[28]['expected_output'])
+        self.assertIn('入力型', by_id[29]['prompt'])
+        self.assertNotIn('interface', by_id[29]['prompt'])
+        self.assertIn('未要求の一般化', by_id[29]['expected_output'])
+        self.assertIn('証拠不足', by_id[3]['expected_output'])
+        for case_id in (3, 5, 19):
+            with self.subTest(case_id=case_id):
+                self.assertNotIn('変更耐性の問題', by_id[case_id]['expected_output'])
+
+    def test_code_review_guidance_matches_current_simple_design_axis(self):
+        root = Path(__file__).resolve().parents[1]
+        guidance = (root / 'skills/code-review/references/review-guidance.md').read_text(
+            encoding='utf-8')
+        self.assertIn('現在の要求を満たす最もシンプルな設計', guidance)
+        self.assertNotIn('変更耐性を最重要の評価軸', guidance)
+        self.assertNotIn('修正すべき変更耐性の問題', guidance)
+        self.assertNotIn('契約・変更耐性', guidance)
+        self.assertIn('欠陥・回帰', guidance)
+        self.assertIn('具体的な変更・検証の支障', guidance)
+        self.assertIn('P0（', guidance)
+        self.assertIn('P3（', guidance)
+
     def test_issue_only_route_does_not_select_delivery(self):
         root = Path(__file__).resolve().parents[1]
         routing = (root / '.apm/instructions/skill-routing.instructions.md').read_text(encoding='utf-8')
