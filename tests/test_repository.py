@@ -307,6 +307,21 @@ class MetadataTests(unittest.TestCase):
         root = Path(__file__).resolve().parents[1]
         guidance = (root / 'skills/code-review/references/review-guidance.md').read_text(
             encoding='utf-8')
+        procedure = guidance.split('## 調べ方\n', 1)[1].split('## 調査の観点', 1)[0]
+        areas = guidance.split('## 調査の観点\n', 1)[1].split('## 具体的な確認基準', 1)[0]
+        responsibilities = guidance.split('### 責務・依存と読みやすさ\n', 1)[1].split(
+            '### テストと失敗の検知', 1)[0]
+        self.assertIn('現在の要求に必要な構造', procedure)
+        self.assertIn('次の変更で追従が必要になる箇所', procedure)
+        design_area = next(line for line in areas.splitlines()
+                           if line.startswith('| 設計の理解しやすさ |'))
+        self.assertIn('現在の要求に不要な抽象化・設定', design_area)
+        self.assertIn('次の変更に無関係な箇所', design_area)
+        for concern in ('早すぎる抽象化', '不要なinterface', '未使用extension point',
+                        '仮想的な将来要件のためのconfiguration', '未要求の一般化'):
+            with self.subTest(concern=concern):
+                self.assertIn(concern, responsibilities)
+        self.assertIn('無関係な実装の修正・起動', responsibilities)
         self.assertIn('現在の要求を満たす最もシンプルな設計', guidance)
         self.assertNotIn('変更耐性を最重要の評価軸', guidance)
         self.assertNotIn('修正すべき変更耐性の問題', guidance)
@@ -315,6 +330,16 @@ class MetadataTests(unittest.TestCase):
         self.assertIn('具体的な変更・検証の支障', guidance)
         self.assertIn('P0（', guidance)
         self.assertIn('P3（', guidance)
+
+    def test_maintainer_guide_describes_current_code_review_axis(self):
+        root = Path(__file__).resolve().parents[1]
+        guide = (root / 'docs/guides/delivery.md').read_text(encoding='utf-8')
+        reviewer_row = next(line for line in guide.splitlines()
+                            if line.startswith('| `skills/code-review/` |'))
+        self.assertIn('現在の要求を満たす最もシンプルな設計', reviewer_row)
+        self.assertIn('実際の変更への安全性', reviewer_row)
+        self.assertIn('欠陥・回帰', reviewer_row)
+        self.assertNotIn('将来の変更への耐性を最優先', reviewer_row)
 
     def test_issue_only_route_does_not_select_delivery(self):
         root = Path(__file__).resolve().parents[1]
