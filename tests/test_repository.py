@@ -143,6 +143,12 @@ class MetadataTests(unittest.TestCase):
         self.assertCountEqual(
             [f'task-workflow/{number}' for number in range(1, 139)], migrated)
 
+    def test_change_delivery_has_installable_skill_entry(self):
+        root = Path(__file__).resolve().parents[1]
+        skill = root / 'skills/change-delivery/SKILL.md'
+        self.assertTrue(skill.is_file(), 'change-delivery needs an installable SKILL.md')
+        self.assertEqual([], validate_file(skill, root))
+
 
 if __name__ == '__main__':
     unittest.main()
