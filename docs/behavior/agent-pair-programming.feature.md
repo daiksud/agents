@@ -9,6 +9,8 @@ sources:
     resource: https://github.com/daiksud/agents/issues/80
   - id: issue-87
     resource: https://github.com/daiksud/agents/issues/87
+  - id: issue-100
+    resource: https://github.com/daiksud/agents/issues/100
 ---
 
 ## 機能: 独立したNavigatorとコード変更を進める
@@ -116,6 +118,30 @@ sources:
 - ならば: Driverは確認済み範囲と未確認範囲を報告する
 - かつ: 確認を必要とする後続のコード変更を止め、新しいNavigatorを継続扱いにしない
 
+### ルール: 再ペアは停止と明示的な承認の後に別のペアとして始める
+
+#### シナリオ: 元Navigatorを復旧できないが再ペアは未承認
+
+- 前提: 元Navigatorの復旧不能と、未確認のRedの差分・テスト結果を確認した
+- もし: 再ペアの承認がないまま作業を再開しようとする
+- ならば: Driverは未確認の段階を成功扱いせず、後続のコード変更を止めたままにする
+- かつ: 元の確認済み・未確認の範囲と再開条件を報告し、新しいNavigatorを旧ペアの継続と称しない
+
+#### シナリオ: 明示された承認で新しいペアを始める
+
+- 前提: 元Navigatorを復旧できず、再ペアが明示的に承認された。[^issue-100]
+- もし: Driverが新Navigatorと別のペアを始める
+- ならば: Driverは元の依頼・受け入れ条件・適用指示・共有ToDo、対象HEADと未コミット差分、テスト結果、未解決指摘、確認済み・未確認の段階を共有し、継続応答を確認する
+- かつ: 新Navigatorが未確認の最初の段階から実差分とテストを再確認し、旧ペアの完了項目の証拠と現在の最終差分も照合する
+- かつ: 対象が変わっていれば影響する検証と確認をやり直し、旧ペアの未解決指摘と同じ論点の2往復上限を保持する
+- かつ: 一度に有効なNavigatorは1体とし、ペア内確認を独立したPRレビュー・必須CI・マージ条件と混同しない
+
+#### シナリオ: 新しいペアも継続不能になる
+
+- 前提: 承認された別ペアのNavigatorも継続不能になった
+- もし: Driverがさらに別のNavigatorへ交代しようとする
+- ならば: Driverは後続のコード変更を再び停止・報告し、自動で交代を繰り返さない
+
 ### ルール: 解消しない指摘では作業を止める
 
 #### シナリオ: 同じ指摘が二往復後も残る
@@ -136,3 +162,4 @@ sources:
 [^issue-76]: [Issue #76](https://github.com/daiksud/agents/issues/76) に記録された目的、受け入れ条件、検証計画。
 [^issue-80]: [Issue #80](https://github.com/daiksud/agents/issues/80) に記録された共有ToDoと段階別レビューの受け入れ条件、検証計画。
 [^issue-87]: [Issue #87](https://github.com/daiksud/agents/issues/87) に記録された、初回の応答だけでは後続の継続確認を保証できない問題。
+[^issue-100]: [Issue #100](https://github.com/daiksud/agents/issues/100) に記録された、承認付き再ペアの目的と安全境界。
