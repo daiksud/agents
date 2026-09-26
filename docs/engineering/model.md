@@ -177,10 +177,10 @@ DDDを採用していること、Bounded Contextが存在すること、複数Te
 - 問題から必要なlensだけを選ぶ `engineering-assessment` のprogressive disclosure
 
 [^ron-jeffries-xp]: [What is Extreme Programming? — Ron Jeffries](https://ronjeffries.com/xprog/what-is-extreme-programming/)。XPの価値と、小さいFeedbackで設計を進化させる考え方。2026-09-27確認。
+[^continuous-integration]: [Continuous Integration](https://continuousdelivery.com/foundations/continuous-integration/)。XP由来のCI、頻繁なmain統合、小さいbatch、壊れたbuildの優先修復。2026-09-27確認。
+[^dora-capabilities]: [DORA Capability Catalog](https://dora.dev/capabilities/)。Coreに含まれるCapabilityとCore外・AI関連等の項目が同じCatalogにあることを区別する。2026-09-27確認。
 [^lean-what-is-lean]: [What is Lean? — Lean Enterprise Institute](https://www.lean.org/explore-lean/what-is-lean/)。顧客価値、流れ、人、継続的な実験の関係。2026-09-27確認。
 [^ddd-reference]: [Domain-Driven Design Reference — Eric Evans](https://www.domainlanguage.com/wp-content/uploads/2016/05/DDD_Reference_2015-03.pdf)。Ubiquitous Language、Bounded Context、Context Map等のモデル境界。既存固定資料を2026-09-27再確認。
 [^continuous-delivery]: [Continuous Delivery](https://continuousdelivery.com/)。配布可能な状態、小さい変更、共同責任と継続的なFeedback。2026-09-27確認。
-[^continuous-integration]: [Continuous Integration](https://continuousdelivery.com/foundations/continuous-integration/)。XP由来のCI、頻繁なmain統合、小さいbatch、壊れたbuildの優先修復。2026-09-27確認。
 [^team-topologies]: [Team Topologies — Key Concepts](https://teamtopologies.com/key-concepts)。Team type、interaction、cognitive load、Conway's Lawをfast flowへ結びつける。2026-09-27確認。
 [^dora-research]: [DORA Research](https://dora.dev/research/)。Core Modelを繰り返し支持された研究上のcapability・metric・outcomeの関係として扱う。2026-09-27確認。
-[^dora-capabilities]: [DORA Capability Catalog](https://dora.dev/capabilities/)。Coreに含まれるCapabilityとCore外・AI関連等の項目が同じCatalogにあることを区別する。2026-09-27確認。
