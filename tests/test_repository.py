@@ -414,6 +414,43 @@ class MetadataTests(unittest.TestCase):
         self.assertNotIn('`issue-management`', checks)
         self.assertNotIn('`task-workflow`', delivery)
 
+    def test_assessment_xp_lens_is_discoverable_and_distinct_from_practices(self):
+        root = Path(__file__).resolve().parents[1]
+        skill = (root / 'skills/engineering-assessment/SKILL.md').read_text(encoding='utf-8')
+        principles = (root / 'skills/engineering-assessment/references/principles.md').read_text(
+            encoding='utf-8')
+        sources = (root / 'skills/engineering-assessment/references/sources.md').read_text(
+            encoding='utf-8')
+        self.assertIn('XP', skill.split('---', 2)[1])
+        self.assertIn('XPを含む各観点', skill)
+        self.assertIn('限定診断は依頼された概念・困りごとに絞り', skill)
+        self.assertNotIn('9概念', skill)
+
+        lens = principles.split('### XPの価値から開発判断を診断する\n', 1)[1].split(
+            '### ', 1)[0]
+        for value in ('Communication', 'Simplicity', 'Feedback', 'Courage', 'Respect'):
+            with self.subTest(value=value):
+                self.assertIn(value, lens)
+        for practice in ('TDD', 'BDD', 'ATDD', 'DDD'):
+            with self.subTest(practice=practice):
+                self.assertIn(practice, lens)
+        self.assertIn('一律の採用や点数化を要求しない', lens)
+        self.assertNotIn('[^', lens)
+        for concept in ('DevOps', 'Lean', 'CI', 'CD', 'BDD', 'ATDD', 'TDD', 'DDD',
+                        'Team Topologies'):
+            with self.subTest(concept=concept):
+                self.assertIn(concept, principles)
+
+        entries = {entry['id']: entry['resource'] for entry in
+                   yaml.safe_load(sources.split('---', 2)[1])['sources']}
+        self.assertIn('ron-jeffries-xp', entries)
+        self.assertEqual('https://ronjeffries.com/xprog/what-is-extreme-programming/',
+                         entries['ron-jeffries-xp'])
+        self.assertIn('| What is Extreme Programming? — Ron Jeffries[^ron-jeffries-xp]',
+                      sources)
+        self.assertIn('[^ron-jeffries-xp]: [What is Extreme Programming?]'
+                      '(https://ronjeffries.com/xprog/what-is-extreme-programming/)', sources)
+
     def test_assessment_diagnosis_stops_before_approved_delivery(self):
         root = Path(__file__).resolve().parents[1]
         skill = (root / 'skills/engineering-assessment/SKILL.md').read_text(encoding='utf-8')
