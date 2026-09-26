@@ -119,7 +119,7 @@ apm compile --global
 | `.apm/instructions/decision-making.instructions.md` | 目的・目標・手段・スタンダードと判断の前提 |
 | `.apm/instructions/development.instructions.md` | XPの価値、共有理解、テスト先行と小さな反復 |
 | `.apm/instructions/domain-modeling.instructions.md` | 用語、モデルの境界と依存 |
-| `.apm/instructions/collaboration.instructions.md` | 継続Navigator、共有ToDo、段階確認と停止条件 |
+| `.apm/instructions/collaboration.instructions.md` | 継続Navigator、共有ToDo、段階確認と承認付き再ペア |
 | `.apm/instructions/delivery.instructions.md` | 価値の流れ、小さな統合とmainの健全性 |
 | `.apm/instructions/change-safety.instructions.md` | 承認・権限・変更保護 |
 | `.apm/instructions/quality.instructions.md` | 成果物と検証の品質、未確認範囲の報告 |

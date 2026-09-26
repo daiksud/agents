@@ -1,7 +1,7 @@
 ---
 type: Specification
 title: エージェントペアによるコード変更
-description: DriverとNavigatorによる共有ToDo、TDD各段階の確認、起動・フィードバックの停止条件の受け入れシナリオを定めます。
+description: DriverとNavigatorによる共有ToDo、TDD各段階の確認、停止と承認付き再ペアの受け入れシナリオを定めます。
 sources:
   - id: issue-76
     resource: https://github.com/daiksud/agents/issues/76
@@ -9,13 +9,15 @@ sources:
     resource: https://github.com/daiksud/agents/issues/80
   - id: issue-87
     resource: https://github.com/daiksud/agents/issues/87
+  - id: issue-100
+    resource: https://github.com/daiksud/agents/issues/100
 ---
 
 ## 機能: 独立したNavigatorとコード変更を進める
 
 開発者は、対応環境で実装前から方針・テスト・小さな変更を確認し、独立したNavigatorと共有ToDoおよびTDD各段階の短いフィードバックサイクルで進めたい。[^issue-76] [^issue-80]
 
-### ルール: 同じNavigatorを実装前から最終確認まで使う
+### ルール: 各ペアでは同じNavigatorを実装前からそのペアの最終確認まで使う
 
 #### シナリオ: 対応環境で一つの振る舞いを変更する
 
@@ -24,7 +26,7 @@ sources:
 - ならば: Driverは元の要件、受け入れ条件、作業範囲、適用指示、関連コードを一体のNavigatorに共有する
 - かつ: Navigatorは実装前に次の振る舞い、対応テスト、境界条件を確認する
 - かつ: Driverだけがファイルを編集し、Navigatorは実際の要件・コード・差分・テスト結果を読み取り専用で確認する
-- かつ: 両者は共有ToDoから理由とともに一項目を選び、同じNavigatorが各段階と最終差分にフィードバックする
+- かつ: 両者は共有ToDoから理由とともに一項目を選び、そのペアの同じNavigatorが各段階と最終差分にフィードバックする
 
 #### シナリオ: 初回の確認後も同じNavigatorとやり取りする
 
@@ -56,7 +58,7 @@ sources:
 - ならば: 現在の段階を成立させる修正と検証を先送りせずに行う
 - かつ: Driverはテストを通すために受け入れ条件や期待値を弱めない
 
-### ルール: 各TDD段階を同じNavigatorが確認してから次へ進める
+### ルール: 各TDD段階をそのペアの同じNavigatorが確認してから次へ進める
 
 #### シナリオ: 意図したRedを確認する
 
@@ -116,6 +118,31 @@ sources:
 - ならば: Driverは確認済み範囲と未確認範囲を報告する
 - かつ: 確認を必要とする後続のコード変更を止め、新しいNavigatorを継続扱いにしない
 
+### ルール: 再ペアは停止と明示的な承認の後に別のペアとして始める
+
+#### シナリオ: 元Navigatorを復旧できないが今回の再ペアは未承認
+
+- 前提: 元Navigatorの復旧不能と、未確認のRedの差分・テスト結果を確認した
+- もし: 今回の喪失について停止報告後の再ペア承認がないまま作業を再開しようとする
+- ならば: Driverは未確認の段階を成功扱いせず、後続のコード変更を止めたままにする
+- かつ: 元の確認済み・未確認の範囲と再開条件を報告し、新しいNavigatorを旧ペアの継続と称しない
+
+#### シナリオ: 明示された承認で新しいペアを始める
+
+- 前提: 元Navigatorを復旧できず、停止報告後に今回の喪失について再ペアが明示的に承認された。[^issue-100]
+- もし: Driverが新Navigatorと別のペアを始める
+- ならば: Driverは旧Navigatorを担当から外し、遅れた応答を新ペアの確認済み段階の証拠に使わない
+- かつ: Driverは元の依頼・受け入れ条件・適用指示・共有ToDo、対象HEADと未コミット差分、テスト結果、未解決指摘、確認済み・未確認の段階を共有し、継続応答を確認する
+- かつ: 新Navigatorが未確認の最初の段階から実差分とテストを再確認し、旧ペアの完了項目の証拠と現在の最終差分も照合する
+- かつ: 対象が変わっていれば影響する検証と確認をやり直し、旧ペアの未解決指摘と同じ論点の2往復上限を保持する
+- かつ: 一度に有効なNavigatorは1体とし、ペア内確認を独立したPRレビュー・必須CI・マージ条件と混同しない
+
+#### シナリオ: 新しいペアも継続不能になる
+
+- 前提: 承認された別ペアのNavigatorも継続不能になった
+- もし: Driverがさらに別のNavigatorへ交代しようとする
+- ならば: Driverは後続のコード変更を再び停止・報告し、前回の承認を再利用せず、新たな喪失への明示的な承認があるまで交代しない
+
 ### ルール: 解消しない指摘では作業を止める
 
 #### シナリオ: 同じ指摘が二往復後も残る
@@ -136,3 +163,4 @@ sources:
 [^issue-76]: [Issue #76](https://github.com/daiksud/agents/issues/76) に記録された目的、受け入れ条件、検証計画。
 [^issue-80]: [Issue #80](https://github.com/daiksud/agents/issues/80) に記録された共有ToDoと段階別レビューの受け入れ条件、検証計画。
 [^issue-87]: [Issue #87](https://github.com/daiksud/agents/issues/87) に記録された、初回の応答だけでは後続の継続確認を保証できない問題。
+[^issue-100]: [Issue #100](https://github.com/daiksud/agents/issues/100) に記録された、承認付き再ペアの目的と安全境界。
