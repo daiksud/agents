@@ -136,12 +136,35 @@ class MetadataTests(unittest.TestCase):
             data = json.loads(path.read_text(encoding='utf-8'))
             self.assertEqual(skill, data['skill_name'])
             legacy = [case for case in data['evals'] if 'source_id' in case]
-            self.assertEqual(69, len(legacy))
             for case in legacy:
                 self.assertEqual(f'task-workflow/{case["id"]}', case['source_id'])
             migrated.extend(case['source_id'] for case in legacy)
         self.assertCountEqual(
             [f'task-workflow/{number}' for number in range(1, 139)], migrated)
+
+    def test_issue_eval_read_only_excludes_current_skills(self):
+        root = Path(__file__).resolve().parents[1]
+        data = json.loads((root / 'skills/issue-management/evals/evals.json').read_text(
+            encoding='utf-8'))
+        case = next(case for case in data['evals']
+                    if case.get('source_id') == 'task-workflow/1')
+        expected = case['expected_output']
+        self.assertIn('読み取りと概念説明だけに留め', expected)
+        self.assertIn('issue-management・change-delivery・okf-docsを起動せず', expected)
+        self.assertIn('Issue・PRを作成しない', expected)
+        self.assertNotIn('task-workflow', expected)
+
+    def test_approved_continuation_evals_belong_to_delivery(self):
+        root = Path(__file__).resolve().parents[1]
+        issue = json.loads((root / 'skills/issue-management/evals/evals.json').read_text(
+            encoding='utf-8'))
+        delivery = json.loads((root / 'skills/change-delivery/evals/evals.json').read_text(
+            encoding='utf-8'))
+        for source_id in ('task-workflow/27', 'task-workflow/91',
+                          'task-workflow/92', 'task-workflow/98'):
+            with self.subTest(source_id=source_id):
+                self.assertIn(source_id, [case.get('source_id') for case in delivery['evals']])
+                self.assertNotIn(source_id, [case.get('source_id') for case in issue['evals']])
 
     def test_change_delivery_has_installable_skill_entry(self):
         root = Path(__file__).resolve().parents[1]
