@@ -35,6 +35,7 @@ gh skill install daiksud/agents --all --agent codex --scope user
 | 廃止した入口 | 移行先 |
 | --- | --- |
 | `bdd-tdd` | 仕様の発見は `behavior-specification`、コード変更は `software-development` |
+| `task-workflow` | Issueの計画・記録は `issue-management`、承認済み変更の完了は `change-delivery` |
 
 ## グローバル導入
 

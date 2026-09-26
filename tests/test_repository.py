@@ -129,6 +129,10 @@ class MetadataTests(unittest.TestCase):
 
     def test_workflow_eval_split_preserves_legacy_case_lineage(self):
         root = Path(__file__).resolve().parents[1]
+        self.assertFalse((root / 'skills/task-workflow/SKILL.md').exists(),
+                         'the retired root must not remain installable')
+        readme = (root / 'README.md').read_text(encoding='utf-8')
+        self.assertIn('| `task-workflow` |', readme)
         migrated = []
         for skill in ('issue-management', 'change-delivery'):
             path = root / 'skills' / skill / 'evals' / 'evals.json'
