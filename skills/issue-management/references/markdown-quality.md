@@ -62,7 +62,7 @@ GitHub投稿本文には共通設定を明示指定する。リポジトリ文�
 5. 保存済み本文を再取得して整形済みファイルと一致することを確認する。Issueでは[Issue保存後のブラウザ起動](issue-recording.md#issue保存後のブラウザ起動)に従い、要求時だけ一度開く。GitHubのレンダリングで使用した見出し・表・Alerts・リンク・リストの表示を確認し、単純リストの不要な `li > p` と意図した複数段落を区別する。起動の有無によらず本文・表示を確認し、起動成功だけで目視確認済みとしない。
 6. 表示が不自然なら元ファイルを修正し、整形・チェック・投稿・再取得を繰り返す。APIのHTML確認だけの場合は画面を目視確認したと報告しない。
 
-リポジトリ文書も保存前に同じ整形・チェックを行い、frontmatter・見出し階層・相対リンク・feature文書のステップを確認する。通常概念のtitleとH1がMD025で重複と判定される場合は本文の見出し階層を調整する。`type: Attested Computation` で本文に計算定義を置く場合は仕様が `# Computation` を要求するため、その文書だけ `--config 'MD025.front-matter-title = ""'` を既存設定に追加する。MD025自体と本文H1の重複検査は維持する。計算のH1をH2へ変えて回避しない。固有契約と検証手順は依存する [okf-docsの計算資料](../../okf-docs/references/computation.md) を確認する。
+リポジトリ文書も保存前に同じ整形・チェックを行い、frontmatter・見出し階層・相対リンク・feature文書のステップを確認する。通常概念のtitleとH1がMD025で重複と判定される場合は本文の見出し階層を調整する。`type: Attested Computation` で本文に計算定義を置く場合は仕様が `# Computation` を要求するため、その文書だけ `--config 'MD025.front-matter-title = ""'` を既存設定に追加する。MD025自体と本文H1の重複検査は維持する。計算のH1をH2へ変えて回避しない。固有契約と検証手順は依存する [document-authoringの計算資料](../../document-authoring/references/computation.md) を確認する。
 
 ### 参考
 

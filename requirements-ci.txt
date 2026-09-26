@@ -1,2 +1,2 @@
--r skills/okf-docs/scripts/requirements.txt
+-r skills/document-authoring/scripts/requirements.txt
 rumdl==0.2.69

@@ -154,7 +154,7 @@ class MetadataTests(unittest.TestCase):
                     if case.get('source_id') == 'task-workflow/1')
         expected = case['expected_output']
         self.assertIn('読み取りと概念説明だけに留め', expected)
-        self.assertIn('issue-management・change-delivery・okf-docsを起動せず', expected)
+        self.assertIn('issue-management・change-delivery・document-authoringを起動せず', expected)
         self.assertIn('Issue・PRを作成しない', expected)
         self.assertNotIn('task-workflow', expected)
 
@@ -210,7 +210,7 @@ class MetadataTests(unittest.TestCase):
                 self.assertNotIn('task-workflow', expected)
                 if number == 2:
                     self.assertIn('issue-management', expected)
-                    self.assertIn('okf-docs', expected)
+                    self.assertIn('document-authoring', expected)
                     self.assertIn('文書のみなのでTDDは要求しない', expected)
                 else:
                     self.assertIn('未確認ならissue-management', expected)
@@ -389,14 +389,14 @@ class MetadataTests(unittest.TestCase):
         self.assertIn('Issue計画', handoff)
         self.assertIn('公開許可', handoff)
         self.assertIn('main', handoff)
-        self.assertIn('`okf-docs`', skill)
+        self.assertIn('`document-authoring`', skill)
         self.assertIn('コード変更が依頼された場合', handoff)
         self.assertIn('Plan Mode・読み取り限定では文案を提示', handoff)
-        self.assertIn('計画だけの依頼では `change-delivery` や `okf-docs` の導入を前提にしない', handoff)
+        self.assertIn('計画だけの依頼では `change-delivery` や `document-authoring` の導入を前提にしない', handoff)
         self.assertIn('仕様保存だけを実装承認にしない', handoff)
         self.assertIn('`issue-management` を利用できなければIssueへ投稿せず', handoff)
         self.assertIn('`change-delivery` を利用できなければ文書を保存せず', handoff)
-        self.assertIn('`okf-docs` を利用できなければ文書を保存せず', handoff)
+        self.assertIn('`document-authoring` を利用できなければ文書を保存せず', handoff)
         self.assertNotIn('`task-workflow`', skill)
 
         evals = json.loads((root / 'skills/behavior-specification/evals/evals.json').read_text(encoding='utf-8'))
@@ -411,7 +411,7 @@ class MetadataTests(unittest.TestCase):
         self.assertIn('Plan Modeでは編集せず', by_id[14]['expected_output'])
         self.assertIn('仕様整理だけでsoftware-developmentのTDD', by_id[35]['expected_output'])
         self.assertIn('コード変更を依頼された場合だけ', by_id[37]['expected_output'])
-        for case_id, missing in ((38, 'issue-management'), (39, 'change-delivery'), (40, 'okf-docs')):
+        for case_id, missing in ((38, 'issue-management'), (39, 'change-delivery'), (40, 'document-authoring')):
             with self.subTest(case_id=case_id):
                 self.assertIn(case_id, by_id, f'missing {missing} must stop document delivery')
                 self.assertIn(missing, by_id[case_id]['prompt'])
@@ -419,7 +419,7 @@ class MetadataTests(unittest.TestCase):
                 self.assertIn('文書', by_id[case_id]['expected_output'])
         self.assertIn(41, by_id, 'issue-only plans must not require delivery or document authoring')
         self.assertIn('change-delivery', by_id[41]['prompt'])
-        self.assertIn('okf-docs', by_id[41]['prompt'])
+        self.assertIn('document-authoring', by_id[41]['prompt'])
         self.assertIn('issue-management', by_id[41]['expected_output'])
         self.assertIn('妨げない', by_id[41]['expected_output'])
         self.assertIn('未投稿', by_id[41]['expected_output'])
@@ -491,7 +491,7 @@ class MetadataTests(unittest.TestCase):
 
     def test_document_authoring_routes_publication_and_approved_delivery_separately(self):
         root = Path(__file__).resolve().parents[1]
-        skill = (root / 'skills/okf-docs/SKILL.md').read_text(encoding='utf-8')
+        skill = (root / 'skills/document-authoring/SKILL.md').read_text(encoding='utf-8')
         entry = skill.split('## 適用と参照資料')[0]
         self.assertIn('`issue-management`', entry)
         self.assertIn('`change-delivery`', entry)
@@ -516,7 +516,7 @@ class MetadataTests(unittest.TestCase):
         self.assertIn('`change-delivery` を利用できなければ', skill)
         self.assertNotIn('task-workflow', skill)
 
-        validation = (root / 'skills/okf-docs/references/validation.md').read_text(encoding='utf-8')
+        validation = (root / 'skills/document-authoring/references/validation.md').read_text(encoding='utf-8')
         self.assertIn(
             '[検証環境の準備](../../issue-management/references/planning.md#検証環境の準備)',
             validation)
@@ -528,12 +528,12 @@ class MetadataTests(unittest.TestCase):
         self.assertIn('実行できない検査を合格にしない', validation)
         self.assertNotIn('task-workflow', validation)
 
-        specification = (root / 'skills/okf-docs/references/specification.md').read_text(encoding='utf-8')
+        specification = (root / 'skills/document-authoring/references/specification.md').read_text(encoding='utf-8')
         scope = next(sentence for sentence in specification.split('。') if '実装の範囲や方針変更' in sentence)
         self.assertIn('issue-management', scope)
         self.assertNotIn('task-workflow', specification)
 
-        evals = json.loads((root / 'skills/okf-docs/evals/evals.json').read_text(encoding='utf-8'))
+        evals = json.loads((root / 'skills/document-authoring/evals/evals.json').read_text(encoding='utf-8'))
         by_id = {case['id']: case for case in evals['evals']}
         for case_id in (1, 2, 4):
             with self.subTest(case_id=case_id):
@@ -561,9 +561,24 @@ class MetadataTests(unittest.TestCase):
         self.assertIn('旧task-workflow', by_id[32]['expected_output'])
         self.assertIn('旧task-workflow', by_id[33]['expected_output'])
 
+    def test_document_authoring_owns_the_renamed_skill_and_validator(self):
+        root = Path(__file__).resolve().parents[1]
+        skill = root / 'skills/document-authoring'
+        self.assertTrue((skill / 'SKILL.md').is_file())
+        self.assertFalse((root / 'skills/okf-docs').exists())
+        self.assertIn('name: document-authoring',
+                      (skill / 'SKILL.md').read_text(encoding='utf-8'))
+        evals = json.loads((skill / 'evals/evals.json').read_text(encoding='utf-8'))
+        self.assertEqual('document-authoring', evals['skill_name'])
+        self.assertEqual(list(range(1, 34)), sorted(case['id'] for case in evals['evals']))
+        self.assertIn('skills/document-authoring/scripts/requirements.txt',
+                      (root / 'requirements-ci.txt').read_text(encoding='utf-8'))
+        self.assertIn("skills/document-authoring/scripts/validate_okf.py",
+                      (root / 'scripts/check_repository.py').read_text(encoding='utf-8'))
+
     def test_document_authoring_preserves_approval_without_assuming_a_saved_plan(self):
         root = Path(__file__).resolve().parents[1]
-        evals = json.loads((root / 'skills/okf-docs/evals/evals.json').read_text(encoding='utf-8'))
+        evals = json.loads((root / 'skills/document-authoring/evals/evals.json').read_text(encoding='utf-8'))
         by_id = {case['id']: case for case in evals['evals']}
         for case_id in (1, 2):
             with self.subTest(case_id=case_id):
@@ -572,7 +587,7 @@ class MetadataTests(unittest.TestCase):
                 self.assertIn('公開許可', by_id[case_id]['expected_output'])
                 self.assertIn('実行承認を保持', by_id[case_id]['expected_output'])
 
-        skill = (root / 'skills/okf-docs/SKILL.md').read_text(encoding='utf-8')
+        skill = (root / 'skills/document-authoring/SKILL.md').read_text(encoding='utf-8')
         missing_delivery = next(sentence for sentence in skill.split('。')
                                 if '`change-delivery` を利用できなければ' in sentence)
         self.assertIn('リポジトリ文書・PR', missing_delivery)
@@ -580,7 +595,7 @@ class MetadataTests(unittest.TestCase):
 
     def test_document_and_pr_handoff_checks_plan_record_separately_from_approval(self):
         root = Path(__file__).resolve().parents[1]
-        skill = (root / 'skills/okf-docs/SKILL.md').read_text(encoding='utf-8')
+        skill = (root / 'skills/document-authoring/SKILL.md').read_text(encoding='utf-8')
         handoff = next((line for line in skill.splitlines()
                         if line.startswith('- PR本文・リポジトリ文書の変更では')), '')
         self.assertIn('計画承認済みでも', handoff)

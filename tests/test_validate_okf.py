@@ -4,7 +4,7 @@ import sys
 import tempfile
 import unittest
 
-SCRIPT = Path(__file__).resolve().parents[1] / 'skills/okf-docs/scripts/validate_okf.py'
+SCRIPT = Path(__file__).resolve().parents[1] / 'skills/document-authoring/scripts/validate_okf.py'
 spec = importlib.util.spec_from_file_location('validate_okf', SCRIPT)
 okf = importlib.util.module_from_spec(spec)
 sys.modules[spec.name] = okf

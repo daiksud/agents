@@ -37,7 +37,7 @@ XPの5価値を、[同梱設計資料の対応付け](references/design.md#xpの
 
 実装前に目的・ルール・代表例・未回答の質問を整理し、対応する受け入れ条件を定める。既存の合意と仮定を区別し、未合意の業務判断をAI同士の一致で確定しない。
 
-ドメインのルールを追加・変更するときは、ルールが合意済みでも `behavior-specification` の[共有理解とfeature文書](../behavior-specification/references/behavior.md)に従い、`okf-docs` を併用して `docs/behavior/<機能名>.feature.md` を実装より先に保存する。正しい既存仕様は不要に書き換えず、テストとの対応を追えるようにする。
+ドメインのルールを追加・変更するときは、ルールが合意済みでも `behavior-specification` の[共有理解とfeature文書](../behavior-specification/references/behavior.md)に従い、`document-authoring` を併用して `docs/behavior/<機能名>.feature.md` を実装より先に保存する。正しい既存仕様は不要に書き換えず、テストとの対応を追えるようにする。
 
 ## テスト駆動開発（TDD）
 

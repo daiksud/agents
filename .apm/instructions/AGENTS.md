@@ -20,7 +20,7 @@ sources:
 - 自作する通常概念の `description` に、指示の対象と目的を一文で書く。`index.md`・`log.md` を作る場合は予約形式を使い、概念メタデータを要求しない。
 - 本文は日本語のMarkdownで書き、先頭の見出しにインストラクション名を付ける。
 - テンプレートから目的に必要な節だけを選び、未記入の欄や不要な節を残さない。
-- APM用の `description` や `applyTo`、未知メタデータと出典・確認履歴を保持する。出典付き更新と確認の扱いは [okf-docs](../../skills/okf-docs/SKILL.md) に従う。過去の確認を更新後内容の確認として主張しない。
+- APM用の `description` や `applyTo`、未知メタデータと出典・確認履歴を保持する。出典付き更新と確認の扱いは [document-authoring](../../skills/document-authoring/SKILL.md) に従う。過去の確認を更新後内容の確認として主張しない。
 
 ### 共通指示と作業スキル
 

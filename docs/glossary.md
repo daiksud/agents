@@ -40,8 +40,8 @@ sources:
 | OOP | 状態とふるまいをオブジェクトにまとめる設計手段。DDDの必須形式ではない | 設計・実装の指示 | Object-Oriented Programming、`software-development` |
 | SOLID | 責務・拡張・置換可能性・インターフェース・依存方向を点検する設計原則。抽象型やクラス数を目標にしない | 設計・実装の指示 | `software-development` の設計判断 |
 | GoFパターン | 繰り返し現れるオブジェクト設計の問題と解決形を共有する語彙。実際の要求に応じて選択する | 設計・実装の指示 | Strategy、Adapter、Builder等、`software-development` |
-| 外部契約 | モデルやシステムの境界を越えて利用者に約束する入出力・失敗・副作用等の条件 | 仕様記述・検証の指示 | feature、API仕様、スキーマ、`okf-docs` |
-| 仕様の正本 | ある要求・契約を変更するときに基準として更新する記録。情報ごとに特定し他文書から参照する | 仕様記述の指示 | feature、ADR、API仕様、`okf-docs` |
+| 外部契約 | モデルやシステムの境界を越えて利用者に約束する入出力・失敗・副作用等の条件 | 仕様記述・検証の指示 | feature、API仕様、スキーマ、`document-authoring` |
+| 仕様の正本 | ある要求・契約を変更するときに基準として更新する記録。情報ごとに特定し他文書から参照する | 仕様記述の指示 | feature、ADR、API仕様、`document-authoring` |
 | 不安定なテスト | 同じ条件で結果が揺れるテスト。再試行成功と原因の解消を区別する | テスト・検証の指示 | flaky test、`software-development` |
 | サブドメイン | 業務上の問題領域の一部分 | 開発実践の指示・診断 | Subdomain |
 | 境界づけられたコンテキスト | 一つのモデルの意味が通用する明示的な範囲 | 開発実践の指示・診断 | Bounded Context |

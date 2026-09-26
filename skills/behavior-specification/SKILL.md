@@ -14,12 +14,12 @@ description: 利用者向けのふるまい、ドメインルール、共有す�
 3. 対応する実装より先に受け入れ条件を定め、通常・境界・失敗のどの結果を観測すればよいかを示す。内部の実装手順を業務仕様に混ぜず、外部に約束する応答・保存結果・通知は契約として保持する。
 4. ドメインルールの追加・変更では、合意済みのルールでも実装前に `docs/behavior/<機能名>.feature.md` を保存する。正しい既存仕様は不要に書き換えない。外部の技術契約は既存API仕様等の正本を優先し、共有仕様が必要な場合に読者と観測結果を明示してfeatureを使える。
 
-文書を保存するときは依存スキル `okf-docs` を併用し、featureは[共有仕様の形式](references/behavior.md#feature文書の形式)の日本語Markdown with Gherkinに従う。定義・出典・採用理由を確認するときは[一次資料](references/sources.md)を読む。会議、参加人数、自動化ツールを一律に要求しない。
+文書を保存するときは依存スキル `document-authoring` を併用し、featureは[共有仕様の形式](references/behavior.md#feature文書の形式)の日本語Markdown with Gherkinに従う。定義・出典・採用理由を確認するときは[一次資料](references/sources.md)を読む。会議、参加人数、自動化ツールを一律に要求しない。
 
 ## 引き渡しと完了
 
 - コードを変更しない仕様整理だけの依頼は、ストーリー、具体例、受け入れ条件、未回答の質問を提示して終了する。Issue作成、公開、TDDを暗黙に開始しない。
-- Issue計画の作成・更新を依頼された場合は `issue-management` で公開許可・実行範囲・保存後の確認を扱う。計画だけの依頼では `change-delivery` や `okf-docs` の導入を前提にしないで、Issue計画の保存・再取得・本文と表示・URLの提示で終了し、文書保存や実装へ進まない。
-- 承認済みのリポジトリ内feature文書の保存には `okf-docs` と `change-delivery` を併用し、保存済みのIssue計画と承認を作り直さず、統合後mainの確認まで進める。Plan Mode・読み取り限定では文案を提示し、保存や実装を実施済みとしない。
-- `issue-management` を利用できなければIssueへ投稿せず、他のSkillで代用せずに未保存案と制約を示す。`change-delivery` を利用できなければ文書を保存せず、他のSkillで代用せずに未完了範囲を示す。`okf-docs` を利用できなければ文書を保存せず、必要な形式と依存を示す。
+- Issue計画の作成・更新を依頼された場合は `issue-management` で公開許可・実行範囲・保存後の確認を扱う。計画だけの依頼では `change-delivery` や `document-authoring` の導入を前提にしないで、Issue計画の保存・再取得・本文と表示・URLの提示で終了し、文書保存や実装へ進まない。
+- 承認済みのリポジトリ内feature文書の保存には `document-authoring` と `change-delivery` を併用し、保存済みのIssue計画と承認を作り直さず、統合後mainの確認まで進める。Plan Mode・読み取り限定では文案を提示し、保存や実装を実施済みとしない。
+- `issue-management` を利用できなければIssueへ投稿せず、他のSkillで代用せずに未保存案と制約を示す。`change-delivery` を利用できなければ文書を保存せず、他のSkillで代用せずに未完了範囲を示す。`document-authoring` を利用できなければ文書を保存せず、必要な形式と依存を示す。
 - コード変更が依頼された場合は依存スキル [software-development](../software-development/SKILL.md) へ、合意済み仕様・具体例・未回答事項とテストの対応を引き渡す。仕様保存だけを実装承認にしない。実装が承認済みならその承認を保持し、同じ承認を再質問しない。
