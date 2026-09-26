@@ -394,6 +394,109 @@ class MetadataTests(unittest.TestCase):
         self.assertIn('issue-management', by_id[29]['expected_output'])
         self.assertIn('妨げない', by_id[29]['expected_output'])
 
+    def test_document_authoring_routes_publication_and_approved_delivery_separately(self):
+        root = Path(__file__).resolve().parents[1]
+        skill = (root / 'skills/okf-docs/SKILL.md').read_text(encoding='utf-8')
+        entry = skill.split('## 適用と参照資料')[0]
+        self.assertIn('`issue-management`', entry)
+        self.assertIn('`change-delivery`', entry)
+        self.assertIn('Issue計画', entry)
+        self.assertIn('公開許可', entry)
+        self.assertIn('main', entry)
+        plan_only = next(sentence for sentence in skill.split('。') if 'Issue計画だけなら' in sentence)
+        self.assertIn('`issue-management`', plan_only)
+        self.assertIn('`change-delivery` は不要', plan_only)
+        self.assertIn('保存・再取得', plan_only)
+        issue_only = next(sentence for sentence in skill.split('。') if 'Issue本文・コメントだけなら' in sentence)
+        self.assertIn('`issue-management`', issue_only)
+        self.assertIn('`change-delivery` は不要', issue_only)
+        external = next(sentence for sentence in skill.split('。') if '外部Bundleのconformanceだけなら' in sentence)
+        self.assertIn('`issue-management`・`change-delivery` が未導入でも', external)
+        self.assertIn('自作のauthoring条件を課さない', external)
+        pr_only = next(sentence for sentence in skill.split('。') if 'PR本文だけの更新は' in sentence)
+        self.assertIn('`issue-management`', pr_only)
+        self.assertIn('`change-delivery`', pr_only)
+        self.assertIn('リポジトリ編集・マージを始めない', pr_only)
+        self.assertIn('`issue-management` を利用できなければ', skill)
+        self.assertIn('`change-delivery` を利用できなければ', skill)
+        self.assertNotIn('task-workflow', skill)
+
+        validation = (root / 'skills/okf-docs/references/validation.md').read_text(encoding='utf-8')
+        self.assertIn(
+            '[検証環境の準備](../../issue-management/references/planning.md#検証環境の準備)',
+            validation)
+        self.assertIn(
+            '[GitHub向けMarkdownの品質](../../issue-management/references/markdown-quality.md)',
+            validation)
+        self.assertIn('conformance', validation)
+        self.assertIn('隔離venv', validation)
+        self.assertIn('実行できない検査を合格にしない', validation)
+        self.assertNotIn('task-workflow', validation)
+
+        specification = (root / 'skills/okf-docs/references/specification.md').read_text(encoding='utf-8')
+        scope = next(sentence for sentence in specification.split('。') if '実装の範囲や方針変更' in sentence)
+        self.assertIn('issue-management', scope)
+        self.assertNotIn('task-workflow', specification)
+
+        evals = json.loads((root / 'skills/okf-docs/evals/evals.json').read_text(encoding='utf-8'))
+        by_id = {case['id']: case for case in evals['evals']}
+        for case_id in (1, 2, 4):
+            with self.subTest(case_id=case_id):
+                self.assertNotIn('task-workflow', json.dumps(by_id[case_id], ensure_ascii=False))
+                self.assertIn('issue-management', by_id[case_id]['expected_output'])
+                self.assertIn('change-delivery', by_id[case_id]['expected_output'])
+        self.assertIn('OKF', by_id[1]['expected_output'])
+        self.assertIn('behavior-specification', by_id[2]['expected_output'])
+        self.assertIn('OKF', by_id[4]['expected_output'])
+        self.assertIn('PR本文だけ', by_id[4]['expected_output'])
+        self.assertIn('保存・確認済みなら', by_id[4]['expected_output'])
+        self.assertIn('未保存なら', by_id[4]['expected_output'])
+        self.assertIn('リポジトリ編集やマージへ進まない', by_id[4]['expected_output'])
+        self.assertIn('隔離環境', by_id[5]['expected_output'])
+        self.assertIn('自作品質条件と区別する', by_id[18]['expected_output'])
+        self.assertIn('TDD', by_id[25]['expected_output'])
+        for case_id in (29, 30, 31, 32, 33):
+            with self.subTest(case_id=case_id):
+                self.assertIn(case_id, by_id)
+                self.assertTrue(by_id[case_id]['expectations'])
+        self.assertIn('保存', by_id[29]['expected_output'])
+        self.assertIn('conformance', by_id[30]['expected_output'])
+        self.assertIn('Issue', by_id[31]['expected_output'])
+        self.assertIn('change-deliveryを要求せず', by_id[31]['expected_output'])
+        self.assertIn('旧task-workflow', by_id[32]['expected_output'])
+        self.assertIn('旧task-workflow', by_id[33]['expected_output'])
+
+    def test_document_authoring_preserves_approval_without_assuming_a_saved_plan(self):
+        root = Path(__file__).resolve().parents[1]
+        evals = json.loads((root / 'skills/okf-docs/evals/evals.json').read_text(encoding='utf-8'))
+        by_id = {case['id']: case for case in evals['evals']}
+        for case_id in (1, 2):
+            with self.subTest(case_id=case_id):
+                self.assertIn('保存・確認済みなら', by_id[case_id]['expected_output'])
+                self.assertIn('未保存なら', by_id[case_id]['expected_output'])
+                self.assertIn('公開許可', by_id[case_id]['expected_output'])
+                self.assertIn('実行承認を保持', by_id[case_id]['expected_output'])
+
+        skill = (root / 'skills/okf-docs/SKILL.md').read_text(encoding='utf-8')
+        missing_delivery = next(sentence for sentence in skill.split('。')
+                                if '`change-delivery` を利用できなければ' in sentence)
+        self.assertIn('リポジトリ文書・PR', missing_delivery)
+        self.assertIn('Issue本文・コメントだけの更新は妨げない', missing_delivery)
+
+    def test_document_and_pr_handoff_checks_plan_record_separately_from_approval(self):
+        root = Path(__file__).resolve().parents[1]
+        skill = (root / 'skills/okf-docs/SKILL.md').read_text(encoding='utf-8')
+        handoff = next((line for line in skill.splitlines()
+                        if line.startswith('- PR本文・リポジトリ文書の変更では')), '')
+        self.assertIn('計画承認済みでも', handoff)
+        self.assertIn('保存・確認済みと推測しない', handoff)
+        self.assertIn('保存・確認済みなら再記録せず', handoff)
+        self.assertIn('未保存なら公開許可', handoff)
+        self.assertIn('`issue-management`', handoff)
+        self.assertIn('保存・再取得', handoff)
+        self.assertIn('本文・表示・URL', handoff)
+        self.assertIn('実行承認を取り直さない', handoff)
+
 
 if __name__ == '__main__':
     unittest.main()
