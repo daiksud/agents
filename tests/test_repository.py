@@ -4,6 +4,8 @@ import tempfile
 import unittest
 from unittest.mock import patch
 
+import yaml
+
 from scripts.check_repository import validate_file
 
 
@@ -340,6 +342,30 @@ class MetadataTests(unittest.TestCase):
         self.assertIn('実際の変更への安全性', reviewer_row)
         self.assertIn('欠陥・回帰', reviewer_row)
         self.assertNotIn('将来の変更への耐性を最優先', reviewer_row)
+
+    def test_code_review_guidance_attributes_simple_design_sources(self):
+        root = Path(__file__).resolve().parents[1]
+        guidance = (root / 'skills/code-review/references/review-guidance.md').read_text(
+            encoding='utf-8')
+        sources = {source['id']: source['resource'] for source in
+                   yaml.safe_load(guidance.split('---', 2)[1])['sources']}
+        self.assertIn('fowler-beck-design-rules', sources)
+        self.assertIn('fowler-yagni', sources)
+        self.assertEqual('https://martinfowler.com/bliki/BeckDesignRules.html',
+                         sources['fowler-beck-design-rules'])
+        self.assertEqual('https://martinfowler.com/bliki/Yagni.html',
+                         sources['fowler-yagni'])
+        self.assertIn('github-instructions-code-review-generic-instructions-md', sources)
+        adoption = guidance.split('## 参照元と適用方針\n', 1)[1].split(
+            '[^github-instructions-code-review-generic-instructions-md]:', 1)[0]
+        self.assertIn('現在の要求', adoption)
+        self.assertIn('5つの観点', adoption)
+        self.assertIn('[^fowler-beck-design-rules]', adoption)
+        self.assertIn('[^fowler-yagni]', adoption)
+        self.assertIn('[^fowler-beck-design-rules]: [Beck Design Rules]'
+                      '(https://martinfowler.com/bliki/BeckDesignRules.html)', guidance)
+        self.assertIn('[^fowler-yagni]: [Yagni]'
+                      '(https://martinfowler.com/bliki/Yagni.html)', guidance)
 
     def test_issue_only_route_does_not_select_delivery(self):
         root = Path(__file__).resolve().parents[1]

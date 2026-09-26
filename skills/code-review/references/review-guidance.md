@@ -5,6 +5,10 @@ description: 11領域を具体的な調査へ結びつけ、正式な修正指�
 sources:
   - id: github-instructions-code-review-generic-instructions-md
     resource: https://github.com/github/awesome-copilot/blob/main/instructions/code-review-generic.instructions.md
+  - id: fowler-beck-design-rules
+    resource: https://martinfowler.com/bliki/BeckDesignRules.html
+  - id: fowler-yagni
+    resource: https://martinfowler.com/bliki/Yagni.html
 ---
 
 ## 調べ方
@@ -132,6 +136,10 @@ sources:
 
 GitHub awesome-copilotのGeneric Code Review Instructions[^github-instructions-code-review-generic-instructions-md]の品質観点、全体から詳細へ進む調査、具体的で建設的な報告を参考にした。
 
+Martin FowlerのBeck Design Rules[^fowler-beck-design-rules]とYagni[^fowler-yagni]を参考に、現在の要求に不要な複雑さを調べる5つの観点を設けた。これらの観点は本スキルでの適用例であり、原典が各構造を一律に禁止したものではない。
+
 このスキルでは現在の要求を満たす最もシンプルな設計と実際の変更への安全性を評価軸とし、重大度はP0〜P3で影響から決める。参照元の領域別の重要度、行数の目安、Copilot用のfrontmatterはそのまま適用しない。レビュー結果は確認範囲の判断として報告し、GitHub上の承認・マージを代行しない。
 
 [^github-instructions-code-review-generic-instructions-md]: [GitHub awesome-copilotのGeneric Code Review Instructions](https://github.com/github/awesome-copilot/blob/main/instructions/code-review-generic.instructions.md)。本文に記した参照範囲と採用判断の根拠。
+[^fowler-beck-design-rules]: [Beck Design Rules](https://martinfowler.com/bliki/BeckDesignRules.html)。現在の要求を満たす設計、意図の明瞭さと不要な要素の判断に適用する。
+[^fowler-yagni]: [Yagni](https://martinfowler.com/bliki/Yagni.html)。仮想的な将来機能の先取りと、現在必要な健全性を区別する。
