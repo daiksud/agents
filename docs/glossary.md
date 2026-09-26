@@ -3,6 +3,8 @@ type: Reference
 title: 開発実践と作業スキルの用語
 description: このパッケージで用いる開発実践と診断の用語、適用範囲、対応する名称を定義します。
 sources:
+  - id: engineering-model
+    resource: engineering/model.md
   - id: xp-principles
     resource: ../skills/software-development/references/sources.md
   - id: okf-v02
@@ -17,6 +19,11 @@ sources:
 
 | 用語 | この文脈での定義 | 適用境界 | コード・指示上の名称 |
 | --- | --- | --- | --- |
+| Engineering model | 開発実践をValues / Principles、Practices、Capabilities、Architectural / Organizational Choicesに分類し、相互の多対多の関係と配置境界を示す概念モデル | agentsパッケージの保守・診断知識。成熟度の一方向階層やruntime必須ルールにはしない | `docs/engineering/model.md` |
+| Values / Principles | 判断時に何を優先するかを示す価値・原則。具体的な作業手順や能力の達成状態とは区別する | 開発判断・診断 | engineering model、各Instruction |
+| Practice | 価値・原則を具体化する、繰り返し実行する行動。別体系ではCapabilityとして扱われる場合がある | 開発実践・診断 | TDD、Pair Programming、CI、Small Batches等 |
+| Capability | チーム・システムが実際に持つ観測可能な能力。設定やPracticeの存在だけで達成済みと判定しない | 開発実践の診断 | `engineering-assessment` |
+| Architectural / Organizational Choice | 現在の要求・制約・能力から選ぶ構造、配置、責任境界。上位成熟状態や既定解とは扱わない | 設計・組織の判断・診断 | Microservices、module / deployment / team boundaries等 |
 | XP | Communication・Simplicity・Feedback・Courage・Respectを軸に、小さなテストと協働から設計を進化させる開発思想 | 開発判断・実装・診断 | `development`、`software-development`、`engineering-assessment` |
 | Simple Design | 現在の契約を満たし、意図を伝え、同じルールの重複と不要な要素を減らす設計の判断基準 | 開発判断と設計・実装 | `software-development` の設計資料 |
 | YAGNI | 仮想の将来機能を先取りせず、現在必要な検証・設計改善を保つ判断 | 開発判断と設計・実装 | `software-development` の設計資料 |
