@@ -39,6 +39,8 @@ sources:
     resource: https://dora.dev/research/core/assets/dora-core-v2.1.0-detail.pdf
   - id: dora-research
     resource: https://dora.dev/research/
+  - id: ron-jeffries-xp
+    resource: https://ronjeffries.com/xprog/what-is-extreme-programming/
   - id: cucumber-docs-bdd
     resource: https://cucumber.io/docs/bdd/
   - id: cucumber-bdd-example-mapping
@@ -67,7 +69,7 @@ sources:
 
 ## 一次資料と適用上の判断
 
-2026-09-11確認。以下を翻訳転載せず、[原則の関係](principles.md)と[診断手順](assessment.md)へ要約・再構成した。更新日がない資料に確認日を公開日として付けない。後日の診断では、実際に参照した版・確認日を記録する。
+既存資料は2026-09-11、追加したXP資料は2026-09-26に確認した。以下を翻訳転載せず、[原則の関係](principles.md)と[診断手順](assessment.md)へ要約・再構成した。更新日がない資料に確認日を公開日として付けない。後日の診断では、実際に参照した版・確認日を記録する。
 
 ### DevOps・Lean・改善
 
@@ -93,6 +95,14 @@ sources:
 | DORA Core v2.1.0[^dora-assets-dora-core-v2-1-0-detail-pdf]・研究モデルの説明[^dora-research] | Coreは安定した研究モデルで、最新ガイドと更新周期が異なる。4指標の図を現行5指標と混同しない |
 
 DORAの文章・図はGoogle LLCによるCC BY 4.0（各ページの例外を除く）。本スキルは資料の要約と適用指針を作成したもので、DORAによる認定や普遍的な因果の保証ではない。
+
+### XPの価値と小さいフィードバック
+
+| 資料・著者 | 参照点と注意 |
+| --- | --- |
+| What is Extreme Programming? — Ron Jeffries[^ron-jeffries-xp]（2026-09-26確認） | Communication・Simplicity・Feedback・Courage・Respectを現在の要求、小さいフィードバック、継続的な設計改善に使う。会議・役割・期間の固定形式、原典の効果数値を共通要件にしない |
+
+5価値を診断の問いとして扱い、採用プラクティスの数や特定の組織形態でXPの成否を判定しないのは、本スキルの適用判断である。
 
 ### BDD・ATDD・TDD・DDD・チームトポロジー
 
@@ -128,6 +138,7 @@ DORAの文章・図はGoogle LLCによるCC BY 4.0（各ページの例外を除
 [^dora-insights-dora-metrics-history]: [Metrics history — DORA](https://dora.dev/insights/dora-metrics-history/)。本文に記した参照範囲と採用判断の根拠。
 [^dora-assets-dora-core-v2-1-0-detail-pdf]: [DORA Core v2.1.0](https://dora.dev/research/core/assets/dora-core-v2.1.0-detail.pdf)。本文に記した参照範囲と採用判断の根拠。
 [^dora-research]: [研究モデルの説明](https://dora.dev/research/)。本文に記した参照範囲と採用判断の根拠。
+[^ron-jeffries-xp]: [What is Extreme Programming?](https://ronjeffries.com/xprog/what-is-extreme-programming/)。5価値、現在の要求、小さいフィードバックと設計改善の参照と適用判断。
 [^cucumber-docs-bdd]: [BDD — Cucumber](https://cucumber.io/docs/bdd/)。本文に記した参照範囲と採用判断の根拠。
 [^cucumber-bdd-example-mapping]: [Example Mapping](https://cucumber.io/docs/bdd/example-mapping/)。本文に記した参照範囲と採用判断の根拠。
 [^cucumber-bdd-better-gherkin]: [Better Gherkin](https://cucumber.io/docs/bdd/better-gherkin/)。本文に記した参照範囲と採用判断の根拠。

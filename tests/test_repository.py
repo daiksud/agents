@@ -414,6 +414,114 @@ class MetadataTests(unittest.TestCase):
         self.assertNotIn('`issue-management`', checks)
         self.assertNotIn('`task-workflow`', delivery)
 
+    def test_assessment_xp_lens_is_discoverable_and_distinct_from_practices(self):
+        root = Path(__file__).resolve().parents[1]
+        skill = (root / 'skills/engineering-assessment/SKILL.md').read_text(encoding='utf-8')
+        principles = (root / 'skills/engineering-assessment/references/principles.md').read_text(
+            encoding='utf-8')
+        sources = (root / 'skills/engineering-assessment/references/sources.md').read_text(
+            encoding='utf-8')
+        self.assertIn('XP', skill.split('---', 2)[1])
+        self.assertIn('XPを含む各観点', skill)
+        self.assertIn('限定診断は依頼された概念・困りごとに絞り', skill)
+        self.assertNotIn('9概念', skill)
+
+        lens = principles.split('### XPの価値から開発判断を診断する\n', 1)[1].split(
+            '### ', 1)[0]
+        for value in ('Communication', 'Simplicity', 'Feedback', 'Courage', 'Respect'):
+            with self.subTest(value=value):
+                self.assertIn(value, lens)
+        for practice in ('TDD', 'BDD', 'ATDD', 'DDD'):
+            with self.subTest(practice=practice):
+                self.assertIn(practice, lens)
+        self.assertIn('一律の採用や点数化を要求しない', lens)
+        self.assertNotIn('[^', lens)
+        for concept in ('DevOps', 'Lean', 'CI', 'CD', 'BDD', 'ATDD', 'TDD', 'DDD',
+                        'Team Topologies'):
+            with self.subTest(concept=concept):
+                self.assertIn(concept, principles)
+
+        entries = {entry['id']: entry['resource'] for entry in
+                   yaml.safe_load(sources.split('---', 2)[1])['sources']}
+        self.assertIn('ron-jeffries-xp', entries)
+        self.assertEqual('https://ronjeffries.com/xprog/what-is-extreme-programming/',
+                         entries['ron-jeffries-xp'])
+        self.assertIn('| What is Extreme Programming? — Ron Jeffries[^ron-jeffries-xp]',
+                      sources)
+        self.assertIn('[^ron-jeffries-xp]: [What is Extreme Programming?]'
+                      '(https://ronjeffries.com/xprog/what-is-extreme-programming/)', sources)
+
+    def test_assessment_xp_observation_distinguishes_values_from_artifacts(self):
+        root = Path(__file__).resolve().parents[1]
+        guide = (root / 'skills/engineering-assessment/references/assessment.md').read_text(
+            encoding='utf-8')
+        rows = [line for line in guide.splitlines() if line.startswith('| XP |')]
+        self.assertEqual(1, len(rows))
+        columns = [column.strip() for column in rows[0].strip('|').split('|')]
+        self.assertEqual(3, len(columns))
+        evidence, unknown = columns[1:]
+        for signal in ('現在の要求', '小さいフィードバック', '共有', '設計改善'):
+            with self.subTest(signal=signal):
+                self.assertIn(signal, evidence)
+        self.assertIn('TDD・BDDの成果物', unknown)
+        self.assertIn('固定の会議・役割', unknown)
+        self.assertIn('未実践と断定しない', unknown)
+        self.assertIn('各判断は「観測した実践」「根拠のある不足」「未確認」「適用外（理由付き）」',
+                      guide)
+        self.assertIn('YAMLやブランチ上の成功だけでCI達成にしない', guide)
+        self.assertIn('用語集の有無をモデルの品質と同一視しない', guide)
+
+    def test_assessment_xp_evals_keep_limited_and_evidence_boundaries(self):
+        root = Path(__file__).resolve().parents[1]
+        data = json.loads((root / 'skills/engineering-assessment/evals/evals.json').read_text(
+            encoding='utf-8'))
+        cases = {case['id']: case for case in data['evals']}
+        self.assertTrue({20, 21, 22} <= cases.keys())
+        limited, holistic, negative = (cases[index] for index in (20, 21, 22))
+        self.assertIn('XP', limited['prompt'])
+        self.assertIn('限定', limited['prompt'])
+        self.assertIn('全面診断へ広げない', ' '.join(limited['expectations']))
+        for signal in ('現在の要求', '小さいフィードバック', '未確認'):
+            self.assertIn(signal, limited['expected_output'])
+        self.assertIn('XP', holistic['prompt'])
+        self.assertIn('TDD', holistic['prompt'])
+        self.assertIn('TDDの成果物だけ', holistic['expected_output'])
+        self.assertIn('XPの証拠', ' '.join(holistic['expectations']))
+        for request in ('5価値', '採点', '必須'):
+            self.assertIn(request, negative['prompt'])
+        for guard in ('点数化', '一律', '未実践と断定しない'):
+            self.assertIn(guard, negative['expected_output'])
+        for case in (limited, holistic, negative):
+            self.assertEqual([], case['files'])
+            self.assertGreaterEqual(len(case['expectations']), 2)
+            self.assertIn('診断', case['prompt'])
+
+    def test_assessment_xp_vocabulary_stays_consistent_across_guidance(self):
+        root = Path(__file__).resolve().parents[1]
+        delivery = (root / '.apm/instructions/delivery.instructions.md').read_text(
+            encoding='utf-8')
+        self.assertNotIn('9概念', delivery)
+        self.assertIn('通常の変更で開発実践の全面診断を行わない', delivery)
+        cases = json.loads((root / 'skills/engineering-assessment/evals/evals.json').read_text(
+            encoding='utf-8'))['evals']
+        for case in cases:
+            if case['id'] in (16, 20):
+                with self.subTest(case=case['id']):
+                    self.assertNotIn('9概念', json.dumps(case, ensure_ascii=False))
+                    self.assertIn('開発実践の全面診断', ' '.join(case['expectations']))
+                    if case['id'] == 16:
+                        self.assertIn('開発実践の全面診断', case['expected_output'])
+                    else:
+                        self.assertIn('包括診断に広げない', case['expected_output'])
+        glossary = (root / 'docs/glossary.md').read_text(encoding='utf-8')
+        rows = {line.split('|')[1].strip(): line for line in glossary.splitlines()
+                if line.startswith('| ') and line.count('|') == 5}
+        self.assertIn('開発判断・実装・診断', rows['XP'])
+        self.assertIn('`engineering-assessment`', rows['XP'])
+        self.assertIn('`engineering-assessment`', rows['DevOps'])
+        for concept in ('Simple Design', 'YAGNI'):
+            self.assertNotIn('`engineering-assessment`', rows[concept])
+
     def test_assessment_diagnosis_stops_before_approved_delivery(self):
         root = Path(__file__).resolve().parents[1]
         skill = (root / 'skills/engineering-assessment/SKILL.md').read_text(encoding='utf-8')
