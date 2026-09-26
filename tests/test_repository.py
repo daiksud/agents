@@ -166,6 +166,34 @@ class MetadataTests(unittest.TestCase):
                 self.assertIn(source_id, [case.get('source_id') for case in delivery['evals']])
                 self.assertNotIn(source_id, [case.get('source_id') for case in issue['evals']])
 
+    def test_approved_issue_evals_handoff_delivery_without_reapproval(self):
+        root = Path(__file__).resolve().parents[1]
+        data = json.loads((root / 'skills/issue-management/evals/evals.json').read_text(
+            encoding='utf-8'))
+        cases = {case.get('source_id'): case for case in data['evals']}
+        boundaries = {
+            4: ('ブランチ準備・修正・検証・既存PR完了手順へ進む', '会話上の再承認待ちを作らず'),
+            7: ('修正と既存PR完了手順へ進む', '保存内容を再取得・提示後'),
+            9: ('ファイル追加だけを理由に再承認を待たず修正・検証へ進む', '再取得した本文とURLを提示し'),
+            11: ('実装へ進む', '必要なfeature文書は実装より先に保存し'),
+            26: ('編集・検証・PR・レビュー・マージへ進む', '承認待ちの記録を更新する'),
+            43: ('ブランチ準備・実装・検証・既存PR完了手順へ進む', '会話上の再承認を求めず'),
+            95: ('計画保存・再取得・提示後に修正へ進む手順を示す', '別のマップ承認や同じ計画の再承認を追加しない'),
+        }
+        for number, (stale, preserved) in boundaries.items():
+            with self.subTest(source_id=f'task-workflow/{number}'):
+                case = cases[f'task-workflow/{number}']
+                expected = case['expected_output']
+                self.assertIn(preserved, expected)
+                self.assertIn('change-delivery', expected)
+                self.assertIn('引き渡', expected)
+                self.assertNotIn(stale, expected)
+                if number == 95:
+                    self.assertIn(preserved, case['expectations'][2])
+                    self.assertIn('change-delivery', case['expectations'][2])
+                    self.assertIn('引き渡', case['expectations'][2])
+                    self.assertNotIn(stale, case['expectations'][2])
+
     def test_change_delivery_has_installable_skill_entry(self):
         root = Path(__file__).resolve().parents[1]
         skill = root / 'skills/change-delivery/SKILL.md'
