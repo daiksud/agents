@@ -15,7 +15,7 @@ Issueの計画と記録を担当する。Issueを作成・更新した事実や�
 | --- | --- |
 | 個別変更の調査・計画、実行範囲や追加確認の判断、検証依存の準備 | [計画と実行範囲](references/planning.md) |
 | Issueの検索・作成・更新、Sub-issue、後続依頼、診断計画、共通スタンダード候補 | [Issueの記録と提示](references/issue-recording.md) |
-| Issue・PR本文・コメントの投稿・更新 | [GitHub向けMarkdownの品質](references/markdown-quality.md) |
+| Issue・PR本文・コメントの投稿・更新、またはその具体的な手順の判断・提示 | [GitHub向けMarkdownの品質](references/markdown-quality.md) |
 
 ## 記録後の停止と引き渡し
 
