@@ -127,6 +127,22 @@ class MetadataTests(unittest.TestCase):
         self.assertTrue(self.check(path, '{"skill_name":"other","evals":[]}'))
         self.assertTrue(self.check(path, '[]'))
 
+    def test_workflow_eval_split_preserves_legacy_case_lineage(self):
+        root = Path(__file__).resolve().parents[1]
+        migrated = []
+        for skill in ('issue-management', 'change-delivery'):
+            path = root / 'skills' / skill / 'evals' / 'evals.json'
+            self.assertTrue(path.is_file(), f'{skill} evals must exist')
+            data = json.loads(path.read_text(encoding='utf-8'))
+            self.assertEqual(skill, data['skill_name'])
+            legacy = [case for case in data['evals'] if 'source_id' in case]
+            self.assertEqual(69, len(legacy))
+            for case in legacy:
+                self.assertEqual(f'task-workflow/{case["id"]}', case['source_id'])
+            migrated.extend(case['source_id'] for case in legacy)
+        self.assertCountEqual(
+            [f'task-workflow/{number}' for number in range(1, 139)], migrated)
+
 
 if __name__ == '__main__':
     unittest.main()
