@@ -249,6 +249,42 @@ class MetadataTests(unittest.TestCase):
         self.assertIn(18, by_id, 'missing Issue dependency must not silently fall back to the retired root')
         self.assertIn(19, by_id, 'missing delivery dependency must not start implementation')
 
+    def test_code_changes_use_issue_planning_and_approved_delivery(self):
+        root = Path(__file__).resolve().parents[1]
+        skill = (root / 'skills/software-development/SKILL.md').read_text(encoding='utf-8')
+        testing = (root / 'skills/software-development/references/testing.md').read_text(encoding='utf-8')
+        entry = skill.split('工程に対応する資料を読む')[0]
+        self.assertIn('`issue-management`', entry)
+        self.assertIn('`change-delivery`', entry)
+        self.assertIn('Issue計画', entry)
+        self.assertIn('公開許可', entry)
+        self.assertIn('main', entry)
+        self.assertIn('`issue-management` を利用できなければIssueへ投稿せず', skill)
+        self.assertIn('`change-delivery` を利用できなければコード変更を開始せず', skill)
+        subissue = next(sentence for sentence in skill.split('。') if '確認が必要な変更は' in sentence)
+        self.assertIn('`issue-management`', subissue)
+        self.assertIn('[behavior-specification](../behavior-specification/SKILL.md)', skill)
+        self.assertIn('DriverとNavigatorが同じ共有ToDoを育て', skill)
+        self.assertIn('テストファースト', skill)
+        self.assertNotIn('`task-workflow`', skill)
+
+        recovery = next(sentence for sentence in testing.split('。') if 'CIの再試行・復旧' in sentence)
+        self.assertIn('`change-delivery`', recovery)
+        self.assertIn('必要な統合検証を一律にマージ後へ送らない', recovery)
+        self.assertNotIn('task-workflow', testing)
+
+        evals = json.loads((root / 'skills/software-development/evals/evals.json').read_text(encoding='utf-8'))
+        by_id = {case['id']: case for case in evals['evals']}
+        for case_id in (1, 8, 35):
+            with self.subTest(case_id=case_id):
+                self.assertNotIn('task-workflow', json.dumps(by_id[case_id], ensure_ascii=False))
+        self.assertIn('issue-management', by_id[1]['expected_output'])
+        self.assertIn('change-delivery', by_id[1]['expected_output'])
+        self.assertIn('change-delivery', by_id[8]['expected_output'])
+        self.assertIn('change-delivery', by_id[35]['expected_output'])
+        self.assertIn(39, by_id, 'missing Issue dependency must not silently substitute the retired Skill')
+        self.assertIn(40, by_id, 'missing delivery dependency must not start code changes')
+
 
 if __name__ == '__main__':
     unittest.main()

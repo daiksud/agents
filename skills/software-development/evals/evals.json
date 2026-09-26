@@ -4,7 +4,7 @@
     {
       "id": 1,
       "prompt": "HTTPクライアントのタイムアウト処理を修正して。ドメインの判断は変わらない。",
-      "expected_output": "task-workflowとsoftware-developmentを読み、技術処理の具体的仕様をテストに記述してレッド・グリーン・リファクタリングを行い、feature文書は作らない。",
+      "expected_output": "issue-managementとchange-deliveryとsoftware-developmentを読み、技術処理の具体的仕様をテストに記述してレッド・グリーン・リファクタリングを行い、feature文書は作らない。",
       "files": [],
       "source_id": "bdd-tdd/1"
     },
@@ -39,7 +39,7 @@
     {
       "id": 8,
       "prompt": "読み取り専用模擬評価。実操作はしない。変更するのはスキルの判断手順を記述したMarkdownだけで、実行コードは変えない。software-developmentを適用してTDDやfeature文書を作るべきか判断して。",
-      "expected_output": "コード変更がないのでsoftware-developmentを適用せず、TDDやfeature文書を要求しない。task-workflowとスキル作成・改善の模擬評価で判断を検証する。",
+      "expected_output": "コード変更がないのでsoftware-developmentを適用せず、TDDやfeature文書を要求しない。issue-managementとchange-deliveryとスキル作成・改善の模擬評価で判断を検証する。",
       "files": [],
       "source_id": "bdd-tdd/8"
     },
@@ -225,7 +225,7 @@
     {
       "id": 35,
       "prompt": "読み取り専用の模擬評価。実際の編集・投稿・実行は禁止。指定Skillと必要な同梱資料から判断と手順を示し、未実行を成功としない。\n\n合意済みAPI契約と正しい回帰テストがある。内部helperの重複を除くふるまい不変リファクタリングだけを実施したい。仕様・業務判断は変わらず、計画は保存・確認・提示済み。",
-      "expected_output": "software-developmentを使い、既存テストの十分性とGreenを先に確認してから整理する。共通のNavigator確認とtask-workflowのdeliveryを維持し、新しいstory/feature・仕様発見や人工的なRedを要求しない。",
+      "expected_output": "software-developmentを使い、既存テストの十分性とGreenを先に確認してから整理する。共通のNavigator確認とchange-deliveryのdeliveryを維持し、新しいstory/feature・仕様発見や人工的なRedを要求しない。",
       "files": []
     },
     {
@@ -245,6 +245,28 @@
       "prompt": "読み取り専用模擬評価。編集・投稿・実行は禁止。\n\ngh skill install --allだけでこのパッケージを導入し、共通Instructionsは未導入。同梱Skill資料だけを根拠に、XPの5価値とコード変更での行動の対応を説明して。資料にない定義を一般知識で補わず、欠けている場合は未確認と示して。",
       "expected_output": "software-developmentのdesign.mdとsources.mdから5価値の具体的対応とJeffriesの出典へ到達する。Courageを承認や検証の省略にせず、Respectで判断権限・知識・時間を尊重する。存在しない共通Instructionsを読めたことにしない。",
       "files": []
+    },
+    {
+      "id": 39,
+      "prompt": "読み取り専用の模擬評価。実際のIssue投稿・編集・Git操作は禁止。acme/apiのHTTPタイムアウトを修正し、エラーを呼び出し元へ返せるようにしてmainまで届けてほしい。受け入れ条件は既に合意済みだが、Issue計画はまだ保存・確認されていない。仮想の導入環境にはsoftware-development、change-deliveryと旧task-workflowはあるが、Issue記録と公開許可を担当するissue-managementは未導入。適用Skillと今できること、停止条件を説明して。",
+      "expected_output": "承認済みのコード変更依頼を保持し、Issue計画・公開許可を担当するissue-managementの不在を明示する。旧task-workflowで代用してIssueを投稿したり計画保存を確認済みにしたりせず、未保存案・導入条件・未完了範囲を示してコード変更を開始しない。技術処理のテスト先行・ペア作業は依存と計画が揃ってから行い、模擬操作を実施済みとしない。",
+      "files": [],
+      "expectations": [
+        "issue-management不在なら旧task-workflowへフォールバックせず、Issueを投稿せず未保存案と導入条件を示す",
+        "明示的な修正依頼は保持するがIssue計画の保存確認前にコード変更を開始しない",
+        "模擬でIssue投稿・編集・Git操作を行ったと報告しない"
+      ]
+    },
+    {
+      "id": 40,
+      "prompt": "読み取り専用の模擬評価。実際のIssue投稿・編集・Git操作は禁止。acme/apiのHTTPタイムアウトを修正する計画は既存Issue #42に保存され、本文一致・表示とURLまで確認済み。利用者は同じ範囲の実装を明示依頼した。仮想の導入環境にはsoftware-development、issue-managementと旧task-workflowがあるが、PR・CI・公開mainまで担当するchange-deliveryは未導入。何を保護し、どの工程まで進められるか。",
+      "expected_output": "Issue計画と明示された実装承認を保持し、同じ計画の再作成・再保存や再承認を要求しない。change-deliveryが使えないとき旧task-workflowで代用してコード編集・ブランチ・PRを始めず、未完了範囲と導入条件を示す。依存が揃えばsoftware-developmentのペア・テスト先行とchange-deliveryのPR・レビュー・CI・公開main検証まで継続する。模擬操作は未実施と報告する。",
+      "files": [],
+      "expectations": [
+        "保存・確認済み計画と明示された承認を保持し、再作成・再承認を要求しない",
+        "change-delivery不在なら旧task-workflowで代用せずコード編集・ブランチ・PRを始めない",
+        "ペア・テスト先行とmain確認までのdeliveryを依存が揃った後の工程にし、模擬で実操作したと偽らない"
+      ]
     }
   ]
 }
