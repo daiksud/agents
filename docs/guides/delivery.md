@@ -128,7 +128,7 @@ apm compile --global
 | `skills/engineering-assessment/` | 開発実践の証拠に基づく診断と段階的な導入計画。Issue記録で完了 |
 | `skills/behavior-specification/` | ストーリー、BDD・ATDD、具体例・受け入れ仕様の発見と整理 |
 | `skills/software-development/` | Shared ToDo、TDD、Simple Design・YAGNIと小さな実装・検証 |
-| `skills/code-review/` | 将来の変更への耐性を最優先に、欠陥・回帰も根拠から評価する読み取り専用レビュー |
+| `skills/code-review/` | 現在の要求を満たす最もシンプルな設計と実際の変更への安全性を軸に、欠陥・回帰も根拠から評価する読み取り専用レビュー |
 | `skills/document-authoring/` | OKF v0.2に従う文書の作成・更新・検証 |
 | `skills/github-actions/` | GitHub Actionsの設計・安全性・効率改善・Action内部ランタイム更新の判断と検証 |
 
