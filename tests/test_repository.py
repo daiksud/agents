@@ -497,6 +497,73 @@ class MetadataTests(unittest.TestCase):
         self.assertIn('本文・表示・URL', handoff)
         self.assertIn('実行承認を取り直さない', handoff)
 
+    def test_public_maintenance_docs_route_current_split_skills(self):
+        root = Path(__file__).resolve().parents[1]
+        readme = (root / 'README.md').read_text(encoding='utf-8')
+        install = readme.split('## gh skillでスキルを導入')[1].split('### gh skillの更新')[0]
+        diagnosis = readme.split('## 開発実践の診断と導入計画')[1].split('## 更新')[0]
+        maintenance = readme.split('## 保守と検証')[1]
+        for section in (install, diagnosis, maintenance):
+            self.assertIn('`issue-management`', section)
+            self.assertIn('`change-delivery`', section)
+            self.assertNotIn('`task-workflow`', section)
+        self.assertIn('保存したIssueを提示して終了', diagnosis)
+        self.assertIn('実装・組織変更は行わず', diagnosis)
+        self.assertIn('明確な変更依頼と承認がある場合だけ', diagnosis)
+        self.assertIn('gh skill install daiksud/agents --all --agent codex --scope user', readme)
+        self.assertIn('| `bdd-tdd` |', readme)
+        self.assertIn('apm install --global --target codex,copilot daiksud/agents', readme)
+
+        glossary = (root / 'docs/glossary.md').read_text(encoding='utf-8')
+        for term, owner in (('継続的インテグレーション', 'change-delivery'),
+                            ('スタンダード', 'issue-management'),
+                            ('導入計画', 'issue-management')):
+            with self.subTest(term=term):
+                row = next(line for line in glossary.splitlines() if line.startswith(f'| {term} |'))
+                self.assertIn(f'`{owner}`', row)
+                self.assertNotIn('`task-workflow`', row)
+
+        instructions = (root / 'skills/AGENTS.md').read_text(encoding='utf-8')
+        self.assertIn('`issue-management`', instructions)
+        self.assertIn('`change-delivery`', instructions)
+        self.assertIn('[GitHub向けMarkdownの品質](issue-management/references/markdown-quality.md)',
+                      instructions)
+        self.assertNotIn('task-workflow/references/markdown-quality.md', instructions)
+        self.assertNotIn('`task-workflow`', instructions)
+
+        guide = (root / 'docs/guides/delivery.md').read_text(encoding='utf-8')
+        self.assertIn('`skills/issue-management/`', guide)
+        self.assertIn('`skills/change-delivery/`', guide)
+        self.assertIn('skills/issue-management/assets/rumdl.toml', guide)
+        self.assertIn(
+            '[GitHub向けMarkdownの品質](../../skills/issue-management/references/markdown-quality.md)',
+            guide)
+        self.assertIn(
+            '[統合後mainの確認と復旧]'
+            '(../../skills/change-delivery/references/review-and-merge.md#統合後mainの確認と復旧)',
+            guide)
+        self.assertIn(
+            '[小さな統合単位と活動日]'
+            '(../../skills/change-delivery/references/branches.md#小さな統合単位と活動日)',
+            guide)
+        self.assertIn(
+            '[作業環境整理]'
+            '(../../skills/change-delivery/references/review-and-merge.md#マージ後の作業環境の整理)',
+            guide)
+        self.assertIn(
+            '[代替レビュー]'
+            '(../../skills/change-delivery/references/review-and-merge.md#代替レビュー)',
+            guide)
+        self.assertIn('必要な承認・レビュー・CIを省略せず', guide)
+        self.assertNotIn('skills/task-workflow/references/', guide)
+        self.assertIn('python scripts/sync_review_skill.py --check', guide)
+
+        approvals = (root / 'docs/guides/codex-command-approvals.md').read_text(encoding='utf-8')
+        self.assertIn(
+            '[検証環境の準備](../../skills/issue-management/references/planning.md#検証環境の準備)',
+            approvals)
+        self.assertNotIn('skills/task-workflow/references/', approvals)
+
 
 if __name__ == '__main__':
     unittest.main()

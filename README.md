@@ -16,11 +16,11 @@ gh skill install daiksud/agents --all --agent codex --scope user
 
 各スキルの `SKILL.md` から、計画・Issue記録・ブランチ準備、設計・共有仕様・テスト、文書検証など、現在の工程に対応する資料を参照します。feature文書だけの作成では形式資料を使い、コード実装のTDD工程は開始しません。
 
-[behavior-specification](skills/behavior-specification/SKILL.md)は、コードを書かない場合もストーリー・具体例・受け入れ条件を整理します。[software-development](skills/software-development/SKILL.md)は、合意済みの仕様からTDD・ペア協働・Simple Designで実装します。文書の保存には `okf-docs`、変更の計画とdeliveryには `task-workflow` を条件に応じて併用します。兄弟Skillの資料を使う場合は、上記の `--all` で依存も導入してください。
+[behavior-specification](skills/behavior-specification/SKILL.md)は、コードを書かない場合もストーリー・具体例・受け入れ条件を整理します。[software-development](skills/software-development/SKILL.md)は、合意済みの仕様からTDD・ペア協働・Simple Designで実装します。Issue計画・公開許可・Markdown品質は `issue-management`、承認済み変更のbranch準備から公開main確認までは `change-delivery`、文書形式は `okf-docs` を条件に応じて併用します。Issue計画だけならdeliveryを始めません。兄弟Skillの資料を使う場合は、上記の `--all` で依存も導入してください。
 
-[github-actions](skills/github-actions/SKILL.md)は、GitHub Actionsの設計・安全性・効率改善・Action内部ランタイム更新を扱います。依頼に該当する参照資料だけを読み、監査のみと修正依頼を区別します。変更の進行は`task-workflow`、コード変更の検証は`software-development`、文書作成は`okf-docs`、読み取り専用レビューは`code-review`を併用します。これらの依存スキルは上記の`--all`で一緒に導入できます。
+[github-actions](skills/github-actions/SKILL.md)は、GitHub Actionsの設計・安全性・効率改善・Action内部ランタイム更新を扱います。依頼に該当する参照資料だけを読み、監査のみと修正依頼を区別します。Issue計画と公開許可は `issue-management`、承認済みworkflow変更とmain確認は `change-delivery`、アプリコードの変更は `software-development`、文書作成は `okf-docs`、読み取り専用レビューは `code-review` を併用します。これらの依存スキルは上記の `--all` で一緒に導入できます。
 
-`okf-docs`の検査スクリプトにはPython 3.10以上と同梱requirements.txtの依存が必要です。スキルの配布はPython依存を自動導入しません。外部Bundleの受け入れは `conformance`、自作の公開前検査は `authoring` を使います。[検査環境の準備](skills/okf-docs/references/validation.md)に従って利用する環境を確認してください。
+`okf-docs`の検査スクリプトにはPython 3.10以上と同梱requirements.txtの依存が必要です。スキルの配布はPython依存を自動導入しません。外部Bundleの読み取り専用の受け入れにはIssue計画やdeliveryを要求せず `conformance`、自作の公開前検査は `authoring` を使います。[検査環境の準備](skills/okf-docs/references/validation.md)に従って利用する環境を確認してください。
 
 ### gh skillの更新と廃止Skillの退避
 
@@ -68,7 +68,7 @@ apm compile --global
 
 既存リポジトリへの導入を検討するときは、[engineering-assessment](skills/engineering-assessment/SKILL.md)へ「現状を診断し、段階的な導入計画をIssueにまとめて」と依頼します。実際の作業の証拠から優先順位と最初の小さな実験を示し、保存したIssueを提示して終了します。実装・組織変更は行わず、導入未実施のIssueは開いたまま残します。通常の修正や概念説明では全面診断を起動しません。
 
-このスキルはIssue記録に `task-workflow` を使い、実装へ進む場合は同スキルの通常手順へ引き継ぎます。
+診断計画は `issue-management` でIssueへ保存・確認・提示して終了します。別途の明確な変更依頼と承認がある場合だけ、確認済み計画を `change-delivery` へ引き渡します。
 
 ## 更新
 
@@ -98,4 +98,4 @@ Codexの実行権限を準備する場合は[コマンド事前許可のガイ�
 
 原本編集・同期・ローカル検査・CI・レビュー連携の設定検証は[配布ガイド](docs/guides/delivery.md#原本の編集と保守)を参照します。変更・保守前の準備は[AGENTS.md](AGENTS.md)、スキル編集は[skills/AGENTS.md](skills/AGENTS.md)に従います。
 
-導入済み環境の復旧は[正常SHAへ戻す手順](docs/guides/delivery.md#不具合から復旧する)を参照します。共通ルールの使い方は導入済みの各スキルを読み、Issue・PRの手順は `task-workflow`、文書の形式は `okf-docs` を適用します。
+導入済み環境の復旧は[正常SHAへ戻す手順](docs/guides/delivery.md#不具合から復旧する)を参照します。共通ルールの使い方は導入済みの各スキルを読み、Issueの計画・記録は `issue-management`、承認済み変更とPR・main確認は `change-delivery`、文書の形式は `okf-docs` を適用します。
