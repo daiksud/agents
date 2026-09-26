@@ -285,6 +285,50 @@ class MetadataTests(unittest.TestCase):
         self.assertIn(39, by_id, 'missing Issue dependency must not silently substitute the retired Skill')
         self.assertIn(40, by_id, 'missing delivery dependency must not start code changes')
 
+    def test_behavior_specification_separates_planning_from_document_delivery(self):
+        root = Path(__file__).resolve().parents[1]
+        skill = (root / 'skills/behavior-specification/SKILL.md').read_text(encoding='utf-8')
+        handoff = skill.split('## 引き渡しと完了')[1]
+        self.assertIn('`issue-management`', handoff)
+        self.assertIn('`change-delivery`', handoff)
+        self.assertIn('Issue計画', handoff)
+        self.assertIn('公開許可', handoff)
+        self.assertIn('main', handoff)
+        self.assertIn('`okf-docs`', skill)
+        self.assertIn('コード変更が依頼された場合', handoff)
+        self.assertIn('Plan Mode・読み取り限定では文案を提示', handoff)
+        self.assertIn('計画だけの依頼では `change-delivery` や `okf-docs` の導入を前提にしない', handoff)
+        self.assertIn('仕様保存だけを実装承認にしない', handoff)
+        self.assertIn('`issue-management` を利用できなければIssueへ投稿せず', handoff)
+        self.assertIn('`change-delivery` を利用できなければ文書を保存せず', handoff)
+        self.assertIn('`okf-docs` を利用できなければ文書を保存せず', handoff)
+        self.assertNotIn('`task-workflow`', skill)
+
+        evals = json.loads((root / 'skills/behavior-specification/evals/evals.json').read_text(encoding='utf-8'))
+        by_id = {case['id']: case for case in evals['evals']}
+        for case_id in (2, 36):
+            with self.subTest(case_id=case_id):
+                self.assertNotIn('task-workflow', json.dumps(by_id[case_id], ensure_ascii=False))
+        self.assertIn('コード変更が依頼された場合', by_id[2]['expected_output'])
+        self.assertIn('issue-management', by_id[2]['expected_output'])
+        self.assertIn('change-delivery', by_id[36]['expected_output'])
+        self.assertIn('TDDやコード編集を始めない', by_id[36]['expected_output'])
+        self.assertIn('Plan Modeでは編集せず', by_id[14]['expected_output'])
+        self.assertIn('仕様整理だけでsoftware-developmentのTDD', by_id[35]['expected_output'])
+        self.assertIn('コード変更を依頼された場合だけ', by_id[37]['expected_output'])
+        for case_id, missing in ((38, 'issue-management'), (39, 'change-delivery'), (40, 'okf-docs')):
+            with self.subTest(case_id=case_id):
+                self.assertIn(case_id, by_id, f'missing {missing} must stop document delivery')
+                self.assertIn(missing, by_id[case_id]['prompt'])
+                self.assertIn('旧task-workflow', by_id[case_id]['expected_output'])
+                self.assertIn('文書', by_id[case_id]['expected_output'])
+        self.assertIn(41, by_id, 'issue-only plans must not require delivery or document authoring')
+        self.assertIn('change-delivery', by_id[41]['prompt'])
+        self.assertIn('okf-docs', by_id[41]['prompt'])
+        self.assertIn('issue-management', by_id[41]['expected_output'])
+        self.assertIn('妨げない', by_id[41]['expected_output'])
+        self.assertIn('未投稿', by_id[41]['expected_output'])
+
 
 if __name__ == '__main__':
     unittest.main()

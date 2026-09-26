@@ -4,7 +4,7 @@
     {
       "id": 2,
       "prompt": "注文のキャンセル可否のドメインルールを変更して。",
-      "expected_output": "behavior-specificationで共有理解と受け入れ条件を扱う。コード変更が依頼された場合はsoftware-developmentへ条件付きで引き渡す。task-workflow、software-development、okf-docsを適用する。用語・不変条件・合意済みルールを確認し、意味のある具体例を含む日本語featureを実装より先に保存する。受け入れ条件と自動検証を対応させ、テストリストから一つずつTDDする。シナリオ数だけでIssueを分割しない。",
+      "expected_output": "behavior-specificationで共有理解と受け入れ条件を扱う。Issue計画・公開許可はissue-management、承認済みfeature文書の保存と統合はokf-docsとchange-deliveryを適用する。用語・不変条件を確認し、未合意のルールは確定させず、合意済みの意味のある具体例を含む日本語featureを実装より先に保存する。コード変更が依頼された場合はsoftware-developmentへ条件付きで引き渡し、受け入れ条件と自動検証を対応させ、テストリストから一つずつTDDする。仕様整理だけなら実装を始めず、シナリオ数だけでIssueを分割しない。",
       "files": [],
       "source_id": "bdd-tdd/2"
     },
@@ -83,13 +83,37 @@
     {
       "id": 36,
       "prompt": "読み取り専用の模擬評価。実際の編集・投稿・実行は禁止。指定Skillと必要な同梱資料から判断と手順を示し、未実行を成功としない。\n\n既存featureの曖昧な記述を、合意済みの4999円は送料500円・5000円は0円という例で更新したい。目的・用語・保存計画は確認済み。コードは変更しない。必要な資料と保存形式を示して。",
-      "expected_output": "behavior-specificationのbehavior.mdとokf-docsを使い、日本語Markdown with GherkinとOKF形式を維持する。task-workflowで承認済み保存範囲を扱うが、software-developmentのTDDやコード編集を始めない。",
+      "expected_output": "behavior-specificationのbehavior.mdとokf-docsを使い、日本語Markdown with GherkinとOKF形式を維持する。issue-managementで確認済みの保存計画と承認を保持し、Issueへの新たな投稿許可を推測せず、承認済みの文書更新はchange-deliveryで統合後mainまで扱う。読み取り専用の模擬評価では文案のみを示し、software-developmentのTDDやコード編集を始めない。",
       "files": []
     },
     {
       "id": 37,
       "prompt": "読み取り専用模擬評価。編集・投稿・実行は禁止。\n\n受け入れ条件の整理だけを依頼している。behavior.mdの「関係と適用判断」も読んだ。この参照文書の説明を理由に、いまアサーションを書き始めてTDDへ進むべきか。実装は依頼していない。",
       "expected_output": "behavior-specificationと必読referenceの境界を一致させ、ストーリー・ルール・例・受け入れ条件・未回答事項の整理で終了する。テスト先行・アサート先行の実装は、コード変更を依頼された場合だけsoftware-developmentへ引き渡す。",
+      "files": []
+    },
+    {
+      "id": 38,
+      "prompt": "読み取り専用の模擬評価。編集・Issue投稿・Git操作は禁止。架空のdemo/shopで、合意済みの送料境界（4999円は500円、5000円は0円）を既存feature文書に反映し、mainまで届けたい。Issue計画は既に保存・再取得・表示確認され、同じ範囲の文書更新は明示承認済み。導入済みSkillはbehavior-specification、okf-docs、change-deliveryと旧task-workflowで、issue-managementは未導入。できることと停止条件を示して。",
+      "expected_output": "保存済みIssue計画と文書更新の承認を保持し、同じ計画の作り直しや再承認を要求しない。issue-management不在では公開許可・実行範囲を旧task-workflowで代用せず、feature文書の編集・投稿・Git操作を始めない。読み取りで文案と不足依存・未完了範囲を示して停止し、実施済みと報告しない。",
+      "files": []
+    },
+    {
+      "id": 39,
+      "prompt": "読み取り専用の模擬評価。編集・Issue投稿・Git操作は禁止。架空のdemo/shopで既存feature文書の送料境界を合意済みの4999円と5000円の例で更新する計画が、Issueに保存・確認済み。文書更新は明示承認済みで、コード変更は依頼していない。導入済みSkillはbehavior-specification、okf-docs、issue-managementと旧task-workflowで、change-deliveryは未導入。今できることと未完了範囲を示して。",
+      "expected_output": "保存済みIssue計画と承認を保持し、コードのTDDも計画の再投稿も始めない。change-delivery不在では旧task-workflowで代用してfeature文書の編集やブランチ・PRを始めず、文案と未完了の文書保存・公開main確認を明示して停止する。模擬操作を成功としない。",
+      "files": []
+    },
+    {
+      "id": 40,
+      "prompt": "読み取り専用の模擬評価。編集・Issue投稿・Git操作は禁止。架空のdemo/shopで合意済みの注文送料のfeature文書を既存Issueの保存済み計画と承認どおり更新し、mainに統合したい。導入済みSkillはbehavior-specification、issue-management、change-deliveryと旧task-workflowで、文書形式を担当するokf-docsは未導入。必要な形式と停止条件を示して。",
+      "expected_output": "Issue計画・承認を保持し、日本語Markdown with GherkinとOKFの文書形式を要件として示す。okf-docs不在では旧task-workflowや独自の形式に代用してfeature文書を保存・投稿せず、未保存案と依存・未完了範囲を示す。コードの実装を暗黙に始めず、模擬編集やmain統合を実施済みとしない。",
+      "files": []
+    },
+    {
+      "id": 41,
+      "prompt": "読み取り専用の模擬評価。実際のIssue投稿・編集・Git操作は禁止。架空のdemo/shopで注文の送料境界を合意済みの具体例とともにIssue計画へ記録し、本文・表示・URLを確認して計画だけで終了してほしい。feature文書やコードの保存は依頼していない。導入済みSkillはbehavior-specification、issue-managementと旧task-workflowで、change-deliveryとokf-docsは未導入。適用Skillと実行可能な工程・停止条件を示して。",
+      "expected_output": "Issue計画だけの依頼はissue-managementで扱い、change-deliveryやokf-docsの不在は計画保存・再取得・本文とURLの確認を妨げない。実環境なら公開許可と範囲を確認してIssueを記録し、保存確認後に停止する。今回の読み取り専用模擬では文案と手順だけを示して未投稿と明記し、旧task-workflowで代用してfeature編集・TDD・Git操作へ進まない。",
       "files": []
     }
   ]
