@@ -149,6 +149,20 @@ class MetadataTests(unittest.TestCase):
         self.assertTrue(skill.is_file(), 'change-delivery needs an installable SKILL.md')
         self.assertEqual([], validate_file(skill, root))
 
+    def test_reviewer_candidate_routes_to_issue_management(self):
+        root = Path(__file__).resolve().parents[1]
+        reviewer = (root / 'skills/code-review/SKILL.md').read_text(encoding='utf-8')
+        decision = (root / '.apm/instructions/decision-making.instructions.md').read_text(encoding='utf-8')
+        routing = (root / '.apm/instructions/skill-routing.instructions.md').read_text(encoding='utf-8')
+        candidate_exception = next(line for line in routing.splitlines()
+                                   if '相談・比較・説明・読み取り調査' in line)
+        self.assertIn('`issue-management`', reviewer)
+        self.assertNotIn('`task-workflow`', reviewer)
+        self.assertIn('`issue-management`', decision)
+        self.assertNotIn('`task-workflow`', decision)
+        self.assertIn('`issue-management`', candidate_exception)
+        self.assertIn('投稿しない', candidate_exception)
+
 
 if __name__ == '__main__':
     unittest.main()

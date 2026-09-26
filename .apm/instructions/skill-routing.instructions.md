@@ -20,4 +20,4 @@ description: 依頼と現在の工程に合う作業スキルを選びます。
 | 開発実践の現状診断・導入計画を依頼されたとき | `~/.agents/skills/engineering-assessment/SKILL.md` |
 | GitHub Actionsのworkflow設計・変更・失敗調査・レビュー・効率改善 | `~/.agents/skills/github-actions/SKILL.md` |
 
-相談・比較・説明・読み取り調査だけにはIssue・PR・マージを要求しない。ただし、ユーザーが共通スタンダードとなり得るトレードオフを判断した場合は、相談・レビュー中でも候補Issueの記録を対象とする。読み取り専用のコードレビューは `code-review` を使い、GitHub Actions workflowのレビューでは `github-actions` も併用する。レビューだけの依頼に通常の変更作業として `task-workflow` を加えず、候補Issueの記録または変更・投稿・マージを行う場合に併用する。調査から変更へ進む前に対応スキルを読む。文書は `okf-docs` に従い、OKF v0.2の通常概念・索引/履歴と固有形式を区別し、出典・未知メタデータ・確認履歴を保持する。
+相談・比較・説明・読み取り調査だけにはIssue・PR・マージを要求しない。ただし、ユーザーが共通スタンダードとなり得るトレードオフを判断した場合は、相談・レビュー中でも候補Issueの記録に `issue-management` を使う。読み取り専用Reviewer/Navigatorは候補をDriverへ引き渡し、自身は投稿しない。読み取り専用のコードレビューは `code-review` を使い、GitHub Actions workflowのレビューでは `github-actions` も併用する。レビューだけの依頼に通常の変更作業として `task-workflow` を加えず、変更・投稿・マージを別途依頼された場合に担当スキルを併用する。調査から変更へ進む前に対応スキルを読む。文書は `okf-docs` に従い、OKF v0.2の通常概念・索引/履歴と固有形式を区別し、出典・未知メタデータ・確認履歴を保持する。
