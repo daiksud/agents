@@ -237,6 +237,16 @@ class MetadataTests(unittest.TestCase):
         self.assertIn('`issue-management`', candidate_exception)
         self.assertIn('投稿しない', candidate_exception)
 
+    def test_code_review_eval_excludes_delivery_skills_for_read_only_review(self):
+        root = Path(__file__).resolve().parents[1]
+        data = json.loads((root / 'skills/code-review/evals/evals.json').read_text(
+            encoding='utf-8'))
+        case = next(case for case in data['evals'] if case['id'] == 1)
+        expected = case['expected_output']
+        self.assertNotIn('task-workflow', expected)
+        self.assertIn('issue-management', expected)
+        self.assertIn('change-delivery', expected)
+
     def test_issue_only_route_does_not_select_delivery(self):
         root = Path(__file__).resolve().parents[1]
         routing = (root / '.apm/instructions/skill-routing.instructions.md').read_text(encoding='utf-8')
