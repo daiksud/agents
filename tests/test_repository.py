@@ -178,7 +178,37 @@ class MetadataTests(unittest.TestCase):
         self.assertNotIn('Issueの検索・作成・更新', delivery_route)
         self.assertNotIn('Issue計画の保存', delivery_route)
         self.assertIn('PR', delivery_route)
-        self.assertIn('`~/.agents/skills/task-workflow/SKILL.md`', delivery_route)
+        self.assertIn('`~/.agents/skills/change-delivery/SKILL.md`', delivery_route)
+        self.assertNotIn('`~/.agents/skills/task-workflow/SKILL.md`', delivery_route)
+
+    def test_approved_change_common_instructions_use_split_skills(self):
+        root = Path(__file__).resolve().parents[1]
+        routing = (root / '.apm/instructions/skill-routing.instructions.md').read_text(encoding='utf-8')
+        review_only = next(line for line in routing.splitlines() if 'レビューだけの依頼' in line)
+        self.assertIn('`change-delivery`', review_only)
+        self.assertNotIn('`task-workflow`', review_only)
+
+        safety = (root / '.apm/instructions/change-safety.instructions.md').read_text(encoding='utf-8')
+        safety_sentences = safety.split('。')
+        issue_scope = next(sentence for sentence in safety_sentences if 'Issue計画の記録' in sentence)
+        branch_scope = next(sentence for sentence in safety_sentences if 'ブランチ保護' in sentence)
+        self.assertIn('`issue-management`', issue_scope)
+        self.assertNotIn('`change-delivery`', issue_scope)
+        self.assertIn('`change-delivery`', branch_scope)
+        self.assertNotIn('`issue-management`', branch_scope)
+        self.assertNotIn('`task-workflow`', safety)
+
+        delivery = (root / '.apm/instructions/delivery.instructions.md').read_text(encoding='utf-8')
+        delivery_sentences = delivery.split('。')
+        fallback = next(sentence for sentence in delivery_sentences if '代替レビュー' in sentence)
+        recovery = next(sentence for sentence in delivery_sentences if '復旧の実行範囲' in sentence)
+        checks = next(sentence for sentence in delivery_sentences if '必要チェックと復旧変更' in sentence)
+        self.assertIn('`change-delivery`', fallback)
+        self.assertIn('`issue-management`', recovery)
+        self.assertNotIn('`change-delivery`', recovery)
+        self.assertIn('`change-delivery`', checks)
+        self.assertNotIn('`issue-management`', checks)
+        self.assertNotIn('`task-workflow`', delivery)
 
 
 if __name__ == '__main__':
