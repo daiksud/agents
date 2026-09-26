@@ -223,6 +223,17 @@ class MetadataTests(unittest.TestCase):
         self.assertTrue(skill.is_file(), 'change-delivery needs an installable SKILL.md')
         self.assertEqual([], validate_file(skill, root))
 
+    def test_change_delivery_preserves_execution_and_reporting_rules(self):
+        root = Path(__file__).resolve().parents[1]
+        entry = (root / 'skills/change-delivery/SKILL.md').read_text(encoding='utf-8')
+        for required in (
+                'skill-creator', '再現入力と期待判断', '同じ入力・基準の独立した模擬実行',
+                '最終差分を依頼', 'TDDの1サイクル',
+                '長い作業', '同じ操作を理由なく繰り返さない',
+                '最終報告にIssue・PR', '同期・ブランチ整理'):
+            with self.subTest(required=required):
+                self.assertIn(required, entry)
+
     def test_reviewer_candidate_routes_to_issue_management(self):
         root = Path(__file__).resolve().parents[1]
         reviewer = (root / 'skills/code-review/SKILL.md').read_text(encoding='utf-8')
