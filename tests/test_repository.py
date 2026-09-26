@@ -194,6 +194,25 @@ class MetadataTests(unittest.TestCase):
                     self.assertIn('引き渡', case['expectations'][2])
                     self.assertNotIn(stale, case['expectations'][2])
 
+    def test_delivery_evals_name_current_skill_owners(self):
+        root = Path(__file__).resolve().parents[1]
+        data = json.loads((root / 'skills/change-delivery/evals/evals.json').read_text(
+            encoding='utf-8'))
+        cases = {case.get('source_id'): case for case in data['evals']}
+        for number in (2, 70):
+            with self.subTest(source_id=f'task-workflow/{number}'):
+                expected = cases[f'task-workflow/{number}']['expected_output']
+                self.assertIn('change-delivery', expected)
+                self.assertNotIn('task-workflow', expected)
+                if number == 2:
+                    self.assertIn('issue-management', expected)
+                    self.assertIn('okf-docs', expected)
+                    self.assertIn('文書のみなのでTDDは要求しない', expected)
+                else:
+                    self.assertIn('未確認ならissue-management', expected)
+                    self.assertIn('利用可能なskill-creator', expected)
+                    self.assertIn('software-developmentを適用せず', expected)
+
     def test_change_delivery_has_installable_skill_entry(self):
         root = Path(__file__).resolve().parents[1]
         skill = root / 'skills/change-delivery/SKILL.md'
