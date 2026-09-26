@@ -83,7 +83,7 @@ class MetadataTests(unittest.TestCase):
 
     def test_computation_markdown_preserves_required_heading(self):
         from scripts.check_repository import check_markdown
-        common = Path(__file__).resolve().parents[1] / 'skills/task-workflow/assets/rumdl.toml'
+        common = Path(__file__).resolve().parents[1] / 'skills/issue-management/assets/rumdl.toml'
         (self.root / '.rumdl.toml').write_text(f'extends = "{common}"\n')
         valid = ('---\ntype: Attested Computation\ntitle: Example\n'
                  'description: Example contract.\nruntime: python\n---\n\n'
@@ -101,7 +101,7 @@ class MetadataTests(unittest.TestCase):
 
     def test_external_computation_keeps_normal_title_check(self):
         from scripts.check_repository import check_markdown
-        common = Path(__file__).resolve().parents[1] / 'skills/task-workflow/assets/rumdl.toml'
+        common = Path(__file__).resolve().parents[1] / 'skills/issue-management/assets/rumdl.toml'
         (self.root / '.rumdl.toml').write_text(f'extends = "{common}"\n')
         (self.root / 'formula.py').write_text('print(1)\n')
         text = ('---\ntype: Attested Computation\ntitle: Example\n'
