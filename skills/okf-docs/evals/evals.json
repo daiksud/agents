@@ -4,13 +4,13 @@
     {
       "id": 1,
       "prompt": "Issue本文提示・計画承認済み。rumdlは導入済み。docs/adr/authentication.mdに認証方式の採用理由を記録するADRを書いて。",
-      "expected_output": "task-workflowとokf-docsを読み、docs/adrに1概念のOKF文書を作成する。type/title/description、確認済みの根拠、リンクを検証する。 task-workflowの共通Markdown品質手順に従い文書全体を整形・チェックする。",
+      "expected_output": "実行承認を保持し、Issue計画が保存・確認済みなら再記録せず、未保存なら公開許可を確認してissue-managementで保存・再取得・表示確認する。okf-docsの形式とchange-deliveryの承認済み変更・main確認を併用してdocs/adrに1概念のOKF文書を作成する。type/title/description、確認済みの根拠、リンクを検証する。issue-managementの共通Markdown品質手順に従い文書全体を整形・チェックする。",
       "files": []
     },
     {
       "id": 2,
       "prompt": "Issue本文提示・計画承認済み。rumdlは導入済み。ドメイン変更に伴うfeature文書を更新して。",
-      "expected_output": "okf-docsとbehavior-specificationの記法を確認し、OKF frontmatterと日本語Markdown with Gherkinを用いる。ルールの理解に意味を持つ具体値・入出力例はシナリオに含め、無関係なデータや内部実装の手順を省く。task-workflowの共通Markdown品質手順で文書全体を整形・チェックし、構造を確認する。",
+      "expected_output": "実行承認を保持し、Issue計画が保存・確認済みなら再記録せず、未保存なら公開許可を確認してissue-managementで保存・再取得・表示確認する。change-deliveryで承認済みの文書変更を届ける。okf-docsとbehavior-specificationの記法を確認し、OKF frontmatterと日本語Markdown with Gherkinを用いる。ルールの理解に意味を持つ具体値・入出力例はシナリオに含め、無関係なデータや内部実装の手順を省く。issue-managementの共通Markdown品質手順で文書全体を整形・チェックし、構造を確認する。文書だけの更新でコードTDDを始めない。",
       "files": []
     },
     {
@@ -22,7 +22,7 @@
     {
       "id": 4,
       "prompt": "計画承認済み。PR本文を読みやすく更新して。rumdlは導入済み。",
-      "expected_output": "GitHub投稿本文にはOKF・YAML frontmatterを付けない。task-workflowの共通設定とGFM構成、投稿前整形・チェック、投稿後確認を適用する。",
+      "expected_output": "PR本文だけの更新はissue-managementのGitHub向けMarkdown品質とchange-deliveryのPR更新経路で扱う。実行承認を保持し、Issue計画が保存・確認済みなら再記録せず、未保存ならissue-managementで計画を保存・再取得・表示確認する。GitHub投稿本文にはOKF・YAML frontmatterを付けず、共通設定とGFM構成、投稿前の全文整形・チェック、投稿後の本文・表示確認を適用する。PR本文だけの依頼からリポジトリ編集やマージへ進まない。",
       "files": []
     },
     {
@@ -291,6 +291,59 @@
         "明示された原文転記のas requestedと、プロンプトテンプレート本文の指示・<対象>を保持する",
         "CHANGELOGはAdded --verbose flagという事実を保持しas requestedだけを除く",
         "Issueの計画・実際の承認記録を保持し、固有形式へOKFを付けず、実データ・契約値を架空化しない"
+      ]
+    },
+    {
+      "id": 29,
+      "prompt": "読み取り専用模擬評価。実際の編集・投稿・導入・ブランチ操作は禁止。Issue計画だけを作成して記録する依頼。issue-managementは利用可能だがchange-deliveryは未導入、旧task-workflowも利用可能。docs/adr/retry.mdの変更はまだ依頼されていない。どこまで進めるか。",
+      "expected_output": "Issue計画の公開許可を確認し、issue-managementで保存・再取得・本文と表示・URLを確認する手順まで示して停止する。change-delivery未導入は計画だけの保存を妨げず、文書の編集・PR・main統合は始めない。模擬評価で投稿済みと主張しない。",
+      "files": [],
+      "expectations": [
+        "Issue計画はissue-managementで保存後の本文・表示・URLの確認まで扱い、読み取り専用評価で実施済みとは言わない",
+        "計画だけならchange-deliveryの欠落で停止位置を早めず、旧Skillを使って文書編集やPRへ進まない"
+      ]
+    },
+    {
+      "id": 30,
+      "prompt": "読み取り専用模擬評価。実際の編集・投稿・導入・テスト実行は禁止。外部から受け取ったOKF Bundleの形式をconformanceで判定する方針だけ示して。issue-managementとchange-deliveryはどちらも未導入で、旧task-workflowのみ利用可能。未知type・x-customキー・任意のtitle欠落があり、既存の検査依存は導入済み。自分たちの文書は作成しない。",
+      "expected_output": "okf-docsのvalidatorとconformance profileを使い、外部Bundleを読むだけの判定にIssue記録・delivery・旧task-workflowを要求しない。未知type・任意title欠落・未知x-customキーだけで不適合にしない。検査結果を捏造せず、authoringの追加品質条件を外部適合へ流用しない。",
+      "files": [],
+      "expectations": [
+        "外部Bundleのconformance-onlyはissue-managementとchange-deliveryなしで進められると判断する",
+        "未知type・x-customや任意title欠落を自作authoringの条件で拒否しない",
+        "未実行検証を成功としない"
+      ]
+    },
+    {
+      "id": 31,
+      "prompt": "読み取り専用模擬評価。実際の編集・投稿・導入は禁止。既存の公開Issue本文に誤記があり、投稿許可と更新内容は確認済み。リポジトリの文書やPRには変更しない。issue-managementは使えるがchange-deliveryは未導入。旧task-workflowは残っている。Issue本文を更新する順序と必要なSkillを説明して。",
+      "expected_output": "Issue本文だけの更新はissue-managementのGitHub向けMarkdown品質と保存後の本文・表示・URLの確認までで完結し、change-deliveryを要求せず旧Skillへ代用しない。IssueにOKF frontmatterを付けず、模擬評価で実投稿済みと主張しない。",
+      "files": [],
+      "expectations": [
+        "Issue本文だけならissue-managementが担当しchange-deliveryは不要と判断する",
+        "OKF frontmatterを付けず、投稿前後の検証と模擬評価の未実行を区別する"
+      ]
+    },
+    {
+      "id": 32,
+      "prompt": "読み取り専用模擬評価。実際の編集・投稿・導入は禁止。docs/adr/retry.mdの修正は依頼・承認済みだがIssue計画は未保存。issue-managementが未導入でchange-deliveryと旧task-workflowだけが利用可能。既存sourcesとx-owner、確認履歴は保持する。Issue記録と文書更新をどう扱うか。",
+      "expected_output": "issue-managementがないためIssue投稿や文書変更を開始せず、未保存の計画案と必要な依存を示す。旧task-workflowで代用しない。OKFのsources・未知x-owner・確認履歴を文案で保持し、実投稿・検証済みと主張しない。",
+      "files": [],
+      "expectations": [
+        "issue-management欠落時はIssueを投稿せず承認済み変更でも文書編集へ進まない",
+        "旧task-workflowへ戻らず未保存案と必要な依存を示す",
+        "sources・未知メタデータ・確認履歴を保持する"
+      ]
+    },
+    {
+      "id": 33,
+      "prompt": "読み取り専用模擬評価。実際の編集・投稿・導入は禁止。Issue計画は保存・確認・提示済み、docs/adr/retry.mdの修正も承認済み。issue-managementは使えるがchange-deliveryは未導入で、旧task-workflowは利用可能。既存sourcesとx-owner、確認履歴は保持する。どこまで進めるか。",
+      "expected_output": "保存済みIssue計画と実行承認を保持して重複記録しない。change-delivery欠落時は文書編集・PR・main統合へ進まず、旧task-workflowで代用しない。okf-docsによる内容・出典・未知メタデータ・確認履歴の文案と未完了範囲を示す。",
+      "files": [],
+      "expectations": [
+        "保存済みIssue計画と承認は再記録や再承認せず保持する",
+        "change-delivery欠落では文書を編集せず旧task-workflowへ戻らない",
+        "OKF文書の保存前の既存sources・未知キーと確認履歴を保持する"
       ]
     }
   ]

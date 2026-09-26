@@ -8,7 +8,7 @@ description: 同梱validatorの環境準備・profile・結果判定と、公開
 
 同梱の [validate_okf.py](../scripts/validate_okf.py) はPython 3.10以上を使用する。[requirements.txt](../scripts/requirements.txt)にPyYAML、markdown-it-py、mdit-py-pluginsとその依存mdurlの検証対象版を固定している。既存の実行環境を確認し、利用できるPythonコマンドを使う。検査は依存の自動インストール、ファイルの書き換え、ネットワーク取得を行わない。
 
-依存が不足する場合は、task-workflowの[検証環境の準備](../../task-workflow/references/planning.md#検証環境の準備)に従い、必要な固定依存を隔離venvへ準備する。対象・配置先と理由を記録する。グローバル設定変更・追加権限・費用発生は確認し、実行できない検査を合格にしない。準備例は以下のとおり。
+文書作成・更新時に依存が不足する場合は、`issue-management` の[検証環境の準備](../../issue-management/references/planning.md#検証環境の準備)に従い、必要な固定依存を隔離venvへ準備する。外部BundleのconformanceのみならIssue計画や同スキルの導入を前提にせず、既知の固定依存を同様に隔離環境へ準備できる。対象・配置先と理由を記録する。グローバル設定変更・追加権限・費用発生は確認し、実行できない検査を合格にしない。準備例は以下のとおり。
 
 ```sh
 python3 -m venv /path/to/project/.venv-okf
@@ -31,7 +31,7 @@ python3 /path/to/okf-docs/scripts/validate_okf.py /path/to/project/docs adr/choi
 
 結果のファイル・フィールド・理由・規則区分を確認する。終了値は成功 `0`、検査エラー `1`、引数・依存・実行環境の問題 `2`。未検証・期限切れ自体は構文エラーにしない。検査成功は出典の真偽、人間の内容確認、計算の実行証明を意味しない。
 
-- 依存スキル `task-workflow` の[GitHub向けMarkdownの品質](../../task-workflow/references/markdown-quality.md)に従い、Markdown全体をrumdlで整形・チェックする。既存プロジェクト設定を無断で上書きしない。
+- リポジトリ文書の作成・更新時は依存スキル `issue-management` の[GitHub向けMarkdownの品質](../../issue-management/references/markdown-quality.md)に従い、Markdown全体をrumdlで整形・チェックする。既存プロジェクト設定を無断で上書きしない。
 - rumdl未導入・旧版の場合の導入・更新やダウンロードを伴う一時実行は、同資料の権限確認手順に従う。実行不能を合格と扱わない。
 - 分類、用語、リンク、記載したコマンド、差分を確認する。リンク検査とrumdlは本環境の公開品質検査であり、外部BundleのOKF適合判定に流用しない。
 - feature文書は整形後も見出し・ステップを確認する。出典の内容や契約の意味は、validatorとは別に読んで確認する。

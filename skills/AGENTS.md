@@ -22,7 +22,7 @@ sources:
 - 既存スキルの目的と適用範囲を確認し、新規作成と既存スキルの改善のどちらが必要か判断する。
 - 作成・改善の手順には、利用可能な `skill-creator` の `SKILL.md` を読んで適用する。APMの外部依存として導入する方法は[README](../README.md)を参照する。
 - 成果物や適用範囲を左右する不明点は、既存の指示と会話を確認したうえでユーザーに確認する。
-- Issue・PR・レビューの手順は `task-workflow`、文書の形式は `okf-docs`、実行コードの追加・変更は `software-development` に従う。
+- Issue計画・公開許可は `issue-management`、承認済み変更・PR・レビュー・main確認は `change-delivery`、文書の形式は `okf-docs`、実行コードの追加・変更は `software-development` に従う。
 
 ### 配置と形式
 
@@ -62,7 +62,7 @@ sources:
 
 ### 配布と完了の確認
 
-- Markdownの作成・更新は[GitHub向けMarkdownの品質](task-workflow/references/markdown-quality.md)に従い、共通設定で投稿・更新前に整形・チェックする。
+- Markdownの作成・更新は[GitHub向けMarkdownの品質](issue-management/references/markdown-quality.md)に従い、共通設定で投稿・更新前に整形・チェックする。
 - YAML・JSONの構文、必須項目、名前、相対リンク、記載したパスとコマンドを確認し、rumdlと `git diff --check` で文書を検証する。
 - スキルの追加・削除・名前・配置・同梱資源を変更した場合は、`gh skill install . --from-local` の非対話での列挙と、一時ディレクトリへの導入で対象スキルと必要な資料が揃うことを確認する。
 - 配布構成を変更した場合は、APMでの導入・更新・共通指示生成も隔離環境で確認する。実ユーザーのグローバル配布先を検証用に書き換えない。

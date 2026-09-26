@@ -58,7 +58,7 @@ APM 0.30.0・GitHub CLI 2.100.0と固定Python依存を使用します。runner�
 
 ### 不具合から復旧する
 
-mainの失敗を検出したら、[統合後mainの確認と復旧](../../skills/task-workflow/references/review-and-merge.md#統合後mainの確認と復旧)に従って復旧を優先します。原因変更は承認済みの復旧PR、変更不要の外部障害は同じmain SHAの再検証で対応し、本リポジトリの必要チェックと公開配布検証が成功するまで後続作業を進めません。
+mainの失敗を検出したら、[統合後mainの確認と復旧](../../skills/change-delivery/references/review-and-merge.md#統合後mainの確認と復旧)に従って復旧を優先します。原因変更は承認済みの復旧PR、変更不要の外部障害は同じmain SHAの再検証で対応し、本リポジトリの必要チェックと公開配布検証が成功するまで後続作業を進めません。
 
 すでに導入した利用者は、過去の成功した証跡で確認した正常SHAを指定し直して再生成できます。
 
@@ -75,9 +75,9 @@ apm compile --global
 
 ### 小さく統合しmainまで確認する
 
-[小さな統合単位と活動日](../../skills/task-workflow/references/branches.md#小さな統合単位と活動日)に従い、Issueへ開始日時・次の統合単位・検証を記録します。活動日の毎日の統合、原則1活動日以内のブランチを目安とし、超過時の理由と次の単位を更新します。
+[小さな統合単位と活動日](../../skills/change-delivery/references/branches.md#小さな統合単位と活動日)に従い、Issueへ開始日時・次の統合単位・検証を記録します。活動日の毎日の統合、原則1活動日以内のブランチを目安とし、超過時の理由と次の単位を更新します。
 
-マージ後は[main確認](../../skills/task-workflow/references/review-and-merge.md#統合後mainの確認と復旧)と[作業環境整理](../../skills/task-workflow/references/review-and-merge.md#マージ後の作業環境の整理)まで担当します。本リポジトリではmainのSHAと必要チェックに加えて、両OSartifactの候補・依存・配布ハッシュを照合し、正常なmain・同期・ブランチ整理の後に完了を記録します。必要な承認・レビュー・CIを省略せず、他プロジェクト向けの[CI未設定の例外](../../skills/task-workflow/references/review-and-merge.md#ci未設定の場合)を本リポジトリへ適用しません。
+マージ後は[main確認](../../skills/change-delivery/references/review-and-merge.md#統合後mainの確認と復旧)と[作業環境整理](../../skills/change-delivery/references/review-and-merge.md#マージ後の作業環境の整理)まで担当します。本リポジトリではmainのSHAと必要チェックに加えて、両OSartifactの候補・依存・配布ハッシュを照合し、正常なmain・同期・ブランチ整理の後に完了を記録します。必要な承認・レビュー・CIを省略せず、他プロジェクト向けの[CI未設定の例外](../../skills/change-delivery/references/review-and-merge.md#ci未設定の場合)を本リポジトリへ適用しません。
 
 ### 計測の定義
 
@@ -123,7 +123,8 @@ apm compile --global
 | `.apm/instructions/delivery.instructions.md` | 価値の流れ、小さな統合とmainの健全性 |
 | `.apm/instructions/change-safety.instructions.md` | 承認・権限・変更保護 |
 | `.apm/instructions/quality.instructions.md` | 成果物と検証の品質、未確認範囲の報告 |
-| `skills/task-workflow/` | Issue記録、実装時の計画からレビュー・スカッシュマージまでの作業手順 |
+| `skills/issue-management/` | Issue計画・記録、公開許可、Markdown投稿・整形の手順 |
+| `skills/change-delivery/` | 承認済み変更のbranch、レビュー・CI・マージと統合後mainの確認・整理 |
 | `skills/engineering-assessment/` | 開発実践の証拠に基づく診断と段階的な導入計画。Issue記録で完了 |
 | `skills/behavior-specification/` | ストーリー、BDD・ATDD、具体例・受け入れ仕様の発見と整理 |
 | `skills/software-development/` | Shared ToDo、TDD、Simple Design・YAGNIと小さな実装・検証 |
@@ -131,15 +132,15 @@ apm compile --global
 | `skills/okf-docs/` | OKF v0.2に従う文書の作成・更新・検証 |
 | `skills/github-actions/` | GitHub Actionsの設計・安全性・効率改善・Action内部ランタイム更新の判断と検証 |
 
-共通指示には `applyTo` を付けません。詳細手順はスキルと同梱資料に置きます。各SKILL.mdを工程別の入口にし、task-workflowは計画・Issue記録・ブランチ、behavior-specificationは共有仕様、software-developmentは設計・実装・テスト、okf-docsは形式・出典・検証へ分けます。参照を移した場合はリンク元と導入後の同梱資料も確認します。[インストラクションのテンプレート](../templates/instructions.md)と[スキルの編集指示](../../skills/AGENTS.md)を参照します。スキルの作成・改善には外部依存の `skill-creator` を使います。
+共通指示には `applyTo` を付けません。詳細手順はスキルと同梱資料に置きます。各SKILL.mdを工程別の入口にし、issue-managementは計画・Issue記録・Markdown品質、change-deliveryはbranch・レビュー・main確認、behavior-specificationは共有仕様、software-developmentは設計・実装・テスト、okf-docsは形式・出典・検証へ分けます。参照を移した場合はリンク元と導入後の同梱資料も確認します。[インストラクションのテンプレート](../templates/instructions.md)と[スキルの編集指示](../../skills/AGENTS.md)を参照します。スキルの作成・改善には外部依存の `skill-creator` を使います。
 
 原本を編集しても公開版やユーザースコープは更新されません。編集中の原本を適用するための自己更新は行わず、公開後の導入・更新は[README](../../README.md)の利用者向け操作として扱います。生成されたAGENTS.mdは直接編集しません。
 
 ### Markdownの整形と投稿
 
-構成・整形・保存後の本文と表示の確認は[GitHub向けMarkdownの品質](../../skills/task-workflow/references/markdown-quality.md)に従います。以下は本リポジトリで同じ検査を実行する設定とコマンドです。
+構成・整形・保存後の本文と表示の確認は[GitHub向けMarkdownの品質](../../skills/issue-management/references/markdown-quality.md)に従います。以下は本リポジトリで同じ検査を実行する設定とコマンドです。
 
-共通設定は `task-workflow` に同梱され、本リポジトリの `.rumdl.toml` も同じ設定を継承します。MD013・MD033・MD034・MD041のみを無効化し、MD060をcompact、MD076をtightにします。通常概念ではその他のルールは既定のままです。Attested Computationは [計算文書の検証](../../skills/okf-docs/references/computation.md#markdownと契約を合わせて検証する) に従い、MD025のtitleの扱いだけを限定して調整します。
+共通設定は `skills/issue-management/assets/rumdl.toml` に同梱され、本リポジトリの `.rumdl.toml` も同じ設定を継承します。MD013・MD033・MD034・MD041のみを無効化し、MD060をcompact、MD076をtightにします。通常概念ではその他のルールは既定のままです。Attested Computationは [計算文書の検証](../../skills/okf-docs/references/computation.md#markdownと契約を合わせて検証する) に従い、MD025のtitleの扱いだけを限定して調整します。
 
 リポジトリ直下で、継承設定を明示して実行します。
 
@@ -148,9 +149,9 @@ rumdl check --config .rumdl.toml --deny-config-warnings --fix <変更したMarkd
 rumdl check --config .rumdl.toml --deny-config-warnings <変更したMarkdownファイル>
 ```
 
-投稿用の一時本文や配布先での実行は[GitHub向けMarkdownの品質](../../skills/task-workflow/references/markdown-quality.md)に従って設定を明示指定します。`okf-docs` は既存の依存スキル `task-workflow` に同梱された設定・資料を参照するため、両スキルを導入します。
+投稿用の一時本文や配布先での実行は[GitHub向けMarkdownの品質](../../skills/issue-management/references/markdown-quality.md)に従って設定を明示指定します。リポジトリ文書を作成・更新する場合は `okf-docs` の形式検証と `issue-management` のMarkdown品質を併用します。外部Bundleの読み取り専用conformanceだけならIssue記録やdeliveryは要求しません。
 
-rumdl未導入・旧版の場合は、[検証環境の準備](../../skills/task-workflow/references/planning.md#検証環境の準備)に従い、既知の必要版を隔離環境へ用意します。グローバル設定変更・追加権限・費用発生は確認し、未検証の投稿は保留します。
+rumdl未導入・旧版の場合は、[検証環境の準備](../../skills/issue-management/references/planning.md#検証環境の準備)に従い、既知の必要版を隔離環境へ用意します。グローバル設定変更・追加権限・費用発生は確認し、未検証の投稿は保留します。
 
 原本リポジトリのBundleルートはリポジトリ直下です。`scripts/check_repository.py` は `docs/`・`skills/`・`.apm/` と `.github/skills/` のMarkdownに同梱validatorの `authoring` を適用します。`SKILL.md` はAgent Skillsの検査、`index.md`・`log.md` は予約形式、READMEと生成AGENTS.mdは既存の固有形式を保ちます。未知メタデータを削除せず、未検証・期限切れは注意として表示します。
 
@@ -169,7 +170,7 @@ rumdlとリンク検査はこのリポジトリの公開品質条件です。外
 
 ### ローカルとCIで同じ検査を実行
 
-Python 3.12、GitHub CLI 2.100.0を使います。既存環境を確認し、必要な固定依存を隔離した専用環境へ準備して、リポジトリ直下から実行します。導入の境界は[検証環境の準備](../../skills/task-workflow/references/planning.md#検証環境の準備)に従います。
+Python 3.12、GitHub CLI 2.100.0を使います。既存環境を確認し、必要な固定依存を隔離した専用環境へ準備して、リポジトリ直下から実行します。導入の境界は[検証環境の準備](../../skills/issue-management/references/planning.md#検証環境の準備)に従います。
 
 ```bash
 python3 -m venv .venv
@@ -213,7 +214,7 @@ python scripts/sync_review_skill.py --check
 gh skill install . --from-local code-review --dir /tmp/review-skill-install
 ```
 
-同期先は生成専用です。原本を編集して同期し、両方をコミットします。CIで内容差分・欠落・余分なファイルを検出します。レビュー依頼・指摘対応・完了判定は[task-workflow](../../skills/task-workflow/references/review-and-merge.md#代替レビュー)が担当します。
+同期先は生成専用です。原本を編集して同期し、両方をコミットします。CIで内容差分・欠落・余分なファイルを検出します。レビュー依頼・指摘対応・完了判定は[代替レビュー](../../skills/change-delivery/references/review-and-merge.md#代替レビュー)を含む `change-delivery` が担当します。
 
 Copilot公式資料[^docs-request-a-code-review-use-code-review]に従い、実PRの指摘の出典またはセッションログで使用したスキルを確認します。Codex公式資料[^learn-third-party-github]によるAGENTS.mdの案内も、実PRで読み込みを検証します。通常の `@codex review`、確認できなければ原本パスを付けた依頼を順に試し、ログまたは固有手順の根拠付き適用を確認します。後者のみ成功ならパス指定を標準にし、いずれも未確認なら連携未完了とします。結果と未確認範囲はPRに記録し、パス復唱やリアクションだけを成功の証拠にしません。
 

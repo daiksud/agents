@@ -71,8 +71,9 @@ def verify_upgrade(source, root):
     previous_names = {p.parent.name for p in (previous / 'skills').glob('*/SKILL.md')}
     current_names = {p.parent.name for p in (source / 'skills').glob('*/SKILL.md')}
     retired_names = previous_names - current_names
-    if 'bdd-tdd' not in retired_names:
-        raise RuntimeError(f'migration fixture does not retire bdd-tdd: {baseline}')
+    for name in ('bdd-tdd', 'task-workflow'):
+        if name not in retired_names:
+            raise RuntimeError(f'migration fixture does not retire {name}: {baseline}')
     retired = {name: content(target / name) for name in retired_names}
     unrelated = target / 'unrelated-fixture/SKILL.md'
     unrelated.parent.mkdir()
