@@ -329,6 +329,71 @@ class MetadataTests(unittest.TestCase):
         self.assertIn('妨げない', by_id[41]['expected_output'])
         self.assertIn('未投稿', by_id[41]['expected_output'])
 
+    def test_actions_repairs_route_plans_delivery_and_application_code_separately(self):
+        root = Path(__file__).resolve().parents[1]
+        skill = (root / 'skills/github-actions/SKILL.md').read_text(encoding='utf-8')
+        description = skill.split('---')[1]
+        entry = skill.split('作業に該当する資料だけを読む')[0]
+        self.assertIn('issue-management', description)
+        self.assertIn('change-delivery', description)
+        self.assertIn('`issue-management`', entry)
+        self.assertIn('`change-delivery`', entry)
+        self.assertIn('Issue計画', entry)
+        self.assertIn('公開許可', entry)
+        self.assertIn('main', entry)
+        self.assertIn('`software-development`', entry)
+        self.assertIn('`code-review`', entry)
+        self.assertIn('相談・監査だけから編集・Issue投稿・PR作成・実行トリガーへ進まない', entry)
+        plan_only = next(sentence for sentence in entry.split('。') if 'Issue計画だけなら' in sentence)
+        self.assertIn('`issue-management`', plan_only)
+        self.assertIn('`change-delivery` や `software-development` が未導入でも', plan_only)
+        self.assertIn('保存・再取得', plan_only)
+        self.assertIn('停止', plan_only)
+        app_fix = next(sentence for sentence in entry.split('。') if 'アプリコードの修正' in sentence)
+        self.assertIn('`software-development`', app_fix)
+        self.assertIn('TDD', app_fix)
+        workflow_fix = next(sentence for sentence in entry.split('。') if 'workflow設定のみ' in sentence)
+        self.assertIn('TDDを始めない', workflow_fix)
+        self.assertIn('`issue-management` を利用できなければIssueへ投稿せず', entry)
+        self.assertIn('`change-delivery` を利用できなければworkflowを編集せず', entry)
+        self.assertIn('`software-development` を利用できなければアプリコードを編集せず', entry)
+        self.assertNotIn('task-workflow', skill)
+
+        design = (root / 'skills/github-actions/references/workflow-design.md').read_text(encoding='utf-8')
+        recovery = next(sentence for sentence in design.split('。') if '公開条件や権限の変更' in sentence)
+        self.assertIn('`issue-management`', recovery)
+        self.assertNotIn('task-workflow', recovery)
+        self.assertNotIn('task-workflow', design)
+
+        sources = (root / 'skills/github-actions/references/sources.md').read_text(encoding='utf-8')
+        boundary = next(line for line in sources.splitlines() if line.startswith('| 作業の境界 |'))
+        self.assertIn('issue-management', boundary)
+        self.assertIn('change-delivery', boundary)
+        self.assertNotIn('task-workflow', boundary)
+
+        evals = json.loads((root / 'skills/github-actions/evals/evals.json').read_text(encoding='utf-8'))
+        by_id = {case['id']: case for case in evals['evals']}
+        for case_id in (3, 5, 25):
+            with self.subTest(case_id=case_id):
+                self.assertNotIn('task-workflow', json.dumps(by_id[case_id], ensure_ascii=False))
+        self.assertIn('案だけ', by_id[3]['prompt'])
+        self.assertIn('承認', by_id[5]['prompt'])
+        self.assertIn('未公開内容', by_id[5]['expected_output'])
+        self.assertIn('投稿先・本文案', by_id[5]['expected_output'])
+        self.assertNotIn('確認済みの計画・公開許可', by_id[5]['expected_output'])
+        self.assertIn('software-development', by_id[25]['expected_output'])
+        for case_id, missing in ((26, 'issue-management'), (27, 'change-delivery'),
+                                 (28, 'software-development')):
+            with self.subTest(case_id=case_id):
+                self.assertIn(case_id, by_id, f'missing {missing} needs a safe stop')
+                self.assertIn(missing, by_id[case_id]['prompt'])
+                self.assertIn('旧task-workflow', by_id[case_id]['expected_output'])
+        self.assertIn(29, by_id, 'issue-plan-only must not require delivery or code Skills')
+        self.assertIn('change-delivery', by_id[29]['prompt'])
+        self.assertIn('software-development', by_id[29]['prompt'])
+        self.assertIn('issue-management', by_id[29]['expected_output'])
+        self.assertIn('妨げない', by_id[29]['expected_output'])
+
 
 if __name__ == '__main__':
     unittest.main()
