@@ -180,9 +180,11 @@ python scripts/check_repository.py
 python scripts/skill_smoke.py
 ```
 
-静的検査は隠しディレクトリを含む原本のMarkdown・相対リンク・YAML・JSON・必須メタデータ・評価データを確認します。導入検証は一時ディレクトリで `gh skill` の列挙、新規導入、強制再導入と原本との内容一致を確認します。固定baselineのGit履歴も必要です。旧版→新版の導入後、[READMEの移行手順](../../README.md#gh-skillの更新と廃止skillの退避)に沿って廃止した所有Skillだけを探索先外の一時backupへ退避し、旧名の不在、backup内容と無関係Skillの保持を照合します。検証用ディレクトリは終了時に削除し、実ユーザー環境へcleanupを適用しません。探索的に内容を読む場合は、次のコマンドで検証用ディレクトリを作れます。
+静的検査は隠しディレクトリを含む原本のMarkdown・相対リンク・YAML・JSON・必須メタデータ・評価データを確認します。導入検証は一時ディレクトリで `gh skill` の列挙、新規導入、強制再導入と原本との内容一致を確認します。固定baselineのGit履歴も必要です。旧版→新版の導入後、[READMEの移行手順](../../README.md#gh-skillの更新と廃止skillの退避)に沿って廃止した所有Skillだけを探索先外の一時backupへ退避し、旧名の不在、backup内容と無関係Skillの保持を照合します。検証用ディレクトリは終了時に削除し、実ユーザー環境へcleanupを適用しません。
 
 gh skillの移行fixtureは [skill_smoke.py](../../scripts/skill_smoke.py) の `SKILL_MIGRATION_BASELINE` で、Skill名変更前の6e09d5166a8f49aa3a71edc102446d92a59e939d に固定します。更新可能なAPM復旧用 `baseline_sha` から独立させ、復旧先を進めても旧名の退避・backup検証が消えないようにします。
+
+探索的に内容を読む場合は、次のコマンドで検証用ディレクトリを作れます。
 
 ```bash
 exploration_dir=$(mktemp -d)

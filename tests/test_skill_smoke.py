@@ -1,13 +1,53 @@
+from contextlib import contextmanager, redirect_stdout
+import io
 from pathlib import Path
 import tempfile
 import unittest
 from unittest.mock import patch
 import subprocess
 
-from scripts.skill_smoke import main, validate_install, verify_upgrade
+from scripts.skill_smoke import SKILL_MIGRATION_BASELINE, main, validate_install, verify_upgrade
 
 
 class InstallationTests(unittest.TestCase):
+    @staticmethod
+    @contextmanager
+    def _upgrade_fixture(root, legacy_names, pruned=None, calls=None):
+        def skill(name):
+            return f'---\nname: {name}\ndescription: Sample.\n---\n# {name}\n'
+
+        source = root / 'source'
+        current = source / 'skills/sample/SKILL.md'
+        current.parent.mkdir(parents=True)
+        current.write_text(skill('sample'))
+
+        def extract_previous(previous, *, filter):
+            for name in legacy_names:
+                path = previous / 'skills' / name / 'SKILL.md'
+                path.parent.mkdir(parents=True)
+                path.write_text(skill(name))
+
+        def install(command, **kwargs):
+            if calls is not None:
+                calls.append((list(command), dict(kwargs)))
+            target = root / 'upgraded'
+            if '--force' in command:
+                if pruned:
+                    (target / pruned / 'SKILL.md').unlink()
+                    (target / pruned).rmdir()
+            else:
+                for path in (root / 'previous-source/skills').glob('*/SKILL.md'):
+                    installed = target / path.parent.name / 'SKILL.md'
+                    installed.parent.mkdir(parents=True)
+                    installed.write_bytes(path.read_bytes())
+            return subprocess.CompletedProcess(command, 0)
+
+        with patch('scripts.skill_smoke.subprocess.check_output', return_value=b''), patch(
+                'scripts.skill_smoke.tarfile.open') as archive, patch(
+                'scripts.skill_smoke.subprocess.run', side_effect=install):
+            archive.return_value.__enter__.return_value.extractall.side_effect = extract_previous
+            yield source
+
     def test_migration_fixture_is_independent_of_the_recovery_baseline(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
@@ -20,6 +60,66 @@ class InstallationTests(unittest.TestCase):
                     verify_upgrade(source, root)
             self.assertEqual(['git', 'archive', '6e09d5166a8f49aa3a71edc102446d92a59e939d'],
                              archive.call_args.args[0])
+
+    def test_migration_fixture_requires_bdd_tdd_retirement(self):
+        for legacy_names in (('sample',), ('sample', 'other')):
+            with self.subTest(legacy_names=legacy_names), tempfile.TemporaryDirectory() as directory:
+                root = Path(directory)
+                with self._upgrade_fixture(root, legacy_names) as source:
+                    output = io.StringIO()
+                    with redirect_stdout(output):
+                        with self.assertRaisesRegex(RuntimeError, 'bdd-tdd'):
+                            verify_upgrade(source, root)
+                    self.assertNotIn('Upgrade from', output.getvalue())
+
+    def test_upgrade_rejects_retired_skill_pruned_before_backup(self):
+        cases = ((('sample', 'bdd-tdd'), 'bdd-tdd'),
+                 (('sample', 'bdd-tdd', 'other'), 'other'))
+        for legacy_names, pruned in cases:
+            with self.subTest(pruned=pruned), tempfile.TemporaryDirectory() as directory:
+                root = Path(directory)
+                with self._upgrade_fixture(root, legacy_names, pruned=pruned) as source:
+                    output = io.StringIO()
+                    with redirect_stdout(output):
+                        with self.assertRaisesRegex(RuntimeError, pruned):
+                            verify_upgrade(source, root)
+                    self.assertNotIn('Upgrade from', output.getvalue())
+
+    def test_upgrade_backs_up_all_retired_skills_and_preserves_other_owners(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            output = io.StringIO()
+            with self._upgrade_fixture(root, ('sample', 'bdd-tdd', 'other')) as source:
+                with redirect_stdout(output):
+                    verify_upgrade(source, root)
+            backup = root / 'retired-backup'
+            moved = sorted(path.name for path in backup.iterdir())
+            self.assertEqual(['bdd-tdd', 'other'], moved)
+            for name in moved:
+                original = root / 'previous-source/skills' / name / 'SKILL.md'
+                self.assertEqual(original.read_bytes(), (backup / name / 'SKILL.md').read_bytes())
+                self.assertFalse((root / 'upgraded' / name).exists())
+            self.assertEqual(
+                f'Upgrade from {SKILL_MIGRATION_BASELINE} verified; '
+                f'retired skills outside discovery: {moved}\n', output.getvalue())
+            self.assertEqual(b'---\nname: unrelated-fixture\n'
+                             b'description: Preserve other owners.\n---\n',
+                             (root / 'upgraded/unrelated-fixture/SKILL.md').read_bytes())
+
+    def test_upgrade_install_calls_stay_isolated_and_noninteractive(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            calls = []
+            with self._upgrade_fixture(root, ('sample', 'bdd-tdd'), calls=calls) as source:
+                with redirect_stdout(io.StringIO()):
+                    verify_upgrade(source, root)
+            self.assertEqual(2, len(calls))
+            for command, options in calls:
+                self.assertEqual(['gh', 'skill', 'install'], command[:3])
+                self.assertIn('--dir', command)
+                self.assertEqual(str(root / 'upgraded'), command[command.index('--dir') + 1])
+                self.assertEqual(subprocess.DEVNULL, options.get('stdin'))
+                self.assertIs(True, options.get('check'))
 
     def test_retired_owned_skill_is_rejected_without_changing_other_files(self):
         with tempfile.TemporaryDirectory() as directory:

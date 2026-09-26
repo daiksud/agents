@@ -70,7 +70,10 @@ def verify_upgrade(source, root):
 
     previous_names = {p.parent.name for p in (previous / 'skills').glob('*/SKILL.md')}
     current_names = {p.parent.name for p in (source / 'skills').glob('*/SKILL.md')}
-    retired = {name: content(target / name) for name in previous_names - current_names}
+    retired_names = previous_names - current_names
+    if 'bdd-tdd' not in retired_names:
+        raise RuntimeError(f'migration fixture does not retire bdd-tdd: {baseline}')
+    retired = {name: content(target / name) for name in retired_names}
     unrelated = target / 'unrelated-fixture/SKILL.md'
     unrelated.parent.mkdir()
     unrelated.write_text('---\nname: unrelated-fixture\ndescription: Preserve other owners.\n---\n')
@@ -81,19 +84,21 @@ def verify_upgrade(source, root):
     if errors:
         raise RuntimeError('\n'.join(errors))
     backup.mkdir()
+    moved = []
     for name, original in retired.items():
         installed = target / name
-        if not installed.exists():
-            continue
+        if not installed.is_dir():
+            raise RuntimeError(f'retired skill missing before backup: {name}')
         if content(installed) != original:
             raise RuntimeError(f'retired skill changed before backup: {name}')
         installed.rename(backup / name)
         if content(backup / name) != original:
             raise RuntimeError(f'retired skill backup differs: {name}')
+        moved.append(name)
     errors = validate_install(source, target, previous_source=previous)
     if errors or unrelated.read_bytes() != unrelated_content:
         raise RuntimeError('\n'.join(errors) or 'unrelated skill changed')
-    print(f'Upgrade from {baseline} verified; retired skills outside discovery: {sorted(retired)}',
+    print(f'Upgrade from {baseline} verified; retired skills outside discovery: {sorted(moved)}',
           flush=True)
 
 
