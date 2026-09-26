@@ -496,6 +496,32 @@ class MetadataTests(unittest.TestCase):
             self.assertGreaterEqual(len(case['expectations']), 2)
             self.assertIn('診断', case['prompt'])
 
+    def test_assessment_xp_vocabulary_stays_consistent_across_guidance(self):
+        root = Path(__file__).resolve().parents[1]
+        delivery = (root / '.apm/instructions/delivery.instructions.md').read_text(
+            encoding='utf-8')
+        self.assertNotIn('9概念', delivery)
+        self.assertIn('通常の変更で開発実践の全面診断を行わない', delivery)
+        cases = json.loads((root / 'skills/engineering-assessment/evals/evals.json').read_text(
+            encoding='utf-8'))['evals']
+        for case in cases:
+            if case['id'] in (16, 20):
+                with self.subTest(case=case['id']):
+                    self.assertNotIn('9概念', json.dumps(case, ensure_ascii=False))
+                    self.assertIn('開発実践の全面診断', ' '.join(case['expectations']))
+                    if case['id'] == 16:
+                        self.assertIn('開発実践の全面診断', case['expected_output'])
+                    else:
+                        self.assertIn('包括診断に広げない', case['expected_output'])
+        glossary = (root / 'docs/glossary.md').read_text(encoding='utf-8')
+        rows = {line.split('|')[1].strip(): line for line in glossary.splitlines()
+                if line.startswith('| ') and line.count('|') == 5}
+        self.assertIn('開発判断・実装・診断', rows['XP'])
+        self.assertIn('`engineering-assessment`', rows['XP'])
+        self.assertIn('`engineering-assessment`', rows['DevOps'])
+        for concept in ('Simple Design', 'YAGNI'):
+            self.assertNotIn('`engineering-assessment`', rows[concept])
+
     def test_assessment_diagnosis_stops_before_approved_delivery(self):
         root = Path(__file__).resolve().parents[1]
         skill = (root / 'skills/engineering-assessment/SKILL.md').read_text(encoding='utf-8')
