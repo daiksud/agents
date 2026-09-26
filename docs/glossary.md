@@ -7,6 +7,8 @@ sources:
     resource: ../skills/software-development/references/sources.md
   - id: okf-v02
     resource: https://github.com/GoogleCloudPlatform/open-knowledge-format/blob/ad30107c31c06aec8a7d5636e0d1058118604e6f/SPEC.md
+  - id: issue-100
+    resource: https://github.com/daiksud/agents/issues/100
 ---
 
 ## 開発実践と作業スキルの用語
@@ -26,9 +28,10 @@ sources:
 | BDD | 具体例を使う共同の発見・定式化・自動化を通じて期待するふるまいの理解を深める実践 | 開発実践の指示・診断 | `behavior-specification`、`*.feature.md` |
 | ATDD | 対応する実装に先立ち、受け入れ条件・テストを具体化する実践 | 開発実践の指示・診断 | `behavior-specification` |
 | TDD | テスト項目を含むToDoから一つずつRed・最小のGreen・必要なRefactorを反復する設計・検証の実践 | 開発実践の指示・診断 | `software-development` |
-| 共有ToDo | TDDの対象となる小さな振る舞い、境界・異常系、既存ふるまいの保護、設計改善を記録し、未着手・進行中・完了・要確認を区別するリスト | 同じNavigatorと継続して協働できるDriver/Navigatorのコード変更。専用ツール・固定ファイル名は要求しない | 共通インストラクションの共有ToDoリスト |
-| Driver | 2エージェントでのコード変更を進めるメインエージェント。共有ToDoをNavigatorと共同で選び、テスト・実装・統合を担い、作業対象を編集する唯一の役割 | 独立コンテキストを持つ同じNavigatorと継続的にフィードバックを交換できる環境でのコード変更 | 共通インストラクションのDriver |
-| Navigator | Driverと独立した実行コンテキストを持つ1体の読み取り専用サブエージェント。共有ToDo、要件・コード・差分・テスト結果を確認し、Red・Green・Refactorごとにフィードバックする | 独立コンテキストを持つ同じNavigatorと継続的にフィードバックを交換できる環境でのコード変更 | 共通インストラクションのNavigator |
+| 共有ToDo | TDDの対象となる小さな振る舞い、境界・異常系、既存ふるまいの保護、設計改善を記録し、未着手・進行中・完了・要確認を区別するリスト | 各ペア内で同じNavigatorと継続して協働するDriver/Navigatorのコード変更。専用ツール・固定ファイル名は要求しない | 共通インストラクションの共有ToDoリスト |
+| Driver | 2エージェントでのコード変更を進めるメインエージェント。共有ToDoをNavigatorと共同で選び、テスト・実装・統合を担い、作業対象を編集する唯一の役割 | 独立コンテキストを持つそのペアのNavigatorと継続的にフィードバックを交換できる環境でのコード変更 | 共通インストラクションのDriver |
+| Navigator | Driverと独立した実行コンテキストを持つ1体の読み取り専用サブエージェント。共有ToDo、要件・コード・差分・テスト結果を確認し、Red・Green・Refactorごとにフィードバックする | 各ペア内では同じNavigatorを使い、交代する場合も同時に有効なNavigatorは1体とするコード変更 | 共通インストラクションのNavigator |
+| 再ペア | Navigatorを復旧できないときに停止・報告し、その喪失への明示承認を受けて元Navigatorを担当から外し、新しいNavigatorと別のペアを始めること。未確認段階と未解決指摘を引き継ぐ。[^issue-100] | 継続不能になったDriver/Navigatorのコード変更。作業全体や過去の再ペア承認では再開しない | 共通インストラクションの承認付き再ペア |
 | ストーリーファースト | 設計より先に、誰が、どの状況で、完成後に何をできるかを語り、受け入れ条件へつなぐ本環境の方針 | システム・機能の構築。技術修正・整理では既存の目的・期待結果へ結ぶ | decision-makingの目的・目標・手段・スタンダード、`behavior-specification` |
 | スタンダード | 複数のプロジェクトで目標を満たす手段を選ぶ際に繰り返し使う判断基準・優先順位。ユーザーの判断から抽出した候補はIssueへの記録だけでは採用されない | 共通作業原則の設計判断・候補Issueの記録 | decision-makingのスタンダード、`task-workflow` の共通スタンダード候補 |
 | テストファースト | 実装後の期待するふるまいを、対応する実装コードより先にテストで表現する本環境の方針 | コード変更。ふるまい不変の整理では十分な既存テストの成功を先に確認し、不足時は先に補う | developmentの共有理解と検証、`software-development` |
@@ -66,5 +69,6 @@ Simple Design・YAGNIの定義と本環境への適用範囲は、一次資料�
 | 確認記録 | 文書の内容や計算定義を確認したActorと日時 | OKF文書検査 | `verified` |
 | 実行証明 | 許可された計算による単一実行の結果をreceiptから確認すること。静的検査の対象外 | OKF計算契約 | Attestation |
 
+[^issue-100]: [Issue #100](https://github.com/daiksud/agents/issues/100) のNavigator喪失と承認付き再ペアの条件。
 [^xp-principles]: Simple Design・YAGNIの一次資料と本環境のテスト・設計改善への適用判断。
 [^okf-v02]: OKF v0.2 §§2、5、10–11。profile名は本パッケージの検査契約。
