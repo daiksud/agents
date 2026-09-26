@@ -5,7 +5,7 @@ description: DevOps・Lean・CI/CD・BDD/ATDD/TDD・DDD・チームトポロジ�
 
 # 開発実践を診断し、導入を計画する
 
-利用者へ価値を安全に届ける流れを調べ、最初に試す改善を具体化する。依存スキル `task-workflow` の[診断・計画専用経路](../task-workflow/references/issue-recording.md#診断計画専用のissue記録)でIssueへ記録する。以下のリポジトリ・`docs/` は診断対象を指す。
+利用者へ価値を安全に届ける流れを調べ、最初に試す改善を具体化する。依存スキル `issue-management` の[診断・計画専用経路](../issue-management/references/issue-recording.md#診断計画専用のissue記録)でIssueへ記録する。`issue-management` を利用できなければIssueへ投稿せず、他のSkillで代用せずに未保存案と導入条件を示す。以下のリポジトリ・`docs/` は診断対象を指す。
 
 ## 範囲と参照資料
 
@@ -22,4 +22,4 @@ description: DevOps・Lean・CI/CD・BDD/ATDD/TDD・DDD・チームトポロジ�
 
 保存・再取得・表示確認とURL・本文の提示で終了し、診断完了と導入未実施を区別してIssueを開いたまま残す。再診断は既存の証拠と判断変更の履歴を保持する。投稿禁止・保存不能・未確認なら未保存案・制約・再開条件を示す。
 
-コード・CI設定・組織の変更、Sub-issueの実行対象確定、ブランチ・PR・マージへ進まない。main失敗も証拠と復旧優先度を計画に記録するだけとし、実装を依頼されたら既存計画を引き継いで `task-workflow` の通常経路へ移る。
+コード・CI設定・組織の変更、Sub-issueの実行対象確定、ブランチ・PR・マージへ進まない。main失敗も証拠と復旧優先度を計画に記録するだけとする。実装を依頼されたら、`issue-management` の通常経路で既存Issueの計画を確認し、不足する実装範囲・受け入れ条件・検証は保存・再取得して、実行承認がある範囲だけを `change-delivery` へ引き渡す。後日の実装で `change-delivery` を利用できなければ実装を開始せず、未完了範囲と導入条件を示す。

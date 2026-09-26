@@ -210,6 +210,45 @@ class MetadataTests(unittest.TestCase):
         self.assertNotIn('`issue-management`', checks)
         self.assertNotIn('`task-workflow`', delivery)
 
+    def test_assessment_diagnosis_stops_before_approved_delivery(self):
+        root = Path(__file__).resolve().parents[1]
+        skill = (root / 'skills/engineering-assessment/SKILL.md').read_text(encoding='utf-8')
+        guide = (root / 'skills/engineering-assessment/references/assessment.md').read_text(encoding='utf-8')
+        issue_path = root / 'skills/issue-management/references/issue-recording.md'
+        self.assertIn('### 診断・計画専用のIssue記録', issue_path.read_text(encoding='utf-8'))
+        self.assertIn(
+            '[診断・計画専用経路](../issue-management/references/issue-recording.md#診断計画専用のissue記録)',
+            skill)
+        self.assertIn('`issue-management`', skill.split('## 範囲と参照資料')[0])
+        self.assertIn('保存・再取得・表示確認とURL・本文の提示で終了', skill)
+        self.assertIn('投稿禁止・保存不能・未確認なら未保存案', skill)
+        self.assertIn('main失敗も証拠と復旧優先度を計画に記録するだけ', skill)
+        self.assertIn('`issue-management` を利用できなければIssueへ投稿せず', skill)
+        self.assertIn('`change-delivery` を利用できなければ実装を開始せず', skill)
+        handoff = next(sentence for sentence in skill.split('。') if '実装を依頼されたら' in sentence)
+        self.assertIn('`issue-management`', handoff)
+        self.assertIn('`change-delivery`', handoff)
+        self.assertNotIn('`task-workflow`', skill)
+
+        self.assertIn(
+            '[診断・計画専用経路](../../issue-management/references/issue-recording.md#診断計画専用のissue記録)',
+            guide)
+        self.assertIn('[承認済み変更のdelivery](../../change-delivery/SKILL.md)', guide)
+        self.assertIn('Issueを記録しただけでSub-issueを実行対象として確定したり、実装承認を得たことにしたりしない', guide)
+        self.assertNotIn('`task-workflow`', guide)
+
+        evals = json.loads((root / 'skills/engineering-assessment/evals/evals.json').read_text(encoding='utf-8'))
+        by_id = {case['id']: case for case in evals['evals']}
+        for case_id in (7, 11, 16):
+            with self.subTest(case_id=case_id):
+                self.assertNotIn('task-workflow', json.dumps(by_id[case_id], ensure_ascii=False))
+        self.assertIn('issue-management', by_id[7]['expected_output'])
+        self.assertIn('change-delivery', by_id[11]['expected_output'])
+        self.assertIn('issue-management', by_id[16]['expected_output'])
+        self.assertIn(17, by_id, 'diagnosis follow-on needs a scoped, explicitly approved delivery scenario')
+        self.assertIn(18, by_id, 'missing Issue dependency must not silently fall back to the retired root')
+        self.assertIn(19, by_id, 'missing delivery dependency must not start implementation')
+
 
 if __name__ == '__main__':
     unittest.main()

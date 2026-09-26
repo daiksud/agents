@@ -67,10 +67,10 @@
     {
       "id": 7,
       "prompt": "このリポジトリのDevOps・DDD・TDDの現状を診断して導入計画を作り、Issueへ記録して。acme/shopには日本語feature、受け入れテスト、用語集があり全テストは成功。履歴はスカッシュ済みで、誰といつ条件を確認したか、テストの失敗を先に見たかは不明。目的は仕様の認識違いを減らすこと。",
-      "expected_output": "engineering-assessmentで現状を診断し、Issue記録にはtask-workflowを併用する。成果物だけで共同理解・実装前合意・テスト先行の有無を断定せず、DevOps・DDD・TDDの関係者確認と証拠の不足を区別し、小さな導入計画を示す。コード・CI・組織の変更やPR作成へ進まない。",
+      "expected_output": "engineering-assessmentで現状を診断し、Issue記録にはissue-managementを併用する。成果物だけで共同理解・実装前合意・テスト先行の有無を断定せず、DevOps・DDD・TDDの関係者確認と証拠の不足を区別し、小さな導入計画を示す。コード・CI・組織の変更やPR作成へ進まない。",
       "files": [],
       "expectations": [
-        "engineering-assessmentで診断し、Issue記録にはtask-workflowを併用する",
+        "engineering-assessmentで診断し、Issue記録にはissue-managementを併用する",
         "成果物だけで共同理解・実装前合意・テスト先行の有無を断定しない",
         "関係者や直近作業の確認、ルール・例・質問を使う小さな改善を示す"
       ]
@@ -108,11 +108,11 @@
     {
       "id": 11,
       "prompt": "acme/api のHTTPタイムアウト修正を実装して。既存Issueの計画を明示承認済みで、今回はタイムアウト処理と回帰テストだけが範囲。DevOpsやTDDという共通原則もある。どのスキルを使い、どこまで進めるか。",
-      "expected_output": "通常の修正からengineering-assessmentの全面診断・導入Issueを起動しない。承認済み範囲の実装をtask-workflowとsoftware-developmentへ引き継ぐ。",
+      "expected_output": "通常の修正からengineering-assessmentの全面診断・導入Issueを起動しない。承認済み範囲の実装をchange-deliveryとsoftware-developmentへ引き継ぐ。",
       "files": [],
       "expectations": [
         "通常の修正からengineering-assessmentの全面診断・導入Issueを起動しない",
-        "承認済み範囲の実装をtask-workflowとsoftware-developmentへ引き継ぐ"
+        "承認済み範囲の実装をchange-deliveryとsoftware-developmentへ引き継ぐ"
       ]
     },
     {
@@ -152,13 +152,48 @@
     {
       "id": 16,
       "prompt": "読み取り専用模擬評価。実際の編集・投稿・導入・ブランチ操作・テスト実行は禁止。対象スキルの本文と同梱資料から必要な参照先を選び、以下の仮想資料だけを根拠に判断と手順を示してください。未実行の操作を実施済みと報告しないでください。\n\nacme/apiのCIだけを診断し、改善計画をIssueへ残してほしい。目的は変更を短い間隔で安全に共有すること。CIの定義は関係者と既に確認済みで、版差やDORA指標の調査は求められていない。直近10件のPRはテスト成功後に統合したが、mainの2件の失敗が未修復で、作業ブランチは平均14日。原因変更と担当者の経験は未確認。対象・指示者・ラベル・rumdlは確認済み。必要な参照資料、診断と完了条件を示して。",
-      "expected_output": "限定したCI診断ではassessment.mdの証拠収集と優先順位付けを使い、定義が確認済みのためprinciples.mdやsources.mdの全読を必須にしない。main失敗と長期ブランチの観測を根拠として復旧と統合単位の改善を優先計画にし、未確認の原因を断定しない。task-workflowのissue-recording.mdで保存・再取得・本文一致・表示確認・URLと本文提示へ進む手順を示し、導入未実施のIssueを開いたまま残す。9概念の全面診断・復旧実装・ブランチ・PR・マージへ進まない。",
+      "expected_output": "限定したCI診断ではassessment.mdの証拠収集と優先順位付けを使い、定義が確認済みのためprinciples.mdやsources.mdの全読を必須にしない。main失敗と長期ブランチの観測を根拠として復旧と統合単位の改善を優先計画にし、未確認の原因を断定しない。issue-managementのissue-recording.mdで保存・再取得・本文一致・表示確認・URLと本文提示へ進む手順を示し、導入未実施のIssueを開いたまま残す。9概念の全面診断・復旧実装・ブランチ・PR・マージへ進まない。",
       "files": [],
       "expectations": [
         "assessment.mdで限定CI診断を進め、定義・版差の判断が不要な場面でprinciples.mdやsources.mdを必須読み込みにしない",
         "main失敗と統合間隔の観測を使い、未確認の原因を断定せず小さな改善計画へつなぐ",
         "issue-recording.mdの保存確認・提示へ到達し、導入未実施を明示してIssueを開いたまま残す",
         "9概念の全面診断や復旧実装へ広げない"
+      ]
+    },
+    {
+      "id": 17,
+      "prompt": "読み取り専用の模擬評価。実際のIssue投稿・編集・Git操作は禁止し、判断と手順だけ示して。acme/apiのCI診断と改善の導入計画は既存Issue #42に保存され、再取得・本文と表示の確認も済んでいる。診断は完了したが、導入は未実施。後日、利用者から「最初の検証スクリプトを実装してmainまで届けて」と明示的に依頼された。診断Issueには実装対象と受け入れ条件・検証がまだ記載されていない。診断時のmainには失敗があったが、最新mainの状態は未確認。計画と承認の扱い、必要な確認、担当Skillと次の工程を説明して。",
+      "expected_output": "診断Issueの保存だけを実装計画や承認と同一視しない。明示された変更依頼は保持し、未確定の実装対象・受け入れ条件と検証をissue-managementの通常の計画経路で確認・記録して再取得し、未合意の業務条件を勝手に確定しない。計画と承認がそろった範囲をchange-deliveryへ引き渡し、最新mainが失敗していれば原因と復旧を優先して通常の変更を先行させない。模擬では投稿・編集・Git操作を行ったと報告しない。",
+      "files": [],
+      "expectations": [
+        "診断Issueの保存だけを実装計画や承認とみなさず、後から明示された変更依頼は保持する",
+        "issue-managementの通常の計画経路で実装範囲・受け入れ条件・検証を確認して保存・再取得し、未合意事項を勝手に確定しない",
+        "既存の明示承認と確認済みの計画でchange-deliveryへ引き渡し、最新main失敗なら復旧を優先する",
+        "模擬評価で実際の投稿・編集・Git操作を実施済みと偽らない"
+      ]
+    },
+    {
+      "id": 18,
+      "prompt": "読み取り専用の模擬評価。実際の外部取得・Issue投稿・編集・Git操作は禁止。acme/apiのCIを診断して、証拠に基づく導入計画をIssueへ記録するまで依頼された。仮想の導入環境にはengineering-assessmentと旧task-workflowのSkill入口・資料はあるが、必要なissue-managementは未導入。mainの必要チェックは失敗しているが原因は未確認。どのSkillを使い、Issue保存・main復旧・完了報告をどう扱うか。",
+      "expected_output": "engineering-assessmentで診断案とmain失敗の証拠・復旧優先度を整理する。issue-managementが利用できないため旧task-workflowへ無言で切り替えてIssue投稿・保存確認を進めず、未保存案と依存を導入する必要・未完了範囲を示す。診断だけの依頼からmainの復旧実装・ブランチ・PRへ進まない。模擬で実行禁止の操作を実施済みと偽らない。",
+      "files": [],
+      "expectations": [
+        "依存するissue-managementの不在を検出し、旧task-workflowのIssue経路へ無言でフォールバックしない",
+        "診断とmain失敗の証拠・復旧優先度を示し、Issue未保存と導入が必要な条件を区別する",
+        "診断だけの依頼で復旧実装・ブランチ・PRを始めず、模擬操作を実行済みと報告しない"
+      ]
+    },
+    {
+      "id": 19,
+      "prompt": "読み取り専用の模擬評価。Issue投稿・編集・Git操作は禁止し、判断と手順だけ示して。acme/apiのCI診断Issueから、最初の改善の実装範囲・受け入れ条件・検証を追記した計画が保存・再取得・表示確認済みで、利用者は同じ範囲の実装を明示依頼した。仮想の導入環境にはengineering-assessment、issue-managementと旧task-workflowがあるが、change-deliveryは未導入。診断時にはmain失敗の記録があったが最新mainは未確認。実装開始とIssue計画・承認の扱い、依存と次の行動を説明して。",
+      "expected_output": "診断と承認済み実装を区別し、保存済みの実装計画と明示依頼を重複作成・再承認しない。change-delivery不在のため、旧task-workflowで代用してブランチ・編集・PRを始めず、導入が必要な依存と未完了範囲を示す。最新mainの必要チェックは確認前に成功・失敗を決めつけず、実装可能になっても失敗中なら復旧を優先する。模擬操作を実行済みと偽らない。",
+      "files": [],
+      "expectations": [
+        "保存・確認済み実装計画と後日の明示依頼を保持し、再保存・再承認を要求しない",
+        "change-deliveryが利用できなければ旧task-workflowへフォールバックせず実装・ブランチ・PRを始めない",
+        "最新mainの状態を確認するまで成功・失敗を断定せず、未完了範囲と依存の導入条件を示す",
+        "模擬で投稿・編集・Git操作を実施済みと報告しない"
       ]
     }
   ]
