@@ -4,10 +4,23 @@ import unittest
 from unittest.mock import patch
 import subprocess
 
-from scripts.skill_smoke import main, validate_install
+from scripts.skill_smoke import main, validate_install, verify_upgrade
 
 
 class InstallationTests(unittest.TestCase):
+    def test_migration_fixture_is_independent_of_the_recovery_baseline(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            source = root / 'source'
+            (source / '.github').mkdir(parents=True)
+            (source / '.github/delivery.json').write_text('{"baseline_sha":"' + 'a' * 40 + '"}')
+            with patch('scripts.skill_smoke.subprocess.check_output',
+                       side_effect=RuntimeError('archive boundary')) as archive:
+                with self.assertRaisesRegex(RuntimeError, 'archive boundary'):
+                    verify_upgrade(source, root)
+            self.assertEqual(['git', 'archive', '6e09d5166a8f49aa3a71edc102446d92a59e939d'],
+                             archive.call_args.args[0])
+
     def test_retired_owned_skill_is_rejected_without_changing_other_files(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

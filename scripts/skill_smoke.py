@@ -1,12 +1,14 @@
 """Exercise gh skill installation in a temporary directory, never user scope."""
 from pathlib import Path
 import io
-import json
 import subprocess
 import tarfile
 import tempfile
 
 import yaml
+
+# Keep the pre-rename package even when the healthy APM recovery baseline advances.
+SKILL_MIGRATION_BASELINE = '6e09d5166a8f49aa3a71edc102446d92a59e939d'
 
 
 def skill_content(path):
@@ -53,7 +55,7 @@ def validate_install(source, target, previous_source=None):
 def verify_upgrade(source, root):
     """Exercise the documented retirement step only inside the smoke's temporary root."""
     previous, target, backup = root / 'previous-source', root / 'upgraded', root / 'retired-backup'
-    baseline = json.loads((source / '.github/delivery.json').read_text())['baseline_sha']
+    baseline = SKILL_MIGRATION_BASELINE
     archive = subprocess.check_output(['git', 'archive', baseline], cwd=source)
     with tarfile.open(fileobj=io.BytesIO(archive)) as bundle:
         bundle.extractall(previous, filter='data')
