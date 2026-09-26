@@ -11,7 +11,7 @@ description: GitHub Actionsのworkflow作成・変更、CI失敗の原因調査�
 
 最初に、依頼が設計・調査だけか、レビューか、変更まで含むかを確認する。変更でIssue計画・公開許可・実行範囲を扱うときは `issue-management`、承認済み変更をbranch・PR・必須CI・統合後mainの確認まで届けるときは `change-delivery` を併用する。Issue計画だけなら `issue-management` で `change-delivery` や `software-development` が未導入でも保存・再取得・本文と表示・URLの提示で停止できる。
 
-アプリコードの修正では `software-development` のTDDで回帰を再現して修正する。workflow設定のみの修正ではアプリコード用TDDを始めないが、設定の失敗に応じた最小の検証を先に定める。文書作成は `okf-docs`、読み取り専用レビューの進め方と指摘は `code-review` に従う。`issue-management` を利用できなければIssueへ投稿せず、他のSkillで代用せずに未保存案と制約を示す。`change-delivery` を利用できなければworkflowを編集せず、他のSkillで代用せずに未完了の検証・main確認を示す。`software-development` を利用できなければアプリコードを編集せず、再現情報と未完了範囲を示す。該当する依存が未導入なら利用環境で導入方法を確認する。相談・監査だけから編集・Issue投稿・PR作成・実行トリガーへ進まない。
+アプリコードの修正では `software-development` のTDDで回帰を再現して修正する。workflow設定のみの修正ではアプリコード用TDDを始めないが、設定の失敗に応じた最小の検証を先に定める。文書作成は `document-authoring`、読み取り専用レビューの進め方と指摘は `code-review` に従う。`issue-management` を利用できなければIssueへ投稿せず、他のSkillで代用せずに未保存案と制約を示す。`change-delivery` を利用できなければworkflowを編集せず、他のSkillで代用せずに未完了の検証・main確認を示す。`software-development` を利用できなければアプリコードを編集せず、再現情報と未完了範囲を示す。該当する依存が未導入なら利用環境で導入方法を確認する。相談・監査だけから編集・Issue投稿・PR作成・実行トリガーへ進まない。
 
 作業に該当する資料だけを読む。複数の分野に関わる場合は組み合わせる。
 

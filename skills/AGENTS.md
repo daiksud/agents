@@ -22,7 +22,7 @@ sources:
 - 既存スキルの目的と適用範囲を確認し、新規作成と既存スキルの改善のどちらが必要か判断する。
 - 作成・改善の手順には、利用可能な `skill-creator` の `SKILL.md` を読んで適用する。APMの外部依存として導入する方法は[README](../README.md)を参照する。
 - 成果物や適用範囲を左右する不明点は、既存の指示と会話を確認したうえでユーザーに確認する。
-- Issue計画・公開許可は `issue-management`、承認済み変更・PR・レビュー・main確認は `change-delivery`、文書の形式は `okf-docs`、実行コードの追加・変更は `software-development` に従う。
+- Issue計画・公開許可は `issue-management`、承認済み変更・PR・レビュー・main確認は `change-delivery`、文書の形式は `document-authoring`、実行コードの追加・変更は `software-development` に従う。
 
 ### 配置と形式
 
@@ -37,7 +37,7 @@ sources:
 - 既存スキルの更新では、依頼に必要な変更がない限り名前と適用範囲を保持する。
 - 本文と説明は日本語を基本とし、コマンド・識別子・固有名詞は元の表記を保つ。
 - このAGENTS.mdと同梱する通常概念はOKF v0.2に従う。仕様必須の `type` に加え、自作時の追加条件として `title`・`description` を記載する。`index.md`・`log.md` は予約形式とし、`SKILL.md` のfrontmatterはAgent Skills仕様を用いる。
-- Bundleの境界、出典・確認履歴の保持と更新、検証の判断は [okf-docs](okf-docs/SKILL.md) に従う。原本検査でのBundleはリポジトリルートとし、対象を明示して固有形式を除く。
+- Bundleの境界、出典・確認履歴の保持と更新、検証の判断は [document-authoring](document-authoring/SKILL.md) に従う。原本検査でのBundleはリポジトリルートとし、対象を明示して固有形式を除く。
 
 ### 内容と同梱資料
 

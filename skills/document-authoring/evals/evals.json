@@ -1,16 +1,16 @@
 {
-  "skill_name": "okf-docs",
+  "skill_name": "document-authoring",
   "evals": [
     {
       "id": 1,
       "prompt": "Issue本文提示・計画承認済み。rumdlは導入済み。docs/adr/authentication.mdに認証方式の採用理由を記録するADRを書いて。",
-      "expected_output": "実行承認を保持し、Issue計画が保存・確認済みなら再記録せず、未保存なら公開許可を確認してissue-managementで保存・再取得・表示確認する。okf-docsの形式とchange-deliveryの承認済み変更・main確認を併用してdocs/adrに1概念のOKF文書を作成する。type/title/description、確認済みの根拠、リンクを検証する。issue-managementの共通Markdown品質手順に従い文書全体を整形・チェックする。",
+      "expected_output": "実行承認を保持し、Issue計画が保存・確認済みなら再記録せず、未保存なら公開許可を確認してissue-managementで保存・再取得・表示確認する。document-authoringの形式とchange-deliveryの承認済み変更・main確認を併用してdocs/adrに1概念のOKF文書を作成する。type/title/description、確認済みの根拠、リンクを検証する。issue-managementの共通Markdown品質手順に従い文書全体を整形・チェックする。",
       "files": []
     },
     {
       "id": 2,
       "prompt": "Issue本文提示・計画承認済み。rumdlは導入済み。ドメイン変更に伴うfeature文書を更新して。",
-      "expected_output": "実行承認を保持し、Issue計画が保存・確認済みなら再記録せず、未保存なら公開許可を確認してissue-managementで保存・再取得・表示確認する。change-deliveryで承認済みの文書変更を届ける。okf-docsとbehavior-specificationの記法を確認し、OKF frontmatterと日本語Markdown with Gherkinを用いる。ルールの理解に意味を持つ具体値・入出力例はシナリオに含め、無関係なデータや内部実装の手順を省く。issue-managementの共通Markdown品質手順で文書全体を整形・チェックし、構造を確認する。文書だけの更新でコードTDDを始めない。",
+      "expected_output": "実行承認を保持し、Issue計画が保存・確認済みなら再記録せず、未保存なら公開許可を確認してissue-managementで保存・再取得・表示確認する。change-deliveryで承認済みの文書変更を届ける。document-authoringとbehavior-specificationの記法を確認し、OKF frontmatterと日本語Markdown with Gherkinを用いる。ルールの理解に意味を持つ具体値・入出力例はシナリオに含め、無関係なデータや内部実装の手順を省く。issue-managementの共通Markdown品質手順で文書全体を整形・チェックし、構造を確認する。文書だけの更新でコードTDDを始めない。",
       "files": []
     },
     {
@@ -52,7 +52,7 @@
     {
       "id": 9,
       "prompt": "読み取り専用模擬評価。実環境の変更・投稿・検証実行は禁止。まず対象スキルの説明から適用を判断し、必要なら本文・同梱資料を読んで方針を示してください。\n\n計画承認済み。API利用チームが読む api/openapi.yaml の契約文書だけを更新したい。docs配下のMarkdownも実行コードも変更しない。合意済みの変更は見積応答にcurrency: JPYを必須項目として追加すること。api/openapi.yamlが形式の正本、既存テストが成功応答を確認する。既存のJSON Schema参照は同じ契約を検証している。どのスキルを使い、正本・参照・受け入れ条件と文書形式をどう扱うか。",
-      "expected_output": "docs外でも契約文書の作成更新としてokf-docsを選ぶ。API利用チームを読者とし、OpenAPIと参照スキーマの正本・対応を確認しcurrencyが必須でJPYになる合意済み契約と検証を対応づける。YAMLの既存形式を維持しOKFヘッダーや別のMarkdown仕様を追加しない。コード変更なしなのでTDD実行を要求せず、未実行の検証を成功としない。",
+      "expected_output": "docs外でも契約文書の作成更新としてdocument-authoringを選ぶ。API利用チームを読者とし、OpenAPIと参照スキーマの正本・対応を確認しcurrencyが必須でJPYになる合意済み契約と検証を対応づける。YAMLの既存形式を維持しOKFヘッダーや別のMarkdown仕様を追加しない。コード変更なしなのでTDD実行を要求せず、未実行の検証を成功としない。",
       "files": []
     },
     {
@@ -202,7 +202,7 @@
       ],
       "expectations": [
         "OpenAPIのcurrencyを必須かつJPYに制約し、amount等の既存契約を保持する",
-        "契約文書としてokf-docsの適用を認識しつつOpenAPIとPR本文へOKF frontmatterを追加しない",
+        "契約文書としてdocument-authoringの適用を認識しつつOpenAPIとPR本文へOKF frontmatterを追加しない",
         "実行コードなしの依頼にTDD実行を要求せず、未実行の検証を成功としない"
       ]
     },
@@ -249,7 +249,7 @@
     {
       "id": 25,
       "prompt": "読み取り専用模擬評価。実際の編集・投稿・導入・ブランチ操作・テスト実行は禁止。対象スキルの本文と同梱資料から必要な参照先を選び、以下の仮想資料だけを根拠に判断と手順を示してください。未実行の操作を実施済みと報告しないでください。\n\nユーザーは国内配送モデルの送料無料条件を説明するfeature文書だけの更新を依頼した。コードとテストは変更しない。税込小計6,000円以上で送料0円、それ未満は500円というルールは合意済みで、用語集も同じ意味。既存のdocs/behavior/shipping.feature.mdが仕様の正本。Issueの計画保存・確認・提示済み。5,999円と6,000円の日本語シナリオを文案として示し、使う参照資料と検証を説明して。",
-      "expected_output": "okf-docsのspecification.mdと基本形式を使い、featureの日本語記法は依存するbehavior-specificationのreferences/behavior.mdを直接参照する。既存正本にOKF frontmatterと意味のある境界シナリオを保ち、文書形式と意味・参照・rumdl整形後のGherkin構造を確認する手順を示す。形式の参照だけでsoftware-developmentの実装ワークフローやTDD・コード変更を起動しない。",
+      "expected_output": "document-authoringのspecification.mdと基本形式を使い、featureの日本語記法は依存するbehavior-specificationのreferences/behavior.mdを直接参照する。既存正本にOKF frontmatterと意味のある境界シナリオを保ち、文書形式と意味・参照・rumdl整形後のGherkin構造を確認する手順を示す。形式の参照だけでsoftware-developmentの実装ワークフローやTDD・コード変更を起動しない。",
       "files": [],
       "expectations": [
         "featureの記法はbehavior-specificationのreferences/behavior.mdを直接参照し、既存仕様の正本を保つ",
@@ -306,7 +306,7 @@
     {
       "id": 30,
       "prompt": "読み取り専用模擬評価。実際の編集・投稿・導入・テスト実行は禁止。外部から受け取ったOKF Bundleの形式をconformanceで判定する方針だけ示して。issue-managementとchange-deliveryはどちらも未導入で、旧task-workflowのみ利用可能。未知type・x-customキー・任意のtitle欠落があり、既存の検査依存は導入済み。自分たちの文書は作成しない。",
-      "expected_output": "okf-docsのvalidatorとconformance profileを使い、外部Bundleを読むだけの判定にIssue記録・delivery・旧task-workflowを要求しない。未知type・任意title欠落・未知x-customキーだけで不適合にしない。検査結果を捏造せず、authoringの追加品質条件を外部適合へ流用しない。",
+      "expected_output": "document-authoringのvalidatorとconformance profileを使い、外部Bundleを読むだけの判定にIssue記録・delivery・旧task-workflowを要求しない。未知type・任意title欠落・未知x-customキーだけで不適合にしない。検査結果を捏造せず、authoringの追加品質条件を外部適合へ流用しない。",
       "files": [],
       "expectations": [
         "外部Bundleのconformance-onlyはissue-managementとchange-deliveryなしで進められると判断する",
@@ -338,7 +338,7 @@
     {
       "id": 33,
       "prompt": "読み取り専用模擬評価。実際の編集・投稿・導入は禁止。Issue計画は保存・確認・提示済み、docs/adr/retry.mdの修正も承認済み。issue-managementは使えるがchange-deliveryは未導入で、旧task-workflowは利用可能。既存sourcesとx-owner、確認履歴は保持する。どこまで進めるか。",
-      "expected_output": "保存済みIssue計画と実行承認を保持して重複記録しない。change-delivery欠落時は文書編集・PR・main統合へ進まず、旧task-workflowで代用しない。okf-docsによる内容・出典・未知メタデータ・確認履歴の文案と未完了範囲を示す。",
+      "expected_output": "保存済みIssue計画と実行承認を保持して重複記録しない。change-delivery欠落時は文書編集・PR・main統合へ進まず、旧task-workflowで代用しない。document-authoringによる内容・出典・未知メタデータ・確認履歴の文案と未完了範囲を示す。",
       "files": [],
       "expectations": [
         "保存済みIssue計画と承認は再記録や再承認せず保持する",

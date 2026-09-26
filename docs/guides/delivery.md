@@ -129,10 +129,10 @@ apm compile --global
 | `skills/behavior-specification/` | ストーリー、BDD・ATDD、具体例・受け入れ仕様の発見と整理 |
 | `skills/software-development/` | Shared ToDo、TDD、Simple Design・YAGNIと小さな実装・検証 |
 | `skills/code-review/` | 将来の変更への耐性を最優先に、欠陥・回帰も根拠から評価する読み取り専用レビュー |
-| `skills/okf-docs/` | OKF v0.2に従う文書の作成・更新・検証 |
+| `skills/document-authoring/` | OKF v0.2に従う文書の作成・更新・検証 |
 | `skills/github-actions/` | GitHub Actionsの設計・安全性・効率改善・Action内部ランタイム更新の判断と検証 |
 
-共通指示には `applyTo` を付けません。詳細手順はスキルと同梱資料に置きます。各SKILL.mdを工程別の入口にし、issue-managementは計画・Issue記録・Markdown品質、change-deliveryはbranch・レビュー・main確認、behavior-specificationは共有仕様、software-developmentは設計・実装・テスト、okf-docsは形式・出典・検証へ分けます。参照を移した場合はリンク元と導入後の同梱資料も確認します。[インストラクションのテンプレート](../templates/instructions.md)と[スキルの編集指示](../../skills/AGENTS.md)を参照します。スキルの作成・改善には外部依存の `skill-creator` を使います。
+共通指示には `applyTo` を付けません。詳細手順はスキルと同梱資料に置きます。各SKILL.mdを工程別の入口にし、issue-managementは計画・Issue記録・Markdown品質、change-deliveryはbranch・レビュー・main確認、behavior-specificationは共有仕様、software-developmentは設計・実装・テスト、document-authoringは形式・出典・検証へ分けます。参照を移した場合はリンク元と導入後の同梱資料も確認します。[インストラクションのテンプレート](../templates/instructions.md)と[スキルの編集指示](../../skills/AGENTS.md)を参照します。スキルの作成・改善には外部依存の `skill-creator` を使います。
 
 原本を編集しても公開版やユーザースコープは更新されません。編集中の原本を適用するための自己更新は行わず、公開後の導入・更新は[README](../../README.md)の利用者向け操作として扱います。生成されたAGENTS.mdは直接編集しません。
 
@@ -140,7 +140,7 @@ apm compile --global
 
 構成・整形・保存後の本文と表示の確認は[GitHub向けMarkdownの品質](../../skills/issue-management/references/markdown-quality.md)に従います。以下は本リポジトリで同じ検査を実行する設定とコマンドです。
 
-共通設定は `skills/issue-management/assets/rumdl.toml` に同梱され、本リポジトリの `.rumdl.toml` も同じ設定を継承します。MD013・MD033・MD034・MD041のみを無効化し、MD060をcompact、MD076をtightにします。通常概念ではその他のルールは既定のままです。Attested Computationは [計算文書の検証](../../skills/okf-docs/references/computation.md#markdownと契約を合わせて検証する) に従い、MD025のtitleの扱いだけを限定して調整します。
+共通設定は `skills/issue-management/assets/rumdl.toml` に同梱され、本リポジトリの `.rumdl.toml` も同じ設定を継承します。MD013・MD033・MD034・MD041のみを無効化し、MD060をcompact、MD076をtightにします。通常概念ではその他のルールは既定のままです。Attested Computationは [計算文書の検証](../../skills/document-authoring/references/computation.md#markdownと契約を合わせて検証する) に従い、MD025のtitleの扱いだけを限定して調整します。
 
 リポジトリ直下で、継承設定を明示して実行します。
 
@@ -149,7 +149,7 @@ rumdl check --config .rumdl.toml --deny-config-warnings --fix <変更したMarkd
 rumdl check --config .rumdl.toml --deny-config-warnings <変更したMarkdownファイル>
 ```
 
-投稿用の一時本文や配布先での実行は[GitHub向けMarkdownの品質](../../skills/issue-management/references/markdown-quality.md)に従って設定を明示指定します。リポジトリ文書を作成・更新する場合は `okf-docs` の形式検証と `issue-management` のMarkdown品質を併用します。外部Bundleの読み取り専用conformanceだけならIssue記録やdeliveryは要求しません。
+投稿用の一時本文や配布先での実行は[GitHub向けMarkdownの品質](../../skills/issue-management/references/markdown-quality.md)に従って設定を明示指定します。リポジトリ文書を作成・更新する場合は `document-authoring` の形式検証と `issue-management` のMarkdown品質を併用します。外部Bundleの読み取り専用conformanceだけならIssue記録やdeliveryは要求しません。
 
 rumdl未導入・旧版の場合は、[検証環境の準備](../../skills/issue-management/references/planning.md#検証環境の準備)に従い、既知の必要版を隔離環境へ用意します。グローバル設定変更・追加権限・費用発生は確認し、未検証の投稿は保留します。
 

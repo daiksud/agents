@@ -12,14 +12,14 @@ description: 同梱validatorの環境準備・profile・結果判定と、公開
 
 ```sh
 python3 -m venv /path/to/project/.venv-okf
-/path/to/project/.venv-okf/bin/python -m pip install -r /path/to/okf-docs/scripts/requirements.txt
+/path/to/project/.venv-okf/bin/python -m pip install -r /path/to/document-authoring/scripts/requirements.txt
 ```
 
 準備した環境のPythonで検査を実行する。以下の `python3` はそのコマンドに置き換える。
 
 ```sh
-python3 /path/to/okf-docs/scripts/validate_okf.py /path/to/project/docs
-python3 /path/to/okf-docs/scripts/validate_okf.py /path/to/project/docs adr/choice.md --profile authoring
+python3 /path/to/document-authoring/scripts/validate_okf.py /path/to/project/docs
+python3 /path/to/document-authoring/scripts/validate_okf.py /path/to/project/docs adr/choice.md --profile authoring
 ```
 
 対象ファイルはBundleルート基準で指定する。省略時はBundle内のMarkdownを検査する。固有形式を含むディレクトリ全体をOKF Bundleとして渡さず、OKF対象のファイルを指定する。シンボリックリンク経由で無関係な配布先へ検査を広げない。

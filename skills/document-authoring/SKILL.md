@@ -1,5 +1,5 @@
 ---
-name: okf-docs
+name: document-authoring
 description: Markdown文書、仕様、feature文書、ADR、OpenAPI、JSON Schemaなどの作成・更新や、外部OKF Bundleの適合検証で使う。OKF v0.2と各固有形式を区別して作成・検証する。既存文書の要約や概念説明だけには使わない。
 ---
 

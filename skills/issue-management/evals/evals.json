@@ -4,7 +4,7 @@
     {
       "id": 1,
       "prompt": "READMEを読んで内容を説明して。あわせてAGENTS.mdとスキルの違いも知りたい。ファイル変更は不要。",
-      "expected_output": "読み取りと概念説明だけに留め、issue-management・change-delivery・okf-docsを起動せずIssue・PRを作成しない。",
+      "expected_output": "読み取りと概念説明だけに留め、issue-management・change-delivery・document-authoringを起動せずIssue・PRを作成しない。",
       "files": [],
       "source_id": "task-workflow/1"
     },

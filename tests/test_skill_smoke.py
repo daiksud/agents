@@ -94,10 +94,18 @@ class InstallationTests(unittest.TestCase):
                         verify_upgrade(source, root)
                 self.assertNotIn('Upgrade from', output.getvalue())
 
+    def test_migration_fixture_requires_okf_docs_retirement(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            with self._upgrade_fixture(root, ('sample', 'bdd-tdd', 'task-workflow')) as source:
+                with self.assertRaisesRegex(RuntimeError, 'okf-docs'):
+                    verify_upgrade(source, root)
+
     def test_upgrade_rejects_retired_skill_pruned_before_backup(self):
-        cases = ((('sample', 'bdd-tdd', 'task-workflow'), 'bdd-tdd'),
-                 (('sample', 'bdd-tdd', 'task-workflow'), 'task-workflow'),
-                 (('sample', 'bdd-tdd', 'task-workflow', 'other'), 'other'))
+        cases = ((('sample', 'bdd-tdd', 'task-workflow', 'okf-docs'), 'bdd-tdd'),
+                 (('sample', 'bdd-tdd', 'task-workflow', 'okf-docs'), 'task-workflow'),
+                 (('sample', 'bdd-tdd', 'task-workflow', 'okf-docs'), 'okf-docs'),
+                 (('sample', 'bdd-tdd', 'task-workflow', 'okf-docs', 'other'), 'other'))
         for legacy_names, pruned in cases:
             with self.subTest(pruned=pruned), tempfile.TemporaryDirectory() as directory:
                 root = Path(directory)
@@ -112,12 +120,12 @@ class InstallationTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             output = io.StringIO()
-            with self._upgrade_fixture(root, ('sample', 'bdd-tdd', 'task-workflow', 'other')) as source:
+            with self._upgrade_fixture(root, ('sample', 'bdd-tdd', 'task-workflow', 'okf-docs', 'other')) as source:
                 with redirect_stdout(output):
                     verify_upgrade(source, root)
             backup = root / 'retired-backup'
             moved = sorted(path.name for path in backup.iterdir())
-            self.assertEqual(['bdd-tdd', 'other', 'task-workflow'], moved)
+            self.assertEqual(['bdd-tdd', 'okf-docs', 'other', 'task-workflow'], moved)
             for name in moved:
                 original = root / 'previous-source/skills' / name / 'SKILL.md'
                 self.assertEqual(original.read_bytes(), (backup / name / 'SKILL.md').read_bytes())
@@ -133,7 +141,7 @@ class InstallationTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             calls = []
-            with self._upgrade_fixture(root, ('sample', 'bdd-tdd', 'task-workflow'), calls=calls) as source:
+            with self._upgrade_fixture(root, ('sample', 'bdd-tdd', 'task-workflow', 'okf-docs'), calls=calls) as source:
                 with redirect_stdout(io.StringIO()):
                     verify_upgrade(source, root)
             self.assertEqual(2, len(calls))

@@ -10,7 +10,7 @@ import yaml
 
 ROOT = Path(__file__).resolve().parents[1]
 spec = importlib.util.spec_from_file_location(
-    'repository_okf', ROOT / 'skills/okf-docs/scripts/validate_okf.py')
+    'repository_okf', ROOT / 'skills/document-authoring/scripts/validate_okf.py')
 okf = importlib.util.module_from_spec(spec)
 sys.modules[spec.name] = okf
 spec.loader.exec_module(okf)
