@@ -163,6 +163,23 @@ class MetadataTests(unittest.TestCase):
         self.assertIn('`issue-management`', candidate_exception)
         self.assertIn('投稿しない', candidate_exception)
 
+    def test_issue_only_route_does_not_select_delivery(self):
+        root = Path(__file__).resolve().parents[1]
+        routing = (root / '.apm/instructions/skill-routing.instructions.md').read_text(encoding='utf-8')
+        rows = [line for line in routing.splitlines() if line.startswith('| ')]
+        issue_rows = [line for line in rows
+                      if '`~/.agents/skills/issue-management/SKILL.md`' in line]
+        self.assertEqual(1, len(issue_rows))
+        self.assertIn('Issueの検索・作成・更新', issue_rows[0])
+        self.assertIn('計画', issue_rows[0])
+        self.assertIn('共通スタンダード候補', issue_rows[0])
+        delivery_route = next(line for line in rows if 'リポジトリの変更・成果物作成' in line)
+        self.assertNotIn('Issue・PRの作成・更新', delivery_route)
+        self.assertNotIn('Issueの検索・作成・更新', delivery_route)
+        self.assertNotIn('Issue計画の保存', delivery_route)
+        self.assertIn('PR', delivery_route)
+        self.assertIn('`~/.agents/skills/task-workflow/SKILL.md`', delivery_route)
+
 
 if __name__ == '__main__':
     unittest.main()
