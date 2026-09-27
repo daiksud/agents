@@ -15,13 +15,13 @@ description: DevOps・Lean・XP・CI/CD・DORA・BDD/ATDD/TDD・DDD・architectu
 
 | 条件 | 追加で読むreference | 読まないもの |
 | --- | --- | --- |
-| XPそのもの、XP第2版、Values / Principles / Practices、設計・feedback・働き方をXPで診断する | [XP taxonomy](references/xp.md) | 無関係なDORA / Architecture全文 |
+| XPそのもの、XP第2版、Values / Principles / Practices、またはXPを主対象として診断する | [XP taxonomy](references/xp.md) | 無関係なDORA / Architecture全文 |
 | Domain / Bounded Context、service・repository・teamの対応、cross-team dependency、Microservices、Conway | [ArchitectureとOrganization](references/architecture-and-organization.md) | 無関係なDORA Catalog全件 |
 | DORA Core / Capability Catalog / delivery metrics、DORA Capability | [DORA capability lens](references/dora.md) | 無関係なXP全taxonomy / Architecture全文 |
-| BDD / ATDD / TDD / DDD / Lean / DevOps / CI / CDの定義や相互関係だけが必要 | [原則の関係](references/principles.md) | 条件に該当しないfocused reference |
+| BDD / ATDD / TDD / DDD / Lean / DevOps / CI / CDを診断する、または定義・相互関係を確認する | [原則の関係](references/principles.md) | 条件に該当しないfocused reference |
 | 出典・版差・採用判断を確認する | [一次資料と適用判断](references/sources.md) | 全資料の無条件な再読 |
 
-複数lensが実際のproblemへ関係する場合だけ組み合わせる。たとえばMicroservices採否ではArchitecture / Organizationを中心にDDDとXP Simplicityを補助し、release承認待ちだけならLean / CDと関連DORA Capabilityへ絞る。
+複数lensが実際のproblemへ関係する場合だけ組み合わせる。たとえばMicroservices採否ではArchitecture / Organizationを中心にDDDとXP Simplicityを補助する。このときSimplicityを補助判断として使うだけなら `xp.md` 全taxonomyを読まず、Architecture referenceに保持したcompact contractを使う。XP自体を診断対象にするときだけ `xp.md` を読む。release承認待ちだけならLean / CDと関連DORA Capabilityへ絞る。
 
 限定診断は依頼された概念・困りごとに絞り、関連するlensだけを選ぶ。包括診断ではXPを含む各観点を対象の流れへ照らすが、全referenceを順番に読み込まず、実際に関係するlensを選ぶ。話題語が出ただけで無関係な観点を未確認一覧へ追加せず、依頼範囲を変える場合は確認する。
 
