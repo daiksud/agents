@@ -31,7 +31,7 @@ GPT-6 Sol、GPT-6 Luna、Claude Opus 5.5、Claude Sonnet 5に、同じInstructio
 - リポジトリに残す基準記録: `evals/copilot-models/results/` 直下のレビュー済みJSON
 - #122のモデル非依存契約と#123のrouting / Progressive Disclosureを変更せずに評価する。[^issue-122] [^issue-123]
 
-`cases.json` の `criteria` はgrader専用で、評価対象モデルへ渡さない。runnerは各run用workspaceをGitのclean HEADから作り、`evals/copilot-models`、このガイド、runner本体、専用testをworkspaceから除外する。`--cases` で別suiteを選ぶ場合も、commitから再現できるrepository内ファイルに限定し、その選択済みsuite自体をmodel-visible workspace、APM cache、必要ならinstalled Skill treeから除外する。repository外suiteは実評価・dry-runとも受け付けない。promptにもcriteriaを埋め込まない。
+`cases.json` の `criteria` はgrader専用で、評価対象モデルへ渡さない。runnerは各run用workspaceをGitのclean HEADから作り、`evals/copilot-models`、`docs/behavior`、このガイド、runner本体、専用testをworkspaceから除外する。`docs/behavior` はA–Gの期待結果と重なる受け入れ仕様を含むため、評価対象モデルのanswer keyとして使わせない。`--cases` で別suiteを選ぶ場合も、commitから再現できるrepository内ファイルに限定し、その選択済みsuite自体をmodel-visible workspace、APM cache、必要ならinstalled Skill treeから除外する。repository外suiteは実評価・dry-runとも受け付けない。promptにもcriteriaを埋め込まない。
 
 評価対象モデルがgrader、別モデルの出力、過去attemptを読める状態では比較しない。
 
@@ -50,7 +50,7 @@ GPT-6 Sol、GPT-6 Luna、Claude Opus 5.5、Claude Sonnet 5に、同じInstructio
 - tool / permission境界
 - 明示的に変更するreasoning等のモデル設定
 - 1ケースあたりの反復回数
-- per-run timeout（正の有限値のみ）
+- per-run model invocation timeout（正の有限値のみ）。APM install / compile等のdelivery setup timeoutとは独立させる
 
 モデルごとに成功条件を変えない。モデルが利用できない、CLIがない、認証・policyで拒否された場合は品質失敗ではなく `runtime` または `tool_or_permission` として記録する。
 
@@ -58,7 +58,7 @@ GPT-6 Sol、GPT-6 Luna、Claude Opus 5.5、Claude Sonnet 5に、同じInstructio
 
 実測では tracked / untracked の評価入力がHEADとずれないよう、runnerが `git status --porcelain --untracked-files=all` を確認する。差分があれば実行しない。
 
-これによりmanifestの `repo_sha` と、モデルへ届く候補Instructions / Skills、grader側のsuiteを同じcommitted stateへ結びつける。suiteは単にrepository内にあるだけでは足りず、記録したSHAでGit追跡されていることとHEAD blobとの一致を確認する。ignored/untracked suiteは実行しない。
+これによりmanifestの `repo_sha` と、モデルへ届く候補Instructions / Skills、grader側のsuiteを同じcommitted stateへ結びつける。suiteは最初に1回だけbytesとしてcaptureし、その同じbytesからparse、hash、repo外snapshot、記録SHAのGit blobとの一致確認を行う。途中でworking treeのsuiteが変化しても、別のbytesを混ぜない。suiteは単にrepository内にあるだけでは足りず、記録したSHAでGit追跡されていることを確認する。ignored/untracked suiteは実行しない。
 
 ### 隔離したInstructions / Skills配布
 
@@ -126,9 +126,9 @@ python3 scripts/run_copilot_model_eval.py \
 
 repo内の出力先は拒否する。repo外のevidence directoryは `0700`、suite / manifest / stdout / stderrは `0600` とし、共有machineの他ユーザーからgrader基準やraw responseを読めないようにする。runnerは各runの開始時に、graderを含まないworkspaceと新しいHOMEを検証済みbaseから作る。stdout / stderrはCopilot終了後にrunner側がrepo外へ保存するため、後続runのworkspaceから先行モデル出力を読ませない。
 
-実測開始時は、選択モデルとmodel / case / attemptの全planned matrixをmanifestへ先に保存する。CLI不足、BYOK設定、token不足、dirty checkout、Copilot version probe失敗などのpreflight失敗でもこの初期manifestを残し、候補配布前のCLI・環境失敗を `runtime`、認証不足を `tool_or_permission` として記録する。APM verifierのPyYAMLなどdelivery専用依存が不足した場合はtracebackのまま終了せず、`setup: failed` と `instruction_delivery` の未完了証拠をmanifestへ残す。
+実測開始時は、選択モデルとmodel / case / attemptの全planned matrixをmanifestへ先に保存する。CLI不足、BYOK設定、token不足、dirty checkout、Copilot version probe失敗などのpreflight失敗でもこの初期manifestを残し、候補配布前のCLI・環境失敗を `runtime`、認証不足を `tool_or_permission` として記録する。`copilot --version` が非0終了またはtimeoutした場合は、取得できたstdout / stderrを同じprivate evidence directoryへ保存し、manifestからその診断が残ったことを確認できるようにする。APM verifierのPyYAMLなどdelivery専用依存が不足した場合はtracebackのまま終了せず、`setup: failed` と `instruction_delivery` の未完了証拠をmanifestへ残す。
 
-1 runがtimeoutしても、それまでのmanifestを保存し、当該attemptを `runtime` として記録して次のrunへ進む。Copilotが例外ではなく非0 exit codeを返した場合も成功候補にせず、`runtime` と診断メモを記録してraw stderrと区別する。
+1 runがtimeoutしても、それまでのmanifestを保存し、当該attemptを `runtime` として記録して次のrunへ進む。model invocationの `--timeout-seconds` はAPM install / compileへ流用せず、delivery setupは独立した上限で実行する。setup側のtimeoutもmodelの失敗ではなく `runtime` として記録する。Copilotが例外ではなく非0 exit codeを返した場合も成功候補にせず、`runtime` と診断メモを記録してraw stderrと区別する。exit code 0でもstdoutが空なら採点可能なmodel responseが存在しないため `runtime` failureとして扱う。
 
 APM配布の検証済み状態とrun側の失敗を混同しない。配布完了後のworkspace copy、Copilot起動、evidence保存等が失敗した場合は、`setup: verified` を維持したまま当該attemptまたはbatchの `runtime` failureとして記録する。
 
@@ -183,7 +183,7 @@ criteriaを評価対象モデル自身へ見せて自己採点させない。
 - loaded Skills / references
 - 不要な再読
 
-`elapsed_seconds` はCopilot invocation直前から終了までだけを測り、workspace/HOME複製等は `setup_seconds` へ分ける。CopilotのJSONLや利用環境から取得できない値は `null` とする。品質とコストを一つの総合scoreへ合成しない。
+`elapsed_seconds` はCopilot invocation直前からsubprocessのreturn / timeout直後までだけを測り、TemporaryDirectoryのcleanupやworkspace/HOME複製時間を含めない。複製等は `setup_seconds` へ分ける。CopilotのJSONLや利用環境から取得できない値は `null` とする。品質とコストを一つの総合scoreへ合成しない。
 
 ## 原因分類
 
