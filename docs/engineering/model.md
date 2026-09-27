@@ -170,14 +170,14 @@ DDDを採用していること、Bounded Contextが存在すること、複数Te
 
 方法論の全Principle・Practice・CapabilityをInstructionへ列挙しない。通常runtimeがこの文書を全文読む依存も作らない。作業時に必要な最小限の判断だけをInstruction / Skillへ置き、詳細はprogressive disclosureで参照する。
 
-### 後続の整理
+### Runtimeへの段階的な反映
 
-この文書は分類と境界だけを定義する。次の詳細は後続の統合単位で扱う。
+この文書の分類と境界をruntimeへ一度に持ち込まず、診断契約が実装された単位だけを条件付きreferenceへ反映する。
 
-- XPのValues / Principles / Primary Practices / Corollary Practicesの分類とassessmentでの読み分け
-- DDD / Team Topologies / Conway / Architecture choiceを使う診断手順
-- DORA Core Model / Capability Catalog / delivery metricsの版と関係
-- 問題から必要なlensだけを選ぶ `engineering-assessment` のprogressive disclosure
+- DDD / Team Topologies / Conway / Architecture choiceの診断手順は #108 で `engineering-assessment/references/architecture-and-organization.md` へ実装した。
+- XPのValues / Principles / Primary Practices / Corollary Practicesの分類とassessmentでの読み分けは #110 で扱う。
+- DORA Core Model / Capability Catalog / delivery metricsの版と関係は #109 で扱う。
+- 問題から必要なlensだけを選ぶ `engineering-assessment` 全体のprogressive disclosure仕上げは #110 で扱う。
 
 [^ron-jeffries-xp]: [What is Extreme Programming? — Ron Jeffries](https://ronjeffries.com/xprog/what-is-extreme-programming/)。XPの価値と、小さいFeedbackで設計を進化させる考え方。2026-09-27確認。
 [^continuous-integration]: [Continuous Integration](https://continuousdelivery.com/foundations/continuous-integration/)。XP由来のCI、頻繁なmain統合、小さいbatch、壊れたbuildの優先修復。2026-09-27確認。
