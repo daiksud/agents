@@ -76,7 +76,7 @@ Primary Practicesの位置づけは第2版のPrimary Practices章を参照する
 
 ### Corollary Practices
 
-Corollary Practicesの適用注意は第2版のCorollary Practices章を参照する。[^xp-second-edition-corollary-practices]
+Corollary Practicesの適用注意は第2版のCorollary Practices章を参照する。Primary Practicesや必要なdelivery / feedback capabilityの土台がないまま名前だけ導入すると難しい・危険になり得るため、関連するfoundationと現在の制約を先に確認する。[^xp-second-edition-corollary-practices]
 
 | Corollary Practice | Compact diagnostic cue |
 | --- | --- |
