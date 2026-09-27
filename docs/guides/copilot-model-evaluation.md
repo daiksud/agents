@@ -31,7 +31,7 @@ GPT-6 Sol、GPT-6 Luna、Claude Opus 5.5、Claude Sonnet 5に、同じInstructio
 - リポジトリに残す基準記録: `evals/copilot-models/results/` 直下のレビュー済みJSON
 - #122のモデル非依存契約と#123のrouting / Progressive Disclosureを変更せずに評価する。[^issue-122] [^issue-123]
 
-`cases.json` の `criteria` はgrader専用で、評価対象モデルへ渡さない。runnerは各run用workspaceをGitのclean HEADから作り、`evals/copilot-models`、このガイド、runner本体、専用testをworkspaceから除外する。promptにもcriteriaを埋め込まない。
+`cases.json` の `criteria` はgrader専用で、評価対象モデルへ渡さない。runnerは各run用workspaceをGitのclean HEADから作り、`evals/copilot-models`、このガイド、runner本体、専用testをworkspaceから除外する。`--cases` で別のrepository内suiteを選んだ場合も、その選択済みsuite自体をmodel-visible workspaceとAPM cacheから除外する。repository外のsuiteはworkspaceへ持ち込まない。promptにもcriteriaを埋め込まない。
 
 評価対象モデルがgrader、別モデルの出力、過去attemptを読める状態では比較しない。
 
@@ -98,7 +98,7 @@ A–Gを全モデルで同じ順序・基準で使う。
 
 ## 実行
 
-まず評価計画だけを確認する。
+まず評価計画だけを確認する。dry-runはAPM配布を行わず、PyYAMLなどdelivery専用の依存をimportしない。
 
 ```bash
 python3 scripts/run_copilot_model_eval.py --dry-run --repeat 3
@@ -125,7 +125,9 @@ python3 scripts/run_copilot_model_eval.py \
 
 repo内の出力先は拒否する。runnerは各runの開始時に、graderを含まないworkspaceと新しいHOMEを検証済みbaseから作る。stdout / stderrはCopilot終了後にrunner側がrepo外へ保存するため、後続runのworkspaceから先行モデル出力を読ませない。
 
-1 runがtimeoutしても、それまでのmanifestを保存し、当該attemptを `runtime` として記録して次のrunへ進む。
+実測開始時は、選択モデルとmodel / case / attemptの全planned matrixをmanifestへ先に保存する。CLI不足、BYOK設定、token不足、dirty checkoutなどのpreflight失敗でもこの初期manifestを残し、失敗理由を `runtime` または `tool_or_permission` として記録する。
+
+1 runがtimeoutしても、それまでのmanifestを保存し、当該attemptを `runtime` として記録して次のrunへ進む。Copilotが例外ではなく非0 exit codeを返した場合も成功候補にせず、`runtime` と診断メモを記録してraw stderrと区別する。
 
 APM配布の検証済み状態とrun側の失敗を混同しない。配布完了後のworkspace copy、Copilot起動、evidence保存等が失敗した場合は、`setup: verified` を維持したまま当該attemptまたはbatchの `runtime` failureとして記録する。
 
