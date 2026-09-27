@@ -393,6 +393,17 @@
         "XP Simplicityを補助lensとして使う",
         "DORA Catalog全件やXP全Practiceへ診断範囲を広げない"
       ]
+    },
+    {
+      "id": 38,
+      "prompt": "acme/platform のarchitecture診断で、XPのEconomics・Self-Similarity・Redundancyだけを補助lensとして使いたい。目的は重大なservice outageのriskを下げること。既存systemには再試行と監視があるが、別serviceと二重queueを追加する案のcost/valueは未確認。過去に別domainで使った分割patternもある。XP全体の導入診断は求めていない。どう計画する？",
+      "expected_output": "XP全taxonomyを展開せず個別項目の軽量lookupを使う。Economicsではcost/value/opportunity cost、Self-Similarityでは別domainのpatternを仮説として再利用し適合を検証、Redundancyでは重大riskに対する相補的な安全策と無目的な重複を区別する。既存の再試行・監視も証拠に含め、二重queueやservice追加を既定解にしない。",
+      "files": [],
+      "expectations": [
+        "XP全taxonomyではなく個別XP項目の軽量lookupを使う",
+        "Economics・Self-Similarity・Redundancyをそれぞれ診断上の意味で使う",
+        "追加serviceや二重queueを既定解にせず既存安全策とcost/valueを確認する"
+      ]
     }
   ]
 }
