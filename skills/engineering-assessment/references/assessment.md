@@ -23,7 +23,10 @@ description: 診断で確認する証拠、未確認事項の扱い、改善の�
 | TDD | 直近の変更例におけるテスト先行・失敗・成功・整理の証拠や作業者の説明 | 完成したテストやスカッシュ済み履歴だけで先行実践の有無を断定しない |
 | XP | 現在の要求に合う設計、関係者との理解の共有、小さいフィードバックからの設計改善と継続できる働き方の実例 | TDD・BDDの成果物だけでXP全体を判定せず、固定の会議・役割がないだけで未実践と断定しない。実際の進め方を関係者に確認する |
 | DDD | 用語と実装の意味、境界間の契約・翻訳、業務の判断と技術処理、設計理由 | 用語集の有無をモデルの品質と同一視しない |
-| チームトポロジー | 実際の責任・引き渡し・待ち、サービス利用と阻害依存、関係者の認知負荷 | CODEOWNERSからチーム型・能力・文化を確定しない |
+| Architecture・Organization boundary | 実変更での同時変更、test / deploy dependency、runtime topology、release単位、ownership、cross-team coordinationと待ち | service数、repository分割、Bounded Context文書、CODEOWNERSだけでloose coupling・independent deliveryを判定しない |
+| チームトポロジー | 実際の責任・引き渡し・待ち、service利用と阻害依存、interactionの目的・期間、関係者のcognitive load | CODEOWNERSやteam数からteam type・能力・文化を確定しない |
+
+Architecture / Organizationの困りごとでは、[境界とcouplingの診断](architecture-and-organization.md)を使い、semantic・change・runtime・deployment・repository・team ownershipを分けて観測する。Microservicesやteam再編を提案する前に、独立change / test / deployの必要性と、distributed-system / coordination costの現状証拠を確認する。
 
 各判断は「観測した実践」「根拠のある不足」「未確認」「適用外（理由付き）」のいずれかとして記録する。仮説には検証する証拠・相手・質問を添える。依頼範囲内の重要な観点を調べていない場合は未確認と明示する。限定診断で範囲外の概念を機械的に未確認一覧へ加えない。
 
