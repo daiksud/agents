@@ -421,6 +421,8 @@ class MetadataTests(unittest.TestCase):
             encoding='utf-8')
         xp = (root / 'skills/engineering-assessment/references/xp.md').read_text(
             encoding='utf-8')
+        auxiliary = (root / 'skills/engineering-assessment/references/xp-auxiliary.md').read_text(
+            encoding='utf-8')
         sources = (root / 'skills/engineering-assessment/references/sources.md').read_text(
             encoding='utf-8')
 
@@ -428,6 +430,7 @@ class MetadataTests(unittest.TestCase):
         self.assertIn('XPを含む各観点', skill)
         self.assertIn('限定診断は依頼された概念・困りごとに絞り', skill)
         self.assertIn('(references/xp.md)', skill)
+        self.assertIn('(references/xp-auxiliary.md)', skill)
         self.assertNotIn('9概念', skill)
 
         self.assertIn('[XP taxonomy](xp.md)', principles)
@@ -436,21 +439,64 @@ class MetadataTests(unittest.TestCase):
             with self.subTest(concept=concept):
                 self.assertIn(concept, principles)
 
-        for value in ('Communication', 'Simplicity', 'Feedback', 'Courage', 'Respect'):
-            with self.subTest(value=value):
-                self.assertIn(value, xp)
-        for principle in ('Humanity', 'Economics', 'Mutual Benefit', 'Baby Steps',
-                          'Accepted Responsibility'):
-            with self.subTest(principle=principle):
-                self.assertIn(principle, xp)
-        for practice in ('Pair Programming', 'Continuous Integration',
-                         'Test-First Programming', 'Incremental Design'):
-            with self.subTest(practice=practice):
-                self.assertIn(practice, xp)
-        for practice in ('Real Customer Involvement', 'Incremental Deployment',
-                         'Shared Code', 'Daily Deployment'):
-            with self.subTest(practice=practice):
-                self.assertIn(practice, xp)
+        def table_rows(markdown, heading):
+            section = markdown.split(f'### {heading}\n', 1)[1].split('\n### ', 1)[0]
+            rows = {}
+            for line in section.splitlines():
+                if not line.startswith('|'):
+                    continue
+                columns = [column.strip() for column in line.strip('|').split('|')]
+                if len(columns) < 2:
+                    continue
+                name, meaning = columns[:2]
+                if name in ('Value', 'Principle', 'Primary Practice', 'Corollary Practice'):
+                    continue
+                if name and set(name) <= set('-: '):
+                    continue
+                rows[name] = meaning
+            return rows
+
+        expected_values = (
+            'Communication', 'Simplicity', 'Feedback', 'Courage', 'Respect')
+        expected_principles = (
+            'Humanity', 'Economics', 'Mutual Benefit', 'Self-Similarity',
+            'Improvement', 'Diversity', 'Reflection', 'Flow', 'Opportunity',
+            'Redundancy', 'Failure', 'Quality', 'Baby Steps',
+            'Accepted Responsibility')
+        expected_primary = (
+            'Sit Together', 'Whole Team', 'Informative Workspace', 'Energized Work',
+            'Pair Programming', 'Stories', 'Weekly Cycle', 'Quarterly Cycle', 'Slack',
+            'Ten-Minute Build', 'Continuous Integration', 'Test-First Programming',
+            'Incremental Design')
+        expected_corollary = (
+            'Real Customer Involvement', 'Incremental Deployment', 'Team Continuity',
+            'Shrinking Teams', 'Root-Cause Analysis', 'Shared Code', 'Code and Tests',
+            'Single Code Base', 'Daily Deployment', 'Negotiated Scope Contract',
+            'Pay-Per-Use')
+
+        for heading, expected in (
+                ('Values', expected_values),
+                ('Principles', expected_principles),
+                ('Primary Practices', expected_primary),
+                ('Corollary Practices', expected_corollary)):
+            rows = table_rows(xp, heading)
+            self.assertEqual(set(expected), set(rows), heading)
+            for item in expected:
+                with self.subTest(heading=heading, item=item):
+                    self.assertTrue(rows[item].strip())
+                    self.assertNotEqual(item, rows[item].strip())
+
+        for heading, expected in (
+                ('Values', expected_values),
+                ('Principles', expected_principles),
+                ('Primary Practices', expected_primary),
+                ('Corollary Practices', expected_corollary)):
+            rows = table_rows(auxiliary, heading)
+            self.assertEqual(set(expected), set(rows), f'auxiliary {heading}')
+            for item in expected:
+                with self.subTest(auxiliary_heading=heading, item=item):
+                    self.assertTrue(rows[item].strip())
+
         self.assertIn('Primary Practicesは13個', xp)
         self.assertIn('Corollary Practicesは11個', xp)
         self.assertIn('Practiceの数をXP成熟度スコアにせず', xp)
@@ -464,6 +510,11 @@ class MetadataTests(unittest.TestCase):
             'https://www.informit.com/store/'
             'extreme-programming-explained-embrace-change-9780134051987',
             entries['informit-xp-second-edition'])
+        for source_id in (
+                'oreilly-xp-principles', 'oreilly-xp-primary-practices',
+                'oreilly-xp-corollary-practices'):
+            with self.subTest(source_id=source_id):
+                self.assertIn(source_id, entries)
         self.assertIn('| Extreme Programming Explained: Embrace Change, 2nd Edition',
                       sources)
 
