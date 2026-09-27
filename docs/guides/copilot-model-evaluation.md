@@ -212,6 +212,6 @@ CopilotのJSONLや利用環境から取得できない値は `null` とする。
 
 [^github-supported-models]: [Supported AI models in GitHub Copilot](https://docs.github.com/en/copilot/reference/ai-models/supported-models)。対象モデルの対応状況。
 [^github-copilot-cli-programmatic]: [GitHub Copilot CLI programmatic reference](https://docs.github.com/en/copilot/reference/copilot-cli-reference/cli-programmatic-reference)。非対話実行、モデル固定、tool制限、`COPILOT_HOME` とtoken環境変数。
-[^github-copilot-cli-auth]: [Authenticating GitHub Copilot CLI](https://docs.github.com/en/copilot/how-tos/copilot-cli/set-up-copilot-cli/authenticate-copilot-cli)。非対話環境でのtoken認証と優先順位。
 [^issue-122]: [Issue #122](https://github.com/daiksud/agents/issues/122) のモデル非依存契約。
 [^issue-123]: [Issue #123](https://github.com/daiksud/agents/issues/123) のSkill routingとProgressive Disclosure。
+[^github-copilot-cli-auth]: [Authenticating GitHub Copilot CLI](https://docs.github.com/en/copilot/how-tos/copilot-cli/set-up-copilot-cli/authenticate-copilot-cli)。非対話環境でのtoken認証と優先順位。
