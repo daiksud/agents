@@ -13,36 +13,70 @@ sources:
     resource: https://docs.github.com/en/copilot/reference/ai-models/supported-models
   - id: github-copilot-cli-programmatic
     resource: https://docs.github.com/en/copilot/reference/copilot-cli-reference/cli-programmatic-reference
+  - id: github-copilot-cli-auth
+    resource: https://docs.github.com/en/copilot/how-tos/copilot-cli/set-up-copilot-cli/authenticate-copilot-cli
 ---
 
 ## 目的
 
-GPT-6 Sol、GPT-6 Luna、Claude Opus 5.5、Claude Sonnet 5に、同じInstructions・Skills・prompt・成功基準を適用し、モデル固有の補正が本当に必要かを調べる。4モデルはいずれも2026-09-27時点でGitHub Copilotのサポート対象として掲載されている。Copilot CLIは非対話実行と `--model` によるモデル固定をサポートする。[^github-supported-models] [^github-copilot-cli-programmatic]
+GPT-6 Sol、GPT-6 Luna、Claude Opus 5.5、Claude Sonnet 5に、同じInstructions・Skills・prompt・成功基準を適用し、モデル固有の補正が本当に必要かを調べる。4モデルはいずれも2026-09-27時点でGitHub Copilotのサポート対象として掲載されている。Copilot CLIは非対話実行、モデル固定、tool制限、専用の `COPILOT_HOME` をサポートする。[^github-supported-models] [^github-copilot-cli-programmatic]
 
 この評価はモデルの総合ランキングを作らない。品質と効率を分け、少数回の差を一般化しない。
 
-## 正本
+## 正本と非公開境界
 
-- 共通ケース: `evals/copilot-models/cases.json`
+- 共通ケースとgrader基準: `evals/copilot-models/cases.json`
 - 実行: `scripts/run_copilot_model_eval.py`
-- 実測記録: `evals/copilot-models/results/<run>/manifest.json`
+- 実測raw evidence: repo外の出力ディレクトリ
+- リポジトリに残す基準記録: `evals/copilot-models/results/` 直下のレビュー済みJSON
 - #122のモデル非依存契約と#123のrouting / Progressive Disclosureを変更せずに評価する。[^issue-122] [^issue-123]
 
-## 実行条件
+`cases.json` の `criteria` はgrader専用で、評価対象モデルへ渡さない。runnerは各run用workspaceをGitのclean HEADから作り、`evals/copilot-models`、このガイド、runner本体、専用testをworkspaceから除外する。promptにもcriteriaを埋め込まない。
+
+評価対象モデルがgrader、別モデルの出力、過去attemptを読める状態では比較しない。
+
+## 実行前提
 
 同じ比較バッチでは次を固定する。
 
 - repository SHA
+- clean checkout
 - Copilot CLI version
-- `cases.json` のversion
+- `cases.json` の内容hash
 - prompt
-- 利用可能なInstructions / Skills
+- APMから隔離HOMEへ配布したInstructions / Skillsのhash
 - taskの開始状態
 - tool / permission境界
-- reasoningやcontext windowなど、明示的に変更できるモデル設定
+- 明示的に変更するreasoning等のモデル設定
 - 1ケースあたりの反復回数
+- per-run timeout
 
 モデルごとに成功条件を変えない。モデルが利用できない、CLIがない、認証・policyで拒否された場合は品質失敗ではなく `runtime` または `tool_or_permission` として記録する。
+
+### clean checkout
+
+実測では tracked / untracked の評価入力がHEADとずれないよう、runnerが `git status --porcelain --untracked-files=all` を確認する。差分があれば実行しない。
+
+これによりmanifestの `repo_sha` と、モデルへ届く候補Instructions / Skills、grader側のsuiteを同じcommitted stateへ結びつける。
+
+### 隔離したInstructions / Skills配布
+
+runnerはbase用の一時HOMEへ候補SHAをAPMで導入・compileし、既存のAPM smoke verifierで次を確認する。
+
+- APM cacheの候補SHA
+- `~/.copilot/AGENTS.md` に候補Instructionsが生成されていること
+- `~/.agents/skills/` が候補Skillsと対応していること
+- candidateのInstructions / Skillsと配布物のhash
+
+各モデルrunは、この検証済みbase workspace / HOMEを新しい一時ディレクトリへコピーする。run間でHOME、Copilot state、workspaceを共有しない。
+
+### 認証と権限
+
+隔離HOMEでは既存のkeychain / Copilot設定を評価入力として再利用しない。非対話評価は `COPILOT_GITHUB_TOKEN`、`GH_TOKEN`、`GITHUB_TOKEN` のいずれかを環境変数として明示する。Copilot CLIはこの順序でtokenを使用でき、headless環境では環境変数認証が公式に案内されている。[^github-copilot-cli-programmatic] [^github-copilot-cli-auth]
+
+BYOKの `COPILOT_PROVIDER_*` がある環境ではGitHub Copilotモデル比較として実行しない。
+
+評価ケースは判断契約を見るためのread-only taskとし、`shell`、`write`、`url`、`memory` toolを明示的にdenyする。現在workspace外を追加のallowed pathにしない。[^github-copilot-cli-programmatic]
 
 ## 共通ケース
 
@@ -58,22 +92,24 @@ A–Gを全モデルで同じ順序・基準で使う。
 | F | モデル引き継ぎ: self-reportではなく現在の差分・証拠を再確認する |
 | G | Skill routing: github-actions + code-reviewと必要referenceだけを使う |
 
-具体promptと判定項目は `cases.json` を正本とし、この表へ重複させない。
+具体promptとgrader criteriaは `cases.json` を正本とし、モデルにはprompt部分だけを渡す。
 
 ## 実行
 
-まず、評価計画だけを確認する。
+まず評価計画だけを確認する。
 
 ```bash
-python3 scripts/run_copilot_model_eval.py --dry-run
+python3 scripts/run_copilot_model_eval.py --dry-run --repeat 3
 ```
 
-認証済みCopilot CLIがある隔離環境で、同じSHAから最低3回ずつ実行する。
+認証済みCopilot CLIがあり、clean checkoutである環境から最低3回ずつ実行する。raw evidenceはrepo外へ出す。
 
 ```bash
+export COPILOT_GITHUB_TOKEN='...'
 python3 scripts/run_copilot_model_eval.py \
   --repeat 3 \
-  --output-dir evals/copilot-models/results/<run-id>
+  --timeout-seconds 600 \
+  --output-dir /tmp/copilot-model-eval/<run-id>
 ```
 
 一部モデルだけを再現確認するときはCLI model IDを明示する。
@@ -82,20 +118,38 @@ python3 scripts/run_copilot_model_eval.py \
 python3 scripts/run_copilot_model_eval.py \
   --models gpt-6-sol,claude-opus-5.5 \
   --repeat 3 \
-  --output-dir evals/copilot-models/results/<run-id>
+  --output-dir /tmp/copilot-model-eval/<run-id>
 ```
 
-runnerは `--mode=plan`、`--no-ask-user`、JSON出力を使い、ケース自体も外部writeを禁止する。実装能力ではなく共通契約の判断を比較するため、評価時にIssue・PR・mainを変更しない。
+repo内の出力先は拒否する。runnerは各runの開始時に、graderを含まないworkspaceと新しいHOMEを検証済みbaseから作る。stdout / stderrはCopilot終了後にrunner側がrepo外へ保存するため、後続runのworkspaceから先行モデル出力を読ませない。
+
+1 runがtimeoutしても、それまでのmanifestを保存し、当該attemptを `runtime` として記録して次のrunへ進む。
 
 ## 記録
 
-runnerは各runについてraw JSONL、stderr、elapsed timeとmanifestを保存する。manifestの未評価フィールドは `null` のままにし、未知を0へ変換しない。
+manifestには少なくとも次を残す。
 
-実測ディレクトリは `evals/copilot-models/results/.gitignore` で既定のGit管理対象から外す。raw JSONLやstderrにはコード・ログ・モデル応答等が含まれ得るため、共有・コミット前に内容と公開範囲を確認する。リポジトリへ残す場合は、必要な集計・判定だけをレビュー済みの記録へ転記し、秘密値や不要なraw transcriptを保存しない。
+- suite version / suite hash
+- repository SHA
+- Copilot CLI version
+- 認証に使った環境変数名だけ（値は保存しない）
+- workspace / compiled Copilot Instructions / installed Skillsのhash
+- model / case / attempt
+- prompt hash
+- elapsed time
+- return code / timeout
+- raw evidenceのファイル名
+- 品質判定欄
+- 効率判定欄
+- failure class / notes
+
+未評価フィールドは `null` のままにし、未知を0へ変換しない。raw JSONLやstderrにはコード・ログ・モデル応答等が含まれ得るため、そのままGitへ追加しない。共有が必要なら公開範囲を確認し、必要な集計・判定だけをレビュー済み記録へ転記する。
+
+`evals/copilot-models/results/.gitignore` は日時等のrun subdirectoryを既定でGit管理対象から外す。直下のレビュー済み基準JSONは保持できる。
 
 ### 品質
 
-各ケースのcriteriaを実際の出力へ照合し、少なくとも次を記録する。
+各ケースのcriteriaをモデル実行後にgrader側で出力へ照合し、少なくとも次を記録する。
 
 - criteria達成
 - TDD / Navigator gateの欠落
@@ -104,6 +158,8 @@ runnerは各runについてraw JSONL、stderr、elapsed timeとmanifestを保存
 - 不具合・要件違反・回帰の見逃し
 - evidenceなしの成功判定
 - 正当なstop boundary違反
+
+criteriaを評価対象モデル自身へ見せて自己採点させない。
 
 ### 効率
 
@@ -116,17 +172,17 @@ runnerは各runについてraw JSONL、stderr、elapsed timeとmanifestを保存
 - loaded Skills / references
 - 不要な再読
 
-Copilotの出力形式・契約から取得できない値は `null` とする。品質とコストを一つの総合scoreへ合成しない。
+CopilotのJSONLや利用環境から取得できない値は `null` とする。品質とコストを一つの総合scoreへ合成しない。
 
 ## 原因分類
 
 失敗は次の順序で原因を切り分け、一つの便利な「モデル差」へまとめない。
 
-1. `instruction_delivery`: 必要なInstructions / Skillが実際に届いていない。
+1. `instruction_delivery`: APM配布検証、Instructions / Skills hash、実行ログから必要な内容が届いていない。
 2. `ambiguity`: 共通指示が曖昧、重複、矛盾している。
-3. `tool_or_permission`: 必要なtool、認証、policy、permissionがない。
+3. `tool_or_permission`: 必要な認証、policy、permissionがない。
 4. `task_granularity`: Todoやケース自体が大きすぎる。
-5. `runtime`: Copilot client、CLI、session、transport固有の制約。
+5. `runtime`: Copilot client、CLI、session、transport、timeout固有の制約。
 6. `model_specific`: 上記を除外しても同じモデルだけで再現する。
 7. `none`: 受け入れ条件を満たす。
 
@@ -137,10 +193,12 @@ Copilotの出力形式・契約から取得できない値は `null` とする�
 モデル固有の補正は次のすべてを満たす場合だけ候補にする。
 
 - 同じ失敗が同じモデルで複数回再現する。
+- 同一SHA / suite / 配布hash / tool境界で再現する。
 - instruction deliveryの欠落ではない。
 - 共通Instructions / Skillsの曖昧さ・矛盾ではない。
-- tool / permission / runtimeでは説明できない。
+- tool / permission / runtime / timeoutでは説明できない。
 - task粒度では説明できない。
+- grader leakageや先行run leakageがない。
 - 共通ルールを直すと、既に正しく動くモデルへ不要な制約を追加する。
 - 補正の根拠、適用範囲、削除条件を説明できる。
 
@@ -153,6 +211,7 @@ Copilotの出力形式・契約から取得できない値は `null` とする�
 この記録を「4モデルに差がなかった」という証拠に使わない。実機結果が得られるまでモデル固有overlayを追加しない。
 
 [^github-supported-models]: [Supported AI models in GitHub Copilot](https://docs.github.com/en/copilot/reference/ai-models/supported-models)。対象モデルの対応状況。
-[^github-copilot-cli-programmatic]: [GitHub Copilot CLI programmatic reference](https://docs.github.com/en/copilot/reference/copilot-cli-reference/cli-programmatic-reference)。非対話実行とモデル固定。
+[^github-copilot-cli-programmatic]: [GitHub Copilot CLI programmatic reference](https://docs.github.com/en/copilot/reference/copilot-cli-reference/cli-programmatic-reference)。非対話実行、モデル固定、tool制限、`COPILOT_HOME` とtoken環境変数。
+[^github-copilot-cli-auth]: [Authenticating GitHub Copilot CLI](https://docs.github.com/en/copilot/how-tos/copilot-cli/set-up-copilot-cli/authenticate-copilot-cli)。非対話環境でのtoken認証と優先順位。
 [^issue-122]: [Issue #122](https://github.com/daiksud/agents/issues/122) のモデル非依存契約。
 [^issue-123]: [Issue #123](https://github.com/daiksud/agents/issues/123) のSkill routingとProgressive Disclosure。
