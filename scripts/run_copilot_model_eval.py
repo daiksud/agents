@@ -8,6 +8,7 @@ import hashlib
 import io
 import importlib.util
 import json
+import math
 import os
 import shutil
 import subprocess
@@ -62,7 +63,7 @@ def load_suite(path: Path) -> dict:
         raise ValueError("suite must be a JSON object")
     if data.get("suite") != "copilot-model-contracts":
         raise ValueError("unexpected suite")
-    if not isinstance(data.get("version"), int) or data["version"] < 1:
+    if type(data.get("version")) is not int or data["version"] < 1:
         raise ValueError("suite version must be a positive integer")
     if not _nonempty_string_list(data.get("common_rules")):
         raise ValueError("common_rules must be a non-empty string list")
@@ -161,7 +162,7 @@ def require_success(
 def current_head(root: Path) -> str | None:
     try:
         result = run_command(["git", "rev-parse", "HEAD"], root, timeout=30)
-    except OSError:
+    except (OSError, subprocess.SubprocessError):
         return None
     return result.stdout.strip() if result.returncode == 0 else None
 
@@ -180,6 +181,34 @@ def require_clean_checkout(root: Path) -> str:
     if head.returncode != 0:
         raise RuntimeError(head.stderr.strip() or "git rev-parse failed")
     return head.stdout.strip()
+
+
+def require_tracked_suite(
+    root: Path,
+    repo_sha: str,
+    relative: Path,
+    suite_path: Path,
+) -> None:
+    object_name = f"{repo_sha}:{relative.as_posix()}"
+    try:
+        result = subprocess.run(
+            ["git", "show", object_name],
+            cwd=root,
+            check=False,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            timeout=30,
+        )
+    except (OSError, subprocess.SubprocessError) as error:
+        raise RuntimeError(f"cannot verify selected suite at HEAD: {error}") from error
+    if result.returncode != 0:
+        raise RuntimeError(
+            "selected suite must be tracked in the recorded repository commit"
+        )
+    if result.stdout != suite_path.read_bytes():
+        raise RuntimeError(
+            "selected suite differs from the recorded repository commit"
+        )
 
 
 def grader_paths(extra_paths: tuple[Path, ...] = ()) -> tuple[Path, ...]:
@@ -234,9 +263,10 @@ def stage_workspace(
     root: Path,
     destination: Path,
     *,
+    revision: str,
     extra_grader_paths: tuple[Path, ...] = (),
 ) -> None:
-    archive = subprocess.check_output(["git", "archive", "HEAD"], cwd=root)
+    archive = subprocess.check_output(["git", "archive", revision], cwd=root)
     destination.mkdir(parents=True, exist_ok=False)
     with tarfile.open(fileobj=io.BytesIO(archive)) as bundle:
         bundle.extractall(destination, filter="data")
@@ -315,6 +345,7 @@ def prepare_delivery(
     stage_workspace(
         root,
         workspace,
+        revision=repo_sha,
         extra_grader_paths=extra_grader_paths,
     )
     home.mkdir(parents=True)
@@ -359,39 +390,59 @@ def prepare_delivery(
     return workspace, home, environment, fingerprints
 
 
-def snapshot_suite(path: Path, output_dir: Path) -> Path:
-    target = output_dir / "suite.json"
-    payload = path.read_bytes()
-    temporary = target.with_name(f".{target.name}.tmp")
-    try:
-        with temporary.open("wb") as stream:
-            stream.write(payload)
-            stream.flush()
-            os.fsync(stream.fileno())
-        os.replace(temporary, target)
-    finally:
-        try:
-            temporary.unlink()
-        except FileNotFoundError:
-            pass
-    return target
+def create_private_directory(path: Path) -> None:
+    path.mkdir(parents=True, exist_ok=False, mode=0o700)
+    os.chmod(path, 0o700)
 
 
-def write_manifest(path: Path, manifest: dict) -> None:
-    payload = json.dumps(manifest, ensure_ascii=False, indent=2) + "\n"
+def _open_private(path: Path, *, binary: bool):
+    flags = os.O_WRONLY | os.O_CREAT | os.O_TRUNC
+    descriptor = os.open(path, flags, 0o600)
+    os.fchmod(descriptor, 0o600)
+    mode = "wb" if binary else "w"
+    return os.fdopen(descriptor, mode, encoding=None if binary else "utf-8")
+
+
+def write_private_text(path: Path, value: str) -> None:
+    with _open_private(path, binary=False) as stream:
+        stream.write(value)
+        stream.flush()
+        os.fsync(stream.fileno())
+
+
+def _atomic_write(path: Path, payload: bytes) -> None:
     temporary = path.with_name(f".{path.name}.tmp")
     try:
-        with temporary.open("w", encoding="utf-8") as stream:
+        descriptor = os.open(
+            temporary,
+            os.O_WRONLY | os.O_CREAT | os.O_EXCL,
+            0o600,
+        )
+        os.fchmod(descriptor, 0o600)
+        with os.fdopen(descriptor, "wb") as stream:
             stream.write(payload)
             stream.flush()
             os.fsync(stream.fileno())
         os.replace(temporary, path)
+        os.chmod(path, 0o600)
     finally:
         try:
             temporary.unlink()
         except FileNotFoundError:
             pass
 
+
+def snapshot_suite(path: Path, output_dir: Path) -> Path:
+    target = output_dir / "suite.json"
+    _atomic_write(target, path.read_bytes())
+    return target
+
+def write_manifest(path: Path, manifest: dict) -> None:
+    payload = (
+        json.dumps(manifest, ensure_ascii=False, indent=2, allow_nan=False)
+        + "\n"
+    ).encode("utf-8")
+    _atomic_write(path, payload)
 
 def finish_preflight_failure(
     manifest_path: Path,
@@ -435,8 +486,8 @@ def main() -> int:
 
     if args.repeat < 1:
         parser.error("--repeat must be >= 1")
-    if args.timeout_seconds <= 0:
-        parser.error("--timeout-seconds must be > 0")
+    if not math.isfinite(args.timeout_seconds) or args.timeout_seconds <= 0:
+        parser.error("--timeout-seconds must be a finite value > 0")
 
     root = Path.cwd().resolve()
     suite_path = args.cases.resolve()
@@ -480,7 +531,7 @@ def main() -> int:
 
     try:
         output_dir = resolve_output_dir(args.output_dir, root)
-        output_dir.mkdir(parents=True, exist_ok=False)
+        create_private_directory(output_dir)
     except (OSError, ValueError) as error:
         print(str(error), file=sys.stderr)
         return 2
@@ -567,6 +618,20 @@ def main() -> int:
             notes=str(error),
         )
     manifest["repo_sha"] = repo_sha
+    try:
+        require_tracked_suite(
+            root,
+            repo_sha,
+            suite_path.relative_to(root),
+            suite_path,
+        )
+    except RuntimeError as error:
+        return finish_preflight_failure(
+            manifest_path,
+            manifest,
+            failure_class="runtime",
+            notes=str(error),
+        )
     write_manifest(manifest_path, manifest)
 
     executable = shutil.which("copilot")
@@ -622,7 +687,9 @@ def main() -> int:
                 stem = f"{model['cli_model']}__{case['id']}__{attempt}"
                 stdout_path = output_dir / f"{stem}.jsonl"
                 stderr_path = output_dir / f"{stem}.stderr.txt"
-                started = time.monotonic()
+                attempt_started = time.monotonic()
+                invocation_started = None
+                setup_seconds = None
                 timed_out = False
                 failure_class = None
                 notes = None
@@ -652,6 +719,8 @@ def main() -> int:
                             "--output-format=json",
                             "--deny-tool=shell,write,url,memory",
                         ]
+                        setup_seconds = time.monotonic() - attempt_started
+                        invocation_started = time.monotonic()
                         result = run_command(
                             command,
                             workspace,
@@ -679,13 +748,20 @@ def main() -> int:
                 except (OSError, subprocess.SubprocessError) as error:
                     failure_class = "runtime"
                     notes = f"Run-side operation failed: {error}"
-                elapsed = time.monotonic() - started
+                finished = time.monotonic()
+                if setup_seconds is None:
+                    setup_seconds = finished - attempt_started
+                elapsed = (
+                    finished - invocation_started
+                    if invocation_started is not None
+                    else None
+                )
 
                 stdout_name = stdout_path.name
                 stderr_name = stderr_path.name
                 try:
-                    stdout_path.write_text(stdout, encoding="utf-8")
-                    stderr_path.write_text(stderr, encoding="utf-8")
+                    write_private_text(stdout_path, stdout)
+                    write_private_text(stderr_path, stderr)
                 except OSError as error:
                     failure_class = failure_class or "runtime"
                     suffix = f"Evidence write failed: {error}"
@@ -701,7 +777,10 @@ def main() -> int:
                     "prompt_sha256": prompt_hash,
                     "return_code": return_code,
                     "timed_out": timed_out,
-                    "elapsed_seconds": round(elapsed, 3),
+                    "setup_seconds": round(setup_seconds, 3),
+                    "elapsed_seconds": (
+                        round(elapsed, 3) if elapsed is not None else None
+                    ),
                     "stdout": stdout_name,
                     "stderr": stderr_name,
                     "input_fingerprints": fingerprints,
