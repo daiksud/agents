@@ -419,37 +419,53 @@ class MetadataTests(unittest.TestCase):
         skill = (root / 'skills/engineering-assessment/SKILL.md').read_text(encoding='utf-8')
         principles = (root / 'skills/engineering-assessment/references/principles.md').read_text(
             encoding='utf-8')
+        xp = (root / 'skills/engineering-assessment/references/xp.md').read_text(
+            encoding='utf-8')
         sources = (root / 'skills/engineering-assessment/references/sources.md').read_text(
             encoding='utf-8')
+
         self.assertIn('XP', skill.split('---', 2)[1])
         self.assertIn('XPを含む各観点', skill)
         self.assertIn('限定診断は依頼された概念・困りごとに絞り', skill)
+        self.assertIn('(references/xp.md)', skill)
         self.assertNotIn('9概念', skill)
 
-        lens = principles.split('### XPの価値から開発判断を診断する\n', 1)[1].split(
-            '### ', 1)[0]
-        for value in ('Communication', 'Simplicity', 'Feedback', 'Courage', 'Respect'):
-            with self.subTest(value=value):
-                self.assertIn(value, lens)
-        for practice in ('TDD', 'BDD', 'ATDD', 'DDD'):
-            with self.subTest(practice=practice):
-                self.assertIn(practice, lens)
-        self.assertIn('一律の採用や点数化を要求しない', lens)
-        self.assertNotIn('[^', lens)
-        for concept in ('DevOps', 'Lean', 'CI', 'CD', 'BDD', 'ATDD', 'TDD', 'DDD',
-                        'Team Topologies'):
+        self.assertIn('[XP taxonomy](xp.md)', principles)
+        for concept in ('DevOps', 'Lean', 'CI', 'Continuous Delivery', 'DDD',
+                        'Team Topologies', 'DORA'):
             with self.subTest(concept=concept):
                 self.assertIn(concept, principles)
 
+        for value in ('Communication', 'Simplicity', 'Feedback', 'Courage', 'Respect'):
+            with self.subTest(value=value):
+                self.assertIn(value, xp)
+        for principle in ('Humanity', 'Economics', 'Mutual Benefit', 'Baby Steps',
+                          'Accepted Responsibility'):
+            with self.subTest(principle=principle):
+                self.assertIn(principle, xp)
+        for practice in ('Pair Programming', 'Continuous Integration',
+                         'Test-First Programming', 'Incremental Design'):
+            with self.subTest(practice=practice):
+                self.assertIn(practice, xp)
+        for practice in ('Real Customer Involvement', 'Incremental Deployment',
+                         'Shared Code', 'Daily Deployment'):
+            with self.subTest(practice=practice):
+                self.assertIn(practice, xp)
+        self.assertIn('Primary Practicesは13個', xp)
+        self.assertIn('Corollary Practicesは11個', xp)
+        self.assertIn('Practiceの数をXP成熟度スコアにせず', xp)
+        self.assertIn('XP全taxonomyを通常runtimeへ常時ロードしない', xp)
+
         entries = {entry['id']: entry['resource'] for entry in
                    yaml.safe_load(sources.split('---', 2)[1])['sources']}
-        self.assertIn('ron-jeffries-xp', entries)
         self.assertEqual('https://ronjeffries.com/xprog/what-is-extreme-programming/',
                          entries['ron-jeffries-xp'])
-        self.assertIn('| What is Extreme Programming? — Ron Jeffries[^ron-jeffries-xp]',
+        self.assertEqual(
+            'https://www.informit.com/store/'
+            'extreme-programming-explained-embrace-change-9780134051987',
+            entries['informit-xp-second-edition'])
+        self.assertIn('| Extreme Programming Explained: Embrace Change, 2nd Edition',
                       sources)
-        self.assertIn('[^ron-jeffries-xp]: [What is Extreme Programming?]'
-                      '(https://ronjeffries.com/xprog/what-is-extreme-programming/)', sources)
 
     def test_assessment_xp_observation_distinguishes_values_from_artifacts(self):
         root = Path(__file__).resolve().parents[1]
