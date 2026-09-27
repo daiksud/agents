@@ -44,6 +44,15 @@ class CopilotModelEvaluationTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "exactly one ordered A-G"):
                 self.module.load_suite(path)
 
+    def test_suite_rejects_duplicate_model_ids(self):
+        data = json.loads(self.cases_path.read_text(encoding="utf-8"))
+        data["models"][1]["cli_model"] = data["models"][0]["cli_model"]
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "cases.json"
+            path.write_text(json.dumps(data), encoding="utf-8")
+            with self.assertRaisesRegex(ValueError, "ordered baseline model set"):
+                self.module.load_suite(path)
+
     def test_failure_taxonomy_separates_model_behavior_from_environment(self):
         data = json.loads(self.cases_path.read_text(encoding="utf-8"))
         self.assertEqual(
@@ -88,6 +97,7 @@ class CopilotModelEvaluationTests(unittest.TestCase):
                 )
             self.assertTrue((workspace / "skills/software-development/SKILL.md").is_file())
             self.assertTrue((workspace / ".apm/instructions/skill-routing.instructions.md").is_file())
+            self.assertEqual([], list((workspace / "skills").glob("*/evals")))
 
     def test_grader_material_is_removed_from_delivery_cache(self):
         with tempfile.TemporaryDirectory() as directory:
@@ -100,9 +110,14 @@ class CopilotModelEvaluationTests(unittest.TestCase):
                 else:
                     target.mkdir(parents=True, exist_ok=True)
                     (target / "rubric.json").write_text("{}", encoding="utf-8")
+            skill_evals = cache / ".agents/skills/example/evals"
+            skill_evals.mkdir(parents=True)
+            (skill_evals / "evals.json").write_text("{}", encoding="utf-8")
             self.module.remove_grader_material(cache)
+            self.module.remove_skill_evals(cache)
             for relative in self.module.GRADER_ONLY_PATHS:
                 self.assertFalse((cache / relative).exists())
+            self.assertFalse(skill_evals.exists())
 
     def test_output_directory_must_be_outside_repository(self):
         with self.assertRaisesRegex(ValueError, "outside the repository"):
