@@ -39,6 +39,7 @@ EXPECTED_MODEL_IDS = [model_id for _, model_id in EXPECTED_MODELS]
 GRADER_ONLY_PATHS = (
     Path("evals/copilot-models"),
     Path("docs/guides/copilot-model-evaluation.md"),
+    Path("docs/behavior"),
     Path("scripts/run_copilot_model_eval.py"),
     Path("tests/test_copilot_model_eval.py"),
 )
@@ -57,8 +58,8 @@ def _nonempty_string_list(value: object) -> bool:
     )
 
 
-def load_suite(path: Path) -> dict:
-    data = json.loads(path.read_text(encoding="utf-8"))
+def load_suite_bytes(payload: bytes) -> dict:
+    data = json.loads(payload.decode("utf-8"))
     if not isinstance(data, dict):
         raise ValueError("suite must be a JSON object")
     if data.get("suite") != "copilot-model-contracts":
@@ -114,6 +115,10 @@ def load_suite(path: Path) -> dict:
     if ids != EXPECTED_CASE_IDS or len(ids) != len(set(ids)):
         raise ValueError("cases must contain exactly one ordered A-G sequence")
     return data
+
+
+def load_suite(path: Path) -> dict:
+    return load_suite_bytes(path.read_bytes())
 
 def build_prompt(suite: dict, case: dict) -> str:
     rules = "\n".join(f"- {rule}" for rule in suite["common_rules"])
@@ -187,7 +192,7 @@ def require_tracked_suite(
     root: Path,
     repo_sha: str,
     relative: Path,
-    suite_path: Path,
+    suite_bytes: bytes,
 ) -> None:
     object_name = f"{repo_sha}:{relative.as_posix()}"
     try:
@@ -205,7 +210,7 @@ def require_tracked_suite(
         raise RuntimeError(
             "selected suite must be tracked in the recorded repository commit"
         )
-    if result.stdout != suite_path.read_bytes():
+    if result.stdout != suite_bytes:
         raise RuntimeError(
             "selected suite differs from the recorded repository commit"
         )
@@ -433,9 +438,9 @@ def _atomic_write(path: Path, payload: bytes) -> None:
             pass
 
 
-def snapshot_suite(path: Path, output_dir: Path) -> Path:
+def snapshot_suite(payload: bytes, output_dir: Path) -> Path:
     target = output_dir / "suite.json"
-    _atomic_write(target, path.read_bytes())
+    _atomic_write(target, payload)
     return target
 
 def write_manifest(path: Path, manifest: dict) -> None:
@@ -494,7 +499,11 @@ def main() -> int:
     suite_path = args.cases.resolve()
     if not suite_path.is_relative_to(root):
         parser.error("--cases must resolve to a file inside the repository")
-    suite = load_suite(suite_path)
+    try:
+        suite_bytes = suite_path.read_bytes()
+    except OSError as error:
+        parser.error(f"cannot read --cases: {error}")
+    suite = load_suite_bytes(suite_bytes)
     selected = suite["models"]
     if args.models is not None:
         wanted = {item.strip() for item in args.models.split(",") if item.strip()}
@@ -539,11 +548,11 @@ def main() -> int:
 
     manifest_path = output_dir / "manifest.json"
     try:
-        suite_snapshot = snapshot_suite(suite_path, output_dir)
+        suite_snapshot = snapshot_suite(suite_bytes, output_dir)
     except OSError as error:
         print(f"failed to preserve evaluation suite: {error}", file=sys.stderr)
         return 2
-    suite_sha256 = sha256_file(suite_path)
+    suite_sha256 = hashlib.sha256(suite_bytes).hexdigest()
     selected_suite_paths = (suite_path.relative_to(root),)
     manifest = {
         "suite": suite["suite"],
@@ -624,7 +633,7 @@ def main() -> int:
             root,
             repo_sha,
             suite_path.relative_to(root),
-            suite_path,
+            suite_bytes,
         )
     except RuntimeError as error:
         return finish_preflight_failure(
@@ -639,6 +648,20 @@ def main() -> int:
     assert executable is not None
     try:
         version = run_command([executable, "--version"], root, timeout=30)
+    except subprocess.TimeoutExpired as error:
+        stdout = text_from_timeout(error.stdout)
+        stderr = text_from_timeout(error.stderr)
+        write_private_text(output_dir / "copilot-version.stdout.txt", stdout)
+        write_private_text(output_dir / "copilot-version.stderr.txt", stderr)
+        return finish_preflight_failure(
+            manifest_path,
+            manifest,
+            failure_class="runtime",
+            notes=(
+                "Copilot version probe timed out; diagnostics saved as "
+                "copilot-version.stdout.txt and copilot-version.stderr.txt."
+            ),
+        )
     except (OSError, subprocess.SubprocessError) as error:
         return finish_preflight_failure(
             manifest_path,
@@ -647,13 +670,22 @@ def main() -> int:
             notes=f"Copilot version probe failed: {error}",
         )
     if version.returncode != 0:
+        write_private_text(
+            output_dir / "copilot-version.stdout.txt",
+            version.stdout,
+        )
+        write_private_text(
+            output_dir / "copilot-version.stderr.txt",
+            version.stderr,
+        )
         return finish_preflight_failure(
             manifest_path,
             manifest,
             failure_class="runtime",
             notes=(
                 f"Copilot version probe exited with code {version.returncode}; "
-                "inspect stdout/stderr in the local environment."
+                "diagnostics saved as copilot-version.stdout.txt and "
+                "copilot-version.stderr.txt."
             ),
         )
     manifest["copilot_version"] = (version.stdout or version.stderr).strip()
@@ -666,7 +698,7 @@ def main() -> int:
                 root,
                 repo_sha,
                 base_dir,
-                timeout=min(args.timeout_seconds, 180),
+                timeout=180,
                 extra_grader_paths=selected_suite_paths,
             )
             manifest["input_fingerprints"] = fingerprints
@@ -689,8 +721,8 @@ def main() -> int:
                 stdout_path = output_dir / f"{stem}.jsonl"
                 stderr_path = output_dir / f"{stem}.stderr.txt"
                 attempt_started = time.monotonic()
-                invocation_started = None
                 setup_seconds = None
+                elapsed = None
                 timed_out = False
                 failure_class = None
                 notes = None
@@ -722,41 +754,44 @@ def main() -> int:
                         ]
                         setup_seconds = time.monotonic() - attempt_started
                         invocation_started = time.monotonic()
-                        result = run_command(
-                            command,
-                            workspace,
-                            env=environment,
-                            timeout=args.timeout_seconds,
-                        )
-                        stdout = result.stdout
-                        stderr = result.stderr
-                        return_code = result.returncode
-                        if return_code != 0:
+                        try:
+                            result = run_command(
+                                command,
+                                workspace,
+                                env=environment,
+                                timeout=args.timeout_seconds,
+                            )
+                            elapsed = time.monotonic() - invocation_started
+                            stdout = result.stdout
+                            stderr = result.stderr
+                            return_code = result.returncode
+                            if return_code != 0:
+                                failure_class = "runtime"
+                                notes = (
+                                    f"Copilot exited with code {return_code}; "
+                                    "inspect stderr evidence."
+                                )
+                            elif not stdout.strip():
+                                failure_class = "runtime"
+                                notes = (
+                                    "Copilot exited successfully but produced "
+                                    "no model response."
+                                )
+                        except subprocess.TimeoutExpired as error:
+                            elapsed = time.monotonic() - invocation_started
+                            timed_out = True
+                            stdout = text_from_timeout(error.stdout)
+                            stderr = text_from_timeout(error.stderr)
                             failure_class = "runtime"
                             notes = (
-                                f"Copilot exited with code {return_code}; "
-                                "inspect stderr evidence."
+                                "Copilot invocation exceeded the configured "
+                                f"{args.timeout_seconds:g}s timeout."
                             )
-                except subprocess.TimeoutExpired as error:
-                    timed_out = True
-                    stdout = text_from_timeout(error.stdout)
-                    stderr = text_from_timeout(error.stderr)
-                    failure_class = "runtime"
-                    notes = (
-                        "Copilot invocation exceeded the configured "
-                        f"{args.timeout_seconds:g}s timeout."
-                    )
                 except (OSError, subprocess.SubprocessError) as error:
                     failure_class = "runtime"
                     notes = f"Run-side operation failed: {error}"
-                finished = time.monotonic()
                 if setup_seconds is None:
-                    setup_seconds = finished - attempt_started
-                elapsed = (
-                    finished - invocation_started
-                    if invocation_started is not None
-                    else None
-                )
+                    setup_seconds = time.monotonic() - attempt_started
 
                 stdout_name = stdout_path.name
                 stderr_name = stderr_path.name
@@ -807,6 +842,26 @@ def main() -> int:
                 })
                 write_manifest(manifest_path, manifest)
 
+    except subprocess.TimeoutExpired as error:
+        if manifest["setup"].get("status") == "verified":
+            manifest["batch_failure"] = {
+                "failure_class": "runtime",
+                "notes": f"Timed out after setup verification: {error}",
+                "completed_runs": len(manifest["runs"]),
+            }
+        else:
+            manifest["setup"] = {
+                "status": "failed",
+                "failure_class": "runtime",
+                "notes": f"Delivery setup timed out: {error}",
+            }
+        manifest["finished_at"] = datetime.now(timezone.utc).isoformat()
+        try:
+            write_manifest(manifest_path, manifest)
+        except OSError:
+            pass
+        print(str(error), file=sys.stderr)
+        return 2
     except (OSError, RuntimeError, subprocess.SubprocessError) as error:
         if manifest["setup"].get("status") == "verified":
             manifest["batch_failure"] = {
