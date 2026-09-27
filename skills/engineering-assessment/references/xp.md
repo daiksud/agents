@@ -51,7 +51,7 @@ Practiceの数をXP成熟度スコアにせず、Value名だけで実践済み�
 
 ### Principles
 
-第2版のPrinciplesは次を区別して保持する。[^xp-second-edition]
+InformITのTable of Contentsは次の14 Principlesを列挙する。同じpublisherページの紹介文には「Eleven principles」という不一致があるため、本リポジトリでは列挙されたTOCをtaxonomyの根拠にし、この差をprovenanceへ残す。[^xp-second-edition]
 
 - Humanity
 - Economics
@@ -160,5 +160,5 @@ Corollary Practiceも採用数で評価しない。
 
 XP全taxonomyを通常runtimeへ常時ロードしない。診断対象がXPまたは関連problemのときだけこのreferenceを読む。
 
-[^xp-second-edition]: [Extreme Programming Explained: Embrace Change, 2nd Edition — Kent Beck / Cynthia Andres](https://www.informit.com/store/extreme-programming-explained-embrace-change-9780134051987)。2004年版のTable of Contentsで5 Values、14 Principles、13 Primary Practices、11 Corollary Practicesの名称と分類を確認。2026-09-27確認。
+[^xp-second-edition]: [Extreme Programming Explained: Embrace Change, 2nd Edition — Kent Beck / Cynthia Andres](https://www.informit.com/store/extreme-programming-explained-embrace-change-9780134051987)。2004年版のTable of Contentsは5 Values、14個のnamed Principles、13 Primary Practices、11 Corollary Practicesを列挙する。同じpublisherページの紹介文には「Eleven principles」とあるため、Principles数はTOCの列挙を採用し不一致を明記する。2026-09-27確認。
 [^ron-jeffries-xp]: [What is Extreme Programming? — Ron Jeffries](https://ronjeffries.com/xprog/what-is-extreme-programming/)。5 Valuesと、小さいfeedback・現在の要求へXPを適用する考え方。2026-09-27確認。
