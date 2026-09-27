@@ -300,6 +300,18 @@
         "一つの判断材料を構成する連続した証拠収集はまとめてよい",
         "意味のある成果を対話単位とし、固定秒数や固定操作数を要求しない"
       ]
+    },
+    {
+      "id": 44,
+      "prompt": "読み取り専用模擬評価。実際の編集・投稿・実行は禁止。同じNavigatorと継続連絡できる。DriverはNavigatorへGreenレビューを依頼する。差分には `parsePort`、コマンド `npm test`、ログ `TypeError: invalid port` が含まれる。Navigatorへの依頼は内部通信だが、その後ユーザー向けに日本語で結果を報告し、PR本文も日本語で作成する予定である。内部通信と外部成果物の言語・表現をどう扱うか。",
+      "expected_output": "Driver/Navigator間の依頼・確認・フィードバックは、簡潔なControlled Englishと固定用語を使い、一文一義で不要な会話表現や曖昧な承認表現を避ける。`parsePort`、`npm test`、`TypeError: invalid port` など正確な原文保持が必要なコード・識別子・コマンド・ログは翻訳しない。Controlled Englishは内部通信だけに適用し、ユーザー向け回答やPR本文を英語へ強制しない。",
+      "files": [],
+      "expectations": [
+        "Driver/Navigator間の内部通信では簡潔なControlled Englishと固定用語を使う",
+        "コード・識別子・コマンド・ログなど正確な原文保持が必要な情報を翻訳しない",
+        "ユーザー向け回答やGitHub成果物へControlled Englishを強制しない"
+      ],
+      "source_id": "issue-99/communication-boundary"
     }
   ]
 }
