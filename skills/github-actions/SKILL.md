@@ -1,6 +1,6 @@
 ---
 name: github-actions
-description: GitHub Actionsのworkflow作成・変更、CI失敗の原因調査と修正、workflowレビュー、CI高速化・安全性改善、Action内部ランタイム更新を依頼されたときに使う。.github/workflowsやActions設定が対象。変更時のIssue計画・公開許可はissue-management、承認済み変更のmainまでのdeliveryはchange-delivery、アプリのコード修正はsoftware-development、レビューはcode-reviewと併用する。Issue・PR操作だけ、アプリ実装だけ、CI/CDの概念説明だけには使わない。
+description: GitHub Actions workflowの作成・変更、失敗調査、レビュー、効率・安全性改善、Action内部ランタイム更新で使う。`.github/workflows` 等が対象。Issue・PR操作だけ、アプリ実装だけ、CI/CDの概念説明だけには使わない。
 ---
 
 # GitHub Actionsを設計・検証する
