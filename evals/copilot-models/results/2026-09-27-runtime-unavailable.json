@@ -1,0 +1,52 @@
+{
+  "suite": "copilot-model-contracts",
+  "suite_version": 1,
+  "recorded_at": "2026-09-27T10:10:48Z",
+  "environment": "ChatGPT GitHub-connected execution environment",
+  "repo_sha": "ecb7da9176c8b9ba8b0073bbd97afd8dbc0eca82",
+  "execution_status": "blocked",
+  "failure_class": "runtime",
+  "evidence": {
+    "copilot_cli": "not found",
+    "gh_cli": "not found",
+    "note": "This record captures evaluation-runtime availability only. It is not a model-quality result."
+  },
+  "models": [
+    {
+      "name": "GPT-6 Sol",
+      "cli_model": "gpt-6-sol",
+      "cases_run": [],
+      "quality_result": null,
+      "efficiency_result": null,
+      "model_specific_finding": null
+    },
+    {
+      "name": "GPT-6 Luna",
+      "cli_model": "gpt-6-luna",
+      "cases_run": [],
+      "quality_result": null,
+      "efficiency_result": null,
+      "model_specific_finding": null
+    },
+    {
+      "name": "Claude Opus 5.5",
+      "cli_model": "claude-opus-5.5",
+      "cases_run": [],
+      "quality_result": null,
+      "efficiency_result": null,
+      "model_specific_finding": null
+    },
+    {
+      "name": "Claude Sonnet 5",
+      "cli_model": "claude-sonnet-5",
+      "cases_run": [],
+      "quality_result": null,
+      "efficiency_result": null,
+      "model_specific_finding": null
+    }
+  ],
+  "decision": {
+    "add_model_specific_overlay": false,
+    "reason": "No controlled model run was executed in this environment, so there is no behavioral evidence for a model-specific overlay."
+  }
+}
