@@ -55,7 +55,7 @@ attester:
 rumdl check --config /path/to/rumdl.toml --config 'MD025.front-matter-title = ""' --deny-config-warnings /path/to/computation.md
 ```
 
-整形するときも同じ設定に `--fix` を追加する。複数ファイルは計算文書とその他を分けて実行する。本文H1の重複を直す際も仕様の `# Computation` を残し、その配下のコードフェンスを確認する。authoring検査も続けて実行し、H2への誤変更や計算定義の不整合を検出する。rumdlだけの成功を契約の検証としない。
+整形するときも同じ設定に `--fix` を追加する。複数ファイルは計算文書とその他を分けて実行する。本文H1の重複を直す際も仕様の `# Computation` を残し、その配下のコードフェンスを確認する。計算定義と参照先の内容も照合し、rumdlだけの成功を契約の検証としない。
 
 ## 値の指定と定義変更
 
@@ -81,7 +81,7 @@ rumdl check --config /path/to/rumdl.toml --config 'MD025.front-matter-title = ""
 
 同梱サンプルの `sql_equality.py` はネットワークを使わず、SQLの正規化比較とreceipt内の結果・表示値の一致を確認する。パラメータ値の検査はexecutorを信頼し、job IDから権威ある結果を再取得しない。コメント・空白・単語の正規化はSQLの完全な構文解析ではなく、文字列リテラル等の意味を保つ保証は読み取れない。[^sample-attester]
 
-したがって、サンプルの成功だけでパラメータの正しさ・実際のジョブ実行・結果の真正性まで証明されたと主張しない。参考コードを本番attesterとして無条件に転用せず、必要な証拠の取得・束縛の再構成・比較対象・失敗条件を契約ごとに確認する。validatorの静的検査も実行証明の代わりにはならない。
+したがって、サンプルの成功だけでパラメータの正しさ・実際のジョブ実行・結果の真正性まで証明されたと主張しない。参考コードを本番attesterとして無条件に転用せず、必要な証拠の取得・束縛の再構成・比較対象・失敗条件を契約ごとに確認する。
 
 [^okf-spec]: 固定版SPEC §§10–12。§10.5はinformativeであり、運用上の確認項目は本環境の適用判断。
 [^rumdl-md025]: rumdl 0.2.69、MD025のFront Matter IntegrationとConfiguration examples。

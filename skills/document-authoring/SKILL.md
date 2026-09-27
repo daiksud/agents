@@ -1,11 +1,11 @@
 ---
 name: document-authoring
-description: Markdown、仕様文書、feature、ADR、OpenAPI、JSON Schemaなどの文書成果物の作成・更新と、外部OKF Bundleの適合検証で使う。文書形式・出典・検証を扱う。文書成果物を作らない受け入れ条件・具体例の発見整理はbehavior-specification、既存文書の要約や概念説明だけには使わない。
+description: Markdown、仕様文書、feature、ADR、OpenAPI、JSON Schemaなどの文書成果物の作成・更新で使う。文書形式・出典・Markdown品質を扱う。文書成果物を作らない受け入れ条件・具体例の発見整理はbehavior-specification、既存文書の要約や概念説明だけには使わない。
 ---
 
 # OKFで文書を作成する
 
-文書作成・更新時のIssue計画・公開許可・Markdown品質は依存スキル `issue-management`、承認済みのリポジトリ変更・PR更新から公開mainの確認までは `change-delivery` に従う。以下の `docs/` は作業対象リポジトリ、`scripts/` と `references/` はこのスキルの同梱資源を指す。
+文書作成・更新時のIssue計画・公開許可・Markdown品質は依存スキル `issue-management`、承認済みのリポジトリ変更・PR更新から公開mainの確認までは `change-delivery` に従う。以下の `docs/` は作業対象リポジトリ、`references/` はこのスキルの同梱資源を指す。
 
 ## 適用と参照資料
 
@@ -18,7 +18,6 @@ description: Markdown、仕様文書、feature、ADR、OpenAPI、JSON Schemaな�
 
 ## 依頼に応じた引き渡し
 
-- 外部Bundleのconformanceだけなら `issue-management`・`change-delivery` が未導入でも読み取り検査を扱い、自作のauthoring条件を課さない。
 - Issue計画だけなら `issue-management` で保存・再取得して本文・表示・URLを確認し、`change-delivery` は不要として停止する。Issue本文・コメントだけなら `issue-management` を使い、`change-delivery` は不要とする。
 - PR本文・リポジトリ文書の変更では、計画承認済みでもIssue計画を保存・確認済みと推測しない。保存・確認済みなら再記録せず、未保存なら公開許可を確認して `issue-management` で保存・再取得し、本文・表示・URLを確認する。既存の実行承認を取り直さない。
 - PR本文だけの更新は `issue-management` と `change-delivery` を使うが、リポジトリ編集・マージを始めない。承認済みのリポジトリ文書変更は `change-delivery` で公開mainの確認まで進め、文書だけの変更にコードのTDDを要求しない。
@@ -32,7 +31,7 @@ description: Markdown、仕様文書、feature、ADR、OpenAPI、JSON Schemaな�
 3. 通常概念は1ファイル1概念とし、`type` を記載する。本環境で自作する概念には推奨項目の `title`・`description` も付ける。この追加条件をOKF適合の必須条件と呼ばない。
 4. 外部資料に依拠する内容には `sources` を記録し、個別の主張を安定したsource IDの脚注へ結ぶ。関連文書への移動用リンクを出典の代わりにしない。
 5. 意味のある変更か誤字・整形だけかを判断し、実際に確認した生成・確認事実だけを更新する。日時・人間の確認・期限を推測で補わず、古い確認を更新後の内容の確認として主張しない。
-6. [検証手順](references/validation.md)を実施し、形式の合否、内容の確認、未検証・期限切れの注意、実行不能な検査を分けて報告する。
+6. [文書品質の確認](references/validation.md)を実施し、Markdownの検査結果、内容の確認、未検証・期限切れの注意、実行不能な検査を分けて報告する。
 
 ## 配置と本文
 
@@ -43,8 +42,8 @@ description: Markdown、仕様文書、feature、ADR、OpenAPI、JSON Schemaな�
 - 画像などMarkdownに含められない外部アセットは使用しない。これは本環境の文書作成方針であり、OKFの適合条件ではない。
 - 見出し・リスト・表・コードブロックを使い、判断に必要な構造を示す。空の節や装飾のための表は作らない。
 
-## 検証
+## 文書品質の確認
 
-公開前に[OKFとMarkdownの検証](references/validation.md)を読み、同梱validatorとrumdlを実行する。外部Bundleの適合判定（conformance）と自作の公開品質（authoring）を区別し、固有形式は各形式で検査する。検証依存は既存環境を確認して隔離環境へ準備する。
+公開前に[Markdownと内容の確認](references/validation.md)を読み、rumdlで整形・チェックする。OpenAPI・JSON Schema等の固有形式は各形式で検査する。
 
 形式検査の成功を、出典の真偽・人間による内容確認・計算の実行証明にしない。分類・用語・リンク・コマンド・最終差分と内容も照合し、未検証・期限切れ・実行不能を区別して報告する。
