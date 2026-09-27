@@ -53,10 +53,11 @@ sources:
 | 仕様の正本 | ある要求・契約を変更するときに基準として更新する記録。情報ごとに特定し他文書から参照する | 仕様記述の指示 | feature、ADR、API仕様、`document-authoring` |
 | 不安定なテスト | 同じ条件で結果が揺れるテスト。再試行成功と原因の解消を区別する | テスト・検証の指示 | flaky test、`software-development` |
 | サブドメイン | 業務上の問題領域の一部分 | 開発実践の指示・診断 | Subdomain |
+| Domain boundary | 業務上の問題・知識の範囲を区切る境界。Bounded Contextのsemantic boundaryやtechnical boundaryとは区別する | Architecture / Organization診断 | `engineering-assessment` のarchitecture lens |
 | 境界づけられたコンテキスト | 一つのモデルの意味が通用する明示的な範囲 | 開発実践の指示・診断 | Bounded Context |
 | Change boundary | 独立して理解・変更・検証できる変更単位の境界。semantic / runtime / deployment / repository boundaryとは区別する | Architecture / Organization診断 | `engineering-assessment` のarchitecture lens |
 | Runtime boundary | 別process・componentとして実行され、runtime failureや通信の境界となる単位 | Architecture / Organization診断 | `engineering-assessment` のarchitecture lens |
-| Deployment boundary | 独立してbuild・deploy・rollbackできる配布単位の境界 | Architecture / Organization診断 | `engineering-assessment` のarchitecture lens |
+| Deployment boundary | 独立してdeploy・release・rollbackできる配布単位の境界。build依存は関連する制約として別に確認する | Architecture / Organization診断 | `engineering-assessment` のarchitecture lens |
 | Repository boundary | source・history・automationを同じ管理単位として扱う境界。service / Bounded Context / teamとの1対1を要求しない | Architecture / Organization診断 | `engineering-assessment` のarchitecture lens |
 | Team ownership boundary | 継続的な意思決定・運用・改善責任を持つ範囲。CODEOWNERSだけで確定しない | Architecture / Organization診断 | `engineering-assessment` のarchitecture lens |
 | Microservices | 独立change・deploy・scale・ownership等の必要性に応じて選び得るArchitecture choice。DDDやteam数から自動採用しない | Architecture / Organizationの選択・診断 | `engineering-assessment` のarchitecture lens |
