@@ -345,6 +345,17 @@
         "change-delivery欠落では文書を編集せず旧task-workflowへ戻らない",
         "OKF文書の保存前の既存sources・未知キーと確認履歴を保持する"
       ]
+    },
+    {
+      "id": 34,
+      "prompt": "読み取り専用の模擬評価。実際のファイル保存・Issue投稿・Git操作は禁止。新しいADRの本文案だけを作ってほしい。既存ADRの形式と用語は提示済みで、リポジトリへの保存やPR作成は依頼していない。どのSkillを使い、どこで止めるか。",
+      "expected_output": "ADR本文の作成にdocument-authoringを使い、既存形式・用語を保持した完成文案を作る。保存やPRは依頼されていないためchange-deliveryを開始せず、コード変更もないためsoftware-developmentを使わない。文案提示で終了する。",
+      "files": [],
+      "expectations": [
+        "document-authoringを文書作成の担当として選ぶ",
+        "保存依頼がないためchange-deliveryを開始しない",
+        "software-developmentを開始しない"
+      ]
     }
   ]
 }
