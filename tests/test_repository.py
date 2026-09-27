@@ -490,7 +490,7 @@ class MetadataTests(unittest.TestCase):
         self.assertIn('13 Primary Practices', xp)
         self.assertIn('11 Corollary Practices', xp)
         self.assertIn('Practiceの数をXP成熟度スコアにせず', xp)
-        self.assertIn('全カテゴリを常時ロードしない', xp)
+        self.assertIn('xp-auxiliary.md', xp)
 
         entries = {entry['id']: entry['resource'] for entry in
                    yaml.safe_load(sources.split('---', 2)[1])['sources']}
