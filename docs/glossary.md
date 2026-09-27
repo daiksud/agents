@@ -7,6 +7,8 @@ sources:
     resource: engineering/model.md
   - id: architecture-organization-lens
     resource: ../skills/engineering-assessment/references/architecture-and-organization.md
+  - id: dora-lens
+    resource: ../skills/engineering-assessment/references/dora.md
   - id: xp-principles
     resource: ../skills/software-development/references/sources.md
   - id: okf-v02
