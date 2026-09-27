@@ -75,7 +75,7 @@ sources:
 
 ## 一次資料と適用上の判断
 
-既存資料は2026-09-11、追加したXP資料は2026-09-26、Architecture / Organization lensとDORA model整理で追加した資料は2026-09-27に確認した。以下を翻訳転載せず、[原則の関係](principles.md)と[診断手順](assessment.md)へ要約・再構成した。更新日がない資料に確認日を公開日として付けない。後日の診断では、実際に参照した版・確認日を記録する。
+既存資料は2026-09-11、追加したXP資料は2026-09-26、Architecture / Organization lensとDORA model整理で追加した資料は2026-09-27に確認した。以下を翻訳転載せず、[原則の関係](principles.md)、[診断手順](assessment.md)、および条件付きのfocused referenceへ要約・再構成した。更新日がない資料に確認日を公開日として付けない。後日の診断では、実際に参照した版・確認日を記録する。
 
 ### DevOps・Lean・改善
 
