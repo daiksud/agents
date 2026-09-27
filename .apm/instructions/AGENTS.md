@@ -3,6 +3,8 @@ type: Instruction
 title: インストラクションの作成・更新
 description: このディレクトリのインストラクションの形式、内容、確認方法を定めます。
 sources:
+  - id: issue-122
+    resource: https://github.com/daiksud/agents/issues/122
   - id: github-ad30107c31c06aec8a7d5636e0d1058118604e6f-spec-md
     resource: https://github.com/GoogleCloudPlatform/open-knowledge-format/blob/ad30107c31c06aec8a7d5636e0d1058118604e6f/SPEC.md
 ---
@@ -31,6 +33,26 @@ sources:
 - 共通本文には設計・品質・実行範囲・完了責任を残し、工程の細かな操作は担当スキルへ集約する。誤記修正にも全資料の読み込みを求める導線を作らず、複数の利用エージェントで境界を確認する。
 - ルールの移動では、元の指示との対応を確認し、合意していない意味の変更や脱落を防ぐ。
 
+### 共通契約の責務とモデル別調整
+
+共通契約は利用モデルに依存させず、次の責務に従って正本を選ぶ。この表は原本編集時に使い、配布本文へ一括展開しない。[^issue-122]
+
+| 原本 | 担当する契約 |
+| --- | --- |
+| `decision-making.instructions.md` | 目的・目標・手段の区別と業務判断 |
+| `change-safety.instructions.md` | 実行承認・権限・停止条件と変更保護 |
+| `development.instructions.md` | 受け入れ条件、テスト先行と開発上の判断 |
+| `collaboration.instructions.md` | 共有ToDo、独立したペア、段階確認と内部通信 |
+| `domain-modeling.instructions.md` | ドメインの用語・モデル・境界 |
+| `quality.instructions.md` | 成果物の品質、検証の証拠と未確認範囲 |
+| `delivery.instructions.md` | レビュー・CI・統合と完了責任 |
+| `skill-routing.instructions.md` | 作業に応じたスキルの適用条件と入口 |
+
+- TDD、共有ToDo、ペアの段階確認など、採用する開発プロセスをモデル能力の補助説明として削除しない。
+- 環境固有の操作方法とモデル固有の補足を共通契約へ混ぜず、必要な作業で読む資料と明示的な適用条件に分ける。
+- モデル別の補足は共通契約を緩めず、根拠・適用範囲・削除条件を確認する。モデル名だけを変えた原本の複製を作らない。
+- CopilotやCodexなどの名称だけでモデル固有の調整と判断せず、既存のレビュー条件や実行環境との区別を確認する。
+
 ### 配布本文の境界
 
 配布本文には利用先で必要な判断・手順だけを置く。agentsの原本配置・同期・導入検証履歴はローカルAGENTS.mdまたは保守ガイドへ置き、共通本文から管理手順に依存させない。
@@ -40,3 +62,5 @@ sources:
 [適用前の確認](../../docs/templates/instructions.md#適用前の確認)と[運用中の見直し](../../docs/templates/instructions.md#運用中の見直し)に従う。手順・完了条件の検証方法と期待結果を明示し、代表的な依頼で判断を確認する。効果を確認できなかった場合は未確認として報告する。
 
 [^github-ad30107c31c06aec8a7d5636e0d1058118604e6f-spec-md]: [Open Knowledge Format（OKF）](https://github.com/GoogleCloudPlatform/open-knowledge-format/blob/ad30107c31c06aec8a7d5636e0d1058118604e6f/SPEC.md)。本文に記した参照範囲と採用判断の根拠。
+
+[^issue-122]: [Issue #122](https://github.com/daiksud/agents/issues/122) に記録された、モデル非依存の開発契約、責務の分離と既存契約の保持方針。
