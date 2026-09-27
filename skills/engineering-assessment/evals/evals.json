@@ -338,6 +338,61 @@
         "サービス・期間・定義を揃える",
         "利用者成果・reliability・well-beingと合わせて改善を評価する"
       ]
+    },
+    {
+      "id": 33,
+      "prompt": "XP第2版に沿ってacme/apiの現状を診断したい。CommunicationなどのValues、HumanityなどのPrinciples、Pair ProgrammingやCIなどのPracticesを全部『原則』として一つのチェックリストにまとめ、未導入数で評価して。",
+      "expected_output": "Values / Principles / Practicesを平坦化せず、PracticeはPrimary / Corollaryを区別する。全項目の未導入数で採点せず、現在のproblemに関係するvalue・principle・practiceと実際の証拠だけを診断する。",
+      "files": [],
+      "expectations": [
+        "XPのValues / Principles / Practicesを別分類として扱う",
+        "Primary PracticesとCorollary Practicesを区別する",
+        "全項目の未導入数を成熟度スコアにしない"
+      ]
+    },
+    {
+      "id": 34,
+      "prompt": "acme/teamでXPを始めたいので、13 Primary Practicesと11 Corollary Practicesを全部今月から必須ルールにしてIssue計画へ入れて。現状の困りごとはレビュー待ちが長いことだけで、どのpracticeが効くかはまだ調べていない。",
+      "expected_output": "XP Practices全件を一律の必須ルールにしない。レビュー待ちの実例、feedback loop、change size、pairing/CI等の関連証拠から最初の小さい改善を選び、Corollary PracticeをPrimary Practiceより先に機械的に導入しない。",
+      "files": [],
+      "expectations": [
+        "XP全Practiceを一律の必須ルールにしない",
+        "現在の問題と証拠から関連Practiceだけを選ぶ",
+        "Primary / Corollaryの分類を導入順の機械的チェックリストに変えない"
+      ]
+    },
+    {
+      "id": 35,
+      "prompt": "acme/catalogでUbiquitous Languageの食い違いだけを診断したい。注文の『取消』と『キャンセル』が部署ごとに違う意味で使われ、仕様とコードも一致していない。CI/CD、DORA、Team Topologies、Microservicesの包括診断は求めていない。",
+      "expected_output": "DDDと共有理解に必要な範囲へ診断を限定し、用語・model・関係者の意味確認を扱う。Architecture / OrganizationやDORA等を無関係に展開・未確認一覧化しない。",
+      "files": [],
+      "expectations": [
+        "DDD / shared understanding中心に限定する",
+        "無関係なDORAやArchitecture lensを展開しない",
+        "narrow requestを包括診断へ広げない"
+      ]
+    },
+    {
+      "id": 36,
+      "prompt": "acme/webはPR後の承認待ちだけで平均3日止まる。main統合とテストは速く、domain modelやteam境界の問題は観測されていない。Lean / CD / DORAを使って待ちを減らす診断計画だけ欲しい。",
+      "expected_output": "Lean / CDとDORAのFast flow・Continuous delivery・Streamlining change approval等へ絞り、XP全taxonomy、DDD、Architecture / Organizationを無関係に全面展開しない。承認の目的と安全性を確認する小さい実験を選ぶ。",
+      "files": [],
+      "expectations": [
+        "Lean / CD / 関連DORA Capabilityへ絞る",
+        "無関係なXP全taxonomyやDDD/Architectureを展開しない",
+        "承認の目的と安全性を保つ小さい実験を選ぶ"
+      ]
+    },
+    {
+      "id": 37,
+      "prompt": "acme/ordersでMicroservices採否を診断したい。Bounded Context候補、独立release要求、team ownership、distributed-system costを確認したい一方、DORA Capability Catalog全部の評価は不要。XPのSimplicityも判断に使いたい。",
+      "expected_output": "Architecture / Organization lensを中心にDDDのsemantic boundary、independent delivery、team ownership、distributed-system costを確認し、XP Simplicityを補助lensとして使う。DORA Catalog全件や無関係なXP Practiceを読み込まない。",
+      "files": [],
+      "expectations": [
+        "Architecture / OrganizationとDDDを中心に診断する",
+        "XP Simplicityを補助lensとして使う",
+        "DORA Catalog全件やXP全Practiceへ診断範囲を広げない"
+      ]
     }
   ]
 }
