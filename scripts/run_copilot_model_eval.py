@@ -44,6 +44,7 @@ GRADER_ONLY_PATHS = (
     Path("tests/test_copilot_model_eval.py"),
 )
 AUTH_VARIABLES = ("COPILOT_GITHUB_TOKEN", "GH_TOKEN", "GITHUB_TOKEN")
+DELIVERY_SETUP_TIMEOUT_SECONDS = 180
 
 
 def _nonempty_string(value: object) -> bool:
@@ -468,6 +469,23 @@ def finish_preflight_failure(
     return 2
 
 
+def classify_copilot_result(
+    return_code: int,
+    stdout: str,
+) -> tuple[str | None, str | None]:
+    if return_code != 0:
+        return (
+            "runtime",
+            f"Copilot exited with code {return_code}; inspect stderr evidence.",
+        )
+    if not stdout.strip():
+        return (
+            "runtime",
+            "Copilot exited successfully but produced no model response.",
+        )
+    return None, None
+
+
 def text_from_timeout(value: str | bytes | None) -> str:
     if value is None:
         return ""
@@ -698,7 +716,7 @@ def main() -> int:
                 root,
                 repo_sha,
                 base_dir,
-                timeout=180,
+                timeout=DELIVERY_SETUP_TIMEOUT_SECONDS,
                 extra_grader_paths=selected_suite_paths,
             )
             manifest["input_fingerprints"] = fingerprints
@@ -765,18 +783,10 @@ def main() -> int:
                             stdout = result.stdout
                             stderr = result.stderr
                             return_code = result.returncode
-                            if return_code != 0:
-                                failure_class = "runtime"
-                                notes = (
-                                    f"Copilot exited with code {return_code}; "
-                                    "inspect stderr evidence."
-                                )
-                            elif not stdout.strip():
-                                failure_class = "runtime"
-                                notes = (
-                                    "Copilot exited successfully but produced "
-                                    "no model response."
-                                )
+                            failure_class, notes = classify_copilot_result(
+                                return_code,
+                                stdout,
+                            )
                         except subprocess.TimeoutExpired as error:
                             elapsed = time.monotonic() - invocation_started
                             timed_out = True
