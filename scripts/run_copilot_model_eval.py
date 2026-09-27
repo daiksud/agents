@@ -6,6 +6,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import io
+import importlib.util
 import json
 import os
 import shutil
@@ -147,6 +148,19 @@ def remove_grader_material(
             target.unlink()
 
 
+def remove_deployed_grader_material(
+    home: Path,
+    extra_paths: tuple[Path, ...],
+) -> None:
+    for relative in extra_paths:
+        if len(relative.parts) >= 2 and relative.parts[0] == "skills":
+            target = home / ".agents" / relative
+            if target.is_dir():
+                shutil.rmtree(target)
+            elif target.exists():
+                target.unlink()
+
+
 def remove_skill_evals(root: Path) -> None:
     for base in (
         root / "skills",
@@ -215,6 +229,20 @@ def isolated_environment(home: Path, base: dict[str, str]) -> dict[str, str]:
     return environment
 
 
+def load_delivery_helpers():
+    module_path = Path(__file__).with_name("apm_smoke.py")
+    spec = importlib.util.spec_from_file_location("copilot_eval_apm_smoke", module_path)
+    if spec is None or spec.loader is None:
+        raise RuntimeError("cannot load APM delivery verifier")
+    module = importlib.util.module_from_spec(spec)
+    try:
+        spec.loader.exec_module(module)
+    except ModuleNotFoundError as error:
+        missing = error.name or "unknown module"
+        raise RuntimeError(f"delivery dependency missing: {missing}") from error
+    return module.candidate_environment, module.validate_deployment
+
+
 def prepare_delivery(
     root: Path,
     repo_sha: str,
@@ -223,10 +251,7 @@ def prepare_delivery(
     timeout: float,
     extra_grader_paths: tuple[Path, ...] = (),
 ) -> tuple[Path, Path, dict[str, str], dict[str, str]]:
-    try:
-        from scripts.apm_smoke import candidate_environment, validate_deployment
-    except ModuleNotFoundError:
-        from apm_smoke import candidate_environment, validate_deployment
+    candidate_environment, validate_deployment = load_delivery_helpers()
 
     workspace = base_dir / "workspace"
     home = base_dir / "home"
@@ -267,6 +292,7 @@ def prepare_delivery(
     cached_candidate = home / ".apm/apm_modules/daiksud/agents"
     remove_grader_material(cached_candidate, extra_grader_paths)
     remove_skill_evals(cached_candidate)
+    remove_deployed_grader_material(home, extra_grader_paths)
     remove_skill_evals(home)
 
     fingerprints = {
@@ -278,10 +304,19 @@ def prepare_delivery(
 
 
 def write_manifest(path: Path, manifest: dict) -> None:
-    path.write_text(
-        json.dumps(manifest, ensure_ascii=False, indent=2) + "\n",
-        encoding="utf-8",
-    )
+    payload = json.dumps(manifest, ensure_ascii=False, indent=2) + "\n"
+    temporary = path.with_name(f".{path.name}.tmp")
+    try:
+        with temporary.open("w", encoding="utf-8") as stream:
+            stream.write(payload)
+            stream.flush()
+            os.fsync(stream.fileno())
+        os.replace(temporary, path)
+    finally:
+        try:
+            temporary.unlink()
+        except FileNotFoundError:
+            pass
 
 
 def finish_preflight_failure(
@@ -456,10 +491,27 @@ def main() -> int:
     assert executable is not None
     try:
         version = run_command([executable, "--version"], root, timeout=30)
-        if version.returncode != 0:
-            raise RuntimeError(version.stderr or version.stdout)
-        manifest["copilot_version"] = (version.stdout or version.stderr).strip()
+    except (OSError, subprocess.SubprocessError) as error:
+        return finish_preflight_failure(
+            manifest_path,
+            manifest,
+            failure_class="runtime",
+            notes=f"Copilot version probe failed: {error}",
+        )
+    if version.returncode != 0:
+        return finish_preflight_failure(
+            manifest_path,
+            manifest,
+            failure_class="runtime",
+            notes=(
+                f"Copilot version probe exited with code {version.returncode}; "
+                "inspect stdout/stderr in the local environment."
+            ),
+        )
+    manifest["copilot_version"] = (version.stdout or version.stderr).strip()
+    write_manifest(manifest_path, manifest)
 
+    try:
         with tempfile.TemporaryDirectory(prefix="copilot-eval-base-") as directory:
             base_dir = Path(directory)
             workspace_base, home_base, base_env, fingerprints = prepare_delivery(
