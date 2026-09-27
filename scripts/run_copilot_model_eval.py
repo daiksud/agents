@@ -43,15 +43,12 @@ def load_suite(path: Path) -> dict:
 
 def build_prompt(suite: dict, case: dict) -> str:
     rules = "\n".join(f"- {rule}" for rule in suite["common_rules"])
-    criteria = "\n".join(f"- {criterion}" for criterion in case["criteria"])
     return (
         "This is a controlled GitHub Copilot evaluation.\n"
         "Apply the repository Instructions and Skills available in the current working tree.\n"
         f"{rules}\n\n"
         f"CASE {case['id']}: {case['title']}\n"
-        f"{case['prompt']}\n\n"
-        "Acceptance criteria used by the evaluator (do not self-score):\n"
-        f"{criteria}\n"
+        f"{case['prompt']}\n"
     )
 
 
