@@ -15,7 +15,7 @@ description: 開発実践の役割と重なりを短く整理し、必要なfocu
 | Lens | 主に答える問い | 詳細 |
 | --- | --- | --- |
 | XP | 小さく作り、feedbackから学び、現在の要求へ設計を進化させられるか | [XP taxonomy](xp.md) |
-| Lean | 価値が届くまでのWIP・待ち・手戻り・handoffをどう減らすか | この文書と[診断手順](assessment.md) |
+| Lean | 利用者価値のend-to-end flowを改善し、WIP・待ち・手戻り・handoffを減らしながら人を尊重する。人員削減や各担当者の局所的な稼働率最大化を改善そのものとみなさない | この文書と[診断手順](assessment.md) |
 | DDD | 何をモデル化し、どこまで同じ意味・言語が通用するか | semantic / architectureの関係は[ArchitectureとOrganization](architecture-and-organization.md) |
 | CI | 小さな変更が頻繁にmainへ統合され、速いfeedbackと修復が続いているか | 実装は `change-delivery`、診断は[診断手順](assessment.md) |
 | Continuous Delivery | 必要なときに検証済み変更を安全に配布可能な状態へ保てるか。Continuous Deploymentは検証済み変更を自動でproductionへ配備する別のpracticeであり、手動承認があってもCDは成立し得る | DORA Capabilityとの関係は[DORA lens](dora.md) |
