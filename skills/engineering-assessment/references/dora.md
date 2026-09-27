@@ -3,6 +3,8 @@ type: Reference
 title: DORAをCapability lensとして診断する
 description: DORA Core Model、Capability Catalog、software delivery metrics、annual researchを区別し、問題に関係するCapabilityだけを証拠から診断します。
 sources:
+  - id: dora-core-v2-1-0
+    resource: https://dora.dev/research/core/assets/dora-core-v2.1.0-detail.pdf
   - id: dora-research
     resource: https://dora.dev/research/
   - id: dora-capabilities
@@ -28,11 +30,11 @@ DORA、Capability Catalog、Core Model、delivery metrics、Quick Checkなどを
 | Software delivery performance metrics | 対象application / serviceのdelivery performanceを時系列で観測するmetrics | Capabilityそのものや個人performanceとみなさない |
 | Annual / ongoing research | 新しい技術・働き方・関係を継続的に研究する成果 | 一年の新知見を即座にCoreの固定関係へ読み替えない |
 
-DORA Core Model v2.1.0は、研究全体の中でも比較的確立した関係をpractitioner向けに整理し、ongoing researchより意図的に保守的に更新される。[^dora-research]
+DORA Core Model v2.1.0は、研究全体の中でも比較的確立した関係をpractitioner向けに整理し、ongoing researchより意図的に保守的に更新される。Coreの具体的な構造は固定v2.1.0資料を正本にする。[^dora-research][^dora-core-v2-1-0]
 
 ### Core v2.1.0は3つのCapability groupを持つ
 
-Core v2.1.0ではCapabilityを次の3群に整理する。[^dora-research]
+Core v2.1.0ではCapabilityを次の3群に整理する。[^dora-core-v2-1-0]
 
 | Group | Coreに記載されるCapability |
 | --- | --- |
@@ -42,7 +44,7 @@ Core v2.1.0ではCapabilityを次の3群に整理する。[^dora-research]
 
 これらの名称を、すべての診断で順番に採点する質問票へ変換しない。現在のproblem・value stream・観測証拠から関連するgroupとCapabilityだけを使う。
 
-CoreはCapabilityからPerformanceを予測し、PerformanceからOrganizational performance / Well-beingなどのOutcomeを予測する関係を示す。PerformanceではSoftware deliveryをFour key metrics、ReliabilityをSLOsで扱う。[^dora-research]
+CoreはCapabilityからPerformanceを予測し、PerformanceからOrganizational performance / Well-beingなどのOutcomeを予測する関係を示す。PerformanceではSoftware deliveryをFour key metrics、ReliabilityをSLOsで扱う。[^dora-core-v2-1-0]
 
 ### Capability CatalogはCoreより広い
 
@@ -125,6 +127,7 @@ Deployment frequencyだけを上げるなど、metricを直接操作すること
 最初の改善は、現在の制約へ最も関係するCapabilityを一つまたは小さなまとまりで選び、期待する変化・証拠・見直し条件をIssueへ記録する。
 
 [^dora-research]: [DORA Research / Core Model](https://dora.dev/research/)。Core v2.1.0の3 Capability group、Performance、Outcomeと、Coreを保守的に更新する位置づけ。2026-09-27確認。
+[^dora-core-v2-1-0]: [DORA Core v2.1.0 detail](https://dora.dev/research/core/assets/dora-core-v2.1.0-detail.pdf)。3 Capability group、Software delivery / Reliability Performance、Outcomeの固定版正本。2026-09-27確認。
 [^dora-capabilities]: [DORA Capability Catalog](https://dora.dev/capabilities/)。`core` / `AI` 等のlabelを持つ広いCatalogとCore Modelを区別するために参照。2026-09-27確認。
 [^dora-metrics]: [DORA software delivery performance metrics](https://dora.dev/guides/dora-metrics/)。現行5 metricsとThroughput / Instabilityの定義。2026-09-27確認。
 [^dora-metrics-history]: [A history of DORA's software delivery metrics](https://dora.dev/insights/dora-metrics-history/)。2024年のDeployment rework rate追加とFour Keysから5 metricsへの変遷。2026-09-27確認。
