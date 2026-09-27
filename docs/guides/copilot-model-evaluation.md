@@ -27,7 +27,7 @@ GPT-6 Sol、GPT-6 Luna、Claude Opus 5.5、Claude Sonnet 5に、同じInstructio
 
 - 共通ケースとgrader基準: `evals/copilot-models/cases.json`
 - 実行: `scripts/run_copilot_model_eval.py`
-- 実測raw evidence: repo外の出力ディレクトリ。選択したsuite自体も `suite.json` としてここへ保存する
+- 実測raw evidence: repo外の出力ディレクトリ。選択したrepository内suite自体も `suite.json` としてここへ保存する
 - リポジトリに残す基準記録: `evals/copilot-models/results/` 直下のレビュー済みJSON
 - #122のモデル非依存契約と#123のrouting / Progressive Disclosureを変更せずに評価する。[^issue-122] [^issue-123]
 
@@ -152,7 +152,7 @@ manifestには少なくとも次を残す。
 
 manifest更新は同じ出力ディレクトリの一時ファイルへ完全なJSONを書き、flush後にatomic replaceする。中断時に最後の正常manifestを不用意にtruncateしない。
 
-未評価フィールドは `null` のままにし、未知を0へ変換しない。repository外から指定したcustom suiteも再現・再採点に必要なgrader evidenceなので、raw出力と同じ保護されたrepo外ディレクトリへ `suite.json` としてコピーする。raw JSONLやstderr、suite snapshotにはコード・ログ・モデル応答・grader基準等が含まれ得るため、そのままGitへ追加しない。共有が必要なら公開範囲を確認し、必要な集計・判定だけをレビュー済み記録へ転記する。
+未評価フィールドは `null` のままにし、未知を0へ変換しない。選択したrepository内suiteは再現・再採点用のgrader evidenceとして、raw出力と同じ保護されたrepo外ディレクトリへ `suite.json` としてコピーする。repository外suiteは受け付けない。raw JSONLやstderr、suite snapshotにはコード・ログ・モデル応答・grader基準等が含まれ得るため、そのままGitへ追加しない。共有が必要なら公開範囲を確認し、必要な集計・判定だけをレビュー済み記録へ転記する。
 
 `evals/copilot-models/results/.gitignore` は日時等のrun subdirectoryを既定でGit管理対象から外す。直下のレビュー済み基準JSONは保持できる。
 
