@@ -1,6 +1,6 @@
 ---
 name: engineering-assessment
-description: DevOps・Lean・XP・CI/CD・BDD/ATDD/TDD・DDD・チームトポロジーについて、リポジトリや開発プロセスの現状診断、改善提案、導入計画を依頼されたときに使う。証拠に基づく計画をIssueへ記録する。通常の修正、個別コードレビュー、概念説明、導入実装には使わない。
+description: DevOps・Lean・XP・CI/CD・BDD/ATDD/TDD・DDD・architecture / Microservices・チームトポロジーについて、リポジトリや開発プロセスの現状診断、改善提案、導入計画を依頼されたときに使う。証拠に基づく計画をIssueへ記録する。通常の修正、個別コードレビュー、概念説明、導入実装には使わない。
 ---
 
 # 開発実践を診断し、導入を計画する
@@ -13,6 +13,7 @@ description: DevOps・Lean・XP・CI/CD・BDD/ATDD/TDD・DDD・チームトポ�
 
 - 診断・計画では[証拠から導入計画を作る](references/assessment.md)を読む。限定診断は依頼された概念・困りごとに絞り、包括的な診断はXPを含む各観点を対象の流れに照らす。関連観点は目標への影響を証拠で説明できる範囲で調べ、依頼範囲を変える場合は確認する。
 - 概念の定義・関係を確認するときは[原則の関係](references/principles.md)、出典・版差を検証するときは[一次資料と適用判断](references/sources.md)を読む。毎回の全文読み込みや全観点の一括導入・点数化は要求しない。
+- Domain / Bounded Context、service・repository・teamの対応、cross-team dependency、Microservices採否など、意味・変更・実行・配布・ownershipの境界が問題になるときだけ[ArchitectureとOrganizationの境界を診断する](references/architecture-and-organization.md)を読む。architecture styleやteam typeの数を結論にせず、実際のchange / test / deployment dependencyとcognitive loadを証拠にする。
 
 ## 判断と完了の境界
 
