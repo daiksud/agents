@@ -100,7 +100,7 @@ Principleを実際のproblemへ適用するときは[XP個別項目の軽量look
 - Negotiated Scope Contract
 - Pay-Per-Use
 
-Primary / Corollary Practiceの意味や観測証拠が必要なときは[XP個別項目の軽量lookup](xp-auxiliary.md#primary-practices)だけを読む。Practiceの採用数を成熟度や必須導入数にしない。
+Primary Practiceの意味や観測証拠が必要なときは[Primary Practices](xp-auxiliary.md#primary-practices)、Corollary Practiceなら[Corollary Practices](xp-auxiliary.md#corollary-practices)だけを読む。Practiceの採用数を成熟度や必須導入数にしない。
 
 ### Problemから必要なカテゴリだけを選ぶ
 
@@ -110,7 +110,7 @@ Primary / Corollary Practiceの意味や観測証拠が必要なときは[XP個�
 | 設計の先回り・複雑化 | [Values](xp-auxiliary.md#values)のSimplicity、[Principles](xp-auxiliary.md#principles)のEconomics / Baby Steps、必要なら[Practices](xp-auxiliary.md#primary-practices)のIncremental Design |
 | feedbackの遅さ・大きな変更 | [Values](xp-auxiliary.md#values)のFeedback、[Principles](xp-auxiliary.md#principles)のFlow / Baby Steps、必要なら[Practices](xp-auxiliary.md#primary-practices)のCI / Test-First / Incremental Design |
 | 継続できない働き方 | [Values](xp-auxiliary.md#values)のRespect、[Principles](xp-auxiliary.md#principles)のHumanity、必要なら[Practices](xp-auxiliary.md#primary-practices)のEnergized Work / Slack |
-| 同じ失敗の再発 | [Values](xp-auxiliary.md#values)のCourage、[Principles](xp-auxiliary.md#principles)のReflection / Failure、必要なら[Practices](xp-auxiliary.md#primary-practices)のRoot-Cause Analysis |
+| 同じ失敗の再発 | [Values](xp-auxiliary.md#values)のCourage、[Principles](xp-auxiliary.md#principles)のReflection / Failure、必要なら[Corollary Practices](xp-auxiliary.md#corollary-practices)のRoot-Cause Analysis |
 | 責任と権限のずれ | [Values](xp-auxiliary.md#values)のRespect、[Principles](xp-auxiliary.md#principles)のAccepted Responsibility、必要なら[Practices](xp-auxiliary.md#primary-practices)のWhole Team |
 
 表は唯一のmappingではない。現在のproblemに関係するカテゴリ・項目だけを選び、無関係なXP項目を未確認一覧へ追加しない。
