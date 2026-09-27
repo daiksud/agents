@@ -115,6 +115,17 @@
       "prompt": "読み取り専用の模擬評価。実際のIssue投稿・編集・Git操作は禁止。架空のdemo/shopで注文の送料境界を合意済みの具体例とともにIssue計画へ記録し、本文・表示・URLを確認して計画だけで終了してほしい。feature文書やコードの保存は依頼していない。導入済みSkillはbehavior-specification、issue-managementと旧task-workflowで、change-deliveryとdocument-authoringは未導入。適用Skillと実行可能な工程・停止条件を示して。",
       "expected_output": "Issue計画だけの依頼はissue-managementで扱い、change-deliveryやdocument-authoringの不在は計画保存・再取得・本文とURLの確認を妨げない。実環境なら公開許可と範囲を確認してIssueを記録し、保存確認後に停止する。今回の読み取り専用模擬では文案と手順だけを示して未投稿と明記し、旧task-workflowで代用してfeature編集・TDD・Git操作へ進まない。",
       "files": []
+    },
+    {
+      "id": 42,
+      "prompt": "読み取り専用の模擬評価。実際の文書保存・Issue投稿・コード変更は禁止。新しいcheckout機能について、利用者が成功と判断できるふるまい、境界例、未回答事項だけを整理して。今回はfeature文書の保存、Issue作成、実装は依頼していない。どのSkillを使い、どこで止めるか。",
+      "expected_output": "ふるまい・具体例・受け入れ条件の整理にbehavior-specificationを使う。保存を依頼されていないためdocument-authoring、実装のsoftware-development、deliveryのchange-deliveryを開始せず、仕様案と未回答事項の提示で終了する。",
+      "files": [],
+      "expectations": [
+        "behavior-specificationを仕様整理の担当として選ぶ",
+        "文書保存がないためdocument-authoringを開始しない",
+        "コード実装・deliveryを開始しない"
+      ]
     }
   ]
 }
