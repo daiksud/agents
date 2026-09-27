@@ -70,7 +70,7 @@ runnerはbase用の一時HOMEへ候補SHAをAPMで導入・compileし、既存�
 
 各モデルrunは、この検証済みbase workspace / HOMEを新しい一時ディレクトリへコピーする。run間でHOME、Copilot state、workspaceを共有しない。
 
-APM配布検証の完了後、隔離HOMEのpackage cacheからgrader専用パスも削除してからbaseを複製する。さらに、source workspace、APM cache、`~/.agents/skills/` の各Skill配下にある `evals/` も評価時だけ除外する。Skill本文とreferencesは保持し、過去のSkill評価fixtureやexpected outputをanswer keyとして参照させない。
+APM配布検証の完了後、隔離HOMEのpackage cacheからgrader専用パスも削除してからbaseを複製する。選択したrepository内suiteが `skills/<name>/...` にある場合は、APMが生成した `~/.agents/skills/<name>/...` 側の対応ファイルも削除する。さらに、source workspace、APM cache、`~/.agents/skills/` の各Skill配下にある `evals/` も評価時だけ除外する。Skill本文とreferencesは保持し、過去のSkill評価fixtureやexpected outputをanswer keyとして参照させない。
 
 ### 認証と権限
 
@@ -125,7 +125,7 @@ python3 scripts/run_copilot_model_eval.py \
 
 repo内の出力先は拒否する。runnerは各runの開始時に、graderを含まないworkspaceと新しいHOMEを検証済みbaseから作る。stdout / stderrはCopilot終了後にrunner側がrepo外へ保存するため、後続runのworkspaceから先行モデル出力を読ませない。
 
-実測開始時は、選択モデルとmodel / case / attemptの全planned matrixをmanifestへ先に保存する。CLI不足、BYOK設定、token不足、dirty checkoutなどのpreflight失敗でもこの初期manifestを残し、失敗理由を `runtime` または `tool_or_permission` として記録する。
+実測開始時は、選択モデルとmodel / case / attemptの全planned matrixをmanifestへ先に保存する。CLI不足、BYOK設定、token不足、dirty checkout、Copilot version probe失敗などのpreflight失敗でもこの初期manifestを残し、候補配布前のCLI・環境失敗を `runtime`、認証不足を `tool_or_permission` として記録する。APM verifierのPyYAMLなどdelivery専用依存が不足した場合はtracebackのまま終了せず、`setup: failed` と `instruction_delivery` の未完了証拠をmanifestへ残す。
 
 1 runがtimeoutしても、それまでのmanifestを保存し、当該attemptを `runtime` として記録して次のrunへ進む。Copilotが例外ではなく非0 exit codeを返した場合も成功候補にせず、`runtime` と診断メモを記録してraw stderrと区別する。
 
@@ -149,6 +149,8 @@ manifestには少なくとも次を残す。
 - 品質判定欄
 - 効率判定欄
 - failure class / notes
+
+manifest更新は同じ出力ディレクトリの一時ファイルへ完全なJSONを書き、flush後にatomic replaceする。中断時に最後の正常manifestを不用意にtruncateしない。
 
 未評価フィールドは `null` のままにし、未知を0へ変換しない。raw JSONLやstderrにはコード・ログ・モデル応答等が含まれ得るため、そのままGitへ追加しない。共有が必要なら公開範囲を確認し、必要な集計・判定だけをレビュー済み記録へ転記する。
 
