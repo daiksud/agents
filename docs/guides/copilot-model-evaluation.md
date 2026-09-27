@@ -148,8 +148,7 @@ Copilotの出力形式・契約から取得できない値は `null` とする�
 
 この記録を「4モデルに差がなかった」という証拠に使わない。実機結果が得られるまでモデル固有overlayを追加しない。
 
-[^issue-124]: [Issue #124](https://github.com/daiksud/agents/issues/124) に記録された複数モデル評価の目的と成功条件。
-[^issue-122]: [Issue #122](https://github.com/daiksud/agents/issues/122) のモデル非依存契約。
-[^issue-123]: [Issue #123](https://github.com/daiksud/agents/issues/123) のSkill routingとProgressive Disclosure。
 [^github-supported-models]: [Supported AI models in GitHub Copilot](https://docs.github.com/en/copilot/reference/ai-models/supported-models)。対象モデルの対応状況。
 [^github-copilot-cli-programmatic]: [GitHub Copilot CLI programmatic reference](https://docs.github.com/en/copilot/reference/copilot-cli-reference/cli-programmatic-reference)。非対話実行とモデル固定。
+[^issue-122]: [Issue #122](https://github.com/daiksud/agents/issues/122) のモデル非依存契約。
+[^issue-123]: [Issue #123](https://github.com/daiksud/agents/issues/123) のSkill routingとProgressive Disclosure。
