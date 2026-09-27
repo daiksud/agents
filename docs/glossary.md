@@ -29,8 +29,8 @@ sources:
 | YAGNI | 仮想の将来機能を先取りせず、現在必要な検証・設計改善を保つ判断 | 開発判断と設計・実装 | `software-development` の設計資料 |
 | DevOps | 開発から運用まで、利用者の成果と品質に対する責任・学習を共有する実践 | 開発実践の指示・診断 | deliveryのDevOps、`engineering-assessment` |
 | Lean | 利用者価値を起点に流れ・仕掛かり・待ち・手戻りを改善し、人を尊重して学ぶ考え方 | 開発実践の指示・診断 | deliveryのLean、`engineering-assessment` |
-| 継続的インテグレーション | 小さな変更の頻繁なmain統合、速い自動検証、失敗修復を続ける実践 | 開発実践の指示・診断 | CI、`change-delivery` |
-| 継続的デリバリー | 検証済みの変更を必要なときに安全に配布できる状態を維持する実践 | 開発実践の指示・診断 | CD、`engineering-assessment` |
+| 継続的インテグレーション | 小さな変更の頻繁なmain統合、速い自動検証、失敗修復を続ける実践。XP / CD文脈ではPractice、DORAではCapabilityとしても扱う | 開発実践の指示・診断 | CI、`change-delivery` |
+| 継続的デリバリー | 検証済みの変更を必要なときに安全に配布できる状態として維持するCapability / system of work。複数のPracticeに支えられる | 開発実践の指示・診断 | CD、`engineering-assessment` |
 | 継続的デプロイメント | 検証を通った変更を自動的に本番へ配備する実践 | 開発実践の指示・診断 | Continuous Deployment（CDと区別） |
 | BDD | 具体例を使う共同の発見・定式化・自動化を通じて期待するふるまいの理解を深める実践 | 開発実践の指示・診断 | `behavior-specification`、`*.feature.md` |
 | ATDD | 対応する実装に先立ち、受け入れ条件・テストを具体化する実践 | 開発実践の指示・診断 | `behavior-specification` |
