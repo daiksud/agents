@@ -356,6 +356,17 @@
       "prompt": "読み取り専用模擬評価。Issue投稿・編集・Git操作・workflow実行は禁止。架空のdemo/shopでGitHub Actionsの失敗を調査した結果と修正計画をIssueに記録して本文・表示・URLを確認し、今回は計画だけで終了して。導入済みSkillはgithub-actions、issue-managementと旧task-workflowで、change-deliveryとsoftware-developmentは未導入。適用Skillと手順・停止境界を示して。",
       "expected_output": "Issue計画のみの依頼はissue-managementで公開許可・保存・再取得・本文・表示・URLを扱い、change-deliveryやsoftware-development不在は計画の保存を妨げない。読み取り専用模擬では計画案と未投稿状態を示して停止し、旧task-workflowで代用してworkflow編集・再実行・アプリコードTDDへ進まない。",
       "files": []
+    },
+    {
+      "id": 30,
+      "prompt": "読み取り専用の模擬評価。実際のworkflow編集・PR操作・workflow実行は禁止。.github/workflows/ci.ymlの差分をレビューし、runner、permissions、必須チェックへの影響を確認して。修正は依頼していない。どのSkillを使うか。",
+      "expected_output": "Actions固有のworkflow判断にgithub-actions、読み取り専用レビューの調査・指摘手順にcode-reviewを使う。編集やdeliveryは依頼されていないためsoftware-developmentとchange-deliveryを開始しない。runnerが論点なのでworkflow-design.mdのrunnerとshellを読み、permissionsを扱うためhardening.mdで実効権限・Secret・未信頼入力の境界も確認する。無関係なefficiencyやruntime-upgradesは一括で読まない。",
+      "files": [],
+      "expectations": [
+        "github-actionsとcode-reviewを必要な役割として選ぶ",
+        "software-developmentとchange-deliveryを開始しない",
+        "runnerにはworkflow-design.md、permissionsにはhardening.mdを読み、無関係なefficiencyとruntime-upgradesを一括で読まない"
+      ]
     }
   ]
 }

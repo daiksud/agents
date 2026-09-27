@@ -408,6 +408,17 @@
         "モデル固有補正には根拠・適用範囲・削除条件を持たせる"
       ],
       "source_id": "issue-122/model-specific-overlay-boundary"
+    },
+    {
+      "id": 53,
+      "prompt": "読み取り専用の模擬評価。実際の編集・Git操作・テスト実行は禁止。保存・確認済みIssueの受け入れ条件を変えずにparserの空入力バグを修正する実装工程を考えて。リポジトリ変更のdeliveryは別途change-deliveryが担当する。新しい利用者向け仕様や文書は不要。どのSkillを使い、何を追加しないか。",
+      "expected_output": "コード修正の実装・検証にsoftware-developmentを使い、既存受け入れ条件を再利用して小さなTDDで進める。リポジトリdeliveryはchange-deliveryへ引き渡し、新しい外部契約がないためbehavior-specificationを追加せず、文書変更がないためdocument-authoringを開始しない。",
+      "files": [],
+      "expectations": [
+        "software-developmentをコード実装の担当として選ぶ",
+        "新しい外部契約がないためbehavior-specificationを追加しない",
+        "文書変更がないためdocument-authoringを開始しない"
+      ]
     }
   ]
 }

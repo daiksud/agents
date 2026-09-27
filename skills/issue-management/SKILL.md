@@ -1,6 +1,6 @@
 ---
 name: issue-management
-description: GitHub Issueの検索・計画の保存・作成・更新、Sub-issue、後続依頼、診断計画や共通スタンダード候補の記録で使う。計画だけの依頼は保存・確認・提示で終了し、未公開情報の公開許可を守る。承認済み変更のbranch・commit・PR・CI・merge・main確認はchange-deliveryへ引き渡す。通常の読み取り・概念説明・読み取り専用レビューだけには使わないが、ユーザーが共通のトレードオフを判断した場合は候補の記録に使う。
+description: GitHub Issueの検索・計画保存・作成・更新、Sub-issue、後続依頼、共通スタンダード候補の記録で使う。計画だけは保存・確認・提示で終了する。branch・commit・PR・CI・mergeはchange-delivery、通常の読み取り・概念説明・レビューだけには使わない。
 ---
 
 # Issueと計画を記録する

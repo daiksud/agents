@@ -1,6 +1,6 @@
 ---
 name: engineering-assessment
-description: DevOps・Lean・XP・CI/CD・DORA・BDD/ATDD/TDD・DDD・architecture / Microservices・チームトポロジー・Conway / Inverse Conwayについて、リポジトリや開発プロセスの現状診断、改善提案、導入計画を依頼されたときに使う。証拠に基づく計画をIssueへ記録する。通常の修正、個別コードレビュー、概念説明、導入実装には使わない。
+description: XP、Lean、DevOps、CI/CD、DORA、DDD、architecture、Team Topologies等の開発実践を現状診断し、改善提案・導入計画を作るときに使う。通常の修正、個別コードレビュー、概念説明、導入実装には使わない。
 ---
 
 # 開発実践を診断し、導入を計画する

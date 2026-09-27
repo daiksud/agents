@@ -668,6 +668,17 @@
         "未実施のPR・CI・mergeを成功扱いしない",
         "完了範囲・未完了範囲・ブロッカー・再開条件を区別する"
       ]
+    },
+    {
+      "id": 142,
+      "prompt": "読み取り専用の模擬評価。実際のPR操作・Git操作は禁止。承認済みIssueのコード実装と対象テスト、commit、pushまでは完了済みで、残りはPR作成、通常レビュー、必須CI、merge、統合後main確認だけ。新しいコード変更は予定していない。どのSkillを中心に進めるか。",
+      "expected_output": "残るdelivery工程にchange-deliveryを使い、PR・通常レビュー・必須CI・merge・main確認まで継続する。新しいコード変更がないためsoftware-developmentを再度必須にせず、保存済みIssue計画をissue-managementで重複作成しない。模擬評価では実操作を行わない。",
+      "files": [],
+      "expectations": [
+        "change-deliveryを残るdelivery工程の担当として選ぶ",
+        "新しいコード変更がないためsoftware-developmentを不要に読み直さない",
+        "保存済みIssue計画を重複作成しない"
+      ]
     }
   ]
 }

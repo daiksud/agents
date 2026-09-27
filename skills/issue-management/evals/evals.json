@@ -629,6 +629,17 @@
         "閉じた#60や現行Aを参照する新しい候補Bを扱い、閉じた決定本文は更新しない",
         "非公開の情報を補わず、候補を採用や実装承認とみなさず、模擬評価で実操作済みと偽らない"
       ]
+    },
+    {
+      "id": 142,
+      "prompt": "読み取り専用の模擬評価。実際のIssue投稿・Git操作は禁止。新しい改善案の目的、成功条件、非目標をGitHub Issueに計画として保存し、保存後の本文とURLを確認するところまでの手順を示して。実装・branch・PRは依頼していない。どのSkillを使うか。",
+      "expected_output": "Issue計画の保存・再取得・表示確認にissue-managementを使い、計画だけの依頼としてそこで終了する。実装やPRが依頼されていないためsoftware-developmentとchange-deliveryを開始しない。模擬評価では実際のIssue投稿を行ったと報告しない。",
+      "files": [],
+      "expectations": [
+        "issue-managementをIssue計画の担当として選ぶ",
+        "software-developmentを開始しない",
+        "change-deliveryを開始せず計画提示で終了する"
+      ]
     }
   ]
 }

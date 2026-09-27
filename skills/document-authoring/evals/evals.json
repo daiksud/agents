@@ -345,6 +345,28 @@
         "change-delivery欠落では文書を編集せず旧task-workflowへ戻らない",
         "OKF文書の保存前の既存sources・未知キーと確認履歴を保持する"
       ]
+    },
+    {
+      "id": 34,
+      "prompt": "読み取り専用の模擬評価。実際のファイル保存・Issue投稿・Git操作は禁止。設計判断を共有するためのADR本文をMarkdownで作成して。今回はチャット上の文案だけが欲しく、リポジトリへの保存、コード変更、PR作成は依頼していない。どのSkillを使い、どこで止めるか。",
+      "expected_output": "文書成果物であるADR本文の作成にdocument-authoringを使う。リポジトリ保存を依頼されていないためchange-deliveryを開始せず、コード変更もないためsoftware-developmentを開始しない。必要な形式と内容を満たす文案を提示して終了し、Issue・Git操作を実施済みとしない。",
+      "files": [],
+      "expectations": [
+        "ADR文案という文書成果物の作成にdocument-authoringを選ぶ",
+        "保存やPRがないためchange-deliveryを開始しない",
+        "コード変更がないためsoftware-developmentを開始しない"
+      ]
+    },
+    {
+      "id": 35,
+      "prompt": "読み取り専用の模擬評価。実際のファイル保存・Issue投稿・Git操作は禁止。新機能について利用者が成功と判断できる受け入れ条件、境界例、未回答事項を整理して。文書成果物の作成や保存、コード変更は依頼していない。document-authoringを使うべきか。",
+      "expected_output": "文書成果物を作らないふるまい・具体例・受け入れ条件の発見整理なのでdocument-authoringを選ばず、behavior-specificationの担当として扱う。document-authoring、software-development、change-deliveryを開始せず、仕様整理の結果と未回答事項を提示して終了する。",
+      "files": [],
+      "expectations": [
+        "文書成果物を作らない仕様発見ではdocument-authoringを選ばない",
+        "behavior-specificationの担当境界として扱う",
+        "software-developmentとchange-deliveryも開始しない"
+      ]
     }
   ]
 }
