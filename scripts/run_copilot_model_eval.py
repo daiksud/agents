@@ -17,7 +17,10 @@ import time
 from datetime import datetime, timezone
 from pathlib import Path
 
-from apm_smoke import candidate_environment, validate_deployment
+try:
+    from scripts.apm_smoke import candidate_environment, validate_deployment
+except ModuleNotFoundError:  # direct execution from scripts/
+    from apm_smoke import candidate_environment, validate_deployment
 
 FAILURE_CLASSES = {
     "instruction_delivery",
