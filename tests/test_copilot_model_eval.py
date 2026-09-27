@@ -53,6 +53,23 @@ class CopilotModelEvaluationTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "ordered baseline model set"):
                 self.module.load_suite(path)
 
+    def test_suite_rejects_empty_prompt_and_missing_criteria(self):
+        data = json.loads(self.cases_path.read_text(encoding="utf-8"))
+        data["cases"][0]["prompt"] = ""
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "cases.json"
+            path.write_text(json.dumps(data), encoding="utf-8")
+            with self.assertRaisesRegex(ValueError, "case prompt"):
+                self.module.load_suite(path)
+
+        data = json.loads(self.cases_path.read_text(encoding="utf-8"))
+        del data["cases"][0]["criteria"]
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "cases.json"
+            path.write_text(json.dumps(data), encoding="utf-8")
+            with self.assertRaisesRegex(ValueError, "case criteria"):
+                self.module.load_suite(path)
+
     def test_failure_taxonomy_separates_model_behavior_from_environment(self):
         data = json.loads(self.cases_path.read_text(encoding="utf-8"))
         self.assertEqual(
@@ -189,6 +206,44 @@ class CopilotModelEvaluationTests(unittest.TestCase):
         self.assertEqual(list("ABCDEFG"), data["cases"])
         self.assertEqual(4, len(data["models"]))
         self.assertEqual(3, data["repeat"])
+
+    def test_cli_rejects_external_suite_and_empty_model_selection(self):
+        with tempfile.TemporaryDirectory() as directory:
+            external = Path(directory) / "cases.json"
+            external.write_text(self.cases_path.read_text(encoding="utf-8"), encoding="utf-8")
+            external_result = subprocess.run(
+                [
+                    sys.executable,
+                    "scripts/run_copilot_model_eval.py",
+                    "--dry-run",
+                    "--cases",
+                    str(external),
+                ],
+                cwd=self.root,
+                check=False,
+                text=True,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+            )
+            self.assertEqual(2, external_result.returncode)
+            self.assertIn("inside the repository", external_result.stderr)
+
+        empty_models = subprocess.run(
+            [
+                sys.executable,
+                "scripts/run_copilot_model_eval.py",
+                "--dry-run",
+                "--models",
+                ",",
+            ],
+            cwd=self.root,
+            check=False,
+            text=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+        )
+        self.assertEqual(2, empty_models.returncode)
+        self.assertIn("at least one model id", empty_models.stderr)
 
     def test_preflight_failure_preserves_planned_matrix(self):
         with tempfile.TemporaryDirectory() as directory:
