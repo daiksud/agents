@@ -1,6 +1,6 @@
 ---
 name: document-authoring
-description: Markdown、仕様、feature、ADR、OpenAPI、JSON Schemaの作成・更新と、外部OKF Bundleの適合検証で使う。文書形式・出典・検証を扱う。既存文書の要約や概念説明だけには使わない。
+description: Markdown、仕様文書、feature、ADR、OpenAPI、JSON Schemaなどの文書成果物の作成・更新と、外部OKF Bundleの適合検証で使う。文書形式・出典・検証を扱う。文書成果物を作らない受け入れ条件・具体例の発見整理はbehavior-specification、既存文書の要約や概念説明だけには使わない。
 ---
 
 # OKFで文書を作成する
