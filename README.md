@@ -103,6 +103,10 @@ apm compile --global
 
 Codexの実行権限を準備する場合は[コマンド事前許可のガイド](docs/guides/codex-command-approvals.md)を参照します。明確な変更依頼や計画への実行承認は、環境の権限付与を意味しません。
 
+## 複数モデル評価
+
+GitHub CopilotでGPT-6 Sol / Luna、Claude Opus 5.5 / Sonnet 5へ同じ共通Instructions / Skillsを適用する評価は、[複数モデル評価ガイド](docs/guides/copilot-model-evaluation.md)と `evals/copilot-models/cases.json` を正本にします。未実測の値を補完せず、モデル固有補正は再現可能なモデル固有原因を確認した場合だけ追加します。
+
 ## 保守と検証
 
 原本編集・同期・ローカル検査・CI・レビュー連携の設定検証は[配布ガイド](docs/guides/delivery.md#原本の編集と保守)を参照します。変更・保守前の準備は[AGENTS.md](AGENTS.md)、スキル編集は[skills/AGENTS.md](skills/AGENTS.md)に従います。
