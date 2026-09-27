@@ -225,6 +225,17 @@
         "無用な分岐と型の拡張が現行の検証範囲を増す具体的な負担を示す",
         "架空の将来要件やテスト結果を作らない"
       ]
+    },
+    {
+      "id": 30,
+      "prompt": "読み取り専用の模擬評価。実際の編集・レビュー依頼送信・PR操作は禁止。既存PRのアプリコード差分だけをレビューし、欠陥・回帰・過剰設計がないか確認して。修正やmergeは依頼していない。どのSkillを使い、どのSkillは開始しないか。",
+      "expected_output": "読み取り専用の差分評価にcode-reviewを使う。修正実装やPR操作は依頼されていないためsoftware-developmentとchange-deliveryを開始せず、対象差分・契約・検証証拠に基づく指摘または指摘なしの結果だけを返す。",
+      "files": [],
+      "expectations": [
+        "code-reviewを読み取り専用レビューの担当として選ぶ",
+        "software-developmentを開始しない",
+        "change-deliveryを開始しない"
+      ]
     }
   ]
 }
