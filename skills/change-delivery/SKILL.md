@@ -1,6 +1,6 @@
 ---
 name: change-delivery
-description: 承認済みのリポジトリ変更やPR対応を、branch準備・実装・commit・レビュー・CI・merge・統合後mainの確認と整理まで届ける依頼で使う。Issueの計画と承認を引き継ぎ、途中のPR作成で止めない。Issueの検索・計画保存・Sub-issue・共通スタンダード候補の記録はissue-managementが担当し、計画だけの依頼や読み取り専用レビューには使わない。
+description: 承認済みのリポジトリ変更をbranch準備からPR・レビュー・CI・merge・統合後main確認まで届けるときに使う。Issue計画はissue-management、コード実装や文書作成は担当Skillへ引き渡す。計画だけ・読み取り専用レビューだけには使わない。
 ---
 
 # 承認済みの変更をmainへ届ける
