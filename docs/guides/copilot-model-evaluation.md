@@ -27,7 +27,7 @@ GPT-6 Sol、GPT-6 Luna、Claude Opus 5.5、Claude Sonnet 5に、同じInstructio
 
 - 共通ケースとgrader基準: `evals/copilot-models/cases.json`
 - 実行: `scripts/run_copilot_model_eval.py`
-- 実測raw evidence: repo外の出力ディレクトリ
+- 実測raw evidence: repo外の出力ディレクトリ。選択したsuite自体も `suite.json` としてここへ保存する
 - リポジトリに残す基準記録: `evals/copilot-models/results/` 直下のレビュー済みJSON
 - #122のモデル非依存契約と#123のrouting / Progressive Disclosureを変更せずに評価する。[^issue-122] [^issue-123]
 
@@ -94,7 +94,7 @@ A–Gを全モデルで同じ順序・基準で使う。
 | F | モデル引き継ぎ: self-reportではなく現在の差分・証拠を再確認する |
 | G | Skill routing: github-actions + code-reviewと必要referenceだけを使う |
 
-具体promptとgrader criteriaは `cases.json` を正本とし、モデルにはprompt部分だけを渡す。suiteはA–G、4つのbaseline model、必須フィールド、非空prompt・criteria・common rulesを実行前に検証し、malformed suiteを開始しない。
+具体promptとgrader criteriaは `cases.json` を正本とし、モデルにはprompt部分だけを渡す。runnerはsuiteのモデル名・CLI ID、A–GのID・title・非空prompt・非空criteria、共通rulesとfailure taxonomyを実行前に検証し、不完全なcustom suiteを実行しない。suiteはA–G、4つのbaseline model、必須フィールド、非空prompt・criteria・common rulesを実行前に検証し、malformed suiteを開始しない。
 
 ## 実行
 
@@ -114,7 +114,7 @@ python3 scripts/run_copilot_model_eval.py \
   --output-dir /tmp/copilot-model-eval/<run-id>
 ```
 
-一部モデルだけを再現確認するときはCLI model IDを明示する。`--models` を明示した場合は少なくとも1つの有効なIDを必要とし、空文字や区切り文字だけの指定で0-run batchを成功扱いしない。
+一部モデルだけを再現確認するときはCLI model IDを明示する。`--models` を明示した場合は少なくとも1モデルを選択する必要があり、空文字や区切り文字だけの指定はエラーとする。`--models` を明示した場合は少なくとも1つの有効なIDを必要とし、空文字や区切り文字だけの指定で0-run batchを成功扱いしない。
 
 ```bash
 python3 scripts/run_copilot_model_eval.py \
@@ -135,7 +135,7 @@ APM配布の検証済み状態とrun側の失敗を混同しない。配布完�
 
 manifestには少なくとも次を残す。
 
-- suite version / suite hash
+- suite version / suite hash / repo外へ保存した `suite.json` snapshot
 - repository SHA
 - Copilot CLI version
 - 認証に使った環境変数名だけ（値は保存しない）
@@ -152,7 +152,7 @@ manifestには少なくとも次を残す。
 
 manifest更新は同じ出力ディレクトリの一時ファイルへ完全なJSONを書き、flush後にatomic replaceする。中断時に最後の正常manifestを不用意にtruncateしない。
 
-未評価フィールドは `null` のままにし、未知を0へ変換しない。raw JSONLやstderrにはコード・ログ・モデル応答等が含まれ得るため、そのままGitへ追加しない。共有が必要なら公開範囲を確認し、必要な集計・判定だけをレビュー済み記録へ転記する。
+未評価フィールドは `null` のままにし、未知を0へ変換しない。repository外から指定したcustom suiteも再現・再採点に必要なgrader evidenceなので、raw出力と同じ保護されたrepo外ディレクトリへ `suite.json` としてコピーする。raw JSONLやstderr、suite snapshotにはコード・ログ・モデル応答・grader基準等が含まれ得るため、そのままGitへ追加しない。共有が必要なら公開範囲を確認し、必要な集計・判定だけをレビュー済み記録へ転記する。
 
 `evals/copilot-models/results/.gitignore` は日時等のrun subdirectoryを既定でGit管理対象から外す。直下のレビュー済み基準JSONは保持できる。
 
