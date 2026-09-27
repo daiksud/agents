@@ -6,6 +6,3 @@ includes: auto
 targets:
   - copilot
   - codex
-dependencies:
-  apm:
-    - anthropics/skills/skills/skill-creator#b9e19e6f44773509fbdd7001d77ff41a49a486c1
