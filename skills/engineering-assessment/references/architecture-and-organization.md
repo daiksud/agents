@@ -80,6 +80,13 @@ Team Topologiesはfast flow of valueのためのteam-of-teams design approachで
 
 4つのteam typeを「4チームを設置する組織図」として導入しない。現在の責任とcognitive loadを調べ、必要な役割を比例させる。
 
+| Team type | 診断上の主な役割 |
+| --- | --- |
+| Stream-aligned | 一つの価値の流れに沿ってend-to-endで成果を届ける |
+| Enabling | 他teamが能力を獲得し、自立できるよう一時的に支援する |
+| Complicated Subsystem | 高度な専門知識が必要なsubsystemのcognitive loadを引き受ける |
+| Platform | Stream-aligned teamが低いcognitive loadで利用できる内部product / serviceを提供する |
+
 Interactionは目的で選ぶ。
 
 | Interaction | 使う状況 |
