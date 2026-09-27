@@ -654,6 +654,51 @@ class MetadataTests(unittest.TestCase):
         self.assertIn(39, by_id, 'missing Issue dependency must not silently substitute the retired Skill')
         self.assertIn(40, by_id, 'missing delivery dependency must not start code changes')
 
+    def test_pairing_uses_small_todos_and_meaningful_feedback_boundaries(self):
+        root = Path(__file__).resolve().parents[1]
+        collaboration = (root / '.apm/instructions/collaboration.instructions.md').read_text(
+            encoding='utf-8')
+        behavior = (root / 'docs/behavior/agent-pair-programming.feature.md').read_text(
+            encoding='utf-8')
+        manual = (root / 'skills/software-development/evals/agent-pair-programming.md').read_text(
+            encoding='utf-8')
+        evals = json.loads((root / 'skills/software-development/evals/evals.json').read_text(
+            encoding='utf-8'))
+        by_id = {case['id']: case for case in evals['evals']}
+
+        self.assertIn('一回のRed / Green / Refactorで完了できる粒度', collaboration)
+        self.assertIn('別々のRed', collaboration)
+        self.assertIn('意味のある成果', collaboration)
+        self.assertIn('次の独立した編集を先行させない', collaboration)
+        self.assertIn('対話境界はツール呼び出し単位にしない', collaboration)
+        self.assertIn('固定の秒数・操作数・コマンド数では区切らず', collaboration)
+
+        sources = {entry['id']: entry['resource'] for entry in
+                   yaml.safe_load(behavior.split('---', 2)[1])['sources']}
+        self.assertEqual('https://github.com/daiksud/agents/issues/98', sources['issue-98'])
+        for scenario in (
+                '一つの小さなToDoを一回のRed / Green / Refactorで完了する',
+                '実装中にToDoが大きすぎると判明する',
+                'Green途中の想定外結果を次の修正前に確認する',
+                'Navigator指摘への修正を新しい証拠で再確認する',
+                '一つの判断材料を集める連続操作はまとめる'):
+            with self.subTest(scenario=scenario):
+                self.assertIn(scenario, behavior)
+
+        for case_id in (41, 42, 43):
+            with self.subTest(case_id=case_id):
+                self.assertIn(case_id, by_id)
+        self.assertIn('共有ToDoを小さな振る舞いへ分割', by_id[41]['expected_output'])
+        self.assertIn('想定外の回帰', by_id[42]['expected_output'])
+        self.assertIn('各ツール呼び出しごとの報告を要求しない', by_id[43]['expected_output'])
+
+        self.assertIn('issue-98', manual)
+        self.assertIn('共同選択 → 小さな編集 → 関連検証', manual)
+        self.assertIn('turn数', manual)
+        self.assertIn('token数', manual)
+        self.assertIn('wait time', manual)
+        self.assertIn('一般化しない', manual)
+
     def test_behavior_specification_separates_planning_from_document_delivery(self):
         root = Path(__file__).resolve().parents[1]
         skill = (root / 'skills/behavior-specification/SKILL.md').read_text(encoding='utf-8')

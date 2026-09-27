@@ -9,6 +9,8 @@ sources:
     resource: https://github.com/daiksud/agents/issues/80
   - id: issue-87
     resource: https://github.com/daiksud/agents/issues/87
+  - id: issue-98
+    resource: https://github.com/daiksud/agents/issues/98
   - id: issue-100
     resource: https://github.com/daiksud/agents/issues/100
 ---
@@ -57,6 +59,44 @@ sources:
 - もし: DriverとNavigatorが共有ToDoへ記録する
 - ならば: 現在の段階を成立させる修正と検証を先送りせずに行う
 - かつ: Driverはテストを通すために受け入れ条件や期待値を弱めない
+
+### ルール: 一つの小さなToDoと意味のある成果で短い対話サイクルを回す
+
+#### シナリオ: 一つの小さなToDoを一回のRed / Green / Refactorで完了する
+
+- 前提: 共有ToDoに一つの独立した振る舞いがあり、一回の小さなRed / Green / Refactorで検証できる。[^issue-98]
+- もし: DriverとNavigatorがその項目を選ぶ
+- ならば: その振る舞いだけを進行中にし、Red / Green / Refactorを同じサイクルとして完了する
+- かつ: 次の独立した振る舞いは別ToDoとして残し、現在のサイクルへ無条件に詰め込まない
+
+#### シナリオ: 実装中にToDoが大きすぎると判明する
+
+- 前提: 選んだToDoに複数の独立した振る舞いがあり、別々のRedが必要だと分かった
+- もし: Driverが後続の独立した編集へ進もうとする
+- ならば: Driverは先行せず、分割理由をNavigatorと共有して共有ToDoを更新する
+- かつ: 両者は小さな振る舞いから次の一項目を再選択する
+- かつ: ToDoの分割をユーザーの要件追加や範囲拡大の承認とみなさない
+
+#### シナリオ: Green途中の想定外結果を次の修正前に確認する
+
+- 前提: Greenで一つの小さな実装と関連検証を行った
+- もし: 新規テストは成功したが既存の回帰など、次の編集方針に影響する想定外の結果を得る
+- ならば: Driverは別の独立した修正を重ねる前に、現在の差分と成功・失敗の実結果を同じNavigatorへ共有する
+- かつ: Navigatorが実物を確認して必要な方針を再合意するまで次の独立した編集へ進まない
+
+#### シナリオ: Navigator指摘への修正を新しい証拠で再確認する
+
+- 前提: Navigatorが段階内の差分へ要対応指摘を返した
+- もし: Driverが指摘を修正して関連する検証を実行する
+- ならば: Driverは修正差分と新しい検証結果を同じNavigatorへ共有する
+- かつ: Navigatorが再確認するまで指摘を解消済みとせず、その結果を前提とする次の独立した編集へ進まない
+
+#### シナリオ: 一つの判断材料を集める連続操作はまとめる
+
+- 前提: Driverが関連コードの読み取り、grep、設定確認、局所テストなど、一つの判断材料を構成する証拠を集めている
+- もし: 各操作の途中で差分や次の編集判断に影響する新しい成果がまだない
+- ならば: 各ツール呼び出しごとのNavigator報告を要求せず、一つの意味のある成果としてまとめる
+- かつ: 固定の秒数・操作数・コマンド数では区切らず、Navigatorが次の判断に利用できる成果を対話単位とする
 
 ### ルール: 各TDD段階をそのペアの同じNavigatorが確認してから次へ進める
 
@@ -163,4 +203,5 @@ sources:
 [^issue-76]: [Issue #76](https://github.com/daiksud/agents/issues/76) に記録された目的、受け入れ条件、検証計画。
 [^issue-80]: [Issue #80](https://github.com/daiksud/agents/issues/80) に記録された共有ToDoと段階別レビューの受け入れ条件、検証計画。
 [^issue-87]: [Issue #87](https://github.com/daiksud/agents/issues/87) に記録された、初回の応答だけでは後続の継続確認を保証できない問題。
+[^issue-98]: [Issue #98](https://github.com/daiksud/agents/issues/98) に記録された、1 ToDoの粒度と段階内部の短い対話境界、過剰な逐次報告を避ける条件。
 [^issue-100]: [Issue #100](https://github.com/daiksud/agents/issues/100) に記録された、承認付き再ペアの目的と安全境界。
