@@ -45,16 +45,58 @@ AUTH_VARIABLES = ("COPILOT_GITHUB_TOKEN", "GH_TOKEN", "GITHUB_TOKEN")
 
 def load_suite(path: Path) -> dict:
     data = json.loads(path.read_text(encoding="utf-8"))
-    if data.get("suite") != "copilot-model-contracts":
+    if not isinstance(data, dict) or data.get("suite") != "copilot-model-contracts":
         raise ValueError("unexpected suite")
-    ids = [case["id"] for case in data["cases"]]
-    if ids != EXPECTED_CASE_IDS or len(ids) != len(set(ids)):
-        raise ValueError("cases must contain exactly one ordered A-G sequence")
-    if set(data["failure_classes"]) != FAILURE_CLASSES:
+    if not isinstance(data.get("version"), int):
+        raise ValueError("suite version must be an integer")
+
+    failure_classes = data.get("failure_classes")
+    if not isinstance(failure_classes, list) or set(failure_classes) != FAILURE_CLASSES:
         raise ValueError("failure_classes do not match the documented taxonomy")
-    model_ids = [model["cli_model"] for model in data["models"]]
+
+    rules = data.get("common_rules")
+    if (
+        not isinstance(rules, list)
+        or not rules
+        or any(not isinstance(rule, str) or not rule.strip() for rule in rules)
+    ):
+        raise ValueError("common_rules must contain non-empty strings")
+
+    models = data.get("models")
+    if not isinstance(models, list):
+        raise ValueError("models must be a list")
+    for model in models:
+        if not isinstance(model, dict):
+            raise ValueError("each model must be an object")
+        for field in ("name", "cli_model"):
+            if not isinstance(model.get(field), str) or not model[field].strip():
+                raise ValueError(f"model {field} must be a non-empty string")
+    model_ids = [model["cli_model"] for model in models]
     if model_ids != EXPECTED_MODEL_IDS or len(model_ids) != len(set(model_ids)):
         raise ValueError("models must contain exactly one ordered baseline model set")
+
+    cases = data.get("cases")
+    if not isinstance(cases, list):
+        raise ValueError("cases must be a list")
+    for case in cases:
+        if not isinstance(case, dict):
+            raise ValueError("each case must be an object")
+        for field in ("id", "title", "prompt"):
+            if not isinstance(case.get(field), str) or not case[field].strip():
+                raise ValueError(f"case {field} must be a non-empty string")
+        criteria = case.get("criteria")
+        if (
+            not isinstance(criteria, list)
+            or not criteria
+            or any(
+                not isinstance(criterion, str) or not criterion.strip()
+                for criterion in criteria
+            )
+        ):
+            raise ValueError("case criteria must contain non-empty strings")
+    ids = [case["id"] for case in cases]
+    if ids != EXPECTED_CASE_IDS or len(ids) != len(set(ids)):
+        raise ValueError("cases must contain exactly one ordered A-G sequence")
     return data
 
 
@@ -366,10 +408,14 @@ def main() -> int:
 
     root = Path.cwd().resolve()
     suite_path = args.cases.resolve()
+    if not suite_path.is_relative_to(root):
+        parser.error("--cases must resolve to a file inside the repository")
     suite = load_suite(suite_path)
     selected = suite["models"]
-    if args.models:
+    if args.models is not None:
         wanted = {item.strip() for item in args.models.split(",") if item.strip()}
+        if not wanted:
+            parser.error("--models must include at least one model id")
         selected = [model for model in selected if model["cli_model"] in wanted]
         missing = wanted - {model["cli_model"] for model in selected}
         if missing:
@@ -409,9 +455,7 @@ def main() -> int:
 
     manifest_path = output_dir / "manifest.json"
     suite_sha256 = sha256_file(suite_path)
-    selected_suite_paths: tuple[Path, ...] = ()
-    if suite_path.is_relative_to(root):
-        selected_suite_paths = (suite_path.relative_to(root),)
+    selected_suite_paths = (suite_path.relative_to(root),)
     manifest = {
         "suite": suite["suite"],
         "suite_version": suite["version"],
