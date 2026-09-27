@@ -70,7 +70,7 @@ runnerはbase用の一時HOMEへ候補SHAをAPMで導入・compileし、既存�
 
 各モデルrunは、この検証済みbase workspace / HOMEを新しい一時ディレクトリへコピーする。run間でHOME、Copilot state、workspaceを共有しない。
 
-APM配布検証の完了後、隔離HOMEのpackage cacheからgrader専用パスも削除してからbaseを複製する。評価対象モデルがcurrent workspace以外の隔離配布状態を参照できる場合でも、`cases.json` のcriteriaや評価ガイドへ到達させない。
+APM配布検証の完了後、隔離HOMEのpackage cacheからgrader専用パスも削除してからbaseを複製する。さらに、source workspace、APM cache、`~/.agents/skills/` の各Skill配下にある `evals/` も評価時だけ除外する。Skill本文とreferencesは保持し、過去のSkill評価fixtureやexpected outputをanswer keyとして参照させない。
 
 ### 認証と権限
 
@@ -127,6 +127,8 @@ repo内の出力先は拒否する。runnerは各runの開始時に、graderを�
 
 1 runがtimeoutしても、それまでのmanifestを保存し、当該attemptを `runtime` として記録して次のrunへ進む。
 
+APM配布の検証済み状態とrun側の失敗を混同しない。配布完了後のworkspace copy、Copilot起動、evidence保存等が失敗した場合は、`setup: verified` を維持したまま当該attemptまたはbatchの `runtime` failureとして記録する。
+
 ## 記録
 
 manifestには少なくとも次を残す。
@@ -136,6 +138,7 @@ manifestには少なくとも次を残す。
 - Copilot CLI version
 - 認証に使った環境変数名だけ（値は保存しない）
 - workspace / compiled Copilot Instructions / installed Skillsのhash
+- 選択したmodel一覧と、開始前に確定したmodel / case / attemptの全planned matrix
 - model / case / attempt
 - prompt hash
 - elapsed time
