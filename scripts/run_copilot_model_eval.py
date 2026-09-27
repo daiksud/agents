@@ -32,6 +32,12 @@ FAILURE_CLASSES = {
     "none",
 }
 EXPECTED_CASE_IDS = list("ABCDEFG")
+EXPECTED_MODEL_IDS = [
+    "gpt-6-sol",
+    "gpt-6-luna",
+    "claude-opus-5.5",
+    "claude-sonnet-5",
+]
 GRADER_ONLY_PATHS = (
     Path("evals/copilot-models"),
     Path("docs/guides/copilot-model-evaluation.md"),
@@ -50,8 +56,12 @@ def load_suite(path: Path) -> dict:
         raise ValueError("cases must contain exactly one ordered A-G sequence")
     if set(data["failure_classes"]) != FAILURE_CLASSES:
         raise ValueError("failure_classes do not match the documented taxonomy")
-    if len(data["models"]) != 4:
-        raise ValueError("the baseline suite must contain four models")
+    model_ids = [model["cli_model"] for model in data["models"]]
+    if (
+        model_ids != EXPECTED_MODEL_IDS
+        or len(model_ids) != len(set(model_ids))
+    ):
+        raise ValueError("models must contain exactly one ordered baseline model set")
     return data
 
 
@@ -124,12 +134,26 @@ def remove_grader_material(root: Path) -> None:
             target.unlink()
 
 
+def remove_skill_evals(root: Path) -> None:
+    for base in (
+        root / "skills",
+        root / ".github/skills",
+        root / ".agents/skills",
+    ):
+        if not base.is_dir():
+            continue
+        for eval_dir in base.glob("*/evals"):
+            if eval_dir.is_dir():
+                shutil.rmtree(eval_dir)
+
+
 def stage_workspace(root: Path, destination: Path) -> None:
     archive = subprocess.check_output(["git", "archive", "HEAD"], cwd=root)
     destination.mkdir(parents=True, exist_ok=False)
     with tarfile.open(fileobj=io.BytesIO(archive)) as bundle:
         bundle.extractall(destination, filter="data")
     remove_grader_material(destination)
+    remove_skill_evals(destination)
 
 
 def sha256_file(path: Path) -> str:
@@ -214,6 +238,8 @@ def prepare_delivery(
 
     cached_candidate = home / ".apm/apm_modules/daiksud/agents"
     remove_grader_material(cached_candidate)
+    remove_skill_evals(cached_candidate)
+    remove_skill_evals(home)
 
     fingerprints = {
         "workspace_sha256": sha256_tree(workspace),
