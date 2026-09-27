@@ -24,7 +24,7 @@ sources:
 | Engineering model | 開発実践をValues / Principles、Practices、Capabilities、Architectural / Organizational Choicesに分類し、相互の多対多の関係と配置境界を示す概念モデル | agentsパッケージの保守・診断知識。成熟度の一方向階層やruntime必須ルールにはしない | `docs/engineering/model.md` |
 | Values / Principles | 判断時に何を優先するかを示す価値・原則。具体的な作業手順や能力の達成状態とは区別する | 開発判断・診断 | engineering model、各Instruction |
 | Practice | 価値・原則を具体化する、繰り返し実行する行動。別体系ではCapabilityとして扱われる場合がある | 開発実践・診断 | TDD、Pair Programming、CI、Small Batches等 |
-| Capability | チーム・システムが実際に持つ観測可能な能力。設定やPracticeの存在だけで達成済みと判定しない | engineering modelでの分類。runtime診断へのtaxonomy反映は後続Unitで扱う | `docs/engineering/model.md` |
+| Capability | チーム・システムが実際に持つ観測可能な能力。設定やPracticeの存在だけで達成済みと判定しない | engineering modelの分類とDORA / Architecture診断 | `engineering-assessment` のfocused lens |
 | Architectural / Organizational Choice | 現在の要求・制約・能力から選ぶ構造、配置、責任境界。上位成熟状態や既定解とは扱わない | 設計・組織の判断・診断 | Microservices、module / deployment / team boundaries等 |
 | XP | Communication・Simplicity・Feedback・Courage・Respectを軸に、小さなテストと協働から設計を進化させる開発思想 | 開発判断・実装・診断 | `development`、`software-development`、`engineering-assessment` |
 | Simple Design | 現在の契約を満たし、意図を伝え、同じルールの重複と不要な要素を減らす設計の判断基準 | 開発判断と設計・実装 | `software-development` の設計資料 |
@@ -64,7 +64,9 @@ sources:
 | ユビキタス言語 | 同じモデルの境界内で、会話・文書・コードを通じて使う共通の言語 | 開発実践の指示・診断 | Ubiquitous Language、導入先の `docs/glossary.md` |
 | チームトポロジー | 価値の流れと認知負荷を軸に、チームの責任と相互作用を進化させる考え方 | 開発実践の指示・診断 | Team Topologies |
 | Team API | チームの責任、サービス、期待、関わり方を示す資料 | 開発実践の指示・診断 | Team API（HTTP APIではない） |
-| DORA指標 | 対象サービスの配信性能を観測し改善に使う指標。定義は参照版を明示する | 開発実践の診断 | `references/principles.md` の5指標 |
+| DORA Core Model | DORA研究で繰り返し支持されたCapability・Performance・Outcomeの関係を保守的にまとめるmodel | DORA診断。Capability Catalogや最新metrics guideと区別する | `engineering-assessment/references/dora.md` |
+| DORA Capability Catalog | Core項目に加えてCore外・AI関連等も含むCapability catalog。掲載自体を必須導入条件にしない | DORA診断 | `engineering-assessment/references/dora.md` |
+| DORA指標 | 対象serviceのsoftware delivery performanceを観測し改善feedbackに使う指標。Core v2.1.0のFour key metricsと現行5 metrics guideを区別する | 開発実践の診断 | `engineering-assessment/references/dora.md` |
 | 導入診断 | 証拠・不足・未確認・適用外を区別し、改善の優先順位を決める調査 | 診断スキル | `engineering-assessment` |
 | 導入計画 | 最初の小さな実験、依存・順序、期待する変化と検証・見直し条件を示す成果物 | 診断スキルとIssue記録 | `engineering-assessment`、`issue-management` |
 | 導入未実施 | 診断・計画を記録したが、その変更は実行していない状態 | 診断スキルとIssue記録 | Issue本文の状態。自動で閉じない |
