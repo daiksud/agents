@@ -99,7 +99,9 @@ runnerは各runについてraw JSONL、stderr、elapsed timeとmanifestを保存
 
 - criteria達成
 - TDD / Navigator gateの欠落
+- 完了条件前の途中停止
 - 不要なscope expansion
+- 不具合・要件違反・回帰の見逃し
 - evidenceなしの成功判定
 - 正当なstop boundary違反
 
