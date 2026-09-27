@@ -415,6 +415,17 @@
         "Pay-Per-Useを適合しない社内systemへ強制しない",
         "利用者feedbackとscope再交渉可能性を確かめる小さい実験を選ぶ"
       ]
+    },
+    {
+      "id": 40,
+      "prompt": "読み取り専用の模擬評価。実際のIssue投稿・設定変更・コード変更は禁止。チームのdeployment frequency低下をDORAとCDの観点から診断し、証拠に基づく改善計画をIssueへ記録する手順を示して。導入実装は依頼していない。どのSkillを使うか。",
+      "expected_output": "開発実践の診断と改善計画にengineering-assessmentを使い、Issueへの計画記録にはissue-managementを使う。DORA/CDに必要なlensだけを選び、導入実装が依頼されていないためsoftware-developmentやchange-deliveryへ進まない。模擬評価ではIssueを実際に投稿しない。",
+      "files": [],
+      "expectations": [
+        "engineering-assessmentを診断の担当として選ぶ",
+        "計画記録にissue-managementを使う",
+        "software-developmentとchange-deliveryを開始しない"
+      ]
     }
   ]
 }
