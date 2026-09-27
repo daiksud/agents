@@ -91,6 +91,8 @@ runnerは `--mode=plan`、`--no-ask-user`、JSON出力を使い、ケース自�
 
 runnerは各runについてraw JSONL、stderr、elapsed timeとmanifestを保存する。manifestの未評価フィールドは `null` のままにし、未知を0へ変換しない。
 
+実測ディレクトリは `evals/copilot-models/results/.gitignore` で既定のGit管理対象から外す。raw JSONLやstderrにはコード・ログ・モデル応答等が含まれ得るため、共有・コミット前に内容と公開範囲を確認する。リポジトリへ残す場合は、必要な集計・判定だけをレビュー済みの記録へ転記し、秘密値や不要なraw transcriptを保存しない。
+
 ### 品質
 
 各ケースのcriteriaを実際の出力へ照合し、少なくとも次を記録する。
