@@ -11,6 +11,8 @@ sources:
     resource: https://github.com/daiksud/agents/issues/87
   - id: issue-98
     resource: https://github.com/daiksud/agents/issues/98
+  - id: issue-99
+    resource: https://github.com/daiksud/agents/issues/99
   - id: issue-100
     resource: https://github.com/daiksud/agents/issues/100
 ---
@@ -36,6 +38,22 @@ sources:
 - もし: Driverが初回の確認を終えたNavigatorへ後続の確認を依頼する
 - ならば: 後続依頼が同じNavigatorに処理され、そのNavigatorから応答が返る
 - かつ: 起動結果や待機状態の表示だけで継続連絡できると判断しない
+
+### ルール: 内部通信は低エントロピーなControlled Englishを基本とする
+
+#### シナリオ: DriverとNavigatorが内部でレビュー結果を交換する
+
+- 前提: DriverとNavigatorだけが読む依頼・確認・フィードバックである。[^issue-99]
+- もし: エージェント間で判断と次の行動を伝える
+- ならば: 簡潔なControlled Englishと固定した用語を使い、一つの文に一つの意味を持たせる
+- かつ: 不要な丁寧表現、会話的な埋め草、修辞的表現、曖昧な承認表現を避ける
+
+#### シナリオ: 原文保持または人間向けの情報を扱う
+
+- 前提: コード、識別子、コマンド、ログ、エラーメッセージ、仕様本文、または人間向け成果物を扱う
+- もし: 内部通信規則を適用する
+- ならば: 正確な原文保持が必要な情報を翻訳しない
+- かつ: ユーザー向け回答、Issue、PR、文書、コミットメッセージの言語をControlled Englishへ強制しない
 
 ### ルール: 共有ToDoを共同で育て、一度に一項目を進める
 
@@ -204,4 +222,5 @@ sources:
 [^issue-80]: [Issue #80](https://github.com/daiksud/agents/issues/80) に記録された共有ToDoと段階別レビューの受け入れ条件、検証計画。
 [^issue-87]: [Issue #87](https://github.com/daiksud/agents/issues/87) に記録された、初回の応答だけでは後続の継続確認を保証できない問題。
 [^issue-98]: [Issue #98](https://github.com/daiksud/agents/issues/98) に記録された、1 ToDoの粒度と段階内部の短い対話境界、過剰な逐次報告を避ける条件。
+[^issue-99]: [Issue #99](https://github.com/daiksud/agents/issues/99) に記録された、低エントロピーなControlled Englishによる内部通信と外部成果物との境界。
 [^issue-100]: [Issue #100](https://github.com/daiksud/agents/issues/100) に記録された、承認付き再ペアの目的と安全境界。
