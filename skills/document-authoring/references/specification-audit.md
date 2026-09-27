@@ -1,7 +1,7 @@
 ---
 type: Reference
 title: OKF v0.2の仕様監査と採用判断
-description: 固定した仕様の節ごとに規範、利用場面、採用判断、検証を対応づけ、参考実装との差を記録します。
+description: 固定した仕様の節ごとに規範、利用場面、文書作成時の採用判断を対応づけ、参考実装との差を記録します。
 sources:
   - id: spec
     resource: https://github.com/GoogleCloudPlatform/open-knowledge-format/blob/ad30107c31c06aec8a7d5636e0d1058118604e6f/SPEC.md
@@ -40,35 +40,35 @@ sources:
 
 ## 節別の対応
 
-| 節 | 要件・推奨・任意 | 利用場面 | 本環境の採用判断 | 検証方法 |
-| --- | --- | --- | --- | --- |
-| §1 Motivation | 目的と非目標。ランタイム・分類登録・ドメインスキーマの置換は対象外 | 適用判断 | 既存契約形式を維持 | SKILL・OpenAPI・投稿を変換しない模擬例 |
-| §2 Terminology | Bundle・Concept・ID・Source・Actor等の定義 | 配置・参照 | IDはBundle内パスから `.md` を除く | 相対パスと境界の例 |
-| §3 / §3.1 | 配布形態は任意。予約名を概念に使わない | 文書の配置 | `docs/` を既定Bundleとする | 概念と予約名を分けるテスト |
-| §4.1 | `type` 必須。表示項目は推奨。未知型・キーの許容、未知キー保持推奨 | 通常概念 | 自作のみtitle・descriptionを追加要求 | typeのみ・未知拡張・不正YAML |
-| §4.2 | 構造化Markdown推奨。固定本文節なし | 本文作成 | GFM、featureの固有記法を併用 | rumdlと意味の確認 |
-| §4.3–4.4 | 資産あり・なしの例 | resourceの判断 | 抽象概念にURIを新設しない | 資産と出典の区別 |
-| §5前文 | 各family任意。日時値はoffset付きISO datetime | 日時記録 | 不明日時を補完しない | offset欠落・日付だけの検査 |
-| §5.1 | sourceのresourceは記載時必須。ID・信号は任意、引用時ID推奨 | 出典付き作成・更新 | sourcesと安定ID脚注を使用 | 並べ替え・重複・未定義のテスト |
-| §5.2 | generated.byは記載時必須。verifiedはイベントリスト、単一mappingも可 | 作成・内容照合 | 作成と照合、履歴と現在内容を区別 | 単一mapping・履歴保持の例 |
-| §5.3 | verifiedから信頼段階を導出。未検証を拒否しない | 信頼表示 | CI成功を人間確認に変換しない | 未検証・機械確認・人間確認 |
-| §5.4 | statusはdraft / stable / deprecated、省略時stable | ライフサイクル | stableと検証済みを混同しない | 省略と不正状態 |
-| §5.5 | stale_afterは任意、期限以上でstale | 鮮度判断 | 未設定を保証とせず、期限切れは注意 | 期限直前・ちょうど・後 |
-| §6.1 | Bundle基準リンク推奨、相対可、リンク切れ許容必須 | 関連文書 | GitHub・APM向けにファイル相対を採用 | 両profileでリンク切れを区別 |
-| §6.2–6.3 | URL・Bundle基準・相対パス。referencesは慣例 | パス項目 | 外部出典は完全URL。scope descriptorを許容 | 各基準と範囲記述の例 |
-| §7 | Actorの慣例。人の作成・確認にはhuman:必須 | 主体記録 | 実在する主体だけ記録 | Actor形状と未確認主体の例 |
-| §8 | indexは任意、見出しとリンク一覧。frontmatterはroot版宣言だけ | 索引 | 新設を強制しない | 正常索引・子索引の例外 |
-| §9 | logは任意、日付見出しはYYYY-MM-DD、新しい順 | 履歴 | 実在日を検査。太字ラベルは必須にしない | 不正日付・逆順・コード内見出し |
-| §10.1–10.2 | 計算を独立概念にする。runtime必須、契約fieldを定義 | 計算契約の作成 | runtime・parameters・参照をauthoring検査 | 正常契約・型と名前の不備 |
-| §10.3–10.4 | 本文の一つの計算フェンスまたはファイル。利用者は宣言値のみ指定 | 計算の利用 | 定義変更と値の指定を分離 | 任意SQLに書き換えない模擬例 |
-| §10.5 | informative。実行・証明・提示のモデル | 確認手順 | 実行基盤は追加せず、証跡をBundleへ格納しない | 手順と未実装範囲の確認 |
-| §10.6 | verifiedは定義、attestationは一回の実行 | 証明の解釈 | 一方の成功を他方の証明としない | 定義が古く実行だけ成功する例 |
-| §11 | 最小適合条件。任意family欠落・未知型/キー・リンク切れ・索引不在で拒否しない | 外部Bundle受け入れ | conformanceとauthoringを分離 | 両profileの回帰テスト |
-| §12 | root版宣言任意、未知版もbest effort推奨。ABI等は保留 | 版の扱い | 版宣言保持、未採用提案を必須にしない | root索引・版の例 |
-| §13.1–13.2 | timestampとCitationsを移行。旧形式fallbackは任意 | 既存文書更新 | 根拠を確認して移行、Actorを推測しない | 出典付き更新と未知キー保持 |
-| Appendix A | 移行のworked example | 理解の補助 | 仮想Actor・日時・全familyをコピーしない | 完成した仮想入力で判断を評価 |
+| 節 | 要件・推奨・任意 | 利用場面 | 本環境の採用判断 |
+| --- | --- | --- | --- |
+| §1 Motivation | 目的と非目標。ランタイム・分類登録・ドメインスキーマの置換は対象外 | 適用判断 | 既存契約形式を維持 |
+| §2 Terminology | Bundle・Concept・ID・Source・Actor等の定義 | 配置・参照 | IDはBundle内パスから `.md` を除く |
+| §3 / §3.1 | 配布形態は任意。予約名を概念に使わない | 文書の配置 | `docs/` を既定Bundleとする |
+| §4.1 | `type` 必須。表示項目は推奨。未知型・キーの許容、未知キー保持推奨 | 通常概念 | 自作のみtitle・descriptionを追加要求 |
+| §4.2 | 構造化Markdown推奨。固定本文節なし | 本文作成 | GFM、featureの固有記法を併用 |
+| §4.3–4.4 | 資産あり・なしの例 | resourceの判断 | 抽象概念にURIを新設しない |
+| §5前文 | 各family任意。日時値はoffset付きISO datetime | 日時記録 | 不明日時を補完しない |
+| §5.1 | sourceのresourceは記載時必須。ID・信号は任意、引用時ID推奨 | 出典付き作成・更新 | sourcesと安定ID脚注を使用 |
+| §5.2 | generated.byは記載時必須。verifiedはイベントリスト、単一mappingも可 | 作成・内容照合 | 作成と照合、履歴と現在内容を区別 |
+| §5.3 | verifiedから信頼段階を導出。未検証を拒否しない | 信頼表示 | CI成功を人間確認に変換しない |
+| §5.4 | statusはdraft / stable / deprecated、省略時stable | ライフサイクル | stableと検証済みを混同しない |
+| §5.5 | stale_afterは任意、期限以上でstale | 鮮度判断 | 未設定を保証とせず、期限切れは注意 |
+| §6.1 | Bundle基準リンク推奨、相対可、リンク切れ許容必須 | 関連文書 | GitHub・APM向けにファイル相対を採用 |
+| §6.2–6.3 | URL・Bundle基準・相対パス。referencesは慣例 | パス項目 | 外部出典は完全URL。scope descriptorを許容 |
+| §7 | Actorの慣例。人の作成・確認にはhuman:必須 | 主体記録 | 実在する主体だけ記録 |
+| §8 | indexは任意、見出しとリンク一覧。frontmatterはroot版宣言だけ | 索引 | 新設を強制しない |
+| §9 | logは任意、日付見出しはYYYY-MM-DD、新しい順 | 履歴 | 実在日を記録。太字ラベルは必須にしない |
+| §10.1–10.2 | 計算を独立概念にする。runtime必須、契約fieldを定義 | 計算契約の作成 | runtime・parameters・参照を記述 |
+| §10.3–10.4 | 本文の一つの計算フェンスまたはファイル。利用者は宣言値のみ指定 | 計算の利用 | 定義変更と値の指定を分離 |
+| §10.5 | informative。実行・証明・提示のモデル | 確認手順 | 実行基盤は追加せず、証跡をBundleへ格納しない |
+| §10.6 | verifiedは定義、attestationは一回の実行 | 証明の解釈 | 一方の成功を他方の証明としない |
+| §11 | 最小適合条件。任意family欠落・未知型/キー・リンク切れ・索引不在で拒否しない | 仕様の理解 | 適合判定は提供しない |
+| §12 | root版宣言任意、未知版もbest effort推奨。ABI等は保留 | 版の扱い | 版宣言保持、未採用提案を必須にしない |
+| §13.1–13.2 | timestampとCitationsを移行。旧形式fallbackは任意 | 既存文書更新 | 根拠を確認して移行、Actorを推測しない |
+| Appendix A | 移行のworked example | 理解の補助 | 仮想Actor・日時・全familyをコピーしない |
 
-節ごとの仕様の要約は固定SPECに基づく。検査範囲と本環境の採用判断は独自の運用方針である。[^spec]
+節ごとの仕様の要約は固定SPECに基づく。本環境の採用判断は文書作成の運用方針であり、OKF適合検証は提供しない。[^spec]
 
 ## 日時処理の変更
 
@@ -80,7 +80,7 @@ sources:
 
 | 対象 | 読み取れたふるまい・限界 | 本環境での扱い |
 | --- | --- | --- |
-| document.py | validateはtypeのtruthinessのみ。未知キーをmappingで保持し、verified mappingを正規化する | 非空文字列や既知項目のauthoring検査を別途行う |
+| document.py | validateはtypeのtruthinessのみ。未知キーをmappingで保持し、verified mappingを正規化する | 参考パーサの成功を文書内容や品質の保証にしない |
 | bundle_tools.py | 渡されたfrontmatterを書き込み、generatedを補完する。既存内容を自動mergeしない。web passのBigQuery保護はsource件数の比較 | 同数のsource置換・未知キー消失を防ぐ一般保証とはみなさず差分を読む |
 | viewer/generator.py | 先頭 `/` のリンクを無視し、本文の限定された `.md` リンクを抽出。表示データは既知キー中心。logを予約名として除外しない | viewer表示で参照・未知メタデータの完全性や予約ファイル適合を証明しない |
 | sample sql_equality.py | 束縛値を検査せず、receiptのSQLと結果を比較。job結果の再取得なし | 完全な実行証明と呼ばず、契約ごとに必要な証拠を確認 |
