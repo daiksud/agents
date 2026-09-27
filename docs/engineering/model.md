@@ -170,14 +170,16 @@ DDDを採用していること、Bounded Contextが存在すること、複数Te
 
 方法論の全Principle・Practice・CapabilityをInstructionへ列挙しない。通常runtimeがこの文書を全文読む依存も作らない。作業時に必要な最小限の判断だけをInstruction / Skillへ置き、詳細はprogressive disclosureで参照する。
 
-### Runtimeへの段階的な反映
+### Runtimeへの反映
 
-この文書の分類と境界をruntimeへ一度に持ち込まず、診断契約が実装された単位だけを条件付きreferenceへ反映する。
+この文書の分類と境界をruntimeへ一度に持ち込まず、診断対象に応じてfocused referenceを選ぶ。
 
-- DDD / Team Topologies / Conway / Architecture choiceの診断手順は #108 で `engineering-assessment/references/architecture-and-organization.md` へ実装した。
-- XPのValues / Principles / Primary Practices / Corollary Practicesの分類とassessmentでの読み分けは #110 で扱う。
-- DORA Core Model / Capability Catalog / delivery metricsの版と関係は #109 で `engineering-assessment/references/dora.md` へ実装した。
-- 問題から必要なlensだけを選ぶ `engineering-assessment` 全体のprogressive disclosure仕上げは #110 で扱う。
+- XPのValues / Principles / Primary Practices / Corollary Practicesは `engineering-assessment/references/xp.md` で区別する。
+- DDD / Team Topologies / Conway / Architecture choiceは `engineering-assessment/references/architecture-and-organization.md` で診断する。
+- DORA Core Model / Capability Catalog / delivery metricsは `engineering-assessment/references/dora.md` で区別する。
+- Lean / DevOps / BDD / ATDD / TDD / CI / CDなどの関係は軽量な `principles.md` を入口にし、必要なfocused referenceだけを追加で読む。
+
+`engineering-assessment/SKILL.md` は全lensを常時読み込まず、problemに関係するreferenceだけを選ぶ。メンテナ向けのこの文書をruntimeの常時依存にはしない。
 
 [^ron-jeffries-xp]: [What is Extreme Programming? — Ron Jeffries](https://ronjeffries.com/xprog/what-is-extreme-programming/)。XPの価値と、小さいFeedbackで設計を進化させる考え方。2026-09-27確認。
 [^continuous-integration]: [Continuous Integration](https://continuousdelivery.com/foundations/continuous-integration/)。XP由来のCI、頻繁なmain統合、小さいbatch、壊れたbuildの優先修復。2026-09-27確認。
