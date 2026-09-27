@@ -1,4 +1,0 @@
-{
-  "contexts": ["static-checks", "acceptance (ubuntu-24.04)", "acceptance (macos-15)"],
-  "strict": true
-}
