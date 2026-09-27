@@ -1,7 +1,7 @@
 ---
 type: Guide
-title: 検証済みのスキルと共通指示を届ける
-description: 同じ候補SHAの配布検証、小さな統合、mainの復旧責任、計測と学習の手順を説明します。
+title: スキルと共通指示の原本を保守する
+description: 配布する指示と機能を保持し、原本の編集・同期・レビュー・統合を進める手順を説明します。
 sources:
   - id: continuousdelivery-foundations-configuration-management
     resource: https://continuousdelivery.com/foundations/configuration-management/
@@ -25,91 +25,44 @@ sources:
     resource: https://chatgpt.com/codex/cloud/tasks/task_e_6aa34c1893508327b2c83f674db370e8
 ---
 
-## 検証済みのスキルと共通指示を届ける
+## スキルと共通指示の原本を保守する
 
-利用者が必要なときに導入できる状態を保つため、原本のGitコミットを配布候補として扱います。バイナリを再ビルドする製品ではないため、後段でも同じSHAのMarkdown・設定・同梱ファイルを検証します。構成管理[^continuousdelivery-foundations-configuration-management]とデプロイメントパイプライン[^continuousdelivery-implementing-patterns]に基づく構成です。
+このパッケージの原本はGitで版管理し、配布する版をコミットSHAで識別します。構成管理[^continuousdelivery-foundations-configuration-management]と配布経路[^continuousdelivery-implementing-patterns]を区別し、実ユーザー環境の更新は[README](../../README.md)の導入・更新手順に従います。
 
-### 検証と証跡
+### パッケージ保守の範囲
 
-| 工程 | 確認内容 |
-| --- | --- |
-| static-checks | 原本・リンク・形式と単体テスト。ローカルでも同じコマンドを実行 |
-| acceptance（Ubuntu・macOS） | gh skillの隔離導入後、APMで候補SHAの新規導入・再導入、正常SHAから候補SHAへの更新、正常SHAへの復旧を実行 |
-| 共通指示 | Codex・Copilot両方の生成本文、手書きAGENTS.mdの保護、再生成結果を確認 |
-| 内容照合 | インストール済みパッケージのSHA、原本と配布内容、APMが書き換えたリンクの参照先を確認 |
-| 証跡 | Actions artifactのdelivery-report.jsonとapm-delivery.logに候補・正常SHA、依存SHA、ツール版、OS、ファイルハッシュと所要時間を保存 |
+現時点では、このリポジトリ自身の単体テスト・スキル評価・モデル比較・導入smoke検証と専用CIを管理対象としていません。保守作業では、目的・仕様・実差分・参照先を読み合わせ、実際に確認した範囲と未確認事項をIssue・PRに記録します。これらの追加・再生成を現在の保守作業の完了条件に含めません。将来の再導入を禁止するものではなく、必要性を別途判断します。
 
-PRではGitHubが作る統合候補SHAを一時Gitミラーから供給し、mainへのpushではマージ後SHAを公開GitHubの `daiksud/agents#<SHA>` 経路で導入します。APM 0.30.0が一時マージコミットを通常cloneで取得できないため、PRだけAPM子プロセスのGit URL解決をミラーへ向けます。ミラーのHEAD・内容はチェックアウト済み候補と同じで、元リポジトリやグローバルGit設定を書き換えません。可変のmainを後段で再取得して別の候補に置き換えません。`apm.yml` の外部skill-creator依存は完全SHAに固定し、[検証設定](../../.github/delivery.json)と合わせてPRで更新します。初回成功後に[必須チェック](../../.github/required-checks.json)を既存保護ルールへ反映します。
+配布するスキルと共通インストラクションのTDD・テスト・評価指示は維持します。`document-authoring` のOKF検証CLI・依存・利用手順、`issue-management` の配布用rumdl設定、レビュー用スキルの同期機能も提供機能として保持します。外部Bundleの検証は[検証手順](../../skills/document-authoring/references/validation.md)に従います。
 
-> [!IMPORTANT]
-> APM検証は使い捨てのGitHub-hosted runnerだけで実行します。既存のAPM導入先・配布スキル・AGENTS.mdがあれば停止します。ローカルやself-hosted runnerで実ユーザーのグローバル配布先を検証用に変更しません。
-
-Actionsの手動実行では対象ブランチを選択できます。失敗時もログと途中の証跡をartifactで確認し、実行されなかった工程を成功とは扱いません。探索的なスキル内容の確認は[隔離環境手順](#ローカルとciで同じ検査を実行)で行い、指示の判断品質は読み取り専用模擬評価で別に確認します。
-
-APM 0.30.0では、未固定依存を持つ旧版から更新すると、変更後の依存固定が `update` だけでは反映されないケースを実検証で検出しました。READMEの更新手順では `apm update --global` の後に `apm install --global` を実行して宣言された依存を再適用し、新規導入時と同じ内容になることを確認します。
+専用CIの撤去は、GitHub側のCodeQL・Code Quality・レビュー保護の解除を意味しません。既存の必須チェックを変更するときは承認された範囲を確認し、実際の設定とマージ条件を照合します。
 
 ### 導入する版を選ぶ
 
-1. mainの対象コミットで両OSの受け入れ検証が成功していることをActionsで確認します。
-2. artifactのcandidate、各phaseのsha、依存SHA、ハッシュと成功状態を確認します。チェック成功だけで公開後の判断品質まで保証しません。
-3. 同じ候補を導入する場合は、READMEのAPM導入コマンドのパッケージ指定を `daiksud/agents#<確認した完全SHA>` にします。導入後にdry-run、compileと生成結果を確認します。
-
-APM 0.30.0・GitHub CLI 2.100.0と固定Python依存を使用します。runnerのOSイメージとPython 3.12のパッチ版は更新されるため、実際の環境・版を証跡で追跡します。検証済みSHAを保持し、依存更新も同じパイプラインを通します。
+1. 導入するコミットSHAと、その変更内容・レビュー状態を確認します。
+2. 同じ版を導入する場合は、READMEのAPM導入コマンドのパッケージ指定を `daiksud/agents#<確認した完全SHA>` にします。
+3. APMのグローバルコンパイル[^microsoft-producer-compile]とSkill配布[^microsoft-author-primitives-skills]の役割を区別し、READMEの導入・更新手順を使います。
 
 ### 不具合から復旧する
 
-mainの失敗を検出したら、[統合後mainの確認と復旧](../../skills/change-delivery/references/review-and-merge.md#統合後mainの確認と復旧)に従って復旧を優先します。原因変更は承認済みの復旧PR、変更不要の外部障害は同じmain SHAの再検証で対応し、本リポジトリの必要チェックと公開配布検証が成功するまで後続作業を進めません。
+mainの不具合を見つけたら、影響・確認できた原因・対象SHAを記録し、[統合後mainの確認と復旧](../../skills/change-delivery/references/review-and-merge.md#統合後mainの確認と復旧)に従って認可された復旧を進めます。必要なレビューとGitHub側の保護条件を維持し、確認できない状態を復旧済みとしません。
 
-すでに導入した利用者は、過去の成功した証跡で確認した正常SHAを指定し直して再生成できます。
+すでに導入した利用者は、正常だったことを確認したコミットSHAを指定し直して再生成できます。
 
 ```bash
-known_good_sha='<証跡で確認した正常な完全SHA>'
+known_good_sha='<正常だったことを確認した完全SHA>'
 apm install --global --target codex,copilot "daiksud/agents#$known_good_sha"
 apm compile --global --dry-run
 apm compile --global
 ```
 
-既存設定と手書き指示を先に保持し、復旧後の本文・スキル・依存を証跡と照合します。検証では設定中のbaseline_shaへ実際に戻し、更新前後の配布ハッシュ一致と復旧時間を確認します。正常SHAの更新も、実測済みの成功したコミットを選んでPRに記録します。高速検証5分・受け入れ10分・APM復旧工程10分は初期目標です。長時間化や失敗では原因を調べ、未達を達成済みとしません。main復旧時間とは区別します。
-
-自動リリースと実ユーザー環境への自動配布は行いません。artifactの保存期限後も再検証できるよう、コミット・依存固定・検査コマンドを版管理します。
+既存設定と手書き指示を先に保持し、復旧対象と結果を確認します。未確認のコミットを正常版と呼ばず、実ユーザー環境をパッケージの試験に使いません。
 
 ### 小さく統合しmainまで確認する
 
-[小さな統合単位と活動日](../../skills/change-delivery/references/branches.md#小さな統合単位と活動日)に従い、Issueへ開始日時・次の統合単位・検証を記録します。活動日の毎日の統合、原則1活動日以内のブランチを目安とし、超過時の理由と次の単位を更新します。
+[小さな統合単位と活動日](../../skills/change-delivery/references/branches.md#小さな統合単位と活動日)に従い、目的にまとまった変更をレビュー・統合します。CIの実践[^continuousdelivery-foundations-continuous-integration]と継続的テスト[^continuousdelivery-foundations-test-automation]について配布本文が定める指針と、本リポジトリで管理する検証基盤の有無を区別します。
 
-マージ後は[main確認](../../skills/change-delivery/references/review-and-merge.md#統合後mainの確認と復旧)と[作業環境整理](../../skills/change-delivery/references/review-and-merge.md#マージ後の作業環境の整理)まで担当します。本リポジトリではmainのSHAと必要チェックに加えて、両OSartifactの候補・依存・配布ハッシュを照合し、正常なmain・同期・ブランチ整理の後に完了を記録します。必要な承認・レビュー・CIを省略せず、他プロジェクト向けの[CI未設定の例外](../../skills/change-delivery/references/review-and-merge.md#ci未設定の場合)を本リポジトリへ適用しません。
-
-### 計測の定義
-
-新しい集計サービスやCIジョブを作らず、PR・Issue・Actionsと既存artifactの日時・SHA・URLを根拠に記録します。時刻はタイムゾーンを明記し、活動日の集計はJSTで行います。
-
-| 項目 | 起点・終点と記録方法 |
-| --- | --- |
-| 統合頻度 | 変更作業を記録した活動日ごとのmainマージ件数。ブランチへのpushは数えない。活動記録が欠ける日は欠測とする |
-| 作業の滞留 | Issueに記録した作業開始からPRマージまで。開始不明ならPR作成時刻を代用したと明記する |
-| レビュー待ち | 各依頼から対応するレビューの正常完了まで。対象SHAと依頼・結果URLを結び、未完了・利用不能は別記する |
-| 検証時間 | Actions各ジョブのstarted_at〜completed_at。created_at〜started_atの待ち行列時間と分ける。依存ジョブの待ちを実行時間へ加算しない |
-| main復旧時間 | main失敗検知から復旧コミットの必要チェック（必須の配布検証を含む）がすべて成功するまで。外部障害で変更不要なら同じmain SHAで同じ必要チェックがすべて成功した時刻を終点と明記。失敗発生時刻と検知時刻を混同しない |
-| APM復旧工程 | delivery-report.jsonのrestore_seconds。正常SHAへ戻すCLI工程の所要時間で、main復旧時間ではない |
-
-高速検証5分、受け入れ10分、APM復旧工程10分の初期目標を維持します。main復旧時間に新しい合否閾値は設けず実測します。失敗がなければ「該当なし」、時刻がなければ「欠測」、終わっていなければ「未完了」とし、ゼロ秒へ置き換えません。
-
-実測値は該当PR・Issueへ記録し、共通スキル本文には個別実績を埋め込みません。単発比較から改善効果を断定せず、個人評価・指摘数・Approve速度の競争にも使いません。
-
-### 欠陥から検証を改善する
-
-継続的テストの原則[^continuousdelivery-foundations-test-automation]に従い、探索・受け入れ検証で見つかった欠陥を、再現可能な最も小さい検証に反映します。ドメイン判断・外部契約では共有仕様と再現テストの対応を確認し、正しい仕様を不要に書き換えません。速い単体テストを優先し、実際の接続・設定等が原因なら最小の有効な統合検証を使います。スキル判断は模擬評価で検証します。テスト層を選んだ理由と必要な受け入れ検証を残します。
-
-スキルの模擬評価では、同じ入力・採点基準を使って変更前後を新しい独立した実行コンテキストで比較し、原回答・採点根拠・比較HTMLを保存します。形式検査・導入成功と判断品質を区別し、欠測を成功扱いしません。
-
-障害が起きたIssue・PRには次を記録します。責任追及ではなく、次回の検出を早めるための記録です。
-
-| 記録項目 | 内容 |
-| --- | --- |
-| 影響・時刻 | 影響を受けた利用経路、発生・検知・復旧時刻。不明な時刻は欠測 |
-| 原因と検出 | ログ・再現で確認できた原因、既存検証で検出できなかった理由。仮説は仮説と明記 |
-| 復旧と検証 | 復旧PR・SHA、追加した再現検証、修正前後の結果、mainの必要チェック成功URL |
-| 残る改善 | 未確認範囲と次に検証すべきこと。範囲外の改善は通常の後続Issue手順へ |
+マージ前には最新HEADのレビュー、要対応指摘、競合、GitHub側に残る保護条件を確認します。マージ後は[main確認](../../skills/change-delivery/references/review-and-merge.md#統合後mainの確認と復旧)と[作業環境整理](../../skills/change-delivery/references/review-and-merge.md#マージ後の作業環境の整理)まで担当し、公開mainのSHA・対象ファイル・保護設定と結果を記録します。専用CIがないことを、テストや配布検証の成功として報告しません。
 
 ### 原本の編集と保守
 
@@ -138,65 +91,7 @@ apm compile --global
 
 ### Markdownの整形と投稿
 
-構成・整形・保存後の本文と表示の確認は[GitHub向けMarkdownの品質](../../skills/issue-management/references/markdown-quality.md)に従います。以下は本リポジトリで同じ検査を実行する設定とコマンドです。
-
-共通設定は `skills/issue-management/assets/rumdl.toml` に同梱され、本リポジトリの `.rumdl.toml` も同じ設定を継承します。MD013・MD033・MD034・MD041のみを無効化し、MD060をcompact、MD076をtightにします。通常概念ではその他のルールは既定のままです。Attested Computationは [計算文書の検証](../../skills/document-authoring/references/computation.md#markdownと契約を合わせて検証する) に従い、MD025のtitleの扱いだけを限定して調整します。
-
-リポジトリ直下で、継承設定を明示して実行します。
-
-```bash
-rumdl check --config .rumdl.toml --deny-config-warnings --fix <変更したMarkdownファイル>
-rumdl check --config .rumdl.toml --deny-config-warnings <変更したMarkdownファイル>
-```
-
-投稿用の一時本文や配布先での実行は[GitHub向けMarkdownの品質](../../skills/issue-management/references/markdown-quality.md)に従って設定を明示指定します。リポジトリ文書を作成・更新する場合は `document-authoring` の形式検証と `issue-management` のMarkdown品質を併用します。外部Bundleの読み取り専用conformanceだけならIssue記録やdeliveryは要求しません。
-
-rumdl未導入・旧版の場合は、[検証環境の準備](../../skills/issue-management/references/planning.md#検証環境の準備)に従い、既知の必要版を隔離環境へ用意します。グローバル設定変更・追加権限・費用発生は確認し、未検証の投稿は保留します。
-
-原本リポジトリのBundleルートはリポジトリ直下です。`scripts/check_repository.py` は `docs/`・`skills/`・`.apm/` と `.github/skills/` のMarkdownに同梱validatorの `authoring` を適用します。`SKILL.md` はAgent Skillsの検査、`index.md`・`log.md` は予約形式、READMEと生成AGENTS.mdは既存の固有形式を保ちます。未知メタデータを削除せず、未検証・期限切れは注意として表示します。
-
-rumdlとリンク検査はこのリポジトリの公開品質条件です。外部Bundleの受け入れは `validate_okf.py <Bundle> <対象> --profile conformance` で別に判定します。CI成功は人間の内容確認や計算の実行証明を意味しません。
-
-### 原本と配布の検証
-
-原本のYAML・JSON、ルールの移行漏れ、参照先、rumdlと `git diff --check` を確認します。APM検証では `*.instructions.md` の原本集合とキャッシュ集合を照合し、各本文がCodex・Copilot双方の生成AGENTS.mdに含まれることを確認します。旧単一Instruction構成も同じ検証経路で復旧を確認します。
-配布は隔離したユーザースコープで、新規・再導入・旧構成からの更新、手書きAGENTS.md保護を確認します。
-各スキルの `evals/evals.json` は外部書き込みを行わず適用判断を確認する例です。時間・トークンの新旧比較結果ではありません。
-
-分割したevalの `source_id` は移行元のケースを識別する履歴であり、旧Skillの実行参照ではありません。同じ元ケースは一つの担当Skillへ置き、複数工程の期待は条件付きの引き渡しを含めて保持します。ペア作業の[受け入れ仕様](../behavior/agent-pair-programming.feature.md)と、[使い捨てfixture・手動評価](../../skills/software-development/evals/agent-pair-programming.md)、[Copilot CLI固有手順](../../skills/software-development/references/copilot-cli-pairing.md)を区別します。
-
-- APM: グローバルコンパイル[^microsoft-producer-compile]
-- APM: スキルの作成と配布[^microsoft-author-primitives-skills]
-
-### ローカルとCIで同じ検査を実行
-
-Python 3.12、GitHub CLI 2.100.0を使います。既存環境を確認し、必要な固定依存を隔離した専用環境へ準備して、リポジトリ直下から実行します。導入の境界は[検証環境の準備](../../skills/issue-management/references/planning.md#検証環境の準備)に従います。
-
-```bash
-python3 -m venv .venv
-.venv/bin/python -m pip install -r requirements-ci.txt
-source .venv/bin/activate
-python -m unittest discover -s tests -v
-python scripts/check_repository.py
-python scripts/skill_smoke.py
-```
-
-静的検査は隠しディレクトリを含む原本のMarkdown・相対リンク・YAML・JSON・必須メタデータ・評価データを確認します。導入検証は一時ディレクトリで `gh skill` の列挙、新規導入、強制再導入と原本との内容一致を確認します。固定baselineのGit履歴も必要です。旧版→新版の導入後、[READMEの移行手順](../../README.md#gh-skillの更新と廃止skillの退避)に沿って廃止した所有Skillだけを探索先外の一時backupへ退避し、旧名の不在、backup内容と無関係Skillの保持を照合します。検証用ディレクトリは終了時に削除し、実ユーザー環境へcleanupを適用しません。
-
-gh skillの移行fixtureは [skill_smoke.py](../../scripts/skill_smoke.py) の `SKILL_MIGRATION_BASELINE` で、Skill名変更前の6e09d5166a8f49aa3a71edc102446d92a59e939d に固定します。更新可能なAPM復旧用 `baseline_sha` から独立させ、復旧先を進めても旧名の退避・backup検証が消えないようにします。
-
-探索的に内容を読む場合は、次のコマンドで検証用ディレクトリを作れます。
-
-```bash
-exploration_dir=$(mktemp -d)
-gh skill install . --from-local --all --dir "$exploration_dir"
-```
-
-表示された導入先で各SKILL.mdと同梱リンクを読み、使いにくい指示や不足を確認します。終了後はその検証用ディレクトリだけを削除します。エージェントによる読み取り専用模擬評価は別途行い、形式検査や導入成功をスキルの判断品質の証明とは扱いません。
-
-GitHub Actionsは全ブランチへのpush、main向けPR、mainへの統合後、手動実行で検査します。`static-checks` 成功後にUbuntu・macOSの `acceptance` を並列実行し、失敗をマージで持ち越しません。必須チェックの定義は [.github/required-checks.json](../../.github/required-checks.json) です。初回の実行成功後、管理者が既存ルールを保持してmainの必須チェックに反映し、ジョブ名の変更時も両方を更新します。
-
-CIの実践[^continuousdelivery-foundations-continuous-integration]と継続的テスト[^continuousdelivery-foundations-test-automation]に基づく基盤です。APMの導入・更新・復旧と固定候補の選び方は[配布ガイド](#検証と証跡)を参照します。
+Issue・PR等の投稿は[GitHub向けMarkdownの品質](../../skills/issue-management/references/markdown-quality.md)に従い、保存した本文と表示を確認します。配布用の `skills/issue-management/assets/rumdl.toml` は同スキルの機能として保持します。現時点では、パッケージ全体を検査する専用設定やCIへの接続は備えていません。
 
 ### GitHub上のレビュー用配置
 
@@ -205,31 +100,27 @@ CIの実践[^continuousdelivery-foundations-continuous-integration]と継続的�
 | 利用先 | 配置・読み込み |
 | --- | --- |
 | ローカル | `gh skill` またはAPMで導入した `code-review` をレビュー実行時に読む |
-| Copilot GitHubレビュー | 原本 `skills/code-review/` の実行時ファイルを `.github/skills/code-review/` へ同期する。`evals/` はコピーしない |
+| Copilot GitHubレビュー | 原本 `skills/code-review/` の実行時ファイルを `.github/skills/code-review/` へ同期する |
 | Codex GitHubレビュー | root `AGENTS.md` の条件付き参照に加え、依頼にも原本パスと適用指示を含める。ネイティブなスキル自動探索の保証ではない |
 
 ```bash
 python scripts/sync_review_skill.py
-python scripts/sync_review_skill.py --check
-gh skill install . --from-local code-review --dir /tmp/review-skill-install
 ```
 
-同期先は生成専用です。原本を編集して同期し、両方をコミットします。CIで内容差分・欠落・余分なファイルを検出します。レビュー依頼・指摘対応・完了判定は[代替レビュー](../../skills/change-delivery/references/review-and-merge.md#代替レビュー)を含む `change-delivery` が担当します。
+同期先は生成専用です。原本を編集して同期し、両方をコミットします。同期結果の実差分を確認します。レビュー依頼・指摘対応・完了判定は[代替レビュー](../../skills/change-delivery/references/review-and-merge.md#代替レビュー)を含む `change-delivery` が担当します。
 
-Copilot公式資料[^docs-request-a-code-review-use-code-review]に従い、実PRの指摘の出典またはセッションログで使用したスキルを確認します。Codex公式資料[^learn-third-party-github]によるAGENTS.mdの案内も、実PRで読み込みを検証します。通常の `@codex review`、確認できなければ原本パスを付けた依頼を順に試し、ログまたは固有手順の根拠付き適用を確認します。後者のみ成功ならパス指定を標準にし、いずれも未確認なら連携未完了とします。結果と未確認範囲はPRに記録し、パス復唱やリアクションだけを成功の証拠にしません。
+Copilot公式資料[^docs-request-a-code-review-use-code-review]とCodex公式資料[^learn-third-party-github]を参照し、各実行環境の読み込み方法を区別します。個人環境への導入やパスの復唱だけで、GitHub上のレビューにスキルが適用されたとは扱いません。
 
 標準の依頼は `@codex review` に「`skills/code-review/SKILL.md` を読んで適用してください」を添えます。実PRの検証[^github-pull-34]では、明示パス指定時にセッションログ[^chatgpt-tasks-task-e-6aa34c1893508327b2c83f674db370e8]で原本本文の読み取りを確認しました。ログの閲覧には権限が必要です。条件付き参照だけの通常依頼では読み取りの証拠を確認できていません。
 
-レビュー連携を設定・変更した場合だけ、通常依頼と原本パス付き依頼の読み込みを検証します。先行レビューの終了を確認してから次を依頼し、ログのファイル読み取り、または固有の判断手順が具体的根拠に適用された結果を確認します。通常レビューに証明用の定型報告を要求しません。両方未確認なら連携未完了として記録します。
-
-APMのパッケージキャッシュにルートやディレクトリ別のAGENTS.mdが保存されることと、共通指示として実行時に適用されることを区別します。生成されたCodex・Copilotの本文は共通指示の原本と照合し、配布スキルにはローカル編集指示への依存がないことを確認します。
+APMのパッケージキャッシュにルートやディレクトリ別のAGENTS.mdが保存されることと、共通指示として実行時に適用されることを区別します。配布スキルをローカル編集指示へ依存させません。
 
 [^continuousdelivery-foundations-configuration-management]: [構成管理](https://continuousdelivery.com/foundations/configuration-management/)。本文に記した参照範囲と採用判断の根拠。
 [^continuousdelivery-implementing-patterns]: [デプロイメントパイプライン](https://continuousdelivery.com/implementing/patterns/)。本文に記した参照範囲と採用判断の根拠。
-[^continuousdelivery-foundations-test-automation]: [継続的テストの原則](https://continuousdelivery.com/foundations/test-automation/)。本文に記した参照範囲と採用判断の根拠。
 [^microsoft-producer-compile]: [APM: グローバルコンパイル](https://microsoft.github.io/apm/producer/compile/#global-compilation--g)。本文に記した参照範囲と採用判断の根拠。
 [^microsoft-author-primitives-skills]: [APM: スキルの作成と配布](https://microsoft.github.io/apm/producer/author-primitives/skills/)。本文に記した参照範囲と採用判断の根拠。
 [^continuousdelivery-foundations-continuous-integration]: [CIの実践](https://continuousdelivery.com/foundations/continuous-integration/)。本文に記した参照範囲と採用判断の根拠。
+[^continuousdelivery-foundations-test-automation]: [継続的テストの原則](https://continuousdelivery.com/foundations/test-automation/)。本文に記した参照範囲と採用判断の根拠。
 [^docs-request-a-code-review-use-code-review]: [Copilot公式資料](https://docs.github.com/en/copilot/how-tos/use-copilot-agents/request-a-code-review/use-code-review#mcp-servers-and-agent-skills)。本文に記した参照範囲と採用判断の根拠。
 [^learn-third-party-github]: [Codex公式資料](https://learn.chatgpt.com/docs/third-party/github)。本文に記した参照範囲と採用判断の根拠。
 [^github-pull-34]: [実PRの検証](https://github.com/daiksud/agents/pull/34#issuecomment-5627514742)。本文に記した参照範囲と採用判断の根拠。
