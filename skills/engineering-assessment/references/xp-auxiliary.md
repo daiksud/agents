@@ -1,7 +1,7 @@
 ---
 type: Reference
-title: XP個別項目を補助lensとして使う
-description: Architecture・DORA・Lean等の診断で、個別のXP Value / Principle / Practiceだけを補助的に使うための軽量lookupです。
+title: XP個別項目の軽量lookup
+description: XP-primary診断または他lensの補助判断で、個別のXP Value / Principle / Practiceの診断意味だけを読むための軽量lookupです。
 sources:
   - id: xp-second-edition
     resource: https://www.informit.com/store/extreme-programming-explained-embrace-change-9780134051987
@@ -15,11 +15,11 @@ sources:
     resource: https://www.oreilly.com/library/view/extreme-programming-explained/0321278658/ch09.xhtml
 ---
 
-## XP個別項目を補助lensとして使う
+## XP個別項目の軽量lookup
 
-XPそのものを診断するのではなく、別のlensで一つまたは少数のXP項目だけを補助判断に使う場合に読む。taxonomyの分類はXP第2版を基準にする。[^xp-second-edition]
+XP-primary診断でnamed itemの意味を確認するとき、またはArchitecture・DORA・Lean等の別lensで一つまたは少数のXP項目だけを補助判断に使うときに読む。taxonomyの分類・全体関係は[XP taxonomy](xp.md)を入口にし、item semanticsはこのlookupを共通で使う。[^xp-second-edition]
 
-XP全体のtaxonomy・複数項目の相互関係・XP導入そのものを診断する場合は[XP full lens](xp.md)を使う。このreferenceを「XP全項目の必須チェックリスト」にはしない。
+このreferenceを「XP全項目の必須チェックリスト」にはしない。XP-primary診断でも現在のproblemに関係するitemだけを選び、全項目を未確認一覧へ展開しない。
 
 ### Values
 
@@ -42,7 +42,7 @@ Principlesの位置づけは第2版のPrinciples章を参照する。[^xp-second
 | Humanity | 人が継続して良い仕事をできるneeds・関係・安全性 |
 | Economics | time・cost・value・opportunity costを含む経済的判断 |
 | Mutual Benefit | 今日と将来、複数関係者の利益を同時に増やす選択 |
-| Self-Similarity | 別scaleで機能したfeedback patternを仮説として再利用し検証する |
+| Self-Similarity | 別context・別scaleで機能したfeedback、solution structure、design / delivery patternを仮説として再利用し、現在の制約へ適合するか検証する |
 | Improvement | 完璧を待たず現在状態から小さく改善する |
 | Diversity | 異なる経験・専門性・観点を早く意思決定へ入れる |
 | Reflection | 結果と進め方を振り返り、次の行動へfeedbackする |
@@ -92,7 +92,7 @@ Corollary Practicesの適用注意は第2版のCorollary Practices章を参照�
 | Negotiated Scope Contract | 短い契約・scope再交渉でcost / value / learningを反映する |
 | Pay-Per-Use | 実利用と経済的feedbackを近づけるbusiness modelが有効か確認する |
 
-個別項目が現在のproblemの主対象へ広がった場合は、ここで診断を続けず[XP full lens](xp.md)へ切り替える。
+個別項目の分類や他XP項目との関係まで必要になった場合は[XP taxonomy](xp.md)も読む。item semanticsの診断自体はこのlookupを引き続き使う。
 
 [^xp-second-edition]: [Extreme Programming Explained: Embrace Change, 2nd Edition — Kent Beck / Cynthia Andres](https://www.informit.com/store/extreme-programming-explained-embrace-change-9780134051987)。XP第2版のtaxonomy。2026-09-27確認。
 [^ron-jeffries-xp]: [What is Extreme Programming? — Ron Jeffries](https://ronjeffries.com/xprog/what-is-extreme-programming/)。5 Valuesと小さいfeedbackの適用。2026-09-27確認。
