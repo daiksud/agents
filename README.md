@@ -66,9 +66,16 @@ apm compile --global
 
 ## 開発実践の診断と導入計画
 
-共通指示はXPの価値、DevOps・Lean・CI/CD・BDD/ATDD/TDD・DDD・チームトポロジーを日々の判断の軸にします。概念と本リポジトリでの名称は[用語集](docs/glossary.md)で確認できます。
+共通Instructionは日常の短い判断原則を担い、具体的な実行方法は各Skillが担当します。XP・Lean・DDD・Continuous Delivery・DevOps・Team Topologies・Conway・DORAなどの関係と分類は[Engineering model](docs/engineering/model.md)と[用語集](docs/glossary.md)で確認できます。
 
-既存リポジトリへの導入を検討するときは、[engineering-assessment](skills/engineering-assessment/SKILL.md)へ「現状を診断し、段階的な導入計画をIssueにまとめて」と依頼します。実際の作業の証拠から優先順位と最初の小さな実験を示し、保存したIssueを提示して終了します。実装・組織変更は行わず、導入未実施のIssueは開いたまま残します。通常の修正や概念説明では全面診断を起動しません。
+既存リポジトリへの導入を検討するときは、[engineering-assessment](skills/engineering-assessment/SKILL.md)へ「現状を診断し、段階的な導入計画をIssueにまとめて」と依頼します。Skillは共通の証拠収集手順を使い、problemに応じて必要なfocused referenceだけを選びます。
+
+- XP taxonomy・設計・feedbackの診断: [XP lens](skills/engineering-assessment/references/xp.md)
+- Domain / Architecture / Team / Conway / Microservices: [Architecture / Organization lens](skills/engineering-assessment/references/architecture-and-organization.md)
+- DORA Core / Capability Catalog / metrics: [DORA lens](skills/engineering-assessment/references/dora.md)
+- その他の関係整理: [軽量なlens index](skills/engineering-assessment/references/principles.md)
+
+狭い依頼を無関係な全面診断へ広げず、全XP Practiceや全DORA Capabilityを必須チェックリストにしません。実際の作業の証拠から優先順位と最初の小さな実験を示し、保存したIssueを提示して終了します。実装・組織変更は行わず、導入未実施のIssueは開いたまま残します。通常の修正や概念説明では全面診断を起動しません。
 
 診断計画は `issue-management` でIssueへ保存・確認・提示して終了します。別途の明確な変更依頼と承認がある場合だけ、確認済み計画を `change-delivery` へ引き渡します。
 
