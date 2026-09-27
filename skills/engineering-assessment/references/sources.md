@@ -118,7 +118,7 @@ DORAの文章・図はGoogle LLCによるCC BY 4.0（各ページの例外を除
 | --- | --- |
 | What is Extreme Programming? — Ron Jeffries[^ron-jeffries-xp]（2026-09-26確認） | Communication・Simplicity・Feedback・Courage・Respectを現在の要求、小さいフィードバック、継続的な設計改善に使う。会議・役割・期間の固定形式、原典の効果数値を共通要件にしない |
 | Extreme Programming Explained: Embrace Change, 2nd Edition — Kent Beck / Cynthia Andres[^informit-xp-second-edition]（2004、2026-09-27確認） | Values / Principles / Practicesを区別し、TOCに列挙された14 Principles、13 Primary Practices、11 Corollary Practicesの名称・分類をruntime taxonomyへ反映する。同じpublisherページの紹介文は「Eleven principles」と記すため、Principles数はTOCの列挙を採用し不一致を残す。全Practiceの採用数を成熟度・必須チェックリストにしない |
-| XP 2nd ed. Principles / Primary / Corollary chapters — O'Reilly licensed preview[^oreilly-xp-principles][^oreilly-xp-primary-practices][^oreilly-xp-corollary-practices]（2026-09-27確認） | named taxonomyだけでなく、PrinciplesがValuesとbehaviorを橋渡しすること、Primary Practicesは環境の最大の改善機会から選べること、Corollary PracticesはPrimaryの土台なしでは難しい・危険になり得ることを確認する。`xp.md` の各項目の診断意味は原文転載ではなく、本スキル向けの短い適用パラフレーズ |
+| XP 2nd ed. Principles / Primary / Corollary chapters — O'Reilly licensed preview[^oreilly-xp-principles][^oreilly-xp-primary-practices][^oreilly-xp-corollary-practices]（2026-09-27確認） | named taxonomyだけでなく、PrinciplesがValuesとbehaviorを橋渡しすること、Primary Practicesは環境の最大の改善機会から選べること、Corollary PracticesはPrimaryの土台なしでは難しい・危険になり得ることを確認する。`xp.md` はtaxonomyとroutingを保持し、`xp-auxiliary.md` の各項目の診断意味は原文転載ではなく本スキル向けの短い適用パラフレーズ |
 
 5価値を診断の問いとして扱い、採用プラクティスの数や特定の組織形態でXPの成否を判定しないのは、本スキルの適用判断である。
 
