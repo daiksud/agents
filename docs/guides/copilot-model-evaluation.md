@@ -94,7 +94,7 @@ A–Gを全モデルで同じ順序・基準で使う。
 | F | モデル引き継ぎ: self-reportではなく現在の差分・証拠を再確認する |
 | G | Skill routing: github-actions + code-reviewと必要referenceだけを使う |
 
-具体promptとgrader criteriaは `cases.json` を正本とし、モデルにはprompt部分だけを渡す。runnerはsuiteのモデル名・CLI ID、A–GのID・title・非空prompt・非空criteria、共通rulesとfailure taxonomyを実行前に検証し、不完全なcustom suiteを実行しない。suiteはA–G、4つのbaseline model、必須フィールド、非空prompt・criteria・common rulesを実行前に検証し、malformed suiteを開始しない。
+具体promptとgrader criteriaは `cases.json` を正本とし、モデルにはprompt部分だけを渡す。runnerはsuiteのモデル名・CLI ID、A–GのID・title・非空prompt・非空criteria、共通rules、failure taxonomyを実行前に検証し、malformed suiteを開始しない。
 
 ## 実行
 
@@ -114,7 +114,7 @@ python3 scripts/run_copilot_model_eval.py \
   --output-dir /tmp/copilot-model-eval/<run-id>
 ```
 
-一部モデルだけを再現確認するときはCLI model IDを明示する。`--models` を明示した場合は少なくとも1モデルを選択する必要があり、空文字や区切り文字だけの指定はエラーとする。`--models` を明示した場合は少なくとも1つの有効なIDを必要とし、空文字や区切り文字だけの指定で0-run batchを成功扱いしない。
+一部モデルだけを再現確認するときはCLI model IDを明示する。`--models` を明示した場合は少なくとも1つの有効なIDを必要とし、空文字や区切り文字だけの指定はエラーとする。
 
 ```bash
 python3 scripts/run_copilot_model_eval.py \
