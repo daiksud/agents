@@ -3,6 +3,8 @@ type: Reference
 title: 開発実践と作業スキルの用語
 description: このパッケージで用いる開発実践と診断の用語、適用範囲、対応する名称を定義します。
 sources:
+  - id: engineering-model
+    resource: engineering/model.md
   - id: xp-principles
     resource: ../skills/software-development/references/sources.md
   - id: okf-v02
@@ -17,13 +19,18 @@ sources:
 
 | 用語 | この文脈での定義 | 適用境界 | コード・指示上の名称 |
 | --- | --- | --- | --- |
+| Engineering model | 開発実践をValues / Principles、Practices、Capabilities、Architectural / Organizational Choicesに分類し、相互の多対多の関係と配置境界を示す概念モデル | agentsパッケージの保守・診断知識。成熟度の一方向階層やruntime必須ルールにはしない | `docs/engineering/model.md` |
+| Values / Principles | 判断時に何を優先するかを示す価値・原則。具体的な作業手順や能力の達成状態とは区別する | 開発判断・診断 | engineering model、各Instruction |
+| Practice | 価値・原則を具体化する、繰り返し実行する行動。別体系ではCapabilityとして扱われる場合がある | 開発実践・診断 | TDD、Pair Programming、CI、Small Batches等 |
+| Capability | チーム・システムが実際に持つ観測可能な能力。設定やPracticeの存在だけで達成済みと判定しない | engineering modelでの分類。runtime診断へのtaxonomy反映は後続Unitで扱う | `docs/engineering/model.md` |
+| Architectural / Organizational Choice | 現在の要求・制約・能力から選ぶ構造、配置、責任境界。上位成熟状態や既定解とは扱わない | 設計・組織の判断・診断 | Microservices、module / deployment / team boundaries等 |
 | XP | Communication・Simplicity・Feedback・Courage・Respectを軸に、小さなテストと協働から設計を進化させる開発思想 | 開発判断・実装・診断 | `development`、`software-development`、`engineering-assessment` |
 | Simple Design | 現在の契約を満たし、意図を伝え、同じルールの重複と不要な要素を減らす設計の判断基準 | 開発判断と設計・実装 | `software-development` の設計資料 |
 | YAGNI | 仮想の将来機能を先取りせず、現在必要な検証・設計改善を保つ判断 | 開発判断と設計・実装 | `software-development` の設計資料 |
 | DevOps | 開発から運用まで、利用者の成果と品質に対する責任・学習を共有する実践 | 開発実践の指示・診断 | deliveryのDevOps、`engineering-assessment` |
 | Lean | 利用者価値を起点に流れ・仕掛かり・待ち・手戻りを改善し、人を尊重して学ぶ考え方 | 開発実践の指示・診断 | deliveryのLean、`engineering-assessment` |
-| 継続的インテグレーション | 小さな変更の頻繁なmain統合、速い自動検証、失敗修復を続ける実践 | 開発実践の指示・診断 | CI、`change-delivery` |
-| 継続的デリバリー | 検証済みの変更を必要なときに安全に配布できる状態を維持する実践 | 開発実践の指示・診断 | CD、`engineering-assessment` |
+| 継続的インテグレーション | 小さな変更の頻繁なmain統合、速い自動検証、失敗修復を続ける実践。XP / CD文脈ではPractice、DORAではCapabilityとしても扱う | 開発実践の指示・診断 | CI、`change-delivery` |
+| 継続的デリバリー | 検証済みの変更を必要なときに安全に配布できる状態として維持するCapability / system of work。複数のPracticeに支えられる | 開発実践の指示・診断 | CD、`engineering-assessment` |
 | 継続的デプロイメント | 検証を通った変更を自動的に本番へ配備する実践 | 開発実践の指示・診断 | Continuous Deployment（CDと区別） |
 | BDD | 具体例を使う共同の発見・定式化・自動化を通じて期待するふるまいの理解を深める実践 | 開発実践の指示・診断 | `behavior-specification`、`*.feature.md` |
 | ATDD | 対応する実装に先立ち、受け入れ条件・テストを具体化する実践 | 開発実践の指示・診断 | `behavior-specification` |
