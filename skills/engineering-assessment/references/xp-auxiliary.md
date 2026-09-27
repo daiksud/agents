@@ -17,11 +17,13 @@ sources:
 
 ## XP個別項目を補助lensとして使う
 
-XPそのものを診断するのではなく、別のlensで一つまたは少数のXP項目だけを補助判断に使う場合に読む。
+XPそのものを診断するのではなく、別のlensで一つまたは少数のXP項目だけを補助判断に使う場合に読む。taxonomyの分類はXP第2版を基準にする。[^xp-second-edition]
 
 XP全体のtaxonomy・複数項目の相互関係・XP導入そのものを診断する場合は[XP full lens](xp.md)を使う。このreferenceを「XP全項目の必須チェックリスト」にはしない。
 
 ### Values
+
+5 Valuesの意味はXPの公開説明とも照合する。[^ron-jeffries-xp]
 
 | Value | Compact diagnostic cue |
 | --- | --- |
@@ -32,6 +34,8 @@ XP全体のtaxonomy・複数項目の相互関係・XP導入そのものを診�
 | Respect | 利用者の判断権限、関係者の知識・時間、持続可能な働き方を尊重する |
 
 ### Principles
+
+Principlesの位置づけは第2版のPrinciples章を参照する。[^xp-second-edition-principles]
 
 | Principle | Compact diagnostic cue |
 | --- | --- |
@@ -52,6 +56,8 @@ XP全体のtaxonomy・複数項目の相互関係・XP導入そのものを診�
 
 ### Primary Practices
 
+Primary Practicesの位置づけは第2版のPrimary Practices章を参照する。[^xp-second-edition-primary-practices]
+
 | Primary Practice | Compact diagnostic cue |
 | --- | --- |
 | Sit Together | 必要な人が低いcommunication costで継続的に協働できる状態 |
@@ -69,6 +75,8 @@ XP全体のtaxonomy・複数項目の相互関係・XP導入そのものを診�
 | Incremental Design | 現在要求に必要なdesignを継続的に改善する |
 
 ### Corollary Practices
+
+Corollary Practicesの適用注意は第2版のCorollary Practices章を参照する。[^xp-second-edition-corollary-practices]
 
 | Corollary Practice | Compact diagnostic cue |
 | --- | --- |
