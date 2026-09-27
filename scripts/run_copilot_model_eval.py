@@ -399,8 +399,9 @@ def _open_private(path: Path, *, binary: bool):
     flags = os.O_WRONLY | os.O_CREAT | os.O_TRUNC
     descriptor = os.open(path, flags, 0o600)
     os.fchmod(descriptor, 0o600)
-    mode = "wb" if binary else "w"
-    return os.fdopen(descriptor, mode, encoding=None if binary else "utf-8")
+    if binary:
+        return os.fdopen(descriptor, "wb")
+    return os.fdopen(descriptor, "w", encoding="utf-8")
 
 
 def write_private_text(path: Path, value: str) -> None:
