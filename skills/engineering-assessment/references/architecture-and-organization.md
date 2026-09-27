@@ -4,7 +4,7 @@ title: ArchitectureとOrganizationの境界を診断する
 description: DDD・Team Topologies・Conway・Continuous Deliveryの観点から、意味・変更・実行・配布・所有の境界とMicroservices等の選択を証拠で診断します。
 sources:
   - id: ddd-reference
-    resource: https://www.domainlanguage.com/ddd/reference/
+    resource: https://www.domainlanguage.com/wp-content/uploads/2016/05/DDD_Reference_2015-03.pdf
   - id: team-topologies-key-concepts
     resource: https://teamtopologies.com/key-concepts
   - id: continuous-delivery-architecture
@@ -29,7 +29,7 @@ Domain model、service分割、Microservices、team ownership、cross-team depen
 | Bounded Context / semantic boundary | どこまで同じモデルと言葉の意味が通用するか | Ubiquitous Language、モデル、Context Map、翻訳・契約 |
 | Change boundary | 何を独立して理解・変更・検証できるか | 実変更の差分、テスト依存、同時変更、review待ち |
 | Runtime boundary | 何が別process / componentとして実行されるか | runtime topology、process間通信、failure propagation |
-| Deployment boundary | 何を独立してbuild・deploy・rollbackできるか | pipeline、artifact、release履歴、同時deployの必要性 |
+| Deployment boundary | 何を独立してdeploy・release・rollbackできるか | pipeline、artifact、build dependency、release履歴、同時deployの必要性 |
 | Repository boundary | source・history・automationをどの単位で管理するか | repository、build、ownership設定、tooling |
 | Team ownership boundary | 誰が継続的な判断・運用・改善責任を持つか | 実際の責任、on-call、変更承認、問い合わせ、team experience |
 
@@ -148,7 +148,7 @@ architecture / organizationの判断は次のいずれかとして記録する�
 
 最初の改善は、問題となる一つのdependencyを対象にする。たとえばcontractの明確化、test seam、deployment dependencyの除去、interaction modeの期間限定変更など、結果を観測できるsmall experimentを優先する。全面的なservice分割や組織再編は、証拠と段階的な学習なしに最初の手段へしない。
 
-[^ddd-reference]: [DDD Reference — Domain Language](https://www.domainlanguage.com/ddd/reference/)。Bounded Context、Context Map等のDDD pattern reference。2026-09-27確認。
+[^ddd-reference]: [DDD Reference — Eric Evans](https://www.domainlanguage.com/wp-content/uploads/2016/05/DDD_Reference_2015-03.pdf)。Bounded Context、Context Map等のDDD pattern reference。固定2015-03版を2026-09-27再確認。
 [^continuous-delivery-architecture]: [Architecture — Continuous Delivery](https://continuousdelivery.com/implementing/architecture/)。testability、deployability、loosely-coupled component、evolutionary architectureの判断。2026-09-27確認。
 [^dora-loosely-coupled-teams]: [Loosely coupled teams — DORA](https://dora.dev/capabilities/loosely-coupled-teams/)。独立change / test / deploy、communication dependency、Inverse ConwayとMicroservicesのtrade-off。2026-09-27確認。
 [^team-topologies-key-concepts]: [Key Concepts — Team Topologies](https://teamtopologies.com/key-concepts)。fast flow、4 team types、3 interaction modes、cognitive load、Conway's Law。2026-09-27確認。
