@@ -55,6 +55,14 @@ sources:
 - ならば: 正確な原文保持が必要な情報を翻訳しない
 - かつ: ユーザー向け回答、Issue、PR、文書、コミットメッセージの言語をControlled Englishへ強制しない
 
+#### シナリオ: 必要なフィールドだけでレビュー結果を返す
+
+- 前提: NavigatorがRedの確認結果をDriverへ返す
+- もし: 半構造化した内部メッセージを作る
+- ならば: `PHASE`、`TODO`、`STATUS`、`FINDINGS`、`NEXT` など判断に必要なフィールドだけを使う
+- かつ: 承認なら `STATUS: APPROVED`、修正必須なら `STATUS: CHANGES_REQUIRED`、継続不能なら `STATUS: BLOCKED` を基本とする
+- かつ: 使用しないフィールドを空欄で埋めず、厳密なparse要件がない限りJSONを要求しない
+
 ### ルール: 共有ToDoを共同で育て、一度に一項目を進める
 
 #### シナリオ: Driverが次の境界条件に気づく
