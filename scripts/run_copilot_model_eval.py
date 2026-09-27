@@ -347,6 +347,15 @@ def main() -> int:
     output_dir.mkdir(parents=True, exist_ok=False)
     manifest_path = output_dir / "manifest.json"
     suite_sha256 = sha256_file(args.cases.resolve())
+    planned_runs = [
+        {
+            "model": model["name"],
+            "cli_model": model["cli_model"],
+            "case_id": case["id"],
+            "attempt": attempt,
+        }
+        for model, case, attempt in planned
+    ]
     manifest = {
         "suite": suite["suite"],
         "suite_version": suite["version"],
@@ -354,6 +363,11 @@ def main() -> int:
         "started_at": datetime.now(timezone.utc).isoformat(),
         "repo_sha": repo_sha,
         "auth_source": auth_variable,
+        "selected_models": [
+            {"name": model["name"], "cli_model": model["cli_model"]}
+            for model in selected
+        ],
+        "planned_runs": planned_runs,
         "repeat": args.repeat,
         "timeout_seconds": args.timeout_seconds,
         "setup": {"status": "pending"},
@@ -384,6 +398,7 @@ def main() -> int:
                 "grader_paths_excluded": [
                     path.as_posix() for path in GRADER_ONLY_PATHS
                 ],
+                "skill_evals_excluded": True,
                 "agent_tools_denied": ["shell", "write", "url", "memory"],
             }
             write_manifest(manifest_path, manifest)
@@ -394,33 +409,36 @@ def main() -> int:
                 stem = f"{model['cli_model']}__{case['id']}__{attempt}"
                 stdout_path = output_dir / f"{stem}.jsonl"
                 stderr_path = output_dir / f"{stem}.stderr.txt"
+                started = time.monotonic()
+                timed_out = False
+                failure_class = None
+                notes = None
+                stdout = ""
+                stderr = ""
+                return_code = None
 
-                with tempfile.TemporaryDirectory(
-                    prefix=f"copilot-eval-{case['id']}-"
-                ) as run_directory:
-                    run_root = Path(run_directory)
-                    workspace = run_root / "workspace"
-                    home = run_root / "home"
-                    shutil.copytree(workspace_base, workspace)
-                    shutil.copytree(home_base, home)
-                    environment = isolated_environment(home, base_env)
+                try:
+                    with tempfile.TemporaryDirectory(
+                        prefix=f"copilot-eval-{case['id']}-"
+                    ) as run_directory:
+                        run_root = Path(run_directory)
+                        workspace = run_root / "workspace"
+                        home = run_root / "home"
+                        shutil.copytree(workspace_base, workspace)
+                        shutil.copytree(home_base, home)
+                        environment = isolated_environment(home, base_env)
 
-                    command = [
-                        executable,
-                        "-p",
-                        prompt,
-                        f"--model={model['cli_model']}",
-                        "--mode=plan",
-                        "--no-ask-user",
-                        "--no-auto-update",
-                        "--output-format=json",
-                        "--deny-tool=shell,write,url,memory",
-                    ]
-                    started = time.monotonic()
-                    timed_out = False
-                    failure_class = None
-                    notes = None
-                    try:
+                        command = [
+                            executable,
+                            "-p",
+                            prompt,
+                            f"--model={model['cli_model']}",
+                            "--mode=plan",
+                            "--no-ask-user",
+                            "--no-auto-update",
+                            "--output-format=json",
+                            "--deny-tool=shell,write,url,memory",
+                        ]
                         result = run_command(
                             command,
                             workspace,
@@ -430,20 +448,32 @@ def main() -> int:
                         stdout = result.stdout
                         stderr = result.stderr
                         return_code = result.returncode
-                    except subprocess.TimeoutExpired as error:
-                        timed_out = True
-                        stdout = text_from_timeout(error.stdout)
-                        stderr = text_from_timeout(error.stderr)
-                        return_code = None
-                        failure_class = "runtime"
-                        notes = (
-                            "Copilot invocation exceeded the configured "
-                            f"{args.timeout_seconds:g}s timeout."
-                        )
-                    elapsed = time.monotonic() - started
+                except subprocess.TimeoutExpired as error:
+                    timed_out = True
+                    stdout = text_from_timeout(error.stdout)
+                    stderr = text_from_timeout(error.stderr)
+                    failure_class = "runtime"
+                    notes = (
+                        "Copilot invocation exceeded the configured "
+                        f"{args.timeout_seconds:g}s timeout."
+                    )
+                except (OSError, subprocess.SubprocessError) as error:
+                    failure_class = "runtime"
+                    notes = f"Run-side operation failed: {error}"
+                elapsed = time.monotonic() - started
 
-                stdout_path.write_text(stdout, encoding="utf-8")
-                stderr_path.write_text(stderr, encoding="utf-8")
+                stdout_name = stdout_path.name
+                stderr_name = stderr_path.name
+                try:
+                    stdout_path.write_text(stdout, encoding="utf-8")
+                    stderr_path.write_text(stderr, encoding="utf-8")
+                except OSError as error:
+                    failure_class = failure_class or "runtime"
+                    suffix = f"Evidence write failed: {error}"
+                    notes = f"{notes} {suffix}".strip() if notes else suffix
+                    stdout_name = None
+                    stderr_name = None
+
                 manifest["runs"].append({
                     "model": model["name"],
                     "cli_model": model["cli_model"],
@@ -453,8 +483,8 @@ def main() -> int:
                     "return_code": return_code,
                     "timed_out": timed_out,
                     "elapsed_seconds": round(elapsed, 3),
-                    "stdout": stdout_path.name,
-                    "stderr": stderr_path.name,
+                    "stdout": stdout_name,
+                    "stderr": stderr_name,
                     "input_fingerprints": fingerprints,
                     "quality": {
                         "criteria_met": None,
@@ -479,13 +509,23 @@ def main() -> int:
                 write_manifest(manifest_path, manifest)
 
     except (OSError, RuntimeError, subprocess.SubprocessError) as error:
-        manifest["setup"] = {
-            "status": "failed",
-            "failure_class": "instruction_delivery",
-            "notes": str(error),
-        }
+        if manifest["setup"].get("status") == "verified":
+            manifest["batch_failure"] = {
+                "failure_class": "runtime",
+                "notes": str(error),
+                "completed_runs": len(manifest["runs"]),
+            }
+        else:
+            manifest["setup"] = {
+                "status": "failed",
+                "failure_class": "instruction_delivery",
+                "notes": str(error),
+            }
         manifest["finished_at"] = datetime.now(timezone.utc).isoformat()
-        write_manifest(manifest_path, manifest)
+        try:
+            write_manifest(manifest_path, manifest)
+        except OSError:
+            pass
         print(str(error), file=sys.stderr)
         return 2
 
