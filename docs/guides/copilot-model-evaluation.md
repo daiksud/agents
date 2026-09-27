@@ -41,6 +41,7 @@ GPT-6 Sol、GPT-6 Luna、Claude Opus 5.5、Claude Sonnet 5に、同じInstructio
 
 - repository SHA
 - clean checkout
+- 選択suiteがそのrepository SHAでGit追跡され、working tree内容とHEAD blobが一致すること
 - Copilot CLI version
 - `cases.json` の内容hash
 - prompt
@@ -49,7 +50,7 @@ GPT-6 Sol、GPT-6 Luna、Claude Opus 5.5、Claude Sonnet 5に、同じInstructio
 - tool / permission境界
 - 明示的に変更するreasoning等のモデル設定
 - 1ケースあたりの反復回数
-- per-run timeout
+- per-run timeout（正の有限値のみ）
 
 モデルごとに成功条件を変えない。モデルが利用できない、CLIがない、認証・policyで拒否された場合は品質失敗ではなく `runtime` または `tool_or_permission` として記録する。
 
@@ -57,11 +58,11 @@ GPT-6 Sol、GPT-6 Luna、Claude Opus 5.5、Claude Sonnet 5に、同じInstructio
 
 実測では tracked / untracked の評価入力がHEADとずれないよう、runnerが `git status --porcelain --untracked-files=all` を確認する。差分があれば実行しない。
 
-これによりmanifestの `repo_sha` と、モデルへ届く候補Instructions / Skills、grader側のsuiteを同じcommitted stateへ結びつける。
+これによりmanifestの `repo_sha` と、モデルへ届く候補Instructions / Skills、grader側のsuiteを同じcommitted stateへ結びつける。suiteは単にrepository内にあるだけでは足りず、記録したSHAでGit追跡されていることとHEAD blobとの一致を確認する。ignored/untracked suiteは実行しない。
 
 ### 隔離したInstructions / Skills配布
 
-runnerはbase用の一時HOMEへ候補SHAをAPMで導入・compileし、既存のAPM smoke verifierで次を確認する。
+runnerはbase用の一時HOMEへ候補SHAをAPMで導入・compileし、既存のAPM smoke verifierで次を確認する。model-visible workspaceもmoving `HEAD` ではなく、clean-checkで取得した同じimmutable SHAを直接 `git archive` して作る。
 
 - APM cacheの候補SHA
 - `~/.copilot/AGENTS.md` に候補Instructionsが生成されていること
@@ -123,7 +124,7 @@ python3 scripts/run_copilot_model_eval.py \
   --output-dir /tmp/copilot-model-eval/<run-id>
 ```
 
-repo内の出力先は拒否する。runnerは各runの開始時に、graderを含まないworkspaceと新しいHOMEを検証済みbaseから作る。stdout / stderrはCopilot終了後にrunner側がrepo外へ保存するため、後続runのworkspaceから先行モデル出力を読ませない。
+repo内の出力先は拒否する。repo外のevidence directoryは `0700`、suite / manifest / stdout / stderrは `0600` とし、共有machineの他ユーザーからgrader基準やraw responseを読めないようにする。runnerは各runの開始時に、graderを含まないworkspaceと新しいHOMEを検証済みbaseから作る。stdout / stderrはCopilot終了後にrunner側がrepo外へ保存するため、後続runのworkspaceから先行モデル出力を読ませない。
 
 実測開始時は、選択モデルとmodel / case / attemptの全planned matrixをmanifestへ先に保存する。CLI不足、BYOK設定、token不足、dirty checkout、Copilot version probe失敗などのpreflight失敗でもこの初期manifestを残し、候補配布前のCLI・環境失敗を `runtime`、認証不足を `tool_or_permission` として記録する。APM verifierのPyYAMLなどdelivery専用依存が不足した場合はtracebackのまま終了せず、`setup: failed` と `instruction_delivery` の未完了証拠をmanifestへ残す。
 
@@ -143,14 +144,15 @@ manifestには少なくとも次を残す。
 - 選択したmodel一覧と、開始前に確定したmodel / case / attemptの全planned matrix
 - model / case / attempt
 - prompt hash
-- elapsed time
+- model invocation elapsed time（workspace/HOME複製時間を含めない）
+- per-run setup time
 - return code / timeout
 - raw evidenceのファイル名
 - 品質判定欄
 - 効率判定欄
 - failure class / notes
 
-manifest更新は同じ出力ディレクトリの一時ファイルへ完全なJSONを書き、flush後にatomic replaceする。中断時に最後の正常manifestを不用意にtruncateしない。
+manifest更新は同じ出力ディレクトリの `0600` 一時ファイルへ完全な標準JSON（NaN / Infinityを許可しない）を書き、flush / fsync後にatomic replaceする。中断時に最後の正常manifestを不用意にtruncateしない。
 
 未評価フィールドは `null` のままにし、未知を0へ変換しない。選択したrepository内suiteは再現・再採点用のgrader evidenceとして、raw出力と同じ保護されたrepo外ディレクトリへ `suite.json` としてコピーする。repository外suiteは受け付けない。raw JSONLやstderr、suite snapshotにはコード・ログ・モデル応答・grader基準等が含まれ得るため、そのままGitへ追加しない。共有が必要なら公開範囲を確認し、必要な集計・判定だけをレビュー済み記録へ転記する。
 
@@ -181,7 +183,7 @@ criteriaを評価対象モデル自身へ見せて自己採点させない。
 - loaded Skills / references
 - 不要な再読
 
-CopilotのJSONLや利用環境から取得できない値は `null` とする。品質とコストを一つの総合scoreへ合成しない。
+`elapsed_seconds` はCopilot invocation直前から終了までだけを測り、workspace/HOME複製等は `setup_seconds` へ分ける。CopilotのJSONLや利用環境から取得できない値は `null` とする。品質とコストを一つの総合scoreへ合成しない。
 
 ## 原因分類
 
