@@ -889,7 +889,7 @@ class MetadataTests(unittest.TestCase):
                       (skill / 'SKILL.md').read_text(encoding='utf-8'))
         evals = json.loads((skill / 'evals/evals.json').read_text(encoding='utf-8'))
         self.assertEqual('document-authoring', evals['skill_name'])
-        self.assertEqual(list(range(1, 34)), sorted(case['id'] for case in evals['evals']))
+        self.assertEqual(list(range(1, 36)), sorted(case['id'] for case in evals['evals']))
         self.assertIn('skills/document-authoring/scripts/requirements.txt',
                       (root / 'requirements-ci.txt').read_text(encoding='utf-8'))
         self.assertIn("skills/document-authoring/scripts/validate_okf.py",
