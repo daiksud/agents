@@ -19,7 +19,7 @@ description: 開発実践の役割と重なりを短く整理し、必要なfocu
 | DDD | 何をモデル化し、どこまで同じ意味・言語が通用するか | semantic / architectureの関係は[ArchitectureとOrganization](architecture-and-organization.md) |
 | CI | 小さな変更が頻繁にmainへ統合され、速いfeedbackと修復が続いているか | 実装は `change-delivery`、診断は[診断手順](assessment.md) |
 | Continuous Delivery | 必要なときに検証済み変更を安全に配布可能な状態へ保てるか | DORA Capabilityとの関係は[DORA lens](dora.md) |
-| DevOps | developmentからoperationsまで利用者成果・品質・運用のfeedback loopを閉じられるか | [診断手順](assessment.md) |
+| DevOps | developmentからoperationsまで利用者成果・品質・運用のfeedback loopを閉じられるか | 証拠は[診断手順](assessment.md)、CALMS等の出典・採用判断は[一次資料](sources.md) |
 | Team Topologies / Conway | ownership・interaction・cognitive loadとsoftware boundaryをどう整えるか | [ArchitectureとOrganization](architecture-and-organization.md) |
 | DORA | Capability・Performance・Outcomeを証拠からどう診断するか | [DORA lens](dora.md) |
 
@@ -36,6 +36,20 @@ description: 開発実践の役割と重なりを短く整理し、必要なfocu
 | Documentation Quality | 文書作成そのものではなく利用可能な知識の状態 | DORA Climate for learning Capability |
 
 分類差を矛盾とみなさず、現在のproblemで何を観測するかを明示する。
+
+### BDD・ATDD・TDDの関係を保つ
+
+この3つはテスト成果物の種類だけでなく、どのfeedbackをいつ作るかが異なる。
+
+| Practice | 最小の診断契約 |
+| --- | --- |
+| BDD | 関係者が具体例を使い、Discovery → Formulation → Automationをつないで期待するふるまいの理解を深める |
+| ATDD | 対応する実装より前に、顧客・開発・検証の観点から受け入れ条件・テストを具体化する |
+| TDD | test listから一つずつ、失敗するテスト → 最小実装 → 必要な整理を反復し、設計へfeedbackする |
+
+BDDとATDDは具体例・共同理解で重なるため、別々の会議や二重の仕様書を必須にしない。TDDは合意したふるまいの内側で短い設計・検証loopとして使える。完成したGherkinやテストだけでは、Discovery・実装前合意・Red-firstの過程を確認済みとはしない。
+
+詳細な出典・版差は[一次資料](sources.md)、実際に集める証拠は[診断手順](assessment.md)を使う。
 
 ### 成果物だけで実践を断定しない
 
