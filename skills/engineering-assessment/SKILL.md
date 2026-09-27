@@ -23,7 +23,7 @@ description: DevOps・Lean・XP・CI/CD・DORA・BDD/ATDD/TDD・DDD・architectu
 
 複数lensが実際のproblemへ関係する場合だけ組み合わせる。たとえばMicroservices採否ではArchitecture / Organizationを中心にDDDとXP Simplicityを補助し、release承認待ちだけならLean / CDと関連DORA Capabilityへ絞る。
 
-限定診断は依頼された概念・困りごとに絞る。包括診断ではXPを含む各観点を対象の流れへ照らすが、全referenceを順番に読み込まず、実際に関係するlensを選ぶ。話題語が出ただけで無関係な観点を未確認一覧へ追加せず、依頼範囲を変える場合は確認する。
+限定診断は依頼された概念・困りごとに絞り、関連するlensだけを選ぶ。包括診断ではXPを含む各観点を対象の流れへ照らすが、全referenceを順番に読み込まず、実際に関係するlensを選ぶ。話題語が出ただけで無関係な観点を未確認一覧へ追加せず、依頼範囲を変える場合は確認する。
 
 ## 判断と完了の境界
 
