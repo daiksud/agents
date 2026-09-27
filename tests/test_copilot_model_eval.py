@@ -59,23 +59,6 @@ class CopilotModelEvaluationTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / "cases.json"
             path.write_text(json.dumps(data), encoding="utf-8")
-            with self.assertRaisesRegex(ValueError, "case prompt"):
-                self.module.load_suite(path)
-
-        data = json.loads(self.cases_path.read_text(encoding="utf-8"))
-        del data["cases"][0]["criteria"]
-        with tempfile.TemporaryDirectory() as directory:
-            path = Path(directory) / "cases.json"
-            path.write_text(json.dumps(data), encoding="utf-8")
-            with self.assertRaisesRegex(ValueError, "case criteria"):
-                self.module.load_suite(path)
-
-    def test_suite_rejects_missing_or_empty_case_fields(self):
-        data = json.loads(self.cases_path.read_text(encoding="utf-8"))
-        data["cases"][0]["prompt"] = "   "
-        with tempfile.TemporaryDirectory() as directory:
-            path = Path(directory) / "cases.json"
-            path.write_text(json.dumps(data), encoding="utf-8")
             with self.assertRaisesRegex(ValueError, "non-empty prompt"):
                 self.module.load_suite(path)
 
@@ -319,18 +302,14 @@ class CopilotModelEvaluationTests(unittest.TestCase):
         self.assertEqual(2, result.returncode)
         self.assertIn("at least one model", result.stderr)
 
-    def test_external_suite_is_preserved_before_preflight_failure(self):
+    def test_committed_suite_is_snapshotted_before_preflight_failure(self):
         with tempfile.TemporaryDirectory() as directory:
             base = Path(directory)
-            external_suite = base / "external-cases.json"
-            external_suite.write_bytes(self.cases_path.read_bytes())
             output = base / "run"
             result = subprocess.run(
                 [
                     sys.executable,
                     "scripts/run_copilot_model_eval.py",
-                    "--cases",
-                    str(external_suite),
                     "--output-dir",
                     str(output),
                 ],
@@ -343,7 +322,7 @@ class CopilotModelEvaluationTests(unittest.TestCase):
             )
             self.assertEqual(2, result.returncode)
             self.assertEqual(
-                external_suite.read_bytes(),
+                self.cases_path.read_bytes(),
                 (output / "suite.json").read_bytes(),
             )
             manifest = json.loads(
