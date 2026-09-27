@@ -129,6 +129,26 @@ class CopilotModelEvaluationTests(unittest.TestCase):
             )
             self.assertFalse((workspace / "README.md").exists())
 
+    def test_custom_suite_is_removed_from_installed_skill_tree(self):
+        with tempfile.TemporaryDirectory() as directory:
+            home = Path(directory)
+            relative = Path("skills/example/references/custom-cases.json")
+            deployed = home / ".agents" / relative
+            deployed.parent.mkdir(parents=True)
+            deployed.write_text("grader-only", encoding="utf-8")
+            self.module.remove_deployed_grader_material(home, (relative,))
+            self.assertFalse(deployed.exists())
+
+    def test_manifest_writer_uses_atomic_replace_without_temp_residue(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "manifest.json"
+            self.module.write_manifest(path, {"planned_runs": [1, 2, 3]})
+            self.assertEqual(
+                {"planned_runs": [1, 2, 3]},
+                json.loads(path.read_text(encoding="utf-8")),
+            )
+            self.assertFalse((path.parent / ".manifest.json.tmp").exists())
+
     def test_output_directory_must_be_outside_repository(self):
         with self.assertRaisesRegex(ValueError, "outside the repository"):
             self.module.resolve_output_dir(
