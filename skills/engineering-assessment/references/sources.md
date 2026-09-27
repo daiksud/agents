@@ -5,8 +5,6 @@ description: 診断の根拠にした一次資料、版の違い、資料の要�
 sources:
   - id: github-instructions-devops-core-principles-instructions-md
     resource: https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/instructions/devops-core-principles.instructions.md
-  - id: google-cloud-devops
-    resource: https://cloud.google.com/devops
   - id: www-explore-lean-what-is-lean
     resource: https://www.lean.org/explore-lean/what-is-lean/
   - id: tech-lean-practice
@@ -41,8 +39,6 @@ sources:
     resource: https://dora.dev/research/core/assets/dora-core-v2.1.0-detail.pdf
   - id: dora-research
     resource: https://dora.dev/research/
-  - id: dora-capabilities-catalog
-    resource: https://dora.dev/capabilities/
   - id: ron-jeffries-xp
     resource: https://ronjeffries.com/xprog/what-is-extreme-programming/
   - id: cucumber-docs-bdd
@@ -73,14 +69,13 @@ sources:
 
 ## 一次資料と適用上の判断
 
-既存資料は2026-09-11、追加したXP資料は2026-09-26、Engineering modelで追加したDevOps / DORA Capability Catalog資料は2026-09-27に確認した。以下を翻訳転載せず、[原則の関係](principles.md)と[診断手順](assessment.md)へ要約・再構成した。更新日がない資料に確認日を公開日として付けない。後日の診断では、実際に参照した版・確認日を記録する。
+既存資料は2026-09-11、追加したXP資料は2026-09-26に確認した。以下を翻訳転載せず、[原則の関係](principles.md)と[診断手順](assessment.md)へ要約・再構成した。更新日がない資料に確認日を公開日として付けない。後日の診断では、実際に参照した版・確認日を記録する。
 
 ### DevOps・Lean・改善
 
 | 資料・著者 | 参照点と注意 |
 | --- | --- |
 | DevOps Core Principles — GitHub awesome-copilot[^github-instructions-devops-core-principles-instructions-md]（2026-09-11確認） | CALMS、エンドツーエンドの責任、運用の観測・手順共有を診断へ具体化。全自動化や特定製品を必須にせず、固定のFour Keys・MTTR・Elite値は現行DORAの定義へ更新する。コミュニティの指示例として参照する |
-| DevOps — Google Cloud[^google-cloud-devops]（2026-09-27確認） | DevOpsをsoftware delivery velocity・service reliability・software stakeholdersのshared ownershipを改善するorganizational / cultural movementとして扱う。Engineering modelのDevOps境界をこの公式説明に基づける |
 | What is Lean? — Lean Enterprise Institute[^www-explore-lean-what-is-lean] | 顧客の問題から価値、仕事、人と継続的な実験を考える |
 | Lean practice — LEI[^tech-lean-practice] | 価値・価値の流れ・フロー・プル・改善を扱う |
 | How to transform — Jez Humble / DORA[^dora-guides-how-to-transform]（2025-10-06更新） | 現状、目標状態、制約、小さな実験から改善する |
@@ -98,7 +93,6 @@ sources:
 | Software delivery performance metrics — Nathen Harvey / DORA[^dora-guides-dora-metrics]（2026-01-05更新） | 現行5指標の定義、アプリケーション単位の測定、競争・単一指標・過剰な測定投資を避ける |
 | Metrics history — DORA[^dora-insights-dora-metrics-history]（2026-01-02更新） | 復旧指標の対象変更、rework追加、信頼性と配信指標の区別 |
 | DORA Core v2.1.0[^dora-assets-dora-core-v2-1-0-detail-pdf]・研究モデルの説明[^dora-research] | Coreは安定した研究モデルで、最新ガイドと更新周期が異なる。4指標の図を現行5指標と混同しない |
-| DORA Capability Catalog[^dora-capabilities-catalog]（2026-09-27確認） | CatalogにはCoreと明示されたCapabilityだけでなくAI等の追加項目も含まれる。Catalog全体をCoreや必須チェックリストと同一視しない。Core / Catalogの詳細mappingは #109 で扱う |
 
 DORAの文章・図はGoogle LLCによるCC BY 4.0（各ページの例外を除く）。本スキルは資料の要約と適用指針を作成したもので、DORAによる認定や普遍的な因果の保証ではない。
 
@@ -127,7 +121,6 @@ DORAの文章・図はGoogle LLCによるCC BY 4.0（各ページの例外を除
 本スキルの「単独開発に比例させる」「観測・不足・未確認・適用外で整理する」「Issue保存で診断を完了する」は、これらの資料を作業環境へ適用するための設計判断である。公式の成熟度尺度や組織編成の規格として提示しない。
 
 [^github-instructions-devops-core-principles-instructions-md]: [DevOps Core Principles — GitHub awesome-copilot](https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/instructions/devops-core-principles.instructions.md)。本文に記した参照範囲と採用判断の根拠。
-[^google-cloud-devops]: [DevOps — Google Cloud](https://cloud.google.com/devops)。DevOpsのorganizational / cultural movement、delivery velocity、service reliability、shared ownershipの公式説明。2026-09-27確認。
 [^www-explore-lean-what-is-lean]: [What is Lean? — Lean Enterprise Institute](https://www.lean.org/explore-lean/what-is-lean/)。本文に記した参照範囲と採用判断の根拠。
 [^tech-lean-practice]: [Lean practice — LEI](https://tech.lean.org/lean-practice)。本文に記した参照範囲と採用判断の根拠。
 [^dora-guides-how-to-transform]: [How to transform — Jez Humble / DORA](https://dora.dev/guides/how-to-transform/)。本文に記した参照範囲と採用判断の根拠。
@@ -145,7 +138,6 @@ DORAの文章・図はGoogle LLCによるCC BY 4.0（各ページの例外を除
 [^dora-insights-dora-metrics-history]: [Metrics history — DORA](https://dora.dev/insights/dora-metrics-history/)。本文に記した参照範囲と採用判断の根拠。
 [^dora-assets-dora-core-v2-1-0-detail-pdf]: [DORA Core v2.1.0](https://dora.dev/research/core/assets/dora-core-v2.1.0-detail.pdf)。本文に記した参照範囲と採用判断の根拠。
 [^dora-research]: [研究モデルの説明](https://dora.dev/research/)。本文に記した参照範囲と採用判断の根拠。
-[^dora-capabilities-catalog]: [DORA Capability Catalog](https://dora.dev/capabilities/)。Core表示のCapabilityとCore外・AI関連等のCatalog項目を区別するために参照。2026-09-27確認。
 [^ron-jeffries-xp]: [What is Extreme Programming?](https://ronjeffries.com/xprog/what-is-extreme-programming/)。5価値、現在の要求、小さいフィードバックと設計改善の参照と適用判断。
 [^cucumber-docs-bdd]: [BDD — Cucumber](https://cucumber.io/docs/bdd/)。本文に記した参照範囲と採用判断の根拠。
 [^cucumber-bdd-example-mapping]: [Example Mapping](https://cucumber.io/docs/bdd/example-mapping/)。本文に記した参照範囲と採用判断の根拠。
