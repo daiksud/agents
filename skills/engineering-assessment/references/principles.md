@@ -18,8 +18,8 @@ description: 開発実践の役割と重なりを短く整理し、必要なfocu
 | Lean | 価値が届くまでのWIP・待ち・手戻り・handoffをどう減らすか | この文書と[診断手順](assessment.md) |
 | DDD | 何をモデル化し、どこまで同じ意味・言語が通用するか | semantic / architectureの関係は[ArchitectureとOrganization](architecture-and-organization.md) |
 | CI | 小さな変更が頻繁にmainへ統合され、速いfeedbackと修復が続いているか | 実装は `change-delivery`、診断は[診断手順](assessment.md) |
-| Continuous Delivery | 必要なときに検証済み変更を安全に配布可能な状態へ保てるか | DORA Capabilityとの関係は[DORA lens](dora.md) |
-| DevOps | developmentからoperationsまで利用者成果・品質・運用のfeedback loopを閉じられるか | 証拠は[診断手順](assessment.md)、CALMS等の出典・採用判断は[一次資料](sources.md) |
+| Continuous Delivery | 必要なときに検証済み変更を安全に配布可能な状態へ保てるか。Continuous Deploymentは検証済み変更を自動でproductionへ配備する別のpracticeであり、手動承認があってもCDは成立し得る | DORA Capabilityとの関係は[DORA lens](dora.md) |
+| DevOps | developmentからoperationsまで利用者成果・品質・運用のfeedback loopを閉じられるか。CALMSはCulture / Automation / Lean / Measurement / Sharingの5観点として、組織・自動化・flow・測定・知識共有を一緒に診断する | 証拠は[診断手順](assessment.md)、CALMS等の出典・採用判断は[一次資料](sources.md) |
 | Team Topologies / Conway | ownership・interaction・cognitive loadとsoftware boundaryをどう整えるか | [ArchitectureとOrganization](architecture-and-organization.md) |
 | DORA | Capability・Performance・Outcomeを証拠からどう診断するか | [DORA lens](dora.md) |
 
