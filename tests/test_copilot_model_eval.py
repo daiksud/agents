@@ -54,6 +54,20 @@ class CopilotModelEvaluationTests(unittest.TestCase):
             self.assertIsNone(model["efficiency_result"])
             self.assertIsNone(model["model_specific_finding"])
 
+    def test_runner_does_not_reveal_grading_criteria_to_model(self):
+        import importlib.util
+
+        path = self.root / "scripts/run_copilot_model_eval.py"
+        spec = importlib.util.spec_from_file_location("copilot_eval", path)
+        module = importlib.util.module_from_spec(spec)
+        assert spec.loader is not None
+        spec.loader.exec_module(module)
+        suite = module.load_suite(self.cases_path)
+        prompt = module.build_prompt(suite, suite["cases"][0])
+        self.assertIn(suite["cases"][0]["prompt"], prompt)
+        for criterion in suite["cases"][0]["criteria"]:
+            self.assertNotIn(criterion, prompt)
+
     def test_runner_dry_run_covers_full_matrix_without_copilot(self):
         result = subprocess.run(
             [
