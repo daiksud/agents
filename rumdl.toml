@@ -1,0 +1,11 @@
+# GitHubでの表示を基準にする共通設定。
+[global]
+disable = ["MD013", "MD033", "MD034", "MD041"]
+
+[MD060]
+enabled = true
+style = "compact"
+
+[MD076]
+style = "tight"
+allow-loose-continuation = true
