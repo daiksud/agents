@@ -58,20 +58,8 @@ service / repository / teamの対応、cross-team dependency、deployability、M
 
 Team Topologiesは価値の流れ・cognitive load・interactionを改善するpattern languageとして使い、4つのteam typeを必須の組織図にしない。Conway / Inverse Conwayも、desired architectureへ人員配置を機械的に一致させる指示ではなく、communication structureとsoftware boundaryの相互作用を検証するlensとして扱う。
 
-### 測定は改善へのフィードバック
+### DORAはCapability・Performance・Outcomeを分けて使う
 
-DORAの現行ガイド（2026-01-05更新、2026-09-11確認）は5指標を扱う。
+DORAを使う診断では、Core Model・Capability Catalog・software delivery performance metrics・annual researchを同一の一覧として扱わない。詳細なversion差、Core v2.1.0のCapability group、現行5 metrics、問題からCapabilityを選ぶ手順は[DORAをCapability lensとして診断する](dora.md)を読む。
 
-| 区分 | 指標 | 測定対象 |
-| --- | --- | --- |
-| Throughput | Change lead time | コミットから本番配備までの時間 |
-| Throughput | Deployment frequency | 一定期間の本番配備回数または配備間隔 |
-| Throughput | Failed deployment recovery time | 即時介入が必要な配備失敗からの復旧時間 |
-| Instability | Change fail rate | 配備後に即時介入を要した配備の割合 |
-| Instability | Deployment rework rate | 本番インシデントに起因する予定外の配備の割合 |
-
-割合の分母は対象期間の配備。アプリケーション・サービスごとに定義と期間を揃え、欠測・推定を区別する。復旧指標は全種類の障害のMTTRではなく、CIのmain復旧時間やローカル環境の戻し時間とも異なる。
-
-旧Four Keys、2023年の復旧指標の対象変更、2024年のrework追加を区別する。DORA Core v2.1.0の図は4つの配信指標と別枠の信頼性を示しており、安定した研究モデルと最新の指標ガイドは更新周期が違う。版を確認せず「DORAは常に4つ」「信頼性が現行5番目」と書かない。
-
-指標は目的そのものではない。異なるサービスの平均や個人ランキング、固定Elite閾値を採用せず、利用者の成果・信頼性・働きやすさと併せて変化を見る。大規模な計測基盤の完成を改善開始の条件にしない。
+CI、Continuous Delivery、Small Batchesなど、XP・Lean・CDではPracticeやsystem of workとして現れる概念がDORAではCapabilityとして扱われても矛盾とはみなさない。設定やtoolの存在ではなく実際の行動・結果を観測し、metricsを個人評価や固定rankingへ使わない。
