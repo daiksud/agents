@@ -32,6 +32,13 @@ jobs:
           install: true
           cache: false
 
+      - name: Generate mise lockfile
+        run: |
+          mise lock
+          printf '%s\n' '---MISE-LOCK-BEGIN---'
+          cat mise.lock
+          printf '%s\n' '---MISE-LOCK-END---'
+
       - name: Check rumdl version
         run: mise exec -- rumdl --version
 
