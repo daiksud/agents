@@ -29,7 +29,7 @@ sources:
 
 既存の runtime Instruction / Skill は作業時の判断と実行手順を担う。この文書はそれらの上位に常時読み込ませるInstructionではなく、概念の分類、関係、配置判断を保守するときの正本として使う。
 
-本文は2026-09-27に一次・公式資料を再確認した。既存体系の詳細・版差・採用判断と、この単位で追加したDORA Capability Catalog / DevOps資料の確認記録は `skills/engineering-assessment/references/sources.md` で管理する。Core / Catalogの詳細mappingなど後続Unitへ延期した判断は、この文書の「後続の整理」で未実装として明示する。
+本文は2026-09-27に一次・公式資料を再確認した。既存runtimeがすでに利用する体系の詳細・版差・採用判断は `skills/engineering-assessment/references/sources.md` で管理する。一方、このUnit Aで追加したmaintainer-only taxonomyのDORA Capability Catalog / DevOps provenanceは、この文書の `sources` と脚注に保持し、runtimeのsource registryへはまだ加えない。Core / Catalogの詳細mappingなど後続Unitへ延期した判断は、この文書の「後続の整理」で未実装として明示し、#109で診断契約と同時にskill-owned provenanceへ移す。
 
 ### 分類は成熟度の階層ではない
 
