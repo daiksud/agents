@@ -31,7 +31,7 @@ GPT-6 Sol、GPT-6 Luna、Claude Opus 5.5、Claude Sonnet 5に、同じInstructio
 - リポジトリに残す基準記録: `evals/copilot-models/results/` 直下のレビュー済みJSON
 - #122のモデル非依存契約と#123のrouting / Progressive Disclosureを変更せずに評価する。[^issue-122] [^issue-123]
 
-`cases.json` の `criteria` はgrader専用で、評価対象モデルへ渡さない。runnerは各run用workspaceをGitのclean HEADから作り、`evals/copilot-models`、このガイド、runner本体、専用testをworkspaceから除外する。`--cases` で別のrepository内suiteを選んだ場合も、その選択済みsuite自体をmodel-visible workspaceとAPM cacheから除外する。repository外のsuiteはworkspaceへ持ち込まない。promptにもcriteriaを埋め込まない。
+`cases.json` の `criteria` はgrader専用で、評価対象モデルへ渡さない。runnerは各run用workspaceをGitのclean HEADから作り、`evals/copilot-models`、このガイド、runner本体、専用testをworkspaceから除外する。`--cases` で別suiteを選ぶ場合も、commitから再現できるrepository内ファイルに限定し、その選択済みsuite自体をmodel-visible workspace、APM cache、必要ならinstalled Skill treeから除外する。repository外suiteは実評価・dry-runとも受け付けない。promptにもcriteriaを埋め込まない。
 
 評価対象モデルがgrader、別モデルの出力、過去attemptを読める状態では比較しない。
 
@@ -94,7 +94,7 @@ A–Gを全モデルで同じ順序・基準で使う。
 | F | モデル引き継ぎ: self-reportではなく現在の差分・証拠を再確認する |
 | G | Skill routing: github-actions + code-reviewと必要referenceだけを使う |
 
-具体promptとgrader criteriaは `cases.json` を正本とし、モデルにはprompt部分だけを渡す。
+具体promptとgrader criteriaは `cases.json` を正本とし、モデルにはprompt部分だけを渡す。suiteはA–G、4つのbaseline model、必須フィールド、非空prompt・criteria・common rulesを実行前に検証し、malformed suiteを開始しない。
 
 ## 実行
 
@@ -114,7 +114,7 @@ python3 scripts/run_copilot_model_eval.py \
   --output-dir /tmp/copilot-model-eval/<run-id>
 ```
 
-一部モデルだけを再現確認するときはCLI model IDを明示する。
+一部モデルだけを再現確認するときはCLI model IDを明示する。`--models` を明示した場合は少なくとも1つの有効なIDを必要とし、空文字や区切り文字だけの指定で0-run batchを成功扱いしない。
 
 ```bash
 python3 scripts/run_copilot_model_eval.py \
