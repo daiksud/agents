@@ -1,9 +1,11 @@
 import importlib.util
 import json
+import stat
 import subprocess
 import sys
 import tempfile
 import unittest
+from unittest import mock
 from pathlib import Path
 
 
@@ -79,6 +81,15 @@ class CopilotModelEvaluationTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "non-empty name and cli_model"):
                 self.module.load_suite(path)
 
+    def test_suite_rejects_boolean_version(self):
+        data = json.loads(self.cases_path.read_text(encoding="utf-8"))
+        data["version"] = True
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "cases.json"
+            path.write_text(json.dumps(data), encoding="utf-8")
+            with self.assertRaisesRegex(ValueError, "positive integer"):
+                self.module.load_suite(path)
+
     def test_failure_taxonomy_separates_model_behavior_from_environment(self):
         data = json.loads(self.cases_path.read_text(encoding="utf-8"))
         self.assertEqual(
@@ -115,7 +126,11 @@ class CopilotModelEvaluationTests(unittest.TestCase):
     def test_staged_workspace_excludes_grader_material(self):
         with tempfile.TemporaryDirectory() as directory:
             workspace = Path(directory) / "workspace"
-            self.module.stage_workspace(self.root, workspace)
+            self.module.stage_workspace(
+                self.root,
+                workspace,
+                revision=self.module.current_head(self.root),
+            )
             for relative in self.module.GRADER_ONLY_PATHS:
                 self.assertFalse(
                     (workspace / relative).exists(),
@@ -151,9 +166,27 @@ class CopilotModelEvaluationTests(unittest.TestCase):
             self.module.stage_workspace(
                 self.root,
                 workspace,
+                revision=self.module.current_head(self.root),
                 extra_grader_paths=(Path("README.md"),),
             )
             self.assertFalse((workspace / "README.md").exists())
+
+    def test_selected_suite_must_exist_in_recorded_head(self):
+        head = self.module.current_head(self.root)
+        self.assertIsNotNone(head)
+        self.module.require_tracked_suite(
+            self.root,
+            head,
+            self.cases_path.relative_to(self.root),
+            self.cases_path,
+        )
+        with self.assertRaisesRegex(RuntimeError, "tracked"):
+            self.module.require_tracked_suite(
+                self.root,
+                head,
+                Path("not-a-tracked-suite.json"),
+                self.root / "not-a-tracked-suite.json",
+            )
 
     def test_custom_suite_is_removed_from_installed_skill_tree(self):
         with tempfile.TemporaryDirectory() as directory:
@@ -174,6 +207,19 @@ class CopilotModelEvaluationTests(unittest.TestCase):
                 json.loads(path.read_text(encoding="utf-8")),
             )
             self.assertFalse((path.parent / ".manifest.json.tmp").exists())
+            self.assertEqual(0o600, stat.S_IMODE(path.stat().st_mode))
+
+    def test_private_text_evidence_is_user_only(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "stderr.txt"
+            self.module.write_private_text(path, "evidence")
+            self.assertEqual("evidence", path.read_text(encoding="utf-8"))
+            self.assertEqual(0o600, stat.S_IMODE(path.stat().st_mode))
+
+    def test_current_head_tolerates_git_timeout(self):
+        timeout = subprocess.TimeoutExpired(["git", "rev-parse", "HEAD"], 30)
+        with mock.patch.object(self.module, "run_command", side_effect=timeout):
+            self.assertIsNone(self.module.current_head(self.root))
 
     def test_output_directory_must_be_outside_repository(self):
         with self.assertRaisesRegex(ValueError, "outside the repository"):
@@ -254,6 +300,26 @@ class CopilotModelEvaluationTests(unittest.TestCase):
         self.assertEqual(2, empty_models.returncode)
         self.assertIn("at least one model id", empty_models.stderr)
 
+    def test_runner_rejects_non_finite_timeout(self):
+        for value in ("nan", "inf", "-inf"):
+            result = subprocess.run(
+                [
+                    sys.executable,
+                    "-S",
+                    "scripts/run_copilot_model_eval.py",
+                    "--dry-run",
+                    "--timeout-seconds",
+                    value,
+                ],
+                cwd=self.root,
+                check=False,
+                text=True,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+            )
+            self.assertEqual(2, result.returncode)
+            self.assertIn("finite value", result.stderr)
+
     def test_preflight_failure_preserves_planned_matrix(self):
         with tempfile.TemporaryDirectory() as directory:
             output = Path(directory) / "run"
@@ -282,6 +348,15 @@ class CopilotModelEvaluationTests(unittest.TestCase):
             self.assertEqual(56, len(manifest["planned_runs"]))
             self.assertEqual("failed", manifest["setup"]["status"])
             self.assertEqual("runtime", manifest["setup"]["failure_class"])
+            self.assertEqual(0o700, stat.S_IMODE(output.stat().st_mode))
+            self.assertEqual(
+                0o600,
+                stat.S_IMODE((output / "manifest.json").stat().st_mode),
+            )
+            self.assertEqual(
+                0o600,
+                stat.S_IMODE((output / "suite.json").stat().st_mode),
+            )
 
     def test_runner_rejects_empty_explicit_model_selection(self):
         result = subprocess.run(
