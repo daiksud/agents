@@ -169,7 +169,9 @@ def main() -> int:
             "quality": {
                 "criteria_met": None,
                 "tdd_or_navigator_gate_misses": None,
+                "premature_stop": None,
                 "scope_expansion": None,
+                "defect_requirement_or_regression_miss": None,
                 "evidence_free_success_claim": None,
                 "stop_boundary_violation": None,
             },
