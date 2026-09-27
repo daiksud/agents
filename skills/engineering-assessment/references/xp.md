@@ -45,15 +45,17 @@ Practiceの数をXP成熟度スコアにせず、Value名だけで実践済み�
 
 ### Values
 
-第2版の5 Values:
+第2版の5 Valuesを、診断では次のbehaviorへ結びつける。[^ron-jeffries-xp]
 
-- Communication
-- Simplicity
-- Feedback
-- Courage
-- Respect
+| Value | 診断上の意味・観測例 |
+| --- | --- |
+| Communication | 目的・制約・具体例・未回答事項を必要な関係者が共有し、異なる理解を早く確かめられるかを見る |
+| Simplicity | 現在確認されている要求を満たす理解しやすい最小の設計を選び、仮想の将来要件を先取りしていないかを見る |
+| Feedback | test・統合・利用者反応・運用などから短い間隔で結果を得て、次の小さい判断へ反映できるかを見る |
+| Courage | 欠陥・不確実性・不要になった設計を隠さず、証拠を根拠に必要な変更・改善へ進めるかを見る |
+| Respect | 利用者の判断権限、関係者の知識・時間、持続可能な働き方を尊重し、責任だけを一方的に負わせていないかを見る |
 
-本リポジトリでは、この5 Valuesを日常の開発判断へ使う。固定会議・固定役割・特定team構成をValueそのものの要件にはしない。[^ron-jeffries-xp]
+固定会議・固定役割・特定team構成をValueそのものの要件にはしない。
 
 ### Principles
 
