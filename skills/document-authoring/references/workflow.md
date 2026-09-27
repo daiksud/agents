@@ -6,7 +6,6 @@ description: Issue、PR、リポジトリ文書、外部Bundle検査を区別し
 
 ## 依頼に応じた引き渡し
 
-
 - 外部Bundleのconformanceだけなら `issue-management`・`change-delivery` が未導入でも読み取り検査を扱い、自作のauthoring条件を課さない。
 - Issue計画だけなら `issue-management` で保存・再取得して本文・表示・URLを確認し、`change-delivery` は不要として停止する。
 - Issue本文・コメントだけなら `issue-management` の投稿とMarkdown品質を使い、`change-delivery` は不要とする。
