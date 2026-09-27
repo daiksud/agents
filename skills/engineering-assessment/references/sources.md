@@ -111,7 +111,7 @@ DORAの文章・図はGoogle LLCによるCC BY 4.0（各ページの例外を除
 | 資料・著者 | 参照点と注意 |
 | --- | --- |
 | What is Extreme Programming? — Ron Jeffries[^ron-jeffries-xp]（2026-09-26確認） | Communication・Simplicity・Feedback・Courage・Respectを現在の要求、小さいフィードバック、継続的な設計改善に使う。会議・役割・期間の固定形式、原典の効果数値を共通要件にしない |
-| Extreme Programming Explained: Embrace Change, 2nd Edition — Kent Beck / Cynthia Andres[^informit-xp-second-edition]（2004、2026-09-27確認） | Values / Principles / Practicesを区別し、13 Primary Practicesと11 Corollary Practicesの名称・分類をruntime taxonomyへ反映する。全Practiceの採用数を成熟度・必須チェックリストにしない |
+| Extreme Programming Explained: Embrace Change, 2nd Edition — Kent Beck / Cynthia Andres[^informit-xp-second-edition]（2004、2026-09-27確認） | Values / Principles / Practicesを区別し、TOCに列挙された14 Principles、13 Primary Practices、11 Corollary Practicesの名称・分類をruntime taxonomyへ反映する。同じpublisherページの紹介文は「Eleven principles」と記すため、Principles数はTOCの列挙を採用し不一致を残す。全Practiceの採用数を成熟度・必須チェックリストにしない |
 
 5価値を診断の問いとして扱い、採用プラクティスの数や特定の組織形態でXPの成否を判定しないのは、本スキルの適用判断である。
 
@@ -153,7 +153,7 @@ DORAの文章・図はGoogle LLCによるCC BY 4.0（各ページの例外を除
 [^dora-capabilities-catalog]: [DORA Capability Catalog](https://dora.dev/capabilities/)。Core / AI等のlabelと、Catalog全体とCore Modelの違いを確認する。2026-09-27確認。
 [^dora-capabilities-working-in-small-batches]: [Working in small batches — DORA](https://dora.dev/capabilities/working-in-small-batches/)。Core / AI label、short feedback loop、Lean product managementとの関係を確認する。2026-09-27確認。
 [^ron-jeffries-xp]: [What is Extreme Programming?](https://ronjeffries.com/xprog/what-is-extreme-programming/)。5価値、現在の要求、小さいフィードバックと設計改善の参照と適用判断。
-[^informit-xp-second-edition]: [Extreme Programming Explained: Embrace Change, 2nd Edition — InformIT](https://www.informit.com/store/extreme-programming-explained-embrace-change-9780134051987)。2004年版のValues、Principles、Primary / Corollary PracticesのTable of Contentsをtaxonomyの根拠にする。2026-09-27確認。
+[^informit-xp-second-edition]: [Extreme Programming Explained: Embrace Change, 2nd Edition — InformIT](https://www.informit.com/store/extreme-programming-explained-embrace-change-9780134051987)。2004年版のTable of Contentsをtaxonomyの根拠にする。TOCは14個のnamed Principlesを列挙する一方、同じページの紹介文は「Eleven principles」と記載しているため、その不一致を保持する。2026-09-27確認。
 [^cucumber-docs-bdd]: [BDD — Cucumber](https://cucumber.io/docs/bdd/)。本文に記した参照範囲と採用判断の根拠。
 [^cucumber-bdd-example-mapping]: [Example Mapping](https://cucumber.io/docs/bdd/example-mapping/)。本文に記した参照範囲と採用判断の根拠。
 [^cucumber-bdd-better-gherkin]: [Better Gherkin](https://cucumber.io/docs/bdd/better-gherkin/)。本文に記した参照範囲と採用判断の根拠。
