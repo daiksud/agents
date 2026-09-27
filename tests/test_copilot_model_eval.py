@@ -1,5 +1,6 @@
 import importlib.util
 import json
+import os
 import stat
 import subprocess
 import sys
@@ -139,6 +140,7 @@ class CopilotModelEvaluationTests(unittest.TestCase):
             self.assertTrue((workspace / "skills/software-development/SKILL.md").is_file())
             self.assertTrue((workspace / ".apm/instructions/skill-routing.instructions.md").is_file())
             self.assertEqual([], list((workspace / "skills").glob("*/evals")))
+            self.assertFalse((workspace / "docs/behavior").exists())
 
     def test_grader_material_is_removed_from_delivery_cache(self):
         with tempfile.TemporaryDirectory() as directory:
@@ -174,18 +176,26 @@ class CopilotModelEvaluationTests(unittest.TestCase):
     def test_selected_suite_must_exist_in_recorded_head(self):
         head = self.module.current_head(self.root)
         self.assertIsNotNone(head)
+        suite_bytes = self.cases_path.read_bytes()
         self.module.require_tracked_suite(
             self.root,
             head,
             self.cases_path.relative_to(self.root),
-            self.cases_path,
+            suite_bytes,
         )
+        with self.assertRaisesRegex(RuntimeError, "differs"):
+            self.module.require_tracked_suite(
+                self.root,
+                head,
+                self.cases_path.relative_to(self.root),
+                b"{}",
+            )
         with self.assertRaisesRegex(RuntimeError, "tracked"):
             self.module.require_tracked_suite(
                 self.root,
                 head,
                 Path("not-a-tracked-suite.json"),
-                self.root / "not-a-tracked-suite.json",
+                b"{}",
             )
 
     def test_custom_suite_is_removed_from_installed_skill_tree(self):
@@ -220,6 +230,82 @@ class CopilotModelEvaluationTests(unittest.TestCase):
         timeout = subprocess.TimeoutExpired(["git", "rev-parse", "HEAD"], 30)
         with mock.patch.object(self.module, "run_command", side_effect=timeout):
             self.assertIsNone(self.module.current_head(self.root))
+
+    def test_suite_snapshot_uses_captured_bytes(self):
+        captured = self.cases_path.read_bytes()
+        with tempfile.TemporaryDirectory() as directory:
+            output = Path(directory)
+            self.module.snapshot_suite(captured, output)
+            self.assertEqual(captured, (output / "suite.json").read_bytes())
+
+    def test_copilot_result_requires_a_model_response(self):
+        self.assertEqual(
+            (None, None),
+            self.module.classify_copilot_result(0, '{"response":"ok"}'),
+        )
+        failure, note = self.module.classify_copilot_result(0, "   ")
+        self.assertEqual("runtime", failure)
+        self.assertIn("no model response", note)
+        failure, note = self.module.classify_copilot_result(9, "response")
+        self.assertEqual("runtime", failure)
+        self.assertIn("code 9", note)
+
+    def test_delivery_setup_timeout_is_independent_from_model_timeout(self):
+        self.assertEqual(180, self.module.DELIVERY_SETUP_TIMEOUT_SECONDS)
+
+    def test_version_probe_failure_preserves_private_diagnostics(self):
+        with tempfile.TemporaryDirectory() as directory:
+            base = Path(directory)
+            bin_dir = base / "bin"
+            bin_dir.mkdir()
+            copilot = bin_dir / "copilot"
+            copilot.write_text(
+                "#!/bin/sh\necho version-out\necho version-err >&2\nexit 7\n",
+                encoding="utf-8",
+            )
+            copilot.chmod(0o700)
+            apm = bin_dir / "apm"
+            apm.write_text("#!/bin/sh\nexit 0\n", encoding="utf-8")
+            apm.chmod(0o700)
+            output = base / "run"
+            environment = os.environ.copy()
+            environment["PATH"] = str(bin_dir) + os.pathsep + environment.get("PATH", "")
+            environment["GITHUB_TOKEN"] = "evaluation-test-token"
+            for name in list(environment):
+                if name.startswith("COPILOT_PROVIDER_"):
+                    del environment[name]
+            result = subprocess.run(
+                [
+                    sys.executable,
+                    "scripts/run_copilot_model_eval.py",
+                    "--output-dir",
+                    str(output),
+                ],
+                cwd=self.root,
+                env=environment,
+                check=False,
+                text=True,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+            )
+            self.assertEqual(2, result.returncode)
+            self.assertEqual(
+                "version-out\n",
+                (output / "copilot-version.stdout.txt").read_text(encoding="utf-8"),
+            )
+            self.assertEqual(
+                "version-err\n",
+                (output / "copilot-version.stderr.txt").read_text(encoding="utf-8"),
+            )
+            self.assertEqual(
+                0o600,
+                stat.S_IMODE((output / "copilot-version.stderr.txt").stat().st_mode),
+            )
+            manifest = json.loads(
+                (output / "manifest.json").read_text(encoding="utf-8")
+            )
+            self.assertEqual("runtime", manifest["setup"]["failure_class"])
+            self.assertIn("diagnostics saved", manifest["setup"]["notes"])
 
     def test_output_directory_must_be_outside_repository(self):
         with self.assertRaisesRegex(ValueError, "outside the repository"):
