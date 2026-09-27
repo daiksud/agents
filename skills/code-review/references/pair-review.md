@@ -6,7 +6,6 @@ description: DriverとNavigatorのRed / Green / Refactor各段階で、通常レ
 
 ## ペア内の段階別レビュー
 
-
 共通指示で定めるDriver/Navigatorのペア内確認を依頼されたNavigatorは、このスキルの調査・指摘基準を選んだTDD段階の目的へ適用する。通常のPRレビュー、必須CI、承認、マージを代替せず、レビュー担当者は読み取り専用を維持する。
 
 ペア内で共通スタンダード候補に当たるユーザー判断を見つけたNavigatorも、前述の公開範囲を守ってDriverに引き渡す。候補Issueの記録はDriverが担当し、Navigator自身は投稿しない。
