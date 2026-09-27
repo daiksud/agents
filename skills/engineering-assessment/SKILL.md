@@ -11,10 +11,19 @@ description: DevOps・Lean・XP・CI/CD・DORA・BDD/ATDD/TDD・DDD・architectu
 
 対象の指示、利用者の成果、サービス・価値の流れ、制約、既存の診断Issueを確認する。診断範囲・優先順位を左右する目的が不明なら人に確認し、回答に依存しない資料調査を進める。
 
-- 診断・計画では[証拠から導入計画を作る](references/assessment.md)を読む。限定診断は依頼された概念・困りごとに絞り、包括的な診断はXPを含む各観点を対象の流れに照らす。関連観点は目標への影響を証拠で説明できる範囲で調べ、依頼範囲を変える場合は確認する。
-- 概念の定義・関係を確認するときは[原則の関係](references/principles.md)、出典・版差を検証するときは[一次資料と適用判断](references/sources.md)を読む。毎回の全文読み込みや全観点の一括導入・点数化は要求しない。
-- Domain / Bounded Context、service・repository・teamの対応、cross-team dependency、Microservices採否など、意味・変更・実行・配布・ownershipの境界が問題になるときだけ[ArchitectureとOrganizationの境界を診断する](references/architecture-and-organization.md)を読む。architecture styleやteam typeの数を結論にせず、実際のchange / test / deployment dependencyとcognitive loadを証拠にする。
-- DORA Core / Capability Catalog / delivery metrics、またはDORA Capabilityを使った診断では[DORAをCapability lensとして診断する](references/dora.md)を読む。Core・Catalog・metrics・annual researchを分け、problemに関係するCapabilityだけを証拠から選ぶ。
+[証拠から導入計画を作る](references/assessment.md)は診断・計画で読む共通手順とする。そのうえで、依頼されたproblemに必要なlensだけを選ぶ。
+
+| 条件 | 追加で読むreference | 読まないもの |
+| --- | --- | --- |
+| XPそのもの、XP第2版、Values / Principles / Practices、設計・feedback・働き方をXPで診断する | [XP taxonomy](references/xp.md) | 無関係なDORA / Architecture全文 |
+| Domain / Bounded Context、service・repository・teamの対応、cross-team dependency、Microservices、Conway | [ArchitectureとOrganization](references/architecture-and-organization.md) | 無関係なDORA Catalog全件 |
+| DORA Core / Capability Catalog / delivery metrics、DORA Capability | [DORA capability lens](references/dora.md) | 無関係なXP全taxonomy / Architecture全文 |
+| BDD / ATDD / TDD / DDD / Lean / DevOps / CI / CDの定義や相互関係だけが必要 | [原則の関係](references/principles.md) | 条件に該当しないfocused reference |
+| 出典・版差・採用判断を確認する | [一次資料と適用判断](references/sources.md) | 全資料の無条件な再読 |
+
+複数lensが実際のproblemへ関係する場合だけ組み合わせる。たとえばMicroservices採否ではArchitecture / Organizationを中心にDDDとXP Simplicityを補助し、release承認待ちだけならLean / CDと関連DORA Capabilityへ絞る。
+
+限定診断は依頼された概念・困りごとに絞る。包括診断でも全referenceを順番に読み込まず、対象の流れに関係するlensを選ぶ。話題語が出ただけで無関係な観点を未確認一覧へ追加せず、依頼範囲を変える場合は確認する。
 
 ## 判断と完了の境界
 
