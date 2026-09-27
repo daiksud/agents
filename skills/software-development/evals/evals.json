@@ -360,6 +360,18 @@
         "履歴喪失やコンテキスト不足では共通の再共有・停止条件を優先する"
       ],
       "source_id": "issue-99/copilot-cli-transport"
+    },
+    {
+      "id": 49,
+      "prompt": "読み取り専用模擬評価。実際の編集・投稿・実行は禁止。Copilot CLIではない別runtimeで、同じNavigatorへ継続連絡できるが、そのruntimeには `task`、`mode: background`、`agent_id`、`write_agent` というAPI名は存在しない。共通のDriver/Navigator通信プロトコルは利用できる。どの規則を適用するか。",
+      "expected_output": "Controlled English、固定フィールド、状態語、stable ID、初回コンテキスト、delta-only、再共有・停止条件は環境非依存の共通協働契約として適用する。一方、Copilot CLI固有の `task`、`mode: background`、`agent_id`、`write_agent` はこのruntimeへ強制せず、そのruntime固有の継続通信手段を使う。Copilot CLI資料を一般transport契約として扱わない。",
+      "files": [],
+      "expectations": [
+        "環境非依存の内部通信プロトコルは別runtimeでも適用する",
+        "Copilot CLI固有のtask/background/agent_id/write_agentを別runtimeへ強制しない",
+        "別runtimeではそのruntime固有の継続通信手段を使う"
+      ],
+      "source_id": "issue-99/non-copilot-transport-boundary"
     }
   ]
 }
