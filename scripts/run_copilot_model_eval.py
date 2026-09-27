@@ -115,17 +115,21 @@ def require_clean_checkout(root: Path) -> str:
     return head.stdout.strip()
 
 
+def remove_grader_material(root: Path) -> None:
+    for relative in GRADER_ONLY_PATHS:
+        target = root / relative
+        if target.is_dir():
+            shutil.rmtree(target)
+        elif target.exists():
+            target.unlink()
+
+
 def stage_workspace(root: Path, destination: Path) -> None:
     archive = subprocess.check_output(["git", "archive", "HEAD"], cwd=root)
     destination.mkdir(parents=True, exist_ok=False)
     with tarfile.open(fileobj=io.BytesIO(archive)) as bundle:
         bundle.extractall(destination, filter="data")
-    for relative in GRADER_ONLY_PATHS:
-        target = destination / relative
-        if target.is_dir():
-            shutil.rmtree(target)
-        elif target.exists():
-            target.unlink()
+    remove_grader_material(destination)
 
 
 def sha256_file(path: Path) -> str:
@@ -207,6 +211,9 @@ def prepare_delivery(
     errors = validate_deployment(workspace, home, repo_sha)
     if errors:
         raise RuntimeError("candidate delivery verification failed: " + "; ".join(errors))
+
+    cached_candidate = home / ".apm/apm_modules/daiksud/agents"
+    remove_grader_material(cached_candidate)
 
     fingerprints = {
         "workspace_sha256": sha256_tree(workspace),
