@@ -1,65 +1,81 @@
 ---
 type: Reference
 title: 開発実践の原則と関係
-description: 開発実践の目的と違い、測定と適用の際に混同しやすい点を整理します。
+description: 開発実践の役割と重なりを短く整理し、必要なfocused referenceへ案内します。
 ---
 
 ## 開発実践の原則と関係
 
-各概念は別々の導入チェックリストではない。利用者の成果を起点に、理解・設計・実装・統合・配布・運用の学習をつなぐ。以下は[一次資料](sources.md)に基づく要約であり、特定のツールや組織形態を必須にするものではない。
+各概念は別々の必須チェックリストではない。利用者の成果を起点に、理解・設計・実装・統合・配布・運用のfeedbackをつなぐ。
 
-### 価値を届ける流れ
+詳細を毎回ここへ重複記載せず、problemに応じて必要なfocused referenceだけを読む。
 
-| 概念 | 判断に使う問い | 混同を避ける |
+### Lensの役割
+
+| Lens | 主に答える問い | 詳細 |
 | --- | --- | --- |
-| DevOps | 開発・検証・運用が、利用者の成果と品質に対する責任を共有できるか | DevOps部署や自動化ツールの設置だけでは実践にならない |
-| Lean | 価値が届くまでの仕掛かり、待ち、手戻り、引き渡しを減らせるか | 人員削減や各担当者の稼働率最大化を目標にしない |
-| CI | 小さな変更が頻繁に共有mainへ統合され、速い検証と失敗の修復が続いているか | 長期ブランチのテスト成功やCI設定ファイルの存在だけでは不十分 |
-| 継続的デリバリー（CD） | 必要なときに検証済みの変更を安全に配布できるか | 自動本番配備を必須にしない。公開承認があっても配布可能な状態は維持できる |
+| XP | 小さく作り、feedbackから学び、現在の要求へ設計を進化させられるか | [XP taxonomy](xp.md) |
+| Lean | 利用者価値のend-to-end flowを改善し、WIP・待ち・手戻り・handoffを減らしながら人を尊重する。人員削減や各担当者の局所的な稼働率最大化を改善そのものとみなさない | この文書と[診断手順](assessment.md) |
+| DDD | 何をモデル化し、どこまで同じ意味・言語が通用するか | semantic / architectureの関係は[ArchitectureとOrganization](architecture-and-organization.md) |
+| CI | 小さな変更が頻繁にmainへ統合され、速いfeedbackと修復が続いているか | 実装は `change-delivery`、診断は[診断手順](assessment.md) |
+| Continuous Delivery | 必要なときに検証済み変更を安全に配布可能な状態へ保てるか。Continuous Deploymentは検証済み変更を自動でproductionへ配備する別のpracticeであり、手動承認があってもCDは成立し得る | DORA Capabilityとの関係は[DORA lens](dora.md) |
+| DevOps | developmentからoperationsまで利用者成果・品質・運用のfeedback loopを閉じられるか。CALMSはCulture / Automation / Lean / Measurement / Sharingの5観点として、組織・自動化・flow・測定・知識共有を一緒に診断する | 証拠は[診断手順](assessment.md)、CALMS等の出典・採用判断は[一次資料](sources.md) |
+| Team Topologies / Conway | ownership・interaction・cognitive loadとsoftware boundaryをどう整えるか | [ArchitectureとOrganization](architecture-and-organization.md) |
+| DORA | Capability・Performance・Outcomeを証拠からどう診断するか | [DORA lens](dora.md) |
 
-DevOpsのCALMS（Culture、Automation、Lean、Measurement、Sharing）は観点の整理に使える。Leanは顧客の問題、価値・流れ・プル、実験による継続改善と人の尊重を結びつける。運用や割り込みも仕掛かりに含め、詰まりがあれば着手を増やす前に完了を助ける。
+### 重なる概念を別ルールへ複製しない
 
-CIの「毎日」は頻繁な統合の目安であり、活動していない日まで数を稼ぐための変更を要求しない。長期ブランチを短くする途中の改善と、CIを実践できている状態を区別する。
+同じ概念は体系によって分類や用途が変わる。
 
-CDでは同じ成果物を環境間で昇格させ、構成・依存・データ変更を追跡できるようにする。自動検証に加え探索・使いやすさの確認も使う。継続的デプロイメントは検証を通った変更の自動本番配備を含み、CDとは異なる。承認待ちを改善する提案と、既存の承認を無断で省略する操作は別である。
+| 概念 | 一つのlensでの扱い | 別lensでの扱い |
+| --- | --- | --- |
+| Continuous Integration | XPのPrimary Practice | DORAのFast feedback Capability |
+| Continuous Delivery | delivery system / capability | DORAのFast flow Capability |
+| Small Batches | Lean / XPのflow・feedbackを支えるPractice | DORA Capability |
+| Loosely Coupled Teams | Architecture / Organization上の独立性 | DORA Fast flow Capability |
+| Documentation Quality | 文書作成そのものではなく利用可能な知識の状態 | DORA Climate for learning Capability |
 
-### XPの価値から開発判断を診断する
+分類差を矛盾とみなさず、現在のproblemで何を観測するかを明示する。
 
-XPはCommunication・Simplicity・Feedback・Courage・Respectを、現在の要求に合う設計と小さい学習の判断へ結びつける。価値の名前や実践項目の数ではなく、実際の判断と関係者の経験を確かめる。
+### BDD・ATDD・TDDの関係を保つ
 
-| 価値 | 判断と行動 |
+この3つはテスト成果物の種類だけでなく、どのfeedbackをいつ作るかが異なる。
+
+| Practice | 最小の診断契約 |
 | --- | --- |
-| Communication | 目的・ルール・具体例・未回答事項を共有し、異なる理解を実装前に確かめる |
-| Simplicity | 現在確認されている要求と契約を満たす、理解しやすい最小の設計を選ぶ |
-| Feedback | Small Stepsでテスト・協働・統合・利用者の反応を早く確かめ、次の小さな変更へ反映する |
-| Courage | 欠陥や不確実性を隠さず、テストと既存の承認範囲を根拠に必要な設計改善を行う |
-| Respect | 利用者の判断権限、関係者の知識・時間と持続可能な働き方を尊重する |
+| BDD | 関係者が具体例を使い、Discovery → Formulation → Automationをつないで期待するふるまいの理解を深める |
+| ATDD | 対応する実装より前に、顧客・開発・検証の観点から受け入れ条件・テストを具体化する |
+| TDD | test listから一つずつ、失敗するテスト → 最小実装 → 必要な整理を反復し、設計へfeedbackする |
 
-TDDはテスト先行の反復、BDD・ATDDは共有する期待の発見と受け入れ、DDDはモデル化の境界を調べる観点としてそれぞれ扱う。XPの価値をこれらの実践の存在だけで確認済みにせず、一律の採用や点数化を要求しない。
+BDDとATDDは具体例・共同理解で重なるため、別々の会議や二重の仕様書を必須にしない。TDDは合意したふるまいの内側で短い設計・検証loopとして使える。完成したGherkinやテストだけでは、Discovery・実装前合意・Red-firstの過程を確認済みとはしない。
 
-### 期待するふるまいから設計・検証する
+詳細な出典・版差は[一次資料](sources.md)、実際に集める証拠は[診断手順](assessment.md)を使う。
 
-| 概念 | 役割 | 成果物だけでは分からないこと |
-| --- | --- | --- |
-| BDD | 関係者が具体例を通じて発見（Discovery）・定式化（Formulation）・自動化（Automation）をつなぐ | Gherkinがあるだけでは、異なる観点で期待を確かめた証拠にならない |
-| ATDD | 対応する機能の実装より先に受け入れ条件・テストを具体化する | 実装後に追加した受け入れテストと、テスト駆動の過程を区別する |
-| TDD | テストリストから一つずつ、失敗するテスト・最小実装・整理を反復して設計へフィードバックする | テスト数やカバレッジだけでは、先行して検証した順序を示さない |
-| DDD | 業務の知識を深め、モデルの境界とユビキタス言語により複雑さを扱う | 用語集やクラス名だけでは、実際に共有された意味を保証しない |
+### 成果物だけで実践を断定しない
 
-BDDとATDDには具体例・共同理解という重なりがあり、別々の会議や二重の仕様書を必須にしない。TDDはその内側の短い設計・検証の反復にも使う。AIが利用者・業務・検証担当を演じるだけで、人間の合意を作ったことにはならない。少人数では持っていない知識を確認し、未回答の質問を残す。
+| 概念 | 成果物だけでは分からないこと |
+| --- | --- |
+| BDD | Gherkinの存在だけでは共同のDiscovery / Formulationを示さない |
+| ATDD | 受け入れテストの存在だけでは実装前に条件を共有した証拠にならない |
+| TDD | 完成したテストだけではRedを先に確認した過程を示さない |
+| DDD | 用語集やclass名だけではshared meaningやmodel boundaryを示さない |
+| CI | workflow YAMLだけでは頻繁なmain統合やbroken build修復を示さない |
+| CD | deploy jobだけではon-demandで安全に配布できることを示さない |
+| Team Topologies | CODEOWNERSやteam名だけでは責任・interaction・cognitive loadを示さない |
+| DORA Capability | tool / configの存在だけでは観測可能なCapabilityを示さない |
 
-共有仕様には、意味を明確にする具体値を残す。細かなUI手順や内部実装を混ぜず、API利用者や運用者が観測する契約を区別する。共有仕様の記法と発見は依存スキル `behavior-specification`、実装時のテスト層・既存仕様とリファクタリングは `software-development` に従う。
+実際の変更、履歴、待ち、失敗、配布、関係者の経験などを[診断手順](assessment.md)に従って確認する。
 
-### モデル・Architecture・Organizationの境界を分ける
+### 必要なlensだけを組み合わせる
 
-DDDのサブドメインは業務のproblem space、Bounded Contextは一つのmodelと言語が適用されるsemantic boundaryである。module・service・repository・deployment unit・team ownershipはそれぞれ別の単位なので、対応と理由を証拠から説明し、一律の1対1対応を要求しない。
+例:
 
-service / repository / teamの対応、cross-team dependency、deployability、Microservices採否など、意味・変更・実行・配布・ownershipの境界が問題になる診断では、[ArchitectureとOrganizationの境界](architecture-and-organization.md)を読む。実際のchange / test / deployment dependency、責任、interaction、cognitive loadを確認し、architecture styleやteam typeの数だけでloose couplingやfast flowを判定しない。
+- Ubiquitous Languageの食い違いだけ → DDD中心。DORAやArchitectureを無関係に展開しない。
+- release承認待ち → Lean / CD + 関連DORA Fast flow Capability。
+- cross-team dependency → Architecture / Organization + Team Topologies、必要ならDORA Loosely Coupled Teams。
+- Microservices採否 → Architecture / Organization + DDD + XP Simplicity。DORA Catalog全件は評価しない。
+- XPの設計・feedback診断 → XP focused lens。全Practiceの導入数を採点しない。
 
-Team Topologiesは価値の流れ・cognitive load・interactionを改善するpattern languageとして使い、4つのteam typeを必須の組織図にしない。Conway / Inverse Conwayも、desired architectureへ人員配置を機械的に一致させる指示ではなく、communication structureとsoftware boundaryの相互作用を検証するlensとして扱う。
+診断対象を広げる場合は、利用者の目的への影響を説明できることを条件にする。
 
-### DORAはCapability・Performance・Outcomeを分けて使う
-
-DORAを使う診断では、Core Model・Capability Catalog・software delivery performance metrics・annual researchを同一の一覧として扱わない。詳細なversion差、Core v2.1.0のCapability group、現行5 metrics、問題からCapabilityを選ぶ手順は[DORAをCapability lensとして診断する](dora.md)を読む。
-
-CI、Continuous Delivery、Small Batchesなど、XP・Lean・CDではPracticeやsystem of workとして現れる概念がDORAではCapabilityとして扱われても矛盾とはみなさない。設定やtoolの存在ではなく実際の行動・結果を観測し、metricsを個人評価や固定rankingへ使わない。
+出典・版差は[一次資料と適用判断](sources.md)で確認する。

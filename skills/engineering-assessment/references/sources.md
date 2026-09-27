@@ -47,6 +47,14 @@ sources:
     resource: https://dora.dev/capabilities/loosely-coupled-teams/
   - id: ron-jeffries-xp
     resource: https://ronjeffries.com/xprog/what-is-extreme-programming/
+  - id: informit-xp-second-edition
+    resource: https://www.informit.com/store/extreme-programming-explained-embrace-change-9780134051987
+  - id: oreilly-xp-principles
+    resource: https://www.oreilly.com/library/view/extreme-programming-explained/0321278658/ch05.xhtml
+  - id: oreilly-xp-primary-practices
+    resource: https://www.oreilly.com/library/view/extreme-programming-explained/0321278658/ch07.xhtml
+  - id: oreilly-xp-corollary-practices
+    resource: https://www.oreilly.com/library/view/extreme-programming-explained/0321278658/ch09.xhtml
   - id: cucumber-docs-bdd
     resource: https://cucumber.io/docs/bdd/
   - id: cucumber-bdd-example-mapping
@@ -75,7 +83,7 @@ sources:
 
 ## 一次資料と適用上の判断
 
-既存資料は2026-09-11、追加したXP資料は2026-09-26、Architecture / Organization lensとDORA model整理で追加した資料は2026-09-27に確認した。以下を翻訳転載せず、[原則の関係](principles.md)、[診断手順](assessment.md)、および条件付きのfocused referenceへ要約・再構成した。更新日がない資料に確認日を公開日として付けない。後日の診断では、実際に参照した版・確認日を記録する。
+既存資料は2026-09-11、XPの5 Values資料は2026-09-26、XP第2版taxonomy・Architecture / Organization lens・DORA model整理で追加した資料は2026-09-27に確認した。以下を翻訳転載せず、[原則の関係](principles.md)、[診断手順](assessment.md)、および条件付きのfocused referenceへ要約・再構成した。更新日がない資料に確認日を公開日として付けない。後日の診断では、実際に参照した版・確認日を記録する。
 
 ### DevOps・Lean・改善
 
@@ -109,6 +117,8 @@ DORAの文章・図はGoogle LLCによるCC BY 4.0（各ページの例外を除
 | 資料・著者 | 参照点と注意 |
 | --- | --- |
 | What is Extreme Programming? — Ron Jeffries[^ron-jeffries-xp]（2026-09-26確認） | Communication・Simplicity・Feedback・Courage・Respectを現在の要求、小さいフィードバック、継続的な設計改善に使う。会議・役割・期間の固定形式、原典の効果数値を共通要件にしない |
+| Extreme Programming Explained: Embrace Change, 2nd Edition — Kent Beck / Cynthia Andres[^informit-xp-second-edition]（2004、2026-09-27確認） | Values / Principles / Practicesを区別し、TOCに列挙された14 Principles、13 Primary Practices、11 Corollary Practicesの名称・分類をruntime taxonomyへ反映する。同じpublisherページの紹介文は「Eleven principles」と記すため、Principles数はTOCの列挙を採用し不一致を残す。全Practiceの採用数を成熟度・必須チェックリストにしない |
+| XP 2nd ed. Principles / Primary / Corollary chapters — O'Reilly licensed preview[^oreilly-xp-principles][^oreilly-xp-primary-practices][^oreilly-xp-corollary-practices]（2026-09-27確認） | named taxonomyだけでなく、PrinciplesがValuesとbehaviorを橋渡しすること、Primary Practicesは環境の最大の改善機会から選べること、Corollary PracticesはPrimaryの土台なしでは難しい・危険になり得ることを確認する。`xp.md` はtaxonomyとroutingを保持し、`xp-auxiliary.md` の各項目の診断意味は原文転載ではなく本スキル向けの短い適用パラフレーズ |
 
 5価値を診断の問いとして扱い、採用プラクティスの数や特定の組織形態でXPの成否を判定しないのは、本スキルの適用判断である。
 
@@ -150,6 +160,10 @@ DORAの文章・図はGoogle LLCによるCC BY 4.0（各ページの例外を除
 [^dora-capabilities-catalog]: [DORA Capability Catalog](https://dora.dev/capabilities/)。Core / AI等のlabelと、Catalog全体とCore Modelの違いを確認する。2026-09-27確認。
 [^dora-capabilities-working-in-small-batches]: [Working in small batches — DORA](https://dora.dev/capabilities/working-in-small-batches/)。Core / AI label、short feedback loop、Lean product managementとの関係を確認する。2026-09-27確認。
 [^ron-jeffries-xp]: [What is Extreme Programming?](https://ronjeffries.com/xprog/what-is-extreme-programming/)。5価値、現在の要求、小さいフィードバックと設計改善の参照と適用判断。
+[^informit-xp-second-edition]: [Extreme Programming Explained: Embrace Change, 2nd Edition — InformIT](https://www.informit.com/store/extreme-programming-explained-embrace-change-9780134051987)。2004年版のTable of Contentsをtaxonomyの根拠にする。TOCは14個のnamed Principlesを列挙する一方、同じページの紹介文は「Eleven principles」と記載しているため、その不一致を保持する。2026-09-27確認。
+[^oreilly-xp-principles]: [Chapter 5. Principles — Extreme Programming Explained, 2nd Edition](https://www.oreilly.com/library/view/extreme-programming-explained/0321278658/ch05.xhtml)。PrinciplesをValuesと具体的behaviorの橋渡しとして扱う章構成の参照。2026-09-27確認。
+[^oreilly-xp-primary-practices]: [Chapter 7. Primary Practices — Extreme Programming Explained, 2nd Edition](https://www.oreilly.com/library/view/extreme-programming-explained/0321278658/ch07.xhtml)。Primary Practicesを環境と最大の改善機会に応じて選ぶ位置づけの参照。2026-09-27確認。
+[^oreilly-xp-corollary-practices]: [Chapter 9. Corollary Practices — Extreme Programming Explained, 2nd Edition](https://www.oreilly.com/library/view/extreme-programming-explained/0321278658/ch09.xhtml)。Corollary PracticesをPrimaryの土台と適用条件の上で使う注意の参照。2026-09-27確認。
 [^cucumber-docs-bdd]: [BDD — Cucumber](https://cucumber.io/docs/bdd/)。本文に記した参照範囲と採用判断の根拠。
 [^cucumber-bdd-example-mapping]: [Example Mapping](https://cucumber.io/docs/bdd/example-mapping/)。本文に記した参照範囲と採用判断の根拠。
 [^cucumber-bdd-better-gherkin]: [Better Gherkin](https://cucumber.io/docs/bdd/better-gherkin/)。本文に記した参照範囲と採用判断の根拠。

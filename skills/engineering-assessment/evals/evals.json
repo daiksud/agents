@@ -338,6 +338,83 @@
         "サービス・期間・定義を揃える",
         "利用者成果・reliability・well-beingと合わせて改善を評価する"
       ]
+    },
+    {
+      "id": 33,
+      "prompt": "XP第2版に沿ってacme/apiの現状を診断したい。CommunicationなどのValues、HumanityなどのPrinciples、Pair ProgrammingやCIなどのPracticesを全部『原則』として一つのチェックリストにまとめ、未導入数で評価して。",
+      "expected_output": "Values / Principles / Practicesを平坦化せず、PracticeはPrimary / Corollaryを区別する。全項目の未導入数で採点せず、現在のproblemに関係するvalue・principle・practiceと実際の証拠だけを診断する。",
+      "files": [],
+      "expectations": [
+        "XPのValues / Principles / Practicesを別分類として扱う",
+        "Primary PracticesとCorollary Practicesを区別する",
+        "全項目の未導入数を成熟度スコアにしない"
+      ]
+    },
+    {
+      "id": 34,
+      "prompt": "acme/teamでXPを始めたいので、13 Primary Practicesと11 Corollary Practicesを全部今月から必須ルールにしてIssue計画へ入れて。現状の困りごとはレビュー待ちが長いことだけで、どのpracticeが効くかはまだ調べていない。",
+      "expected_output": "XP Practices全件を一律の必須ルールにしない。レビュー待ちの実例、feedback loop、change size、pairing/CI等の関連証拠から最初の小さい改善を選び、Corollary PracticeをPrimary Practiceより先に機械的に導入しない。",
+      "files": [],
+      "expectations": [
+        "XP全Practiceを一律の必須ルールにしない",
+        "現在の問題と証拠から関連Practiceだけを選ぶ",
+        "Primary / Corollaryの分類を導入順の機械的チェックリストに変えない"
+      ]
+    },
+    {
+      "id": 35,
+      "prompt": "acme/catalogでUbiquitous Languageの食い違いだけを診断したい。注文の『取消』と『キャンセル』が部署ごとに違う意味で使われ、仕様とコードも一致していない。CI/CD、DORA、Team Topologies、Microservicesの包括診断は求めていない。",
+      "expected_output": "DDDと共有理解に必要な範囲へ診断を限定し、用語・model・関係者の意味確認を扱う。Architecture / OrganizationやDORA等を無関係に展開・未確認一覧化しない。",
+      "files": [],
+      "expectations": [
+        "DDD / shared understanding中心に限定する",
+        "無関係なDORAやArchitecture lensを展開しない",
+        "narrow requestを包括診断へ広げない"
+      ]
+    },
+    {
+      "id": 36,
+      "prompt": "acme/webはPR後の承認待ちだけで平均3日止まる。main統合とテストは速く、domain modelやteam境界の問題は観測されていない。Lean / CD / DORAを使って待ちを減らす診断計画だけ欲しい。",
+      "expected_output": "Lean / CDとDORAのFast flow・Continuous delivery・Streamlining change approval等へ絞り、XP全taxonomy、DDD、Architecture / Organizationを無関係に全面展開しない。承認の目的と安全性を確認する小さい実験を選ぶ。",
+      "files": [],
+      "expectations": [
+        "Lean / CD / 関連DORA Capabilityへ絞る",
+        "無関係なXP全taxonomyやDDD/Architectureを展開しない",
+        "承認の目的と安全性を保つ小さい実験を選ぶ"
+      ]
+    },
+    {
+      "id": 37,
+      "prompt": "acme/ordersでMicroservices採否を診断したい。Bounded Context候補、独立release要求、team ownership、distributed-system costを確認したい一方、DORA Capability Catalog全部の評価は不要。XPのSimplicityも判断に使いたい。",
+      "expected_output": "Architecture / Organization lensを中心にDDDのsemantic boundary、independent delivery、team ownership、distributed-system costを確認し、XP Simplicityを補助lensとして使う。DORA Catalog全件や無関係なXP Practiceを読み込まない。",
+      "files": [],
+      "expectations": [
+        "Architecture / OrganizationとDDDを中心に診断する",
+        "XP Simplicityを補助lensとして使う",
+        "DORA Catalog全件やXP全Practiceへ診断範囲を広げない"
+      ]
+    },
+    {
+      "id": 38,
+      "prompt": "acme/platform のarchitecture診断で、XPのEconomics・Self-Similarity・Redundancyだけを補助lensとして使いたい。目的は重大なservice outageのriskを下げること。既存systemには再試行と監視があるが、別serviceと二重queueを追加する案のcost/valueは未確認。過去に別domainで使った分割patternもある。XP全体の導入診断は求めていない。どう計画する？",
+      "expected_output": "XP全taxonomyを展開せず個別項目の軽量lookupを使う。Economicsではcost/value/opportunity cost、Self-Similarityでは別domainのpatternを仮説として再利用し適合を検証、Redundancyでは重大riskに対する相補的な安全策と無目的な重複を区別する。既存の再試行・監視も証拠に含め、二重queueやservice追加を既定解にしない。",
+      "files": [],
+      "expectations": [
+        "XP全taxonomyではなく個別XP項目の軽量lookupを使う",
+        "Economics・Self-Similarity・Redundancyをそれぞれ診断上の意味で使う",
+        "追加serviceや二重queueを既定解にせず既存安全策とcost/valueを確認する"
+      ]
+    },
+    {
+      "id": 39,
+      "prompt": "acme/vendor のXP限定診断。年単位の固定scope契約で、利用者feedback後も低価値機能を作り続けることがある。Negotiated Scope ContractとPay-Per-Useを候補にしたいが、これは社内向けsystemでusage-linked business modelは採用しておらず、契約変更の法務制約も未確認。どういう改善計画にする？",
+      "expected_output": "Negotiated Scope Contractを短い契約・scope再交渉でcost/value/learningを反映するlensとして使い、法務・調達制約を確認する。Pay-Per-Useは実利用と経済feedbackを近づけるbusiness modelが適合する場合の候補であり、社内systemへ不適合なmodelを強制しない。まずfeedbackとscope変更可能性を確認する小さい実験を計画する。",
+      "files": [],
+      "expectations": [
+        "Negotiated Scope Contractの診断意味と法務・調達制約を扱う",
+        "Pay-Per-Useを適合しない社内systemへ強制しない",
+        "利用者feedbackとscope再交渉可能性を確かめる小さい実験を選ぶ"
+      ]
     }
   ]
 }

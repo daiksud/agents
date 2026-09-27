@@ -9,6 +9,8 @@ sources:
     resource: ../skills/engineering-assessment/references/architecture-and-organization.md
   - id: dora-lens
     resource: ../skills/engineering-assessment/references/dora.md
+  - id: xp-lens
+    resource: ../skills/engineering-assessment/references/xp.md
   - id: xp-principles
     resource: ../skills/software-development/references/sources.md
   - id: okf-v02
@@ -29,6 +31,10 @@ sources:
 | Capability | チーム・システムが実際に持つ観測可能な能力。設定やPracticeの存在だけで達成済みと判定しない | engineering modelの分類とDORA / Architecture診断 | `engineering-assessment` のfocused lens |
 | Architectural / Organizational Choice | 現在の要求・制約・能力から選ぶ構造、配置、責任境界。上位成熟状態や既定解とは扱わない | 設計・組織の判断・診断 | Microservices、module / deployment / team boundaries等 |
 | XP | Communication・Simplicity・Feedback・Courage・Respectを軸に、小さなテストと協働から設計を進化させる開発思想 | 開発判断・実装・診断 | `development`、`software-development`、`engineering-assessment` |
+| XP Value | XPで判断時に重視する5つの価値。Practiceの実施数や成熟度スコアとは区別する | 日常の開発判断・XP診断 | `development`、`engineering-assessment/references/xp.md` |
+| XP Principle | XPのValueと具体的Practiceの間をつなぐ判断原則。独立した共通Instruction一覧へ平坦化しない | XP診断 | `engineering-assessment/references/xp.md` |
+| XP Primary Practice | XP第2版でPrimaryに分類された具体的Practice。13項目すべての一律導入を要求しない | XPの実践・診断 | `engineering-assessment/references/xp.md`、該当する実行Skill |
+| XP Corollary Practice | XP第2版でCorollaryに分類された具体的Practice。11項目の採用数を成熟度としない | XPの実践・診断 | `engineering-assessment/references/xp.md`、該当する実行Skill |
 | Simple Design | 現在の契約を満たし、意図を伝え、同じルールの重複と不要な要素を減らす設計の判断基準 | 開発判断と設計・実装 | `software-development` の設計資料 |
 | YAGNI | 仮想の将来機能を先取りせず、現在必要な検証・設計改善を保つ判断 | 開発判断と設計・実装 | `software-development` の設計資料 |
 | DevOps | 開発から運用まで、利用者の成果と品質に対する責任・学習を共有する実践 | 開発実践の指示・診断 | deliveryのDevOps、`engineering-assessment` |

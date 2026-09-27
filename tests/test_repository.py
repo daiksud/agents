@@ -419,37 +419,94 @@ class MetadataTests(unittest.TestCase):
         skill = (root / 'skills/engineering-assessment/SKILL.md').read_text(encoding='utf-8')
         principles = (root / 'skills/engineering-assessment/references/principles.md').read_text(
             encoding='utf-8')
+        xp = (root / 'skills/engineering-assessment/references/xp.md').read_text(
+            encoding='utf-8')
+        auxiliary = (root / 'skills/engineering-assessment/references/xp-auxiliary.md').read_text(
+            encoding='utf-8')
         sources = (root / 'skills/engineering-assessment/references/sources.md').read_text(
             encoding='utf-8')
+
         self.assertIn('XP', skill.split('---', 2)[1])
         self.assertIn('XPを含む各観点', skill)
         self.assertIn('限定診断は依頼された概念・困りごとに絞り', skill)
+        self.assertIn('(references/xp.md)', skill)
+        self.assertIn('(references/xp-auxiliary.md)', skill)
         self.assertNotIn('9概念', skill)
 
-        lens = principles.split('### XPの価値から開発判断を診断する\n', 1)[1].split(
-            '### ', 1)[0]
-        for value in ('Communication', 'Simplicity', 'Feedback', 'Courage', 'Respect'):
-            with self.subTest(value=value):
-                self.assertIn(value, lens)
-        for practice in ('TDD', 'BDD', 'ATDD', 'DDD'):
-            with self.subTest(practice=practice):
-                self.assertIn(practice, lens)
-        self.assertIn('一律の採用や点数化を要求しない', lens)
-        self.assertNotIn('[^', lens)
-        for concept in ('DevOps', 'Lean', 'CI', 'CD', 'BDD', 'ATDD', 'TDD', 'DDD',
-                        'Team Topologies'):
+        self.assertIn('[XP taxonomy](xp.md)', principles)
+        for concept in ('DevOps', 'Lean', 'CI', 'Continuous Delivery', 'DDD',
+                        'Team Topologies', 'DORA'):
             with self.subTest(concept=concept):
                 self.assertIn(concept, principles)
 
+        def table_rows(markdown, heading):
+            section = markdown.split(f'### {heading}\n', 1)[1].split('\n### ', 1)[0]
+            rows = {}
+            for line in section.splitlines():
+                if not line.startswith('|'):
+                    continue
+                columns = [column.strip() for column in line.strip('|').split('|')]
+                if len(columns) < 2:
+                    continue
+                name, meaning = columns[:2]
+                if name in ('Value', 'Principle', 'Primary Practice', 'Corollary Practice'):
+                    continue
+                if name and set(name) <= set('-: '):
+                    continue
+                rows[name] = meaning
+            return rows
+
+        expected_values = (
+            'Communication', 'Simplicity', 'Feedback', 'Courage', 'Respect')
+        expected_principles = (
+            'Humanity', 'Economics', 'Mutual Benefit', 'Self-Similarity',
+            'Improvement', 'Diversity', 'Reflection', 'Flow', 'Opportunity',
+            'Redundancy', 'Failure', 'Quality', 'Baby Steps',
+            'Accepted Responsibility')
+        expected_primary = (
+            'Sit Together', 'Whole Team', 'Informative Workspace', 'Energized Work',
+            'Pair Programming', 'Stories', 'Weekly Cycle', 'Quarterly Cycle', 'Slack',
+            'Ten-Minute Build', 'Continuous Integration', 'Test-First Programming',
+            'Incremental Design')
+        expected_corollary = (
+            'Real Customer Involvement', 'Incremental Deployment', 'Team Continuity',
+            'Shrinking Teams', 'Root-Cause Analysis', 'Shared Code', 'Code and Tests',
+            'Single Code Base', 'Daily Deployment', 'Negotiated Scope Contract',
+            'Pay-Per-Use')
+
+        for heading, expected in (
+                ('Values', expected_values),
+                ('Principles', expected_principles),
+                ('Primary Practices', expected_primary),
+                ('Corollary Practices', expected_corollary)):
+            rows = table_rows(auxiliary, heading)
+            self.assertEqual(set(expected), set(rows), f'auxiliary {heading}')
+            for item in expected:
+                with self.subTest(auxiliary_heading=heading, item=item):
+                    self.assertTrue(rows[item].strip())
+                    self.assertNotEqual(item, rows[item].strip())
+                    self.assertIn(item, xp)
+
+        self.assertIn('13 Primary Practices', xp)
+        self.assertIn('11 Corollary Practices', xp)
+        self.assertIn('Practiceの数をXP成熟度スコアにせず', xp)
+        self.assertIn('xp-auxiliary.md', xp)
+
         entries = {entry['id']: entry['resource'] for entry in
                    yaml.safe_load(sources.split('---', 2)[1])['sources']}
-        self.assertIn('ron-jeffries-xp', entries)
         self.assertEqual('https://ronjeffries.com/xprog/what-is-extreme-programming/',
                          entries['ron-jeffries-xp'])
-        self.assertIn('| What is Extreme Programming? — Ron Jeffries[^ron-jeffries-xp]',
+        self.assertEqual(
+            'https://www.informit.com/store/'
+            'extreme-programming-explained-embrace-change-9780134051987',
+            entries['informit-xp-second-edition'])
+        for source_id in (
+                'oreilly-xp-principles', 'oreilly-xp-primary-practices',
+                'oreilly-xp-corollary-practices'):
+            with self.subTest(source_id=source_id):
+                self.assertIn(source_id, entries)
+        self.assertIn('| Extreme Programming Explained: Embrace Change, 2nd Edition',
                       sources)
-        self.assertIn('[^ron-jeffries-xp]: [What is Extreme Programming?]'
-                      '(https://ronjeffries.com/xprog/what-is-extreme-programming/)', sources)
 
     def test_assessment_xp_observation_distinguishes_values_from_artifacts(self):
         root = Path(__file__).resolve().parents[1]
