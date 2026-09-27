@@ -312,6 +312,18 @@
         "ユーザー向け回答やGitHub成果物へControlled Englishを強制しない"
       ],
       "source_id": "issue-99/communication-boundary"
+    },
+    {
+      "id": 45,
+      "prompt": "読み取り専用模擬評価。実際の編集・投稿・実行は禁止。同じNavigatorと継続連絡できる。RedでT-02のテスト差分を確認し、テストは要件を正しく表しており、未実装のため期待どおり失敗している。Driverへレビュー結果を返す。内部メッセージの形式と状態を示して。",
+      "expected_output": "必要な情報だけを軽量な半構造化形式で返し、例えば `PHASE: RED`、`TODO: T-02`、`STATUS: APPROVED`、必要な `FINDINGS` と `NEXT` を使う。不要なフィールドを空欄で埋めず、JSONを必須にしない。修正が必要なら `CHANGES_REQUIRED`、継続不能なら `BLOCKED` を使い、曖昧な承認表現へ言い換えない。",
+      "files": [],
+      "expectations": [
+        "必要な固定フィールドだけを使い、未使用フィールドを埋めない",
+        "承認状態をAPPROVED、修正必須をCHANGES_REQUIRED、継続不能をBLOCKEDで表す",
+        "厳密なparse要件がない限りJSONを必須にしない"
+      ],
+      "source_id": "issue-99/message-vocabulary"
     }
   ]
 }
