@@ -657,7 +657,7 @@
         "実ブロッカーがなければPRから統合後main確認・整理まで継続する",
         "「必要ならPRを作る」と確認して中間状態で停止しない"
       ],
-      "source_id": "issue-122/model-independent-completion"
+      "source_id": "task-workflow/140"
     },
     {
       "id": 141,
@@ -669,7 +669,7 @@
         "未実施のPR・CI・mergeを成功扱いしない",
         "完了範囲・未完了範囲・ブロッカー・再開条件を区別する"
       ],
-      "source_id": "issue-122/model-independent-stop-condition"
+      "source_id": "task-workflow/141"
     }
   ]
 }
