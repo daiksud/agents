@@ -70,6 +70,8 @@ runnerはbase用の一時HOMEへ候補SHAをAPMで導入・compileし、既存�
 
 各モデルrunは、この検証済みbase workspace / HOMEを新しい一時ディレクトリへコピーする。run間でHOME、Copilot state、workspaceを共有しない。
 
+APM配布検証の完了後、隔離HOMEのpackage cacheからgrader専用パスも削除してからbaseを複製する。評価対象モデルがcurrent workspace以外の隔離配布状態を参照できる場合でも、`cases.json` のcriteriaや評価ガイドへ到達させない。
+
 ### 認証と権限
 
 隔離HOMEでは既存のkeychain / Copilot設定を評価入力として再利用しない。非対話評価は `COPILOT_GITHUB_TOKEN`、`GH_TOKEN`、`GITHUB_TOKEN` のいずれかを環境変数として明示する。Copilot CLIはこの順序でtokenを使用でき、headless環境では環境変数認証が公式に案内されている。[^github-copilot-cli-programmatic] [^github-copilot-cli-auth]
