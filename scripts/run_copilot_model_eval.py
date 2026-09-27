@@ -28,12 +28,13 @@ FAILURE_CLASSES = {
     "none",
 }
 EXPECTED_CASE_IDS = list("ABCDEFG")
-EXPECTED_MODEL_IDS = [
-    "gpt-6-sol",
-    "gpt-6-luna",
-    "claude-opus-5.5",
-    "claude-sonnet-5",
+EXPECTED_MODELS = [
+    ("GPT-6 Sol", "gpt-6-sol"),
+    ("GPT-6 Luna", "gpt-6-luna"),
+    ("Claude Opus 5.5", "claude-opus-5.5"),
+    ("Claude Sonnet 5", "claude-sonnet-5"),
 ]
+EXPECTED_MODEL_IDS = [model_id for _, model_id in EXPECTED_MODELS]
 GRADER_ONLY_PATHS = (
     Path("evals/copilot-models"),
     Path("docs/guides/copilot-model-evaluation.md"),
@@ -43,62 +44,75 @@ GRADER_ONLY_PATHS = (
 AUTH_VARIABLES = ("COPILOT_GITHUB_TOKEN", "GH_TOKEN", "GITHUB_TOKEN")
 
 
+def _nonempty_string(value: object) -> bool:
+    return isinstance(value, str) and bool(value.strip())
+
+
+def _nonempty_string_list(value: object) -> bool:
+    return (
+        isinstance(value, list)
+        and bool(value)
+        and all(_nonempty_string(item) for item in value)
+    )
+
+
 def load_suite(path: Path) -> dict:
     data = json.loads(path.read_text(encoding="utf-8"))
-    if not isinstance(data, dict) or data.get("suite") != "copilot-model-contracts":
+    if not isinstance(data, dict):
+        raise ValueError("suite must be a JSON object")
+    if data.get("suite") != "copilot-model-contracts":
         raise ValueError("unexpected suite")
-    if not isinstance(data.get("version"), int):
-        raise ValueError("suite version must be an integer")
+    if not isinstance(data.get("version"), int) or data["version"] < 1:
+        raise ValueError("suite version must be a positive integer")
+    if not _nonempty_string_list(data.get("common_rules")):
+        raise ValueError("common_rules must be a non-empty string list")
 
     failure_classes = data.get("failure_classes")
-    if not isinstance(failure_classes, list) or set(failure_classes) != FAILURE_CLASSES:
-        raise ValueError("failure_classes do not match the documented taxonomy")
-
-    rules = data.get("common_rules")
     if (
-        not isinstance(rules, list)
-        or not rules
-        or any(not isinstance(rule, str) or not rule.strip() for rule in rules)
+        not isinstance(failure_classes, list)
+        or not all(_nonempty_string(item) for item in failure_classes)
+        or set(failure_classes) != FAILURE_CLASSES
     ):
-        raise ValueError("common_rules must contain non-empty strings")
+        raise ValueError("failure_classes do not match the documented taxonomy")
 
     models = data.get("models")
     if not isinstance(models, list):
         raise ValueError("models must be a list")
+    normalized_models = []
     for model in models:
         if not isinstance(model, dict):
             raise ValueError("each model must be an object")
-        for field in ("name", "cli_model"):
-            if not isinstance(model.get(field), str) or not model[field].strip():
-                raise ValueError(f"model {field} must be a non-empty string")
-    model_ids = [model["cli_model"] for model in models]
-    if model_ids != EXPECTED_MODEL_IDS or len(model_ids) != len(set(model_ids)):
+        name, cli_model = model.get("name"), model.get("cli_model")
+        if not _nonempty_string(name) or not _nonempty_string(cli_model):
+            raise ValueError("each model requires non-empty name and cli_model")
+        normalized_models.append((name, cli_model))
+    if (
+        normalized_models != EXPECTED_MODELS
+        or len({cli_model for _, cli_model in normalized_models})
+        != len(EXPECTED_MODELS)
+    ):
         raise ValueError("models must contain exactly one ordered baseline model set")
 
     cases = data.get("cases")
     if not isinstance(cases, list):
         raise ValueError("cases must be a list")
+    ids = []
     for case in cases:
         if not isinstance(case, dict):
             raise ValueError("each case must be an object")
-        for field in ("id", "title", "prompt"):
-            if not isinstance(case.get(field), str) or not case[field].strip():
-                raise ValueError(f"case {field} must be a non-empty string")
-        criteria = case.get("criteria")
-        if (
-            not isinstance(criteria, list)
-            or not criteria
-            or any(
-                not isinstance(criterion, str) or not criterion.strip()
-                for criterion in criteria
-            )
-        ):
-            raise ValueError("case criteria must contain non-empty strings")
-    ids = [case["id"] for case in cases]
+        case_id = case.get("id")
+        if not _nonempty_string(case_id):
+            raise ValueError("each case requires a non-empty id")
+        if not _nonempty_string(case.get("title")):
+            raise ValueError(f"case {case_id} requires a non-empty title")
+        if not _nonempty_string(case.get("prompt")):
+            raise ValueError(f"case {case_id} requires a non-empty prompt")
+        if not _nonempty_string_list(case.get("criteria")):
+            raise ValueError(f"case {case_id} requires non-empty criteria")
+        ids.append(case_id)
     if ids != EXPECTED_CASE_IDS or len(ids) != len(set(ids)):
         raise ValueError("cases must contain exactly one ordered A-G sequence")
     return data
-
 
 def build_prompt(suite: dict, case: dict) -> str:
     rules = "\n".join(f"- {rule}" for rule in suite["common_rules"])
@@ -345,6 +359,24 @@ def prepare_delivery(
     return workspace, home, environment, fingerprints
 
 
+def snapshot_suite(path: Path, output_dir: Path) -> Path:
+    target = output_dir / "suite.json"
+    payload = path.read_bytes()
+    temporary = target.with_name(f".{target.name}.tmp")
+    try:
+        with temporary.open("wb") as stream:
+            stream.write(payload)
+            stream.flush()
+            os.fsync(stream.fileno())
+        os.replace(temporary, target)
+    finally:
+        try:
+            temporary.unlink()
+        except FileNotFoundError:
+            pass
+    return target
+
+
 def write_manifest(path: Path, manifest: dict) -> None:
     payload = json.dumps(manifest, ensure_ascii=False, indent=2) + "\n"
     temporary = path.with_name(f".{path.name}.tmp")
@@ -454,12 +486,18 @@ def main() -> int:
         return 2
 
     manifest_path = output_dir / "manifest.json"
+    try:
+        suite_snapshot = snapshot_suite(suite_path, output_dir)
+    except OSError as error:
+        print(f"failed to preserve evaluation suite: {error}", file=sys.stderr)
+        return 2
     suite_sha256 = sha256_file(suite_path)
     selected_suite_paths = (suite_path.relative_to(root),)
     manifest = {
         "suite": suite["suite"],
         "suite_version": suite["version"],
         "suite_sha256": suite_sha256,
+        "suite_snapshot": suite_snapshot.name,
         "started_at": datetime.now(timezone.utc).isoformat(),
         "repo_sha": current_head(root),
         "auth_source": None,
