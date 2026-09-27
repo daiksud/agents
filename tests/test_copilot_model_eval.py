@@ -70,6 +70,32 @@ class CopilotModelEvaluationTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "case criteria"):
                 self.module.load_suite(path)
 
+    def test_suite_rejects_missing_or_empty_case_fields(self):
+        data = json.loads(self.cases_path.read_text(encoding="utf-8"))
+        data["cases"][0]["prompt"] = "   "
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "cases.json"
+            path.write_text(json.dumps(data), encoding="utf-8")
+            with self.assertRaisesRegex(ValueError, "non-empty prompt"):
+                self.module.load_suite(path)
+
+        data = json.loads(self.cases_path.read_text(encoding="utf-8"))
+        del data["cases"][0]["criteria"]
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "cases.json"
+            path.write_text(json.dumps(data), encoding="utf-8")
+            with self.assertRaisesRegex(ValueError, "non-empty criteria"):
+                self.module.load_suite(path)
+
+    def test_suite_rejects_missing_or_empty_model_fields(self):
+        data = json.loads(self.cases_path.read_text(encoding="utf-8"))
+        data["models"][0]["name"] = ""
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "cases.json"
+            path.write_text(json.dumps(data), encoding="utf-8")
+            with self.assertRaisesRegex(ValueError, "non-empty name and cli_model"):
+                self.module.load_suite(path)
+
     def test_failure_taxonomy_separates_model_behavior_from_environment(self):
         data = json.loads(self.cases_path.read_text(encoding="utf-8"))
         self.assertEqual(
@@ -273,6 +299,58 @@ class CopilotModelEvaluationTests(unittest.TestCase):
             self.assertEqual(56, len(manifest["planned_runs"]))
             self.assertEqual("failed", manifest["setup"]["status"])
             self.assertEqual("runtime", manifest["setup"]["failure_class"])
+
+    def test_runner_rejects_empty_explicit_model_selection(self):
+        result = subprocess.run(
+            [
+                sys.executable,
+                "-S",
+                "scripts/run_copilot_model_eval.py",
+                "--dry-run",
+                "--models",
+                ",",
+            ],
+            cwd=self.root,
+            check=False,
+            text=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+        )
+        self.assertEqual(2, result.returncode)
+        self.assertIn("at least one model", result.stderr)
+
+    def test_external_suite_is_preserved_before_preflight_failure(self):
+        with tempfile.TemporaryDirectory() as directory:
+            base = Path(directory)
+            external_suite = base / "external-cases.json"
+            external_suite.write_bytes(self.cases_path.read_bytes())
+            output = base / "run"
+            result = subprocess.run(
+                [
+                    sys.executable,
+                    "scripts/run_copilot_model_eval.py",
+                    "--cases",
+                    str(external_suite),
+                    "--output-dir",
+                    str(output),
+                ],
+                cwd=self.root,
+                env={"PATH": ""},
+                check=False,
+                text=True,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+            )
+            self.assertEqual(2, result.returncode)
+            self.assertEqual(
+                external_suite.read_bytes(),
+                (output / "suite.json").read_bytes(),
+            )
+            manifest = json.loads(
+                (output / "manifest.json").read_text(encoding="utf-8")
+            )
+            self.assertEqual("suite.json", manifest["suite_snapshot"])
+            self.assertEqual(28, len(manifest["planned_runs"]))
 
     def test_guide_requires_isolation_and_no_unmeasured_claims(self):
         guide = self.guide_path.read_text(encoding="utf-8")
