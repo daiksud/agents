@@ -17,11 +17,6 @@ import time
 from datetime import datetime, timezone
 from pathlib import Path
 
-try:
-    from scripts.apm_smoke import candidate_environment, validate_deployment
-except ModuleNotFoundError:  # direct execution from scripts/
-    from apm_smoke import candidate_environment, validate_deployment
-
 FAILURE_CLASSES = {
     "instruction_delivery",
     "ambiguity",
@@ -57,10 +52,7 @@ def load_suite(path: Path) -> dict:
     if set(data["failure_classes"]) != FAILURE_CLASSES:
         raise ValueError("failure_classes do not match the documented taxonomy")
     model_ids = [model["cli_model"] for model in data["models"]]
-    if (
-        model_ids != EXPECTED_MODEL_IDS
-        or len(model_ids) != len(set(model_ids))
-    ):
+    if model_ids != EXPECTED_MODEL_IDS or len(model_ids) != len(set(model_ids)):
         raise ValueError("models must contain exactly one ordered baseline model set")
     return data
 
@@ -109,6 +101,14 @@ def require_success(
     return result
 
 
+def current_head(root: Path) -> str | None:
+    try:
+        result = run_command(["git", "rev-parse", "HEAD"], root, timeout=30)
+    except OSError:
+        return None
+    return result.stdout.strip() if result.returncode == 0 else None
+
+
 def require_clean_checkout(root: Path) -> str:
     result = run_command(
         ["git", "status", "--porcelain=v1", "--untracked-files=all"],
@@ -125,8 +125,21 @@ def require_clean_checkout(root: Path) -> str:
     return head.stdout.strip()
 
 
-def remove_grader_material(root: Path) -> None:
-    for relative in GRADER_ONLY_PATHS:
+def grader_paths(extra_paths: tuple[Path, ...] = ()) -> tuple[Path, ...]:
+    seen: set[Path] = set()
+    result: list[Path] = []
+    for path in (*GRADER_ONLY_PATHS, *extra_paths):
+        if path not in seen:
+            seen.add(path)
+            result.append(path)
+    return tuple(result)
+
+
+def remove_grader_material(
+    root: Path,
+    extra_paths: tuple[Path, ...] = (),
+) -> None:
+    for relative in grader_paths(extra_paths):
         target = root / relative
         if target.is_dir():
             shutil.rmtree(target)
@@ -147,12 +160,17 @@ def remove_skill_evals(root: Path) -> None:
                 shutil.rmtree(eval_dir)
 
 
-def stage_workspace(root: Path, destination: Path) -> None:
+def stage_workspace(
+    root: Path,
+    destination: Path,
+    *,
+    extra_grader_paths: tuple[Path, ...] = (),
+) -> None:
     archive = subprocess.check_output(["git", "archive", "HEAD"], cwd=root)
     destination.mkdir(parents=True, exist_ok=False)
     with tarfile.open(fileobj=io.BytesIO(archive)) as bundle:
         bundle.extractall(destination, filter="data")
-    remove_grader_material(destination)
+    remove_grader_material(destination, extra_grader_paths)
     remove_skill_evals(destination)
 
 
@@ -203,11 +221,21 @@ def prepare_delivery(
     base_dir: Path,
     *,
     timeout: float,
+    extra_grader_paths: tuple[Path, ...] = (),
 ) -> tuple[Path, Path, dict[str, str], dict[str, str]]:
+    try:
+        from scripts.apm_smoke import candidate_environment, validate_deployment
+    except ModuleNotFoundError:
+        from apm_smoke import candidate_environment, validate_deployment
+
     workspace = base_dir / "workspace"
     home = base_dir / "home"
     mirror = base_dir / "origin.git"
-    stage_workspace(root, workspace)
+    stage_workspace(
+        root,
+        workspace,
+        extra_grader_paths=extra_grader_paths,
+    )
     home.mkdir(parents=True)
 
     environment = isolated_environment(home, os.environ.copy())
@@ -237,7 +265,7 @@ def prepare_delivery(
         raise RuntimeError("candidate delivery verification failed: " + "; ".join(errors))
 
     cached_candidate = home / ".apm/apm_modules/daiksud/agents"
-    remove_grader_material(cached_candidate)
+    remove_grader_material(cached_candidate, extra_grader_paths)
     remove_skill_evals(cached_candidate)
     remove_skill_evals(home)
 
@@ -254,6 +282,24 @@ def write_manifest(path: Path, manifest: dict) -> None:
         json.dumps(manifest, ensure_ascii=False, indent=2) + "\n",
         encoding="utf-8",
     )
+
+
+def finish_preflight_failure(
+    manifest_path: Path,
+    manifest: dict,
+    *,
+    failure_class: str,
+    notes: str,
+) -> int:
+    manifest["setup"] = {
+        "status": "failed",
+        "failure_class": failure_class,
+        "notes": notes,
+    }
+    manifest["finished_at"] = datetime.now(timezone.utc).isoformat()
+    write_manifest(manifest_path, manifest)
+    print(notes, file=sys.stderr)
+    return 2
 
 
 def text_from_timeout(value: str | bytes | None) -> str:
@@ -284,7 +330,8 @@ def main() -> int:
         parser.error("--timeout-seconds must be > 0")
 
     root = Path.cwd().resolve()
-    suite = load_suite(args.cases)
+    suite_path = args.cases.resolve()
+    suite = load_suite(suite_path)
     selected = suite["models"]
     if args.models:
         wanted = {item.strip() for item in args.models.split(",") if item.strip()}
@@ -299,6 +346,15 @@ def main() -> int:
         for case in suite["cases"]
         for attempt in range(1, args.repeat + 1)
     ]
+    planned_runs = [
+        {
+            "model": model["name"],
+            "cli_model": model["cli_model"],
+            "case_id": case["id"],
+            "attempt": attempt,
+        }
+        for model, case, attempt in planned
+    ]
 
     if args.dry_run:
         print(json.dumps({
@@ -309,60 +365,25 @@ def main() -> int:
         }, ensure_ascii=False, indent=2))
         return 0
 
-    for executable in ("copilot", "apm", "git"):
-        if shutil.which(executable) is None:
-            print(f"{executable} executable not found", file=sys.stderr)
-            return 2
-
-    provider_variables = sorted(
-        key for key in os.environ if key.startswith("COPILOT_PROVIDER_")
-    )
-    if provider_variables:
-        print(
-            "BYOK provider variables are not allowed for GitHub Copilot comparison: "
-            + ", ".join(provider_variables),
-            file=sys.stderr,
-        )
-        return 2
-
-    auth_variable = next(
-        (name for name in AUTH_VARIABLES if os.environ.get(name)),
-        None,
-    )
-    if auth_variable is None:
-        print(
-            "isolated evaluation requires COPILOT_GITHUB_TOKEN, GH_TOKEN, "
-            "or GITHUB_TOKEN",
-            file=sys.stderr,
-        )
-        return 2
-
     try:
-        repo_sha = require_clean_checkout(root)
         output_dir = resolve_output_dir(args.output_dir, root)
-    except (RuntimeError, ValueError) as error:
+        output_dir.mkdir(parents=True, exist_ok=False)
+    except (OSError, ValueError) as error:
         print(str(error), file=sys.stderr)
         return 2
 
-    output_dir.mkdir(parents=True, exist_ok=False)
     manifest_path = output_dir / "manifest.json"
-    suite_sha256 = sha256_file(args.cases.resolve())
-    planned_runs = [
-        {
-            "model": model["name"],
-            "cli_model": model["cli_model"],
-            "case_id": case["id"],
-            "attempt": attempt,
-        }
-        for model, case, attempt in planned
-    ]
+    suite_sha256 = sha256_file(suite_path)
+    selected_suite_paths: tuple[Path, ...] = ()
+    if suite_path.is_relative_to(root):
+        selected_suite_paths = (suite_path.relative_to(root),)
     manifest = {
         "suite": suite["suite"],
         "suite_version": suite["version"],
         "suite_sha256": suite_sha256,
         "started_at": datetime.now(timezone.utc).isoformat(),
-        "repo_sha": repo_sha,
-        "auth_source": auth_variable,
+        "repo_sha": current_head(root),
+        "auth_source": None,
         "selected_models": [
             {"name": model["name"], "cli_model": model["cli_model"]}
             for model in selected
@@ -373,6 +394,62 @@ def main() -> int:
         "setup": {"status": "pending"},
         "runs": [],
     }
+    write_manifest(manifest_path, manifest)
+
+    missing_executables = [
+        executable
+        for executable in ("copilot", "apm", "git")
+        if shutil.which(executable) is None
+    ]
+    if missing_executables:
+        return finish_preflight_failure(
+            manifest_path,
+            manifest,
+            failure_class="runtime",
+            notes="missing executable(s): " + ", ".join(missing_executables),
+        )
+
+    provider_variables = sorted(
+        key for key in os.environ if key.startswith("COPILOT_PROVIDER_")
+    )
+    if provider_variables:
+        return finish_preflight_failure(
+            manifest_path,
+            manifest,
+            failure_class="runtime",
+            notes=(
+                "BYOK provider variables are not allowed for GitHub Copilot "
+                "comparison: " + ", ".join(provider_variables)
+            ),
+        )
+
+    auth_variable = next(
+        (name for name in AUTH_VARIABLES if os.environ.get(name)),
+        None,
+    )
+    if auth_variable is None:
+        return finish_preflight_failure(
+            manifest_path,
+            manifest,
+            failure_class="tool_or_permission",
+            notes=(
+                "isolated evaluation requires COPILOT_GITHUB_TOKEN, GH_TOKEN, "
+                "or GITHUB_TOKEN"
+            ),
+        )
+    manifest["auth_source"] = auth_variable
+    write_manifest(manifest_path, manifest)
+
+    try:
+        repo_sha = require_clean_checkout(root)
+    except (OSError, RuntimeError, subprocess.SubprocessError) as error:
+        return finish_preflight_failure(
+            manifest_path,
+            manifest,
+            failure_class="runtime",
+            notes=str(error),
+        )
+    manifest["repo_sha"] = repo_sha
     write_manifest(manifest_path, manifest)
 
     executable = shutil.which("copilot")
@@ -390,13 +467,15 @@ def main() -> int:
                 repo_sha,
                 base_dir,
                 timeout=min(args.timeout_seconds, 180),
+                extra_grader_paths=selected_suite_paths,
             )
             manifest["input_fingerprints"] = fingerprints
             manifest["setup"] = {
                 "status": "verified",
                 "failure_class": None,
                 "grader_paths_excluded": [
-                    path.as_posix() for path in GRADER_ONLY_PATHS
+                    path.as_posix()
+                    for path in grader_paths(selected_suite_paths)
                 ],
                 "skill_evals_excluded": True,
                 "agent_tools_denied": ["shell", "write", "url", "memory"],
@@ -448,6 +527,12 @@ def main() -> int:
                         stdout = result.stdout
                         stderr = result.stderr
                         return_code = result.returncode
+                        if return_code != 0:
+                            failure_class = "runtime"
+                            notes = (
+                                f"Copilot exited with code {return_code}; "
+                                "inspect stderr evidence."
+                            )
                 except subprocess.TimeoutExpired as error:
                     timed_out = True
                     stdout = text_from_timeout(error.stdout)
