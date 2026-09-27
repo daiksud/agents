@@ -360,12 +360,12 @@
     {
       "id": 30,
       "prompt": "読み取り専用の模擬評価。実際のworkflow編集・PR操作・workflow実行は禁止。.github/workflows/ci.ymlの差分をレビューし、runner、permissions、必須チェックへの影響を確認して。修正は依頼していない。どのSkillを使うか。",
-      "expected_output": "Actions固有のworkflow判断にgithub-actions、読み取り専用レビューの調査・指摘手順にcode-reviewを使う。編集やdeliveryは依頼されていないためsoftware-developmentとchange-deliveryを開始しない。runnerが論点なのでworkflow-design.mdのrunnerとshellを読み、無関係なefficiencyやruntime-upgradesを一括で読まない。",
+      "expected_output": "Actions固有のworkflow判断にgithub-actions、読み取り専用レビューの調査・指摘手順にcode-reviewを使う。編集やdeliveryは依頼されていないためsoftware-developmentとchange-deliveryを開始しない。runnerが論点なのでworkflow-design.mdのrunnerとshellを読み、permissionsを扱うためhardening.mdで実効権限・Secret・未信頼入力の境界も確認する。無関係なefficiencyやruntime-upgradesは一括で読まない。",
       "files": [],
       "expectations": [
         "github-actionsとcode-reviewを必要な役割として選ぶ",
         "software-developmentとchange-deliveryを開始しない",
-        "runner論点に必要なreferenceだけを読む"
+        "runnerにはworkflow-design.md、permissionsにはhardening.mdを読み、無関係なefficiencyとruntime-upgradesを一括で読まない"
       ]
     }
   ]
