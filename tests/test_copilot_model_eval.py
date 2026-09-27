@@ -89,6 +89,21 @@ class CopilotModelEvaluationTests(unittest.TestCase):
             self.assertTrue((workspace / "skills/software-development/SKILL.md").is_file())
             self.assertTrue((workspace / ".apm/instructions/skill-routing.instructions.md").is_file())
 
+    def test_grader_material_is_removed_from_delivery_cache(self):
+        with tempfile.TemporaryDirectory() as directory:
+            cache = Path(directory) / "candidate"
+            for relative in self.module.GRADER_ONLY_PATHS:
+                target = cache / relative
+                if target.suffix:
+                    target.parent.mkdir(parents=True, exist_ok=True)
+                    target.write_text("grader-only", encoding="utf-8")
+                else:
+                    target.mkdir(parents=True, exist_ok=True)
+                    (target / "rubric.json").write_text("{}", encoding="utf-8")
+            self.module.remove_grader_material(cache)
+            for relative in self.module.GRADER_ONLY_PATHS:
+                self.assertFalse((cache / relative).exists())
+
     def test_output_directory_must_be_outside_repository(self):
         with self.assertRaisesRegex(ValueError, "outside the repository"):
             self.module.resolve_output_dir(
