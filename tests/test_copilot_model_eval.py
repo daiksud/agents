@@ -119,6 +119,16 @@ class CopilotModelEvaluationTests(unittest.TestCase):
                 self.assertFalse((cache / relative).exists())
             self.assertFalse(skill_evals.exists())
 
+    def test_selected_in_repo_suite_path_is_removed_from_workspace(self):
+        with tempfile.TemporaryDirectory() as directory:
+            workspace = Path(directory) / "workspace"
+            self.module.stage_workspace(
+                self.root,
+                workspace,
+                extra_grader_paths=(Path("README.md"),),
+            )
+            self.assertFalse((workspace / "README.md").exists())
+
     def test_output_directory_must_be_outside_repository(self):
         with self.assertRaisesRegex(ValueError, "outside the repository"):
             self.module.resolve_output_dir(
@@ -137,10 +147,11 @@ class CopilotModelEvaluationTests(unittest.TestCase):
                 timeout=0.01,
             )
 
-    def test_runner_dry_run_covers_full_matrix_without_copilot(self):
+    def test_runner_dry_run_covers_full_matrix_without_optional_packages(self):
         result = subprocess.run(
             [
                 sys.executable,
+                "-S",
                 "scripts/run_copilot_model_eval.py",
                 "--dry-run",
                 "--repeat",
@@ -158,6 +169,35 @@ class CopilotModelEvaluationTests(unittest.TestCase):
         self.assertEqual(list("ABCDEFG"), data["cases"])
         self.assertEqual(4, len(data["models"]))
         self.assertEqual(3, data["repeat"])
+
+    def test_preflight_failure_preserves_planned_matrix(self):
+        with tempfile.TemporaryDirectory() as directory:
+            output = Path(directory) / "run"
+            environment = {"PATH": ""}
+            result = subprocess.run(
+                [
+                    sys.executable,
+                    "scripts/run_copilot_model_eval.py",
+                    "--repeat",
+                    "2",
+                    "--output-dir",
+                    str(output),
+                ],
+                cwd=self.root,
+                env=environment,
+                check=False,
+                text=True,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+            )
+            self.assertEqual(2, result.returncode)
+            manifest = json.loads(
+                (output / "manifest.json").read_text(encoding="utf-8")
+            )
+            self.assertEqual(4, len(manifest["selected_models"]))
+            self.assertEqual(56, len(manifest["planned_runs"]))
+            self.assertEqual("failed", manifest["setup"]["status"])
+            self.assertEqual("runtime", manifest["setup"]["failure_class"])
 
     def test_guide_requires_isolation_and_no_unmeasured_claims(self):
         guide = self.guide_path.read_text(encoding="utf-8")
