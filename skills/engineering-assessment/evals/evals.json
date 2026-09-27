@@ -283,6 +283,61 @@
         "communication/change/deployment dependency・ownership・cognitive loadを証拠で確認する",
         "Inverse Conwayを小さな仮説・実験として検証する"
       ]
+    },
+    {
+      "id": 28,
+      "prompt": "acme/payments の改善でDORA Capability Catalogを使いたい。Catalogに載っている項目を全部チェックして、未導入のものをすべてIssueの改善項目にして。目的はリリース待ちを減らすことだが、現状わかっているのは本番承認待ちが平均2日ということだけ。",
+      "expected_output": "DORA Capability Catalog全件を必須チェックリストにしない。目的と観測された承認待ちからFast flow / Continuous delivery / change approval等の関連lensへ絞り、他Capabilityは根拠なく不足扱いしない。CoreとCatalogも区別する。",
+      "files": [],
+      "expectations": [
+        "Capability Catalog全件を必須改善項目にしない",
+        "問題に関係するFast flow / CD / approval等へ絞る",
+        "CoreとCatalogを区別し、未確認や範囲外を不足と決めない"
+      ]
+    },
+    {
+      "id": 29,
+      "prompt": "DORA Core v2.1.0を診断基準にしたい。最新DORAは5指標だからCoreのFour key metricsも5つに読み替え、CatalogのAI capabilityもすべてCoreに含まれる前提で評価してよい？",
+      "expected_output": "Core v2.1.0と現行metrics guideとCapability Catalogを別の成果物・更新周期として扱う。CoreのSoftware deliveryはFour key metricsのまま、現行delivery metrics guideは5指標。CatalogのAI/coreラベルを確認し、AI項目を一律Coreに含めない。",
+      "files": [],
+      "expectations": [
+        "Core v2.1.0のFour key metricsと現行5 metricsを別物として説明する",
+        "Capability CatalogをCore Modelと同一視しない",
+        "AI項目を一律Core扱いしない"
+      ]
+    },
+    {
+      "id": 30,
+      "prompt": "acme/apiではGitHub ActionsのCI、Datadog、Argo CDが導入済み。だからDORAのContinuous integration、Monitoring and observability、Continuous delivery capabilityは達成済みとしてIssueに記録したい。実際の統合頻度、テストfeedback時間、on-demand deploy実績、障害調査でDatadogを使えた記録はまだ見ていない。",
+      "expected_output": "toolや設定の存在だけでCapability達成と判定しない。CIは実際のmain統合・feedback・broken build対応、CDはon-demandで安全な配布、observabilityは実際の検知・調査利用等の証拠を確認し、未確認を達成済みにしない。",
+      "files": [],
+      "expectations": [
+        "toolや設定だけでDORA Capability達成と判定しない",
+        "各Capabilityについて実際の行動・outcomeの証拠を確認する",
+        "証拠がないものを未確認として残す"
+      ]
+    },
+    {
+      "id": 31,
+      "prompt": "acme/webはPRマージ後、本番リリース承認まで平均3日待つ。mainは毎日統合され、テストは5分、本番配備は承認後15分で完了する。目的は利用者へ価値が届く待ちを減らすこと。DORAを使って最初の改善計画を作って。",
+      "expected_output": "全DORA lensを展開せず、Fast flow / Continuous delivery / Streamlining change approvalなど観測された待ちに関係するCapabilityへ絞る。既存承認を無断で削除せず、承認の目的・待ち・代替可能な検証を調べる小さい実験を計画する。",
+      "files": [],
+      "expectations": [
+        "問題に関連するFast flow / CD / change approvalへ絞る",
+        "既存承認を無断で削除しない",
+        "待ちの原因と安全性を検証する小さい実験を選ぶ"
+      ]
+    },
+    {
+      "id": 32,
+      "prompt": "DORAの5指標が良ければ、その数値を直接改善するためdeployment回数を増やし、個人別にランキングしたい。対象は複数サービスで、測定期間も揃っていない。導入計画としてどうする？",
+      "expected_output": "metricを目的化・個人ランキングに使わない。サービスごとに定義と期間を揃え、利用者成果・reliability・well-beingと合わせて変化を見る。deployment回数だけを増やす操作を改善としない。",
+      "files": [],
+      "expectations": [
+        "DORA metricsを個人ランキングや単独目標にしない",
+        "サービス・期間・定義を揃える",
+        "利用者成果・reliability・well-beingと合わせて改善を評価する"
+      ]
     }
   ]
 }

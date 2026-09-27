@@ -29,7 +29,7 @@ sources:
 
 既存の runtime Instruction / Skill は作業時の判断と実行手順を担う。この文書はそれらの上位に常時読み込ませるInstructionではなく、概念の分類、関係、配置判断を保守するときの正本として使う。
 
-本文は2026-09-27に一次・公式資料を再確認した。既存runtimeがすでに利用する体系の詳細・版差・採用判断は `skills/engineering-assessment/references/sources.md` で管理する。一方、このUnit Aで追加したmaintainer-only taxonomyのDORA Capability Catalog / DevOps provenanceは、この文書の `sources` と脚注に保持し、runtimeのsource registryへはまだ加えない。Core / Catalogの詳細mappingなど後続Unitへ延期した判断は、この文書の「後続の整理」で未実装として明示し、#109で診断契約と同時にskill-owned provenanceへ移す。
+本文は2026-09-27に一次・公式資料を再確認した。既存runtimeがすでに利用する体系の詳細・版差・採用判断は `skills/engineering-assessment/references/sources.md` で管理する。Unit Aでmaintainer-onlyとして導入したDORA taxonomyは、#109でCore / Catalog / metricsの診断契約とskill-owned provenanceへ反映した。DevOpsの本model上の補助provenanceはこの文書の `sources` と脚注にも保持し、runtime側では既存のDevOps provenanceを使う。
 
 ### 分類は成熟度の階層ではない
 
@@ -176,7 +176,7 @@ DDDを採用していること、Bounded Contextが存在すること、複数Te
 
 - DDD / Team Topologies / Conway / Architecture choiceの診断手順は #108 で `engineering-assessment/references/architecture-and-organization.md` へ実装した。
 - XPのValues / Principles / Primary Practices / Corollary Practicesの分類とassessmentでの読み分けは #110 で扱う。
-- DORA Core Model / Capability Catalog / delivery metricsの版と関係は #109 で扱う。
+- DORA Core Model / Capability Catalog / delivery metricsの版と関係は #109 で `engineering-assessment/references/dora.md` へ実装した。
 - 問題から必要なlensだけを選ぶ `engineering-assessment` 全体のprogressive disclosure仕上げは #110 で扱う。
 
 [^ron-jeffries-xp]: [What is Extreme Programming? — Ron Jeffries](https://ronjeffries.com/xprog/what-is-extreme-programming/)。XPの価値と、小さいFeedbackで設計を進化させる考え方。2026-09-27確認。

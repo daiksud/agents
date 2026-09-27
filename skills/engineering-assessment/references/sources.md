@@ -39,6 +39,10 @@ sources:
     resource: https://dora.dev/research/core/assets/dora-core-v2.1.0-detail.pdf
   - id: dora-research
     resource: https://dora.dev/research/
+  - id: dora-capabilities-catalog
+    resource: https://dora.dev/capabilities/
+  - id: dora-capabilities-working-in-small-batches
+    resource: https://dora.dev/capabilities/working-in-small-batches/
   - id: dora-capabilities-loosely-coupled-teams
     resource: https://dora.dev/capabilities/loosely-coupled-teams/
   - id: ron-jeffries-xp
@@ -71,7 +75,7 @@ sources:
 
 ## 一次資料と適用上の判断
 
-既存資料は2026-09-11、追加したXP資料は2026-09-26、Architecture / Organization lensで追加したDORA資料は2026-09-27に確認した。以下を翻訳転載せず、[原則の関係](principles.md)と[診断手順](assessment.md)へ要約・再構成した。更新日がない資料に確認日を公開日として付けない。後日の診断では、実際に参照した版・確認日を記録する。
+既存資料は2026-09-11、追加したXP資料は2026-09-26、Architecture / Organization lensとDORA model整理で追加した資料は2026-09-27に確認した。以下を翻訳転載せず、[原則の関係](principles.md)、[診断手順](assessment.md)、および条件付きのfocused referenceへ要約・再構成した。更新日がない資料に確認日を公開日として付けない。後日の診断では、実際に参照した版・確認日を記録する。
 
 ### DevOps・Lean・改善
 
@@ -95,6 +99,8 @@ sources:
 | Software delivery performance metrics — Nathen Harvey / DORA[^dora-guides-dora-metrics]（2026-01-05更新） | 現行5指標の定義、アプリケーション単位の測定、競争・単一指標・過剰な測定投資を避ける |
 | Metrics history — DORA[^dora-insights-dora-metrics-history]（2026-01-02更新） | 復旧指標の対象変更、rework追加、信頼性と配信指標の区別 |
 | DORA Core v2.1.0[^dora-assets-dora-core-v2-1-0-detail-pdf]・研究モデルの説明[^dora-research] | Coreは安定した研究モデルで、最新ガイドと更新周期が異なる。4指標の図を現行5指標と混同しない |
+| DORA Capability Catalog[^dora-capabilities-catalog]（2026-09-27確認） | Catalogには `core` / `AI` 等のlabelを持つ項目やCore外の項目も含まれる。Catalog全体をCoreや必須導入一覧とみなさず、問題に関係するCapabilityだけを選ぶ |
+| Working in small batches — DORA[^dora-capabilities-working-in-small-batches]（2026-09-27確認） | Lean product management・短いfeedback loopとの関係と、`core` / `AI` labelの重なりを確認する。XP / Lean側のPractice分類とDORA Capability分類を矛盾扱いしない |
 
 DORAの文章・図はGoogle LLCによるCC BY 4.0（各ページの例外を除く）。本スキルは資料の要約と適用指針を作成したもので、DORAによる認定や普遍的な因果の保証ではない。
 
@@ -141,6 +147,8 @@ DORAの文章・図はGoogle LLCによるCC BY 4.0（各ページの例外を除
 [^dora-insights-dora-metrics-history]: [Metrics history — DORA](https://dora.dev/insights/dora-metrics-history/)。本文に記した参照範囲と採用判断の根拠。
 [^dora-assets-dora-core-v2-1-0-detail-pdf]: [DORA Core v2.1.0](https://dora.dev/research/core/assets/dora-core-v2.1.0-detail.pdf)。本文に記した参照範囲と採用判断の根拠。
 [^dora-research]: [研究モデルの説明](https://dora.dev/research/)。本文に記した参照範囲と採用判断の根拠。
+[^dora-capabilities-catalog]: [DORA Capability Catalog](https://dora.dev/capabilities/)。Core / AI等のlabelと、Catalog全体とCore Modelの違いを確認する。2026-09-27確認。
+[^dora-capabilities-working-in-small-batches]: [Working in small batches — DORA](https://dora.dev/capabilities/working-in-small-batches/)。Core / AI label、short feedback loop、Lean product managementとの関係を確認する。2026-09-27確認。
 [^ron-jeffries-xp]: [What is Extreme Programming?](https://ronjeffries.com/xprog/what-is-extreme-programming/)。5価値、現在の要求、小さいフィードバックと設計改善の参照と適用判断。
 [^cucumber-docs-bdd]: [BDD — Cucumber](https://cucumber.io/docs/bdd/)。本文に記した参照範囲と採用判断の根拠。
 [^cucumber-bdd-example-mapping]: [Example Mapping](https://cucumber.io/docs/bdd/example-mapping/)。本文に記した参照範囲と採用判断の根拠。
