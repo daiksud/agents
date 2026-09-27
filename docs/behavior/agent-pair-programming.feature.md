@@ -221,6 +221,6 @@ sources:
 [^issue-76]: [Issue #76](https://github.com/daiksud/agents/issues/76) に記録された目的、受け入れ条件、検証計画。
 [^issue-80]: [Issue #80](https://github.com/daiksud/agents/issues/80) に記録された共有ToDoと段階別レビューの受け入れ条件、検証計画。
 [^issue-87]: [Issue #87](https://github.com/daiksud/agents/issues/87) に記録された、初回の応答だけでは後続の継続確認を保証できない問題。
-[^issue-98]: [Issue #98](https://github.com/daiksud/agents/issues/98) に記録された、1 ToDoの粒度と段階内部の短い対話境界、過剰な逐次報告を避ける条件。
 [^issue-99]: [Issue #99](https://github.com/daiksud/agents/issues/99) に記録された、低エントロピーなControlled Englishによる内部通信と外部成果物との境界。
+[^issue-98]: [Issue #98](https://github.com/daiksud/agents/issues/98) に記録された、1 ToDoの粒度と段階内部の短い対話境界、過剰な逐次報告を避ける条件。
 [^issue-100]: [Issue #100](https://github.com/daiksud/agents/issues/100) に記録された、承認付き再ペアの目的と安全境界。
