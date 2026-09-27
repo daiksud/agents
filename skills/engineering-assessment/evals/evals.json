@@ -228,6 +228,61 @@
         "ペア作業の固定時間を一律必須ルールにせず、関係者の経験と制約を確認する",
         "会議・役割の不在を未実践と即断せず、診断だけで導入を実行しない"
       ]
+    },
+    {
+      "id": 23,
+      "prompt": "acme/orders は DDD を採用する予定。注文・請求・配送の3つのBounded Context候補があるので、最初から3つのMicroservice・3リポジトリ・3チームに分ける案を診断して。利用者は5人で、独立deployが必要か、変更時の待ち、運用能力、データ整合性はまだ調べていない。計画だけ欲しい。",
+      "expected_output": "Bounded ContextをMicroservice・Repository・Teamへ1対1変換しない。Domain/semantic、change、runtime、deployment、repository、team ownershipの境界を区別し、独立deliveryの必要性とdistributed-system costを証拠で確認する。現状で単純な構成が足りる可能性をSimplicity/YAGNIと照合し、実装へ進まない。",
+      "files": [],
+      "expectations": [
+        "Bounded ContextをMicroservice・Repository・Teamへ1対1変換しない",
+        "各種boundaryを区別して独立deliveryの必要性を確認する",
+        "distributed-system costとSimplicity/YAGNIを評価し、計画だけで停止する"
+      ]
+    },
+    {
+      "id": 24,
+      "prompt": "acme/commerce は一つのBounded Contextとしてモデルは安定しているが、frontendとbackendの2チームが別々に変更するたび統合環境と同時releaseを待つ。目的は待ち時間を減らすこと。『domainを分割すべき』と決める前に何を診断する？",
+      "expected_output": "semantic boundaryの再分割を先に結論にしない。実際のchange/test/deployment dependency、契約、communication/ownership、cognitive loadを調べ、domain上の意味の問題とdelivery/team couplingを分ける。小さな境界改善またはinteraction改善を実験候補にする。",
+      "files": [],
+      "expectations": [
+        "semantic boundaryとchange/deployment/team dependencyを区別する",
+        "実際の契約・待ち・communication・cognitive loadを証拠として調べる",
+        "domain分割を既定解にせず小さな実験を選ぶ"
+      ]
+    },
+    {
+      "id": 25,
+      "prompt": "CODEOWNERSに4グループがあり、サービスも4つある。この事実だけでTeam TopologiesのStream-aligned / Enabling / Complicated Subsystem / Platformの4チーム型が揃っていると判定してよい？ 改善計画まで示して。",
+      "expected_output": "名前・グループ数・サービス数から4 team typesを確定しない。実際の責任、価値の流れ、team cognitive load、interaction mode、待ちと依存を関係者の経験で確認する。必要なinteractionや責任境界だけを改善候補にし、4型を作る計画にしない。",
+      "files": [],
+      "expectations": [
+        "CODEOWNERSや数からTeam Topologiesの型を確定しない",
+        "責任・価値の流れ・cognitive load・interaction・待ちを確認する",
+        "4 team typesの設置を必須の改善にしない"
+      ]
+    },
+    {
+      "id": 26,
+      "prompt": "acme/api をMicroservicesへ移行すればdeployabilityが上がるはずなので採用したい。現在は単一deployだが、1チームで週数回安全にreleaseでき、統合テストも15分で終わる。今後の利用者増加は予想だけで、個別scaleや独立release要求はない。診断して。",
+      "expected_output": "Microservicesをdeployabilityの既定手段にしない。現在の独立変更・テスト・配布能力と具体的な制約を評価し、将来予想だけでnetwork/partial failure/distributed data/observability/tooling等のコストを追加しない。現在要求を満たす単純な構成を維持する選択肢も示す。",
+      "files": [],
+      "expectations": [
+        "Microservicesをdeployabilityの既定手段にしない",
+        "現在の能力と具体的な制約を先に評価する",
+        "distributed-system costを将来予想だけで受け入れず単純な選択肢を残す"
+      ]
+    },
+    {
+      "id": 27,
+      "prompt": "複数チームのcommunicationが多く変更が遅いのでInverse Conway Maneuverで組織をarchitectureに合わせたい。desired architecture図はあるが、実際の変更依存、認知負荷、interaction、利用者価値への影響は未調査。どう計画する？",
+      "expected_output": "desired architectureだけから組織再編を確定しない。現在のcommunication/change/deployment dependency、ownership、cognitive load、価値の流れを観測し、Conwayの相互作用を仮説として扱う。責任やinteractionの小さな変更を試し、flow/couplingの変化を検証してから構造変更を広げる。",
+      "files": [],
+      "expectations": [
+        "desired architectureだけから組織再編を確定しない",
+        "communication/change/deployment dependency・ownership・cognitive loadを証拠で確認する",
+        "Inverse Conwayを小さな仮説・実験として検証する"
+      ]
     }
   ]
 }
