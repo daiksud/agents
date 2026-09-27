@@ -324,6 +324,18 @@
         "厳密なparse要件がない限りJSONを必須にしない"
       ],
       "source_id": "issue-99/message-vocabulary"
+    },
+    {
+      "id": 46,
+      "prompt": "読み取り専用模擬評価。実際の編集・投稿・実行は禁止。同じNavigatorと継続連絡できる。共有ToDoには `T-02 empty input` があり、NavigatorはRedレビューで `F-01 missing empty-input assertion` を指摘した。Driverが修正後のRedを再レビューへ送る。すでに共有済みのToDoとfindingをどう参照するか。",
+      "expected_output": "同じタスクと同じNavigatorの継続セッションでは `T-02` と `F-01` を安定して使い、後続通信では `TODO: T-02` や `Resolved F-01` のようにIDで参照する。共有済みの説明を毎回再送せず、IDはこの継続セッション内で安定すればよく、永続的なグローバルID体系を要求しない。",
+      "files": [],
+      "expectations": [
+        "共有ToDoとfindingをstable IDで後続通信から参照する",
+        "共有済みの説明を毎回再送しない",
+        "永続的なグローバルID体系を要求しない"
+      ],
+      "source_id": "issue-99/stable-ids"
     }
   ]
 }
