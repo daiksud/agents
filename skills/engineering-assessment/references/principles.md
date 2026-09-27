@@ -50,22 +50,13 @@ BDDとATDDには具体例・共同理解という重なりがあり、別々の�
 
 共有仕様には、意味を明確にする具体値を残す。細かなUI手順や内部実装を混ぜず、API利用者や運用者が観測する契約を区別する。共有仕様の記法と発見は依存スキル `behavior-specification`、実装時のテスト層・既存仕様とリファクタリングは `software-development` に従う。
 
-### モデルと組織を重ねて考える
+### モデル・Architecture・Organizationの境界を分ける
 
-DDDのサブドメインは業務の問題領域、境界づけられたコンテキストはモデルの意味が通用する範囲である。モジュール・サービス・リポジトリ・チームはそれぞれ異なる単位なので、対応と理由を明示する。境界間の契約・翻訳・変更依存を扱い、戦術的パターンをすべての処理へ増やさない。
+DDDのサブドメインは業務のproblem space、Bounded Contextは一つのmodelと言語が適用されるsemantic boundaryである。module・service・repository・deployment unit・team ownershipはそれぞれ別の単位なので、対応と理由を証拠から説明し、一律の1対1対応を要求しない。
 
-Team Topologiesは価値の流れとチームの認知負荷を軸に、組織とアーキテクチャを進化させる考え方である。
+service / repository / teamの対応、cross-team dependency、deployability、Microservices採否など、意味・変更・実行・配布・ownershipの境界が問題になる診断では、[ArchitectureとOrganizationの境界](architecture-and-organization.md)を読む。実際のchange / test / deployment dependency、責任、interaction、cognitive loadを確認し、architecture styleやteam typeの数だけでloose couplingやfast flowを判定しない。
 
-| チーム型 | 主な役割 |
-| --- | --- |
-| Stream-aligned | 価値の流れに沿って成果を継続して届ける |
-| Enabling | 他チームの能力不足を補い、自立を支援する |
-| Complicated Subsystem | 高度な専門知識が必要な部分を扱う |
-| Platform | 他チームの提供を助けるサービスを提供する |
-
-相互作用は、探索のための期間を区切った協働（Collaboration）、安定したサービス利用（X-as-a-Service）、能力獲得の支援（Facilitation）として目的と期間を明確にする。Team APIは責任・サービス・期待・関わり方の合意を示す資料で、HTTP APIではない。
-
-4型は全組織が4チームを作る指示ではない。1チームが複数コンテキストを扱う場合もある。単独開発では責任と認知負荷を整理する観点として比例させる。これは本スキルの適用判断であり、公式の「単独開発用4チームモデル」ではない。
+Team Topologiesは価値の流れ・cognitive load・interactionを改善するpattern languageとして使い、4つのteam typeを必須の組織図にしない。Conway / Inverse Conwayも、desired architectureへ人員配置を機械的に一致させる指示ではなく、communication structureとsoftware boundaryの相互作用を検証するlensとして扱う。
 
 ### 測定は改善へのフィードバック
 

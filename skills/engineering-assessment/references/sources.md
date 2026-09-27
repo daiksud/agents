@@ -39,6 +39,8 @@ sources:
     resource: https://dora.dev/research/core/assets/dora-core-v2.1.0-detail.pdf
   - id: dora-research
     resource: https://dora.dev/research/
+  - id: dora-capabilities-loosely-coupled-teams
+    resource: https://dora.dev/capabilities/loosely-coupled-teams/
   - id: ron-jeffries-xp
     resource: https://ronjeffries.com/xprog/what-is-extreme-programming/
   - id: cucumber-docs-bdd
@@ -69,7 +71,7 @@ sources:
 
 ## 一次資料と適用上の判断
 
-既存資料は2026-09-11、追加したXP資料は2026-09-26に確認した。以下を翻訳転載せず、[原則の関係](principles.md)と[診断手順](assessment.md)へ要約・再構成した。更新日がない資料に確認日を公開日として付けない。後日の診断では、実際に参照した版・確認日を記録する。
+既存資料は2026-09-11、追加したXP資料は2026-09-26、Architecture / Organization lensで追加したDORA資料は2026-09-27に確認した。以下を翻訳転載せず、[原則の関係](principles.md)と[診断手順](assessment.md)へ要約・再構成した。更新日がない資料に確認日を公開日として付けない。後日の診断では、実際に参照した版・確認日を記録する。
 
 ### DevOps・Lean・改善
 
@@ -117,6 +119,7 @@ DORAの文章・図はGoogle LLCによるCC BY 4.0（各ページの例外を除
 | Key Concepts — Team Topologies[^teamtopologies-key-concepts] | 4つのチーム型・3つの相互作用、価値の流れと認知負荷 |
 | Team API[^github-teamtopologies-team-api-template]・Dependencies Tracking[^github-teamtopologies-team-dependencies-tracking] | 責任と関わり方、進行を止める依存とサービス利用を区別する |
 | Finding software boundaries — Team Topologies / DDD mini-book[^teamtopologies-s-finding-software-boundaries-for-fast-flow-team-topologies-and-domain-driven-design-mini-book-mb81-v1-pdf]（2023-05-19） | チームとコンテキストの地図を重ねる。1チームが複数境界を持つ事例も扱う |
+| Loosely coupled teams — DORA[^dora-capabilities-loosely-coupled-teams]（2026-09-27確認） | architecture styleやservice数ではなく、独立したchange / test / deployとcross-team coordinationの少なさをCapabilityとして診断する。Microservicesを既定解にせず、monolithでも成果を満たせることを区別する |
 
 本スキルの「単独開発に比例させる」「観測・不足・未確認・適用外で整理する」「Issue保存で診断を完了する」は、これらの資料を作業環境へ適用するための設計判断である。公式の成熟度尺度や組織編成の規格として提示しない。
 
@@ -151,3 +154,4 @@ DORAの文章・図はGoogle LLCによるCC BY 4.0（各ページの例外を除
 [^github-teamtopologies-team-api-template]: [Team API](https://github.com/TeamTopologies/Team-API-template)。本文に記した参照範囲と採用判断の根拠。
 [^github-teamtopologies-team-dependencies-tracking]: [Dependencies Tracking](https://github.com/TeamTopologies/Team-Dependencies-Tracking)。本文に記した参照範囲と採用判断の根拠。
 [^teamtopologies-s-finding-software-boundaries-for-fast-flow-team-topologies-and-domain-driven-design-mini-book-mb81-v1-pdf]: [Finding software boundaries — Team Topologies / DDD mini-book](https://teamtopologies.com/s/Finding-software-boundaries-for-fast-flow-Team-Topologies-and-Domain-Driven-Design-mini-book-MB81-v1.pdf)。本文に記した参照範囲と採用判断の根拠。
+[^dora-capabilities-loosely-coupled-teams]: [Loosely coupled teams — DORA](https://dora.dev/capabilities/loosely-coupled-teams/)。独立change / test / deploy、team coupling、Inverse Conway、Microservicesのtrade-offを診断する根拠。2026-09-27確認。
