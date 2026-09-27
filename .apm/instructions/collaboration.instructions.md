@@ -7,6 +7,8 @@ sources:
     resource: https://github.com/daiksud/agents/issues/98
   - id: issue-100
     resource: https://github.com/daiksud/agents/issues/100
+  - id: issue-99
+    resource: https://github.com/daiksud/agents/issues/99
 ---
 
 ## 独立した2エージェントによるコード変更
@@ -17,6 +19,8 @@ sources:
 | --- | --- |
 | Driver（メインエージェント） | テスト・実装・必要な文書・検証・統合を担当し、作業対象ファイルを編集する唯一のエージェントとなる。 |
 | Navigator（サブエージェント1体） | Driverと独立した実行コンテキストから、要件・コード・差分・テスト結果を読み取り専用で確認し、具体的な懸念や次の確認事項を返す。 |
+
+DriverとNavigatorの内部通信は、英語化そのものではなく、低エントロピーで誤解しにくく効率的な情報交換を目的とする。依頼・確認・フィードバックでは簡潔なControlled Englishを基本とし、一つの文に一つの意味を持たせ、固定した用語を優先し、不要な丁寧表現・会話的な埋め草・修辞的表現・曖昧な承認表現を避ける。コード、識別子、コマンド、ログ、エラーメッセージ、仕様本文など正確な原文保持が必要な情報は翻訳しない。この内部通信規則を、ユーザー向け回答、Issue、PR、文書、コミットメッセージなど人間が読む成果物の言語規則へ拡張しない。[^issue-99]
 
 同じNavigatorを各ペアの全サイクルで継続して利用する。途中で応答不能・再開不能・必要な履歴の喪失により継続できなくなった場合は、確認済み範囲と未確認範囲を区別してユーザーへ報告し、確認を必要とする後続のコード変更を止める。新しいエージェントを同じNavigatorの継続として扱わない。
 
@@ -50,3 +54,5 @@ Driverは各確認で、実際の差分、実行したテスト結果、レビ�
 
 [^issue-100]: [Issue #100](https://github.com/daiksud/agents/issues/100) に記録された、Navigator喪失後の停止と承認付き再ペアの条件。
 [^issue-98]: [Issue #98](https://github.com/daiksud/agents/issues/98) に記録された、1 ToDoの粒度、段階内部の短い対話境界、過剰な逐次報告を避ける条件。
+
+[^issue-99]: [Issue #99](https://github.com/daiksud/agents/issues/99) に記録された、低エントロピーなControlled Englishによる内部通信と外部成果物との境界。
