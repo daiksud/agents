@@ -479,28 +479,18 @@ class MetadataTests(unittest.TestCase):
                 ('Principles', expected_principles),
                 ('Primary Practices', expected_primary),
                 ('Corollary Practices', expected_corollary)):
-            rows = table_rows(xp, heading)
-            self.assertEqual(set(expected), set(rows), heading)
-            for item in expected:
-                with self.subTest(heading=heading, item=item):
-                    self.assertTrue(rows[item].strip())
-                    self.assertNotEqual(item, rows[item].strip())
-
-        for heading, expected in (
-                ('Values', expected_values),
-                ('Principles', expected_principles),
-                ('Primary Practices', expected_primary),
-                ('Corollary Practices', expected_corollary)):
             rows = table_rows(auxiliary, heading)
             self.assertEqual(set(expected), set(rows), f'auxiliary {heading}')
             for item in expected:
                 with self.subTest(auxiliary_heading=heading, item=item):
                     self.assertTrue(rows[item].strip())
+                    self.assertNotEqual(item, rows[item].strip())
+                    self.assertIn(item, xp)
 
-        self.assertIn('Primary Practicesは13個', xp)
-        self.assertIn('Corollary Practicesは11個', xp)
+        self.assertIn('13 Primary Practices', xp)
+        self.assertIn('11 Corollary Practices', xp)
         self.assertIn('Practiceの数をXP成熟度スコアにせず', xp)
-        self.assertIn('XP全taxonomyを通常runtimeへ常時ロードしない', xp)
+        self.assertIn('全カテゴリを常時ロードしない', xp)
 
         entries = {entry['id']: entry['resource'] for entry in
                    yaml.safe_load(sources.split('---', 2)[1])['sources']}
