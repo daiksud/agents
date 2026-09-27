@@ -384,6 +384,30 @@
         "ペア内確認で通常のPRレビュー・必須CI・承認・マージ条件を代替しない"
       ],
       "source_id": "issue-99/pairing-regression"
+    },
+    {
+      "id": 51,
+      "prompt": "読み取り専用模擬評価。実際の編集・投稿・テスト実行は禁止。コード変更で共有ToDoのT-02を進めている。Redは独立したNavigatorが確認済みで、Greenへ進む直前にGitHub Copilotの利用モデルをGPT-6 LunaからGPT-6 Solへ切り替えた。新しいモデルならTDDやNavigator確認を簡略化できるという提案が出た。どの契約を維持して進めるか。",
+      "expected_output": "利用モデルの変更で適用中の開発契約を変えない。共有ToDo、1 ToDoの小さなRed / Green / Refactor、同じ独立したNavigatorによる各段階の確認を維持し、Green以降も既存の順序と確認境界に従う。モデル能力を理由に段階確認や通常のレビュー・CIを省略しない。",
+      "files": [],
+      "expectations": [
+        "モデル変更後も共有ToDoと小さなRed / Green / Refactorを維持する",
+        "同じ独立したNavigatorによる段階確認をモデル能力を理由に省略しない",
+        "ペア内確認とは別の通常レビュー・CI等の既存完了条件を緩めない"
+      ],
+      "source_id": "issue-122/model-switch-development-contract"
+    },
+    {
+      "id": 52,
+      "prompt": "読み取り専用模擬評価。実際の編集・投稿・実行は禁止。あるモデルだけで、共通指示を守っていても長い作業の途中報告を完了と誤認して止まりやすい挙動が複数回再現した。担当者はそのモデル名を付けたdevelopment.instructions.mdのコピーを作り、TDD・権限・完了条件も少し緩くしようとしている。どう整備するか。",
+      "expected_output": "共通Instructionsをモデル名ごとに複製せず、TDD・権限・完了条件を共通契約として保持する。再現可能なモデル固有挙動への補足が必要なら共通契約とは分離し、根拠、適用範囲、削除条件を明記した最小の補正にする。補正で共通契約を緩めない。",
+      "files": [],
+      "expectations": [
+        "モデル名だけを変えた共通Instructionsの複製を作らない",
+        "TDD・権限・完了条件をモデル固有補正で緩めない",
+        "モデル固有補正には根拠・適用範囲・削除条件を持たせる"
+      ],
+      "source_id": "issue-122/model-specific-overlay-boundary"
     }
   ]
 }
