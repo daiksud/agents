@@ -52,7 +52,6 @@ Driverは各確認で、実際の差分、実行したテスト結果、レビ�
 
 同じ論点についてDriverの修正または根拠付き回答とNavigatorの再確認を1往復と数え、2往復しても解消しない場合は作業を止め、未解決点・根拠・選択肢をユーザーに報告する。言い換えや指摘の分割で回数をリセットせず、未解決のまま完了や承認済みとしない。ペア内の確認は、既存のPRレビュー、必須CI、承認、マージ条件を置き換えず、作業範囲や実行権限を広げない。
 
+[^issue-99]: [Issue #99](https://github.com/daiksud/agents/issues/99) に記録された、低エントロピーなControlled Englishによる内部通信と外部成果物との境界。
 [^issue-100]: [Issue #100](https://github.com/daiksud/agents/issues/100) に記録された、Navigator喪失後の停止と承認付き再ペアの条件。
 [^issue-98]: [Issue #98](https://github.com/daiksud/agents/issues/98) に記録された、1 ToDoの粒度、段階内部の短い対話境界、過剰な逐次報告を避ける条件。
-
-[^issue-99]: [Issue #99](https://github.com/daiksud/agents/issues/99) に記録された、低エントロピーなControlled Englishによる内部通信と外部成果物との境界。
