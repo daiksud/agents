@@ -18,11 +18,15 @@ description: Markdown、仕様文書、feature、ADR、OpenAPI、JSON Schemaな�
 
 ## 依頼に応じた引き渡し
 
-- Issue計画だけなら `issue-management` で保存・再取得して本文・表示・URLを確認し、`change-delivery` は不要として停止する。Issue本文・コメントだけなら `issue-management` を使い、`change-delivery` は不要とする。
-- PR本文・リポジトリ文書の変更では、計画承認済みでもIssue計画を保存・確認済みと推測しない。保存・確認済みなら再記録せず、未保存なら公開許可を確認して `issue-management` で保存・再取得し、本文・表示・URLを確認する。既存の実行承認を取り直さない。
-- PR本文だけの更新は `issue-management` と `change-delivery` を使うが、リポジトリ編集・マージを始めない。承認済みのリポジトリ文書変更は `change-delivery` で公開mainの確認まで進め、文書だけの変更にコードのTDDを要求しない。
-- `issue-management` を利用できなければIssue投稿や文書・PRの変更を始めず、文案と未保存の計画を示す。`change-delivery` を利用できなければリポジトリ文書・PRの変更を始めず、保存済みのIssue計画を作り直さないが、Issue本文・コメントだけの更新は妨げない。
-- 詳細な依存関係と停止・引き渡しの組み合わせは[文書作業の依存と引き渡し](references/workflow.md)を読む。
+計画・承認は[計画と実行範囲](../issue-management/references/planning.md)、公開・保存確認は[Issueの記録](../issue-management/references/issue-recording.md)を該当操作前に読む。PR本文・リポジトリ文書の変更前に保存確認と実行承認を別々に照合し、確認済み計画の再作成・承認の取り直しを要求しない。
+
+未公開情報は必要部分だけ投稿先・本文案への許可を確認する。公開済みの事実や保存・確認済みの計画の同じ公開許可は再要求しない。
+
+- Issue計画だけなら `issue-management` の保存・確認・提示で終了する。Issue本文・コメントだけの更新も同スキルを使い、`change-delivery` は不要。
+- PR本文だけの更新は `issue-management` と `change-delivery` を使うが、リポジトリ編集・マージへ広げない。
+- 承認済みのリポジトリ文書変更は [change-delivery](../change-delivery/SKILL.md) で公開main確認まで進める。文書だけにはコードのTDDを要求しない。
+
+`issue-management` がなければIssue投稿・文書・PRの変更を始めず、文案・未保存計画・不足する依存を示す。`change-delivery` がなければリポジトリ文書・PRの変更を止めるが、Issue本文・コメントだけの更新は妨げない。依存欠落でも実行承認と保存済み計画を保持し、他のSkillで代用せず、未完了範囲・再開条件を報告する。
 
 ## 作成・更新の流れ
 
