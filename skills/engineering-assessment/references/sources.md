@@ -137,7 +137,7 @@ DORAの文章・図はGoogle LLCによるCC BY 4.0（各ページの例外を除
 | Finding software boundaries — Team Topologies / DDD mini-book[^teamtopologies-s-finding-software-boundaries-for-fast-flow-team-topologies-and-domain-driven-design-mini-book-mb81-v1-pdf]（2023-05-19） | チームとコンテキストの地図を重ねる。1チームが複数境界を持つ事例も扱う |
 | Loosely coupled teams — DORA[^dora-capabilities-loosely-coupled-teams]（2026-09-27確認） | architecture styleやservice数ではなく、独立したchange / test / deployとcross-team coordinationの少なさをCapabilityとして診断する。Microservicesを既定解にせず、monolithでも成果を満たせることを区別する |
 
-本スキルの「単独開発に比例させる」「観測・不足・未確認・適用外で整理する」「Issue保存で診断を完了する」は、これらの資料を作業環境へ適用するための設計判断である。公式の成熟度尺度や組織編成の規格として提示しない。
+本スキルの「単独開発に比例させる」「観測・不足・未確認・適用外で整理する」「依頼された終端成果物に応じて回答・Issue記録・文書・実装への引き渡しを選ぶ」は、これらの資料を作業環境へ適用するための設計判断である。診断という話題だけを理由にIssue保存を要求しない。Issue記録が終端成果物の場合、または実装計画・共通スタンダード候補・関連の薄い後続依頼など、適用中の既存ワークフローが補助記録を要求する場合は、その経路に従ってIssueを保存できる。補助Issueを現在の終端成果物へ読み替えない。公式の成熟度尺度や組織編成の規格として提示しない。
 
 [^github-instructions-devops-core-principles-instructions-md]: [DevOps Core Principles — GitHub awesome-copilot](https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/instructions/devops-core-principles.instructions.md)。本文に記した参照範囲と採用判断の根拠。
 [^www-explore-lean-what-is-lean]: [What is Lean? — Lean Enterprise Institute](https://www.lean.org/explore-lean/what-is-lean/)。本文に記した参照範囲と採用判断の根拠。
