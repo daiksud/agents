@@ -1,12 +1,14 @@
 ---
 type: Instruction
 title: 開発とフィードバック
-description: XPの価値、ハッピーパスのMVPを優先する設計、受け入れ条件とテスト先行の反復を定めます。
+description: XPの価値、インクリメンタルな設計、受け入れ条件とテスト先行の反復を定めます。
 sources:
   - id: ron-jeffries-xp
     resource: https://ronjeffries.com/xprog/what-is-extreme-programming/
   - id: fowler-yagni
     resource: https://martinfowler.com/bliki/Yagni.html
+  - id: fowler-evolutionary-design
+    resource: https://martinfowler.com/articles/designDead.html
 ---
 
 ## 開発とフィードバック
@@ -23,15 +25,17 @@ Extreme Programming（XP）を日常の開発判断の軸とし、5つの価値�
 
 Simple Design・YAGNIに従い、仮想的な将来変更のために機能や抽象化を追加しない。実際のフィードバックからIncremental DesignとRefactoringを進める。必要なテスト、契約、設計改善、レビュー、CI、承認・公開許可を省く理由にしない。[^fowler-yagni]
 
-### ハッピーパスのMVPを先に届ける
+### インクリメンタルな設計
 
-以下を本環境の既定方針とする。ユーザーが明示した対応範囲や合意済みの受け入れ条件を勝手に縮小しない。
+XPのインクリメンタルな設計（Incremental Design）を採用する。設計を最初に完成させず、現在の要求を満たす最小の設計から始め、テストと実際のフィードバックに基づく小さなリファクタリングで継続的に育てる。設計を省略したり、必要な設計改善を後回しにしたりすることではない。[^fowler-evolutionary-design]
+
+以下を本環境での適用方針とする。ハッピーパスのシンプルなMVPは初回の進め方であり、以後の変更でも現在の要求に必要な設計だけを小さく加える。ユーザーが明示した対応範囲や合意済みの受け入れ条件を勝手に縮小しない。
 
 - 初回実装は、代表的な正常入力・通常操作で目的を達成するハッピーパスだけのシンプルなMVPに絞る。前提を短く明記し、まず最短の経路を動かす。
 - 低確率のエッジケースや仮想的な障害を最初から網羅しない。「念のため」「将来必要かもしれない」だけを根拠に、例外処理・リトライ・フォールバック・互換性対応・設定項目・汎用化を先行追加しない。
 - 計画・受け入れ条件・ToDo・テスト・レビューにも同じ範囲を適用する。未要求のエッジケースを必須項目やマージ条件へ追加せず、説明が必要な未対応の制約だけを短く示す。
 - 明示された要求、既存契約・回帰防止、具体的なセキュリティやデータ破壊の危険に必要な保護は省かない。正常系以外の対応を加える場合は、現在の要求・契約・確認済みの事実に結びつけた理由を示し、必要最小限にする。
-- MVPが受け入れ条件を満たしたら、必要な検証・レビュー・統合まで完了させ、追加の堅牢化を自動で始めない。例外対応や拡張は、実際の利用・不具合・追加要求から必要性が確認されてから、別の小さな変更として扱う。
+- 現在の変更が受け入れ条件を満たしたら、必要な検証・レビュー・統合まで完了させ、追加の堅牢化を自動で始めない。例外対応や拡張は、実際の利用・不具合・追加要求から必要性が確認されてから、別の小さな変更として扱う。
 
 ### 共有理解と検証
 
@@ -43,3 +47,4 @@ TDDでは、テスト項目を含むToDoリストから一つずつ失敗・最�
 
 [^ron-jeffries-xp]: [Ron Jeffries: What is Extreme Programming?](https://ronjeffries.com/xprog/what-is-extreme-programming/)。5価値、現在の要求に合う設計、短い検証・設計改善を採用する。固定の会議・期間・組織編成や効果数値は共通要件にしない。2026-09-25に確認。
 [^fowler-yagni]: [Martin Fowler: Yagni](https://martinfowler.com/bliki/Yagni.html)。将来機能の先取りを避けつつ、現在の変更を支えるテスト・リファクタリング・CIは維持する。アサートファーストとエージェントの段階確認は本環境の運用方針。2026-09-25に確認。
+[^fowler-evolutionary-design]: [Martin Fowler: Is Design Dead?](https://martinfowler.com/articles/designDead.html)。XPで設計を継続的に育て、テスト・CI・リファクタリングで支える考え方を採用する。ハッピーパスのMVPから始める具体的な範囲は本環境の適用方針であり、XPの定義そのものではない。2026-09-28に確認。
