@@ -23,4 +23,6 @@ apm compile --global
 
 Instructions・Skillsが定める確認手順と、GitHubが機械的に強制する保護条件は別です。導入先のRulesets・必須ステータスチェックは各リポジトリで管理し、このパッケージの導入だけで同じ保護設定が適用されるとは扱いません。
 
+[github-repo](skills/github-repo/SKILL.md) は、指定したリポジトリについて、イミュータブルリリース・Squash限定・mainのRuleset・外部ActionのフルSHA必須化・無料セキュリティ機能を診断し、明示的に依頼された範囲だけを適用します。「設定を診断して」は結果の回答、「計画をIssueにして」は記録、「設定を適用して」は差分適用と再診断までを担当します。workflow本文の変更は [github-actions](skills/github-actions/SKILL.md) と連携し、GitHub側の設定変更だけのために空のcommit・PRは作りません。
+
 本リポジトリでは[ci](.github/workflows/ci.yml)を必須とし、CodeQLのスキャン・結果はPRマージの待機対象にしません。最新の強制条件は[Ruleset](https://github.com/daiksud/agents/rules/22615823)、通常レビューから統合後確認までの手順は[レビューとマージ](skills/change-delivery/references/review-and-merge.md)を確認してください。
