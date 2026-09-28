@@ -109,7 +109,7 @@ Inverse Conway Maneuverを「desired architecture図に人員配置を一致さ�
 4. flow、coordination、cognitive load、品質への影響を確認する。
 5. 学習した結果からarchitectureまたはorganizationの次の変更を決める。
 
-team再編を実施せず、診断では仮説・必要な関係者・確認方法とsmall experimentまでをIssue計画へ残す。
+team再編を実施せず、診断では仮説・必要な関係者・確認方法とsmall experimentまでを整理する。回答だけが依頼された場合は直接提示し、Issue記録が終端成果物として依頼された場合だけIssue計画へ残す。
 
 ### MicroservicesはArchitecture choiceとして評価する
 
