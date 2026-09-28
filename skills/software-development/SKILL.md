@@ -12,6 +12,7 @@ description: コードの追加・変更、バグ修正、リファクタリン�
 - ドメインのルールや共有する外部契約、受け入れ条件を発見・仕様化する場合: 依存スキル [behavior-specification](../behavior-specification/SKILL.md)。合意済み仕様は再利用する。
 - アサーションからのテスト作成、テスト層・再現性・UI・性能の検証を設計する場合: [変更単位と再現可能な検証](references/testing.md)。
 - 定義や採用理由の根拠を確認する場合: [一次資料と採用判断](references/sources.md)。
+- コード変更で最初のNavigator依頼を送る前: [DriverとNavigatorの内部通信](references/agent-communication.md)。共通指示の適用・停止条件に従い、Navigatorにも内容を共有する。
 - GitHub Copilot CLIで同じNavigatorへ継続して確認を依頼する場合: [runtime固有の実現方法](references/copilot-cli-pairing.md)。他runtimeへ同じツールや引数を要求しない。
 
 ## ストーリーから始める
