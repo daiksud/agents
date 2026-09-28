@@ -53,7 +53,7 @@ sources:
 2. `GET /repos/{owner}/{repo}/rulesets?includes_parents=true` を全ページ取得し、関連するRulesetの詳細でtarget、enforcement、include/exclude、source、bypassを確認する。
 3. `GET /repos/{owner}/{repo}/rules/branches/main` を全ページ取得し、activeな実効ルールを照合する。このAPIは存在しないブランチにもルールを返すため、mainの実在確認の代わりにしない。[^rules-api]
 4. `pull_request`、`deletion`、`non_fast_forward` と既存の追加制約を確認する。evaluate/disabled、main除外、不要なbypassは見逃さない。bypass情報を閲覧できない場合は「例外なし」と断定しない。
-5. 不足を対象リポジトリ自身のRulesetへ追加する。UIは `Settings` → `Rules` → `Rulesets`、APIは既存IDへの `PUT /repos/{owner}/{repo}/rulesets/{ruleset_id}`。新規 `POST /repos/{owner}/{repo}/rulesets` は必要な場合だけ使う。既存の対象条件・ルール・パラメーター・例外を保持し、上位Rulesetを変更しない。[^rules-api]
+5. 不足を対象リポジトリ自身のRulesetへ追加する。UIは `Settings` → `Rules` → `Rulesets`、APIは既存IDへの `PUT /repos/{owner}/{repo}/rulesets/{ruleset_id}`。新規 `POST /repos/{owner}/{repo}/rulesets` は必要な場合だけ使う。今回の承認済み変更の対象外である条件・ルール・パラメーター・例外を保持し、上位Rulesetを変更しない。[^rules-api]
 6. 詳細と実効ルールを再取得する。従来保護の削除は初版の適用に含めず、保護に空白を作らない。検証目的のmain直接push・削除・force pushを行わない。
 
 既存の必須チェック、承認人数、CODEOWNERS等は維持する。新しい必須チェックは対象側の方針、実際のチェック名・発行元・実行条件・成功履歴を確認して選び、存在しないチェックでマージを止めない。CodeQL有効化をCodeQL必須化に読み替えず、単独開発で満たせない承認人数、署名必須、線形履歴を一律追加しない。不要なbypassを新設せず、既存例外の廃止にも影響と承認を確認する。非対応プランは利用不可として理由を残し、有料プランへ変更しない。[^personal-policy][^ruleset-rules]

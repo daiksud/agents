@@ -47,12 +47,12 @@ sources:
 公式資料・対象UI・APIが一致しない場合は確認できた範囲と相違を残し、未確認の仕様やendpointを補完しない。承認済みの範囲でも費用・権限・破壊的影響の不明点は該当操作の保留理由にする。
 
 [^personal-policy]: Issue #152 の目的・基準・受け入れ条件。
-[^security-features]: GitHubのセキュリティ機能一覧。
-[^advanced-security]: Advanced Security製品の構成と提供条件。
 [^release-setting]: リポジトリでのrelease immutabilityの有効化。
 [^immutable-release]: 公開後に保護される対象と公開手順。
 [^repository-api]: repositoryとセキュリティ関連のREST API。
 [^rules-api]: Rulesetとbranch実効ルールのREST API。
 [^actions-settings]: SHA必須設定の適用対象と限界。
 [^actions-permissions-api]: Actions permissionsのREST API。
+[^security-features]: GitHubのセキュリティ機能一覧。
+[^advanced-security]: Advanced Security製品の構成と提供条件。
 [^code-scanning-api]: Code scanningの設定・実行結果のREST API。
