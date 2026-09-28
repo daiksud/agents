@@ -124,7 +124,7 @@ metricsはapplication / service単位で、期間・定義を揃えて変化を�
 
 Deployment frequencyだけを上げるなど、metricを直接操作することを改善としない。利用者成果、reliability、well-beingと、対象Capabilityの変化を合わせて確認する。固定Elite閾値を普遍的な合否基準として使わない。
 
-最初の改善は、現在の制約へ最も関係するCapabilityを一つまたは小さなまとまりで選び、期待する変化・証拠・見直し条件をIssueへ記録する。
+最初の改善は、現在の制約へ最も関係するCapabilityを一つまたは小さなまとまりで選び、期待する変化・証拠・見直し条件を整理する。回答だけが依頼された場合は直接提示し、Issue記録が終端成果物として依頼された場合だけIssueへ保存する。
 
 [^dora-research]: [DORA Research / Core Model](https://dora.dev/research/)。Core v2.1.0の3 Capability group、Performance、Outcomeと、Coreを保守的に更新する位置づけ。2026-09-27確認。
 [^dora-core-v2-1-0]: [DORA Core v2.1.0 detail](https://dora.dev/research/core/assets/dora-core-v2.1.0-detail.pdf)。3 Capability group、Software delivery / Reliability Performance、Outcomeの固定版正本。2026-09-27確認。
