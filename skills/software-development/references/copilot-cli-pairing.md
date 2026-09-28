@@ -17,7 +17,7 @@ sources:
 
 Driver / Navigatorの役割、編集権限、共有ToDo、段階確認、起動できない場合と継続不能になった場合の停止・報告は共通の協働指示に従う。この資料はCopilot CLI固有の実現方法を扱う。
 
-内部通信のControlled English、固定フィールド、状態語、stable ID、初回コンテキストとdelta-onlyの契約も共通の協働指示を正本とし、この資料で再定義しない。Copilot CLIでは、初回の `task` に共通契約で必要な初期コンテキストを載せ、同じ `agent_id` への後続 `write_agent` では共有済み情報を繰り返さず差分中心のメッセージを送る。履歴喪失やコンテキスト不足ではtransport都合でdelta-onlyを続けず、共通の再共有・停止条件を優先する。[^issue-99]
+内部通信の詳細は最初のNavigator依頼より前に[DriverとNavigatorの内部通信](agent-communication.md)を読み、共通の協働契約に従って使う。Copilot CLIでは初回共有を `task` に、同じNavigatorへの後続メッセージを同じ `agent_id` の `write_agent` に載せる。この資料で通信形式や停止条件を再定義しない。[^issue-99]
 
 GitHub Copilot CLIで後続の連絡が必要なNavigatorは、最初の `task` を `mode: "background"` で起動する。`mode: "sync"` は一度の応答で完了する依頼に限り、応答後に `idle` と表示されても `write_agent` の送信先にできるとは判断しない。[^github-copilot-cli-changelog]
 
