@@ -5,6 +5,16 @@ description: PR作成、レビュー対応、CI確認、リベース、スカッ
 sources:
   - id: docs-request-a-code-review-use-code-review
     resource: https://docs.github.com/en/copilot/how-tos/use-copilot-agents/request-a-code-review/use-code-review
+  - id: github-graphql-pulls
+    resource: https://docs.github.com/en/graphql/reference/pulls
+  - id: github-installed-apps
+    resource: https://docs.github.com/en/apps/using-github-apps/reviewing-and-modifying-installed-github-apps
+  - id: github-app-installation-api
+    resource: https://docs.github.com/en/rest/apps/apps#get-a-repository-installation-for-the-authenticated-app
+  - id: github-app-user-installations
+    resource: https://docs.github.com/en/rest/apps/installations#list-app-installations-accessible-to-the-user-access-token
+  - id: codex-github-review
+    resource: https://developers.openai.com/codex/integrations/github
 ---
 
 ## レビューとマージ
@@ -21,7 +31,7 @@ sources:
 - レビュー対応で目的・成果・受け入れ条件や外部影響を変える場合は、縮小も含め依存スキル `issue-management` の「計画と実行範囲」に従って具体案を保存・提示して確認する。同じ成功条件を満たすファイル・手順の調整は記録して継続する。
 - 承認済み範囲でレビューとその対応により変更内容・理由・検証結果・重要な制約に変化があった場合は、対応と同時にPR本文を更新する。
 - 変更内容が変わった場合はPRのラベルも見直す。
-- ドラフトPRでは通常 Copilot Code Review[^docs-request-a-code-review-use-code-review] を使用する。利用不能時だけ次の「代替レビュー」に従う。
+- ドラフトPRでは [レビュー候補の高速判定](#レビュー候補の高速判定)でCopilot Code Review[^docs-request-a-code-review-use-code-review]を優先して選ぶ。Codexを選ぶ場合は「代替レビュー」に従う。
 - Copilotへの依頼にはこの文書の「Copilot Code Reviewの依頼」を使用する。
 - 外部レビュアーへ適用するレビュー方針は、対象リポジトリ自身のInstructions・レビューガイド・Skill・テンプレート等を優先する。APMでローカルに導入された `daiksud/agents` の `code-review` を、別リポジトリのCopilot Code ReviewやCodex Reviewへ追加指示として渡さない。対象リポジトリ自身にレビュアー向け資料がある場合だけ、そのリポジトリ内の原本を案内できる。`daiksud/agents` 自身のレビューでは、このリポジトリ内の `skills/code-review/SKILL.md` を対象リポジトリ自身の方針として案内できる。
 - 初回・再レビューの依頼後は、レビュー完了までセルフレビューを行う。
@@ -29,21 +39,97 @@ sources:
 - レビュー待ちの間に、CIの結果とコンフリクトの有無を確認する。
 - CIが未設定の場合は、既存のマージ例外としてCI条件を満たしたと扱う。[CI未設定の場合](#ci未設定の場合)に従い、実行成功とは区別する。
 - CIの失敗やコンフリクトがあれば、修正・検証・コミット・プッシュしてPRを更新する。
-- レビュー指摘は、現在の要求・契約との不一致、根拠の確かさ、発生条件、具体的な影響を確認し、正式な修正指摘、任意提案、追加調査、対応不要を判断する。重要度・緊急度・発生可能性・対応コストは優先順位や修正方法の判断に使い、レビュアーの分類や承認状態だけで採否を決めない。
+- レビュー指摘は、現在の要求・契約との不一致、根拠の確かさ、発生条件、具体的な影響から正式な修正指摘、任意提案、追加調査、対応不要を判断する。重要度・緊急度・発生可能性・対応コストは優先順位や修正方法の判断に使い、レビュアーの分類や承認状態だけで採否を決めない。
 - 再現に必要な前提条件の多さ、再現頻度の低さ、再現の難しさだけを対応不要の理由にしない。現行契約との不一致と具体的な影響を根拠から説明できる指摘は、発生条件が限定的でも正式な修正指摘として扱う。成立条件や根拠が不足する場合は追加調査とし、推測だけで修正もしない。
 - レビュー結果で「Suppressed comments」などと分類された指摘も同じ基準で内容を評価する。抑制という分類やCopilotのApprove有無だけで修正要否を決めない。Approve未取得時の扱いは次の「抑制指摘とApprove未取得時の扱い」に従う。
 - レビューへの返信は次の「返信の記載先と公開手順」に従い、個別指摘への回答とレビュー全体への説明を分ける。
 - 修正する指摘は、修正・検証・コミット・プッシュした後に再レビューを依頼する。
 - セルフレビューやCI対応、リベースでレビュー対象のコミットが変わった場合も、最新コミットへの再レビューを依頼する。
 - 対応が必要な指摘がゼロになるまでレビューと修正を繰り返す。
-- Copilotは最新コミットのApproveを得るまで完了としない。証拠付きで利用不能を確認した場合だけ「代替レビュー」のCodex完了条件に切り替える。
+- Copilotを選んだ場合は最新コミットのApproveを得るまで完了としない。「レビュー候補の高速判定」でCodexを選んだ場合はCodexの完了条件を適用する。候補判定をレビュー完了の代わりにしない。
+
+### レビュー候補の高速判定
+
+ここで判断するのは依頼先の候補であり、利用枠・実行成功・レビュー完了の保証ではない。Codexも導入確認だけでレビュー完了とはせず、依頼後の実行結果を確認する。[^codex-github-review]
+
+| 状態 | 意味 |
+| --- | --- |
+| `available` | Copilotのレビュー候補・依頼受理、または対象repoへのCodex Connector導入を確認できた。依頼先として選べる |
+| `unavailable` | Copilotの候補なし、対象repoへのConnector未導入・対象外、またはサービス固有の明示的な利用不能を確認した。この選択では候補から除外する |
+| `unknown` | 権限不足、取得失敗、不完全な一覧、確認手段の非対応などで候補を判定できない。未導入・利用不能と断定しない |
+
+事前確認は下記の手順を各サービスにつき最大1回実施する。Copilotを先に確認し、選べるならCodexを調べない。判定・対象repo・認証条件・根拠・確認日時をタスク内で保持し、同じ条件で設定画面・契約・利用枠・別APIを探し直さない。対象PRが変わればCopilot、対象repoや認証・導入設定が変われば関連する判定を更新する。HEAD更新だけでConnectorの導入確認を繰り返さない。永続キャッシュや専用設定は追加しない。
+
+同じHEADへの依頼が既にある場合は、先に依頼履歴・保留中の依頼・Botの実行状態を確認する。進行中なら通常の完了待ちを続け、受理されたか不明なら状態を1回取得する。それでも不明なら再依頼や切替を止め、未確認範囲と再開条件を記録する。候補探索の上限を、受理済みレビューやCIの通常の進捗確認に適用しない。
+
+- 未依頼でCopilotが `available` ならCopilotへ依頼する。
+- Copilotが `unavailable` または `unknown` で、Codexが `available` ならCodexを選ぶ。前者の理由は「候補なし」「利用不能」、後者は「候補確認不能」と区別し、恒久的な利用不能を証明する追加調査や切替の再承認を要求しない。依頼済みの進行中・受理不明をこの条件で迂回しない。
+- 両方とも `available` でなければ探索を打ち切る。セルフレビュー・CI確認は継続できるが、外部レビュー完了やマージ可とは扱わない。必要な導入・権限・確認手段をブロッカーとして報告し、保護設定を緩めない。
+
+#### Copilotの候補を1回取得する
+
+対象PRの `suggestedReviewerActors` を照会する。これはレビュー候補のAPIであり、Issue担当者用の `suggestedActors` を代用しない。[^github-graphql-pulls]
+
+`OWNER`・`REPO`・`PR_NUMBER` を対象に置き換える。以下は読み取りだけで、レビューを依頼しない。
+
+```bash
+OWNER=daiksud
+REPO=agents
+PR_NUMBER=123
+
+gh api graphql \
+  -f owner="$OWNER" -f name="$REPO" -F number="$PR_NUMBER" \
+  -f query='
+    query($owner: String!, $name: String!, $number: Int!) {
+      repository(owner: $owner, name: $name) {
+        pullRequest(number: $number) {
+          suggestedReviewerActors(first: 100, query: "copilot") {
+            nodes {
+              reviewer {
+                __typename
+                ... on Bot { login }
+              }
+            }
+            pageInfo { hasNextPage }
+          }
+        }
+      }
+    }
+  ' \
+  --jq '
+    if ((.errors // []) | length) > 0
+       or .data.repository.pullRequest == null then "unknown"
+    else
+      .data.repository.pullRequest.suggestedReviewerActors
+      | if (.nodes | type) != "array" then "unknown"
+        elif any(.nodes[]?.reviewer;
+          .__typename == "Bot"
+          and .login == "copilot-pull-request-reviewer") then "available"
+        elif .pageInfo.hasNextPage == false then "unavailable"
+        else "unknown"
+        end
+    end
+  '
+```
+
+コマンド失敗・GraphQLエラーは `unknown` とする。候補なしはこの選択での除外根拠であり、契約全体の利用不能の証明ではない。ページが残るのに見つからない場合も `unknown` とし、探索のための追加ページ取得は行わない。
+
+候補照会を提供しない実行環境では、未依頼を確認したうえで「Copilot Code Reviewの依頼」の正式APIを1回だけ判定兼依頼として使ってよい。成功は依頼受理として記録して完了待ちへ進み、確認目的で再送しない。利用枠上限・無効化などの明示的な利用不能だけを `unavailable` とし、汎用的な403・422・通信失敗だけでサービス利用不能を断定しない。失敗後に別の候補APIを探索しない。
+
+#### Codex Connectorの対象repoへの導入を確認する
+
+`ChatGPT Codex Connector`（slug: `chatgpt-codex-connector`）が対象repoのインストール済みGitHub Appに含まれるかを確認する。既に対象repoについて確認済みの導入結果があれば再利用する。未確認なら、利用可能な認証済みGitHub設定画面のGitHub Apps、または対象repoの導入情報を返す既存ツールのいずれか1つを使う。対応する確認手段がなければ呼び出しを試行錯誤せず `unknown` とする。[^github-installed-apps]
+
+対象repoへの導入を確認できれば `available`、完全な対象一覧で未導入・対象外と確認できれば `unavailable` とする。アカウント単位の情報を使う場合はownerの一致と、All repositoriesまたはSelected repositoriesに対象repoが含まれることまで確認できなければ `unknown` とする。明示的に停止・無効化されていれば `unavailable` とする。公開Appページの存在、過去のBotコメント、ローカルの `codex login status` は現在の対象repoへの導入証拠にしない。
+
+通常の `gh` ユーザートークンで `GET /repos/{owner}/{repo}/installation` を汎用のApp一覧APIとして使わない。このAPIは確認対象App自身のJWTを必要とする。`GET /user/installations` も認証したGitHub Appの導入情報であり、無関係なAppを横断する確認には使わない。これらの認証条件を満たさない環境で、別トークン・別API・ブラウザ内部APIの探索を続けない。[^github-app-installation-api][^github-app-user-installations]
 
 ### 代替レビュー
 
 レビュー依頼と完了判定は本手順が担当する。差分をレビューするときだけ `code-review` を読み、そのスキルから依頼・修正・マージを開始しない。
 
-1. Copilotの利用枠上限、権限不足、設定による無効化、サービス障害などの明示的なエラー・設定・状態を確認し、理由、証拠URLまたは取得結果、確認日時をPRに記録する。利用不能と確認できた場合は切り替えの都度ユーザー承認を求めずCodexへ進む。
-2. 指摘への不同意、Approve未取得、単なる待機時間、一時的な結果取得失敗だけを利用不能の証拠にしない。依頼履歴、保留中の依頼、Botの実行状態・セッションを確認する。進行中なら待ち、状態不明なら調査し、同じHEADへの依頼を重複させない。
+1. 「レビュー候補の高速判定」でCodexを選んだ理由、CopilotとCodexの判定、証拠URLまたは取得結果、確認日時をPRに記録する。Copilotへの依頼後に明示的な利用不能が判明した場合も、その結果を保持して同じ選択手順へ進む。利用不能と候補確認不能を混同せず、切替の都度ユーザー承認を求めない。
+2. 指摘への不同意、Approve未取得、単なる待機時間、一時的な結果取得失敗だけを切替理由にしない。依頼済みのレビューは「レビュー候補の高速判定」の進行中・受理不明の手順に従い、同じHEADへの依頼を重複させない。
 3. PRコメントで `@codex review` を依頼する。対象リポジトリ自身にレビュアー向けInstructions・ガイド・Skill等があり、外部レビュアーから読める場合だけ、そのリポジトリ内の原本パスと適用指示を添える。APMでローカルに導入された共通 `code-review` や、その原本が別リポジトリにあるという理由だけで追加指示しない。対象リポジトリに固有のレビュー資料がなければ、Codex自身の通常レビューに委ねる。送信前後に依頼コメントを確認し、タイムアウト時も保存済みの可能性を調べてから再送する。新しい依頼が必要なのは未送信の確認、HEAD変更、または失敗原因を解消して再実行するとき。
 
 ### Codexの完了判定
@@ -77,7 +163,7 @@ Codexの「重大な問題なし」はそのレビュー範囲の結果であり
 
 | 対象 | 記載先と内容 |
 | --- | --- |
-| 個別スレッドの指摘 | 対象スレッドに、その指摘の対応内容・変更コミット・検証結果、または対応しない判断理由を書く |
+| 個別スレッドの指摘 | 対象スレッドに、その指摘の対応内容・変更コミット・検証結果、または対応しない理由を書く |
 | `Suppressed comments`などレビュー本文にだけ存在する指摘 | レビュー全体コメントに、対象レビューへのリンクと、正式な修正指摘として対応した場合の修正内容・変更コミット・検証結果、または任意提案・対応不要と判断した根拠を書く。Approveの有無で記載要否を変えず、返信先のスレッドを代用しない |
 | レビュー全体に関わる説明 | レビュー全体コメントに、対象レビューへのリンクと全体の説明を書く。個別スレッドに混在させない |
 
@@ -136,18 +222,19 @@ main復旧時間は失敗検知から復旧コミットの必要チェック（�
 
 ### Copilot Code Reviewの依頼
 
-1. Pull Request ID を取得する:
+「レビュー候補の高速判定」と同じ `OWNER`・`REPO`・`PR_NUMBER` を設定し、次のREST APIを1回呼ぶ。固定Bot IDやPRのNode IDの取得は不要。既存の他のレビュアーを削除しない。[^docs-request-a-code-review-use-code-review]
 
-   ```bash
-   PR_ID=$(gh pr view <PR_NUMBER> --json id --jq .id)
-   ```
+```bash
+gh api --method POST \
+  "repos/$OWNER/$REPO/pulls/$PR_NUMBER/requested_reviewers" \
+  -f 'reviewers[]=copilot-pull-request-reviewer[bot]'
+```
 
-2. Copilot Code Review を依頼する:
-
-   ```bash
-   gh api graphql \
-     -f query='mutation($pullRequestId: ID!) { requestReviews(input:{pullRequestId:$pullRequestId, botIds:["BOT_kgDOCnlnWA"]}) { clientMutationId } }' \
-     -f pullRequestId="$PR_ID"
-   ```
+成功応答は依頼受理であり、レビュー完了ではない。タイムアウト等で受理が不明なら「レビュー候補の高速判定」の状態確認を行い、無条件に再送しない。
 
 [^docs-request-a-code-review-use-code-review]: [Copilot Code Review](https://docs.github.com/en/copilot/how-tos/use-copilot-agents/request-a-code-review/use-code-review)。本文に記した参照範囲と採用判断の根拠。
+[^github-graphql-pulls]: [GitHub GraphQL Pull requests](https://docs.github.com/en/graphql/reference/pulls)。PRのレビュー候補取得フィールドと引数の根拠。
+[^github-installed-apps]: [Installed GitHub Appsの確認](https://docs.github.com/en/apps/using-github-apps/reviewing-and-modifying-installed-github-apps)。導入済みAppとリポジトリアクセス範囲の確認方法。
+[^github-app-installation-api]: [Repository installation API](https://docs.github.com/en/rest/apps/apps#get-a-repository-installation-for-the-authenticated-app)。確認対象App自身のJWTが必要なAPIの認証条件。
+[^github-app-user-installations]: [User access tokenで参照できるinstallations](https://docs.github.com/en/rest/apps/installations#list-app-installations-accessible-to-the-user-access-token)。認証したGitHub Appに限定された導入情報の範囲。
+[^codex-github-review]: [CodexのGitHubレビュー](https://developers.openai.com/codex/integrations/github)。レビューの設定・依頼・結果確認と、導入だけで完了としない判断の根拠。
