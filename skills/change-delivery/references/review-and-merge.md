@@ -15,6 +15,8 @@ sources:
     resource: https://docs.github.com/en/rest/apps/installations#list-app-installations-accessible-to-the-user-access-token
   - id: codex-github-review
     resource: https://developers.openai.com/codex/integrations/github
+  - id: github-app-user-access
+    resource: https://docs.github.com/en/apps/creating-github-apps/authenticating-with-a-github-app/generating-a-user-access-token-for-a-github-app
 ---
 
 ## レビューとマージ
@@ -118,7 +120,9 @@ gh api graphql \
 
 #### Codex Connectorの対象repoへの導入を確認する
 
-`ChatGPT Codex Connector`（slug: `chatgpt-codex-connector`）が対象repoのインストール済みGitHub Appに含まれるかを確認する。既に対象repoについて確認済みの導入結果があれば再利用する。未確認なら、利用可能な認証済みGitHub設定画面のGitHub Apps、または対象repoの導入情報を返す既存ツールのいずれか1つを使う。対応する確認手段がなければ呼び出しを試行錯誤せず `unknown` とする。[^github-installed-apps]
+`ChatGPT Codex Connector`（slug: `chatgpt-codex-connector`）が対象repoのインストール済みGitHub Appに含まれるかを確認する。既に対象repoについて確認済みの導入結果、または下記の同一タスクの成功イベントがあれば先に再利用する。どちらもなければ、利用可能な認証済みGitHub設定画面のGitHub Apps、または対象repoの導入情報を返す既存ツールのいずれか1つを使う。対応する確認手段がなければ呼び出しを試行錯誤せず `unknown` とする。[^github-installed-apps]
+
+上記の既存ツールには、同一タスク・同じ認証条件で対象repoへの既存操作が成功した際の、GitHubの返却データや既知のイベントを読む方法も含む。`performed_via_github_app.slug` が `chatgpt-codex-connector` と一致し、対象repo・操作時刻・今回の成功操作との対応を確認できれば `available` の根拠として再利用する。Appとユーザーの双方がアクセスできるリソースに限定される仕組みに基づく運用上の判定であり、導入一覧の直接取得やレビュー成功の保証とは区別する。コメント本文の自己申告や過去タスクの記録は代用せず、確認だけのためのラベル変更・コメント投稿などの書き込みは行わない。[^github-app-user-access]
 
 対象repoへの導入を確認できれば `available`、完全な対象一覧で未導入・対象外と確認できれば `unavailable` とする。アカウント単位の情報を使う場合はownerの一致と、All repositoriesまたはSelected repositoriesに対象repoが含まれることまで確認できなければ `unknown` とする。明示的に停止・無効化されていれば `unavailable` とする。公開Appページの存在、過去のBotコメント、ローカルの `codex login status` は現在の対象repoへの導入証拠にしない。
 
@@ -236,5 +240,6 @@ gh api --method POST \
 [^codex-github-review]: [CodexのGitHubレビュー](https://developers.openai.com/codex/integrations/github)。レビューの設定・依頼・結果確認と、導入だけで完了としない判断の根拠。
 [^github-graphql-pulls]: [GitHub GraphQL Pull requests](https://docs.github.com/en/graphql/reference/pulls)。PRのレビュー候補取得フィールドと引数の根拠。
 [^github-installed-apps]: [Installed GitHub Appsの確認](https://docs.github.com/en/apps/using-github-apps/reviewing-and-modifying-installed-github-apps)。導入済みAppとリポジトリアクセス範囲の確認方法。
+[^github-app-user-access]: [GitHub App user access tokenのアクセス範囲](https://docs.github.com/en/apps/creating-github-apps/authenticating-with-a-github-app/generating-a-user-access-token-for-a-github-app)。Appとユーザー双方のアクセス範囲に限定される仕組みと、同一タスクの成功操作を候補判定に使う根拠。
 [^github-app-installation-api]: [Repository installation API](https://docs.github.com/en/rest/apps/apps#get-a-repository-installation-for-the-authenticated-app)。確認対象App自身のJWTが必要なAPIの認証条件。
 [^github-app-user-installations]: [User access tokenで参照できるinstallations](https://docs.github.com/en/rest/apps/installations#list-app-installations-accessible-to-the-user-access-token)。認証したGitHub Appに限定された導入情報の範囲。
