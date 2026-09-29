@@ -39,7 +39,7 @@ sources:
 - レビュー待ちの間に、CIの結果とコンフリクトの有無を確認する。
 - CIが未設定の場合は、既存のマージ例外としてCI条件を満たしたと扱う。[CI未設定の場合](#ci未設定の場合)に従い、実行成功とは区別する。
 - CIの失敗やコンフリクトがあれば、修正・検証・コミット・プッシュしてPRを更新する。
-- レビュー指摘は、現在の要求・契約との不一致、根拠の確かさ、発生条件、具体的な影響から正式な修正指摘、任意提案、追加調査、対応不要を判断する。重要度・緊急度・発生可能性・対応コストは優先順位や修正方法の判断に使い、レビュアーの分類や承認状態だけで採否を決めない。
+- レビュー指摘は、現在の要求・契約との不一致、根拠の確かさ、発生条件、具体的な影響を確認し、正式な修正指摘、任意提案、追加調査、対応不要を判断する。重要度・緊急度・発生可能性・対応コストは優先順位や修正方法の判断に使い、レビュアーの分類や承認状態だけで採否を決めない。
 - 再現に必要な前提条件の多さ、再現頻度の低さ、再現の難しさだけを対応不要の理由にしない。現行契約との不一致と具体的な影響を根拠から説明できる指摘は、発生条件が限定的でも正式な修正指摘として扱う。成立条件や根拠が不足する場合は追加調査とし、推測だけで修正もしない。
 - レビュー結果で「Suppressed comments」などと分類された指摘も同じ基準で内容を評価する。抑制という分類やCopilotのApprove有無だけで修正要否を決めない。Approve未取得時の扱いは次の「抑制指摘とApprove未取得時の扱い」に従う。
 - レビューへの返信は次の「返信の記載先と公開手順」に従い、個別指摘への回答とレビュー全体への説明を分ける。
@@ -163,7 +163,7 @@ Codexの「重大な問題なし」はそのレビュー範囲の結果であり
 
 | 対象 | 記載先と内容 |
 | --- | --- |
-| 個別スレッドの指摘 | 対象スレッドに、その指摘の対応内容・変更コミット・検証結果、または対応しない理由を書く |
+| 個別スレッドの指摘 | 対象スレッドに、その指摘の対応内容・変更コミット・検証結果、または対応しない判断理由を書く |
 | `Suppressed comments`などレビュー本文にだけ存在する指摘 | レビュー全体コメントに、対象レビューへのリンクと、正式な修正指摘として対応した場合の修正内容・変更コミット・検証結果、または任意提案・対応不要と判断した根拠を書く。Approveの有無で記載要否を変えず、返信先のスレッドを代用しない |
 | レビュー全体に関わる説明 | レビュー全体コメントに、対象レビューへのリンクと全体の説明を書く。個別スレッドに混在させない |
 
@@ -233,8 +233,8 @@ gh api --method POST \
 成功応答は依頼受理であり、レビュー完了ではない。タイムアウト等で受理が不明なら「レビュー候補の高速判定」の状態確認を行い、無条件に再送しない。
 
 [^docs-request-a-code-review-use-code-review]: [Copilot Code Review](https://docs.github.com/en/copilot/how-tos/use-copilot-agents/request-a-code-review/use-code-review)。本文に記した参照範囲と採用判断の根拠。
+[^codex-github-review]: [CodexのGitHubレビュー](https://developers.openai.com/codex/integrations/github)。レビューの設定・依頼・結果確認と、導入だけで完了としない判断の根拠。
 [^github-graphql-pulls]: [GitHub GraphQL Pull requests](https://docs.github.com/en/graphql/reference/pulls)。PRのレビュー候補取得フィールドと引数の根拠。
 [^github-installed-apps]: [Installed GitHub Appsの確認](https://docs.github.com/en/apps/using-github-apps/reviewing-and-modifying-installed-github-apps)。導入済みAppとリポジトリアクセス範囲の確認方法。
 [^github-app-installation-api]: [Repository installation API](https://docs.github.com/en/rest/apps/apps#get-a-repository-installation-for-the-authenticated-app)。確認対象App自身のJWTが必要なAPIの認証条件。
 [^github-app-user-installations]: [User access tokenで参照できるinstallations](https://docs.github.com/en/rest/apps/installations#list-app-installations-accessible-to-the-user-access-token)。認証したGitHub Appに限定された導入情報の範囲。
-[^codex-github-review]: [CodexのGitHubレビュー](https://developers.openai.com/codex/integrations/github)。レビューの設定・依頼・結果確認と、導入だけで完了としない判断の根拠。
