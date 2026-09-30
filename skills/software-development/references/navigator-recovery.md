@@ -41,5 +41,5 @@ Driverは起動済みNavigatorとの継続が失われたとき、確認が必�
 以上の照合を終えるまでコード変更を再開しない。ペアの確認を通常のPRレビュー・必須CI・マージ条件の代わりにせず、資料を読んだ事実や新Navigatorの起動成功だけを復旧完了や検証成功とは扱わない。[^issue-100] [^issue-161]
 
 [^issue-140]: [Issue #140](https://github.com/daiksud/agents/issues/140) の、復旧時だけ読む詳細資料と必須契約を入口に残す境界。
-[^issue-100]: [Issue #100](https://github.com/daiksud/agents/issues/100) の、証拠保持、旧担当の退役、未確認段階からの再検証。
 [^issue-161]: [Issue #161](https://github.com/daiksud/agents/issues/161) の、ユーザー確認不要の自動再ペアと可能な限りのコンテキスト引き継ぎ。
+[^issue-100]: [Issue #100](https://github.com/daiksud/agents/issues/100) の、証拠保持、旧担当の退役、未確認段階からの再検証。
