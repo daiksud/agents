@@ -62,13 +62,13 @@ Red / Green / Refactorの各段階でも、Navigatorが次の判断を変えら�
 
 Driverは各確認で、実際の差分、実行したテスト結果、レビュー結果を同じコード状態に結びつける。HEADのSHAが同じだけでは未コミット差分まで同じと扱わない。確認依頼後に対象を変更した場合は、影響する検証とレビューをやり直し、過去の確認結果を変更後の根拠にしない。Driverの修正または根拠付き回答だけで指摘を解消扱いにせず、Navigatorが再確認する。当該段階の要対応指摘、任意提案、同じサイクルのRefactorへ引き継ぐ事項を区別する。最終差分も同じNavigatorに確認させる。
 
-ペア作業に同時に参加するエージェントはDriverと有効なNavigatorの2体に限る。サブエージェントは通常Navigatorの1体だけとし、承認された再ペアで元のNavigatorを交代させる場合も並行させない。DriverもNavigatorも別の実装・調整・ペア内レビュー用サブエージェントを追加起動しない。Navigatorは他のエージェントへ再委譲しない。共通指示がNavigatorにも適用される場合でも、子に別のペアを作らせない。単一エージェントによる役割演技は代わりにならない。
+ペア作業に同時に参加するエージェントはDriverと有効なNavigatorの2体に限る。サブエージェントは通常Navigatorの1体だけとし、自動再ペアで元のNavigatorを交代させる場合も並行させない。DriverもNavigatorも別の実装・調整・ペア内レビュー用サブエージェントを追加起動しない。Navigatorは他のエージェントへ再委譲しない。共通指示がNavigatorにも適用される場合でも、子に別のペアを作らせない。単一エージェントによる役割演技は代わりにならない。
 
 同じ論点についてDriverの修正または根拠付き回答とNavigatorの再確認を1往復と数え、2往復しても解消しない場合は作業を止め、未解決点・根拠・選択肢をユーザーに報告する。言い換えや指摘の分割で回数をリセットせず、未解決のまま完了や承認済みとしない。ペア内の確認は、既存のPRレビュー、必須CI、承認、マージ条件を置き換えず、作業範囲や実行権限を広げない。
 
 [^issue-138]: [Issue #138](https://github.com/daiksud/agents/issues/138) に記録された、初回Navigator利用不能時のコード変更停止、読み取り継続、初回再試行と再ペアの境界。
+[^issue-161]: [Issue #161](https://github.com/daiksud/agents/issues/161) に記録された、Navigator喪失後に追加確認を待たず自動再ペアし、可能な限りのコンテキストを引き継ぐ方針。
 [^issue-99]: [Issue #99](https://github.com/daiksud/agents/issues/99) に記録された、低エントロピーなControlled Englishによる内部通信と外部成果物との境界。
 [^issue-140]: [Issue #140](https://github.com/daiksud/agents/issues/140) に記録された、必須契約を入口に残す詳細分離と、配布済み資料の確認・共有の境界。
 [^issue-100]: [Issue #100](https://github.com/daiksud/agents/issues/100) に記録された、Navigator喪失後の証拠保持、旧担当退役、未確認段階からの再確認条件。
-[^issue-161]: [Issue #161](https://github.com/daiksud/agents/issues/161) に記録された、Navigator喪失後に追加確認を待たず自動再ペアし、可能な限りのコンテキストを引き継ぐ方針。
 [^issue-98]: [Issue #98](https://github.com/daiksud/agents/issues/98) に記録された、1 ToDoの粒度、段階内部の短い対話境界、過剰な逐次報告を避ける条件。
