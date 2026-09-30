@@ -13,7 +13,7 @@ description: コードの追加・変更、バグ修正、リファクタリン�
 - アサーションからのテスト作成、テスト層・再現性・UI・性能の検証を設計する場合: [変更単位と再現可能な検証](references/testing.md)。
 - 定義や採用理由の根拠を確認する場合: [一次資料と採用判断](references/sources.md)。
 - コード変更で最初のNavigator依頼を送る前: [DriverとNavigatorの内部通信](references/agent-communication.md)。共通指示の適用・停止条件に従い、Navigatorにも内容を共有する。
-- 起動済みNavigatorとの継続不能時: 共通指示に従って停止・報告し、復旧・再ペア手順の前に[引き継ぎと再確認](references/navigator-recovery.md)を読む。通常の初回起動では不要。
+- 起動済みNavigatorとの継続不能時: 共通指示に従って後続コード変更を一時停止し、[引き継ぎと再確認](references/navigator-recovery.md)を読んで、ユーザー確認を待たず新Navigatorへ可能な限りのコンテキストを引き継ぐ。通常の初回起動では不要。
 - GitHub Copilot CLIで同じNavigatorへ継続して確認を依頼する場合: [runtime固有の実現方法](references/copilot-cli-pairing.md)。他runtimeへ同じツールや引数を要求しない。
 
 ## ストーリーから始める
