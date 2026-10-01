@@ -15,6 +15,12 @@ sources:
     resource: https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-rulesets/available-rules-for-rulesets
   - id: rules-api
     resource: https://docs.github.com/en/rest/repos/rules
+  - id: code-owners
+    resource: https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+  - id: copilot-code-review
+    resource: https://docs.github.com/en/copilot/how-tos/copilot-on-github/use-copilot-agents/copilot-code-review
+  - id: approval-code-owner-exception
+    resource: https://github.com/daiksud/agents/issues/165
   - id: actions-settings
     resource: https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/enabling-features-for-your-repository/managing-github-actions-settings-for-a-repository
   - id: actions-permissions-api
@@ -56,6 +62,10 @@ sources:
 5. 不足を対象リポジトリ自身のRulesetへ追加する。UIは `Settings` → `Rules` → `Rulesets`、APIは既存IDへの `PUT /repos/{owner}/{repo}/rulesets/{ruleset_id}`。新規 `POST /repos/{owner}/{repo}/rulesets` は必要な場合だけ使う。今回の承認済み変更の対象外である条件・ルール・パラメーター・例外を保持し、上位Rulesetを変更しない。[^rules-api]
 6. 詳細と実効ルールを再取得する。従来保護の削除は初版の適用に含めず、保護に空白を作らない。検証目的のmain直接push・削除・force pushを行わない。
 
+Pull Requestルールでは `required_approving_review_count` と `require_code_owner_review` を別の条件として記録する。前者はPR全体で必要なApprove数、後者は変更されたパスのCode Ownerによるレビュー要件であり、Code Ownerが複数いる場合はいずれか1人のApproveでCode Owner要件を満たす。設定値だけで実際のPRが未承認と断定せず、対象PRのauthor、変更パスに適用されるCODEOWNERS、review state、GitHubのmergeabilityを照合する。[^ruleset-rules][^code-owners]
+
+変更パスに適用されるCode Ownerが1人だけで、その本人がPR authorの場合は、自己Approve不能を理由に別のCode Ownerや人間レビュアーを作り出して要求しない。このケースではGitHubの実効判定上、Code Owner以外の有効なApproveで `required_approving_review_count` を満たせるため、そのApproveとGitHubのマージ可否を確認して条件充足を判断する。Copilot Approvalsが対象リポジトリで有効で、Copilotのレビューが `APPROVED` として必須承認に数えられている場合は、そのApproveも利用できる。既定のコメントのみのCopilotレビューをApproveに読み替えず、Copilotが明示的にhuman reviewを要求した場合の人手確認手順も上書きしない。[^approval-code-owner-exception][^copilot-code-review]
+
 既存の必須チェック、承認人数、CODEOWNERS等は維持する。新しい必須チェックは対象側の方針、実際のチェック名・発行元・実行条件・成功履歴を確認して選び、存在しないチェックでマージを止めない。CodeQL有効化をCodeQL必須化に読み替えず、単独開発で満たせない承認人数、署名必須、線形履歴を一律追加しない。不要なbypassを新設せず、既存例外の廃止にも影響と承認を確認する。非対応プランは利用不可として理由を残し、有料プランへ変更しない。[^personal-policy][^ruleset-rules]
 
 ## 外部ActionのフルSHA必須化
@@ -74,5 +84,8 @@ APIの適用は `PUT /repos/{owner}/{repo}/actions/permissions`。必須の `ena
 [^repository-api]: repositoryの取得・更新とマージ方式のフィールド。
 [^ruleset-rules]: Rulesetの提供条件、branch保護、マージ関連ルール。
 [^rules-api]: Rulesetの取得・更新、継承とbranchの実効ルール。
+[^code-owners]: CODEOWNERSの適用、Code Ownerレビュー必須化、複数owner時の承認条件。
+[^copilot-code-review]: Copilot Code ReviewのApproveが有効化時に必須承認へ数えられる条件。
+[^approval-code-owner-exception]: Issue #165 で採用した、唯一のCode OwnerがPR authorの場合の実効承認条件。
 [^actions-settings]: ネイティブSHA必須設定の対象と再利用workflowへの制約。
 [^actions-permissions-api]: Actions permissionsの取得・更新と必須パラメーター。
