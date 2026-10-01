@@ -85,7 +85,7 @@ APIの適用は `PUT /repos/{owner}/{repo}/actions/permissions`。必須の `ena
 [^ruleset-rules]: Rulesetの提供条件、branch保護、マージ関連ルール。
 [^rules-api]: Rulesetの取得・更新、継承とbranchの実効ルール。
 [^code-owners]: CODEOWNERSの適用、Code Ownerレビュー必須化、複数owner時の承認条件。
-[^copilot-code-review]: Copilot Code ReviewのApproveが有効化時に必須承認へ数えられる条件。
 [^approval-code-owner-exception]: Issue #165 で採用した、唯一のCode OwnerがPR authorの場合の実効承認条件。
 [^actions-settings]: ネイティブSHA必須設定の対象と再利用workflowへの制約。
+[^copilot-code-review]: Copilot Code ReviewのApproveが有効化時に必須承認へ数えられる条件。
 [^actions-permissions-api]: Actions permissionsの取得・更新と必須パラメーター。
