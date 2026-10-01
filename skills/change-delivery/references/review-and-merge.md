@@ -17,6 +17,12 @@ sources:
     resource: https://developers.openai.com/codex/integrations/github
   - id: github-app-user-access
     resource: https://docs.github.com/en/apps/creating-github-apps/authenticating-with-a-github-app/generating-a-user-access-token-for-a-github-app
+  - id: ruleset-rules
+    resource: https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-rulesets/available-rules-for-rulesets
+  - id: code-owners
+    resource: https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+  - id: approval-code-owner-exception
+    resource: https://github.com/daiksud/agents/issues/165
 ---
 
 ## レビューとマージ
@@ -160,6 +166,14 @@ Copilot Code Reviewのサマリー・レビュー本文・指摘で「人手の�
 - タスク指示者を特定できない、本人へレビュー依頼できない、または別の人間の判断が必要な場合は、代わりのレビュアーを推測せず、必要な判断と理由を示して指示者またはユーザーへ戻す。
 - 必要な人手確認が未解決の間はマージしない。指示者レビューによる修正でHEADが変わった場合は、通常の最新HEADレビュー手順へ戻る。
 
+### 必須ApproveとCODEOWNERSの判定
+
+Rulesetの `required_approving_review_count` と `require_code_owner_review` を別の条件として確認する。前者はPR全体で必要なApprove数、後者は変更パスに適用されるCode Ownerレビュー要件である。Code Ownerが複数いる場合はいずれか1人のApproveでCode Owner要件を満たす。設定値だけでブロック状態を推測せず、PR author、変更パスに適用されるCODEOWNERS、最新review state、GitHubのmergeabilityを照合する。[^ruleset-rules][^code-owners]
+
+変更パスに適用されるCode Ownerが1人だけで、その本人がPR authorの場合は、本人の自己Approveや存在しない別Code Ownerを待たない。このケースではGitHubの実効判定上、Code Owner以外の有効なApproveで必須Approve数を満たせるため、別の有効なApproveとGitHubのマージ可否を確認して先へ進む。Copilot Approvalsが有効で、最新HEADに対するCopilotレビューが `APPROVED` として必須承認に数えられている場合は、そのApproveで問題ない。既定のコメントだけのCopilotレビューはApproveとして扱わない。[^approval-code-owner-exception][^docs-request-a-code-review-use-code-review]
+
+この例外は、Copilotが明示的にhuman reviewを要求した場合、未解決のRequest changes、最新pushを別主体が承認する要件、その他GitHubが未充足としている保護条件を迂回しない。満たせない保護条件が残る場合は、CODEOWNERS設定を緩めたり任意の人間へレビュー依頼したりせず、実際に未充足の条件を特定する。
+
 ### 抑制指摘とApprove未取得時の扱い
 
 「Suppressed comments」などの抑制指摘は、Approveの有無にかかわらず通常のレビュー指摘と同じ基準で採否を判断する。この節は、最新コミットのCopilotレビューが完了してもApproveが得られていない場合のマージ条件の扱いだけを定める。CopilotのApprove必須というマージ条件は維持し、Approve取得を指摘の妥当性の根拠にしない。
@@ -193,7 +207,7 @@ Copilot Code Reviewのサマリー・レビュー本文・指摘で「人手の�
 - マージ先の更新を作業ブランチに取り込むときはリベースし、Git履歴をLinear historyに保つ。
 - リベース後は関連する検証を再実行し、リモートへプッシュする。
 - プッシュ済みの履歴をリベースした場合は `git push --force-with-lease` を使い、リモートに未知の更新があれば上書きせず確認する。
-- マージ直前に、最新コミットのレビューが完了し、対応が必要な指摘がゼロ、CIがパス、コンフリクトがゼロであることを確認する。
+- マージ直前に、最新コミットのレビューが完了し、対応が必要な指摘がゼロ、CIがパス、コンフリクトがゼロであることを確認する。必須ApproveとCODEOWNERSは「必須ApproveとCODEOWNERSの判定」に従い、唯一のCode OwnerがPR authorであることだけを理由に自己Approve待ちへ入らない。
 - マージ直前に最新mainのSHAとそのpushで動いた必要チェック・配布検証を再確認する。開始時の確認だけで代用せず、実行中・未確認なら待ち、失敗していれば復旧を優先して通常PRをマージしない。当該失敗を解消する承認済み復旧PRはこのmain成功条件の対象外とし、復旧PR自体のレビュー・必要チェック・必須承認を満たして進める。CIが存在しない場合だけ既存の未設定例外に従う。
 - すべての条件を満たしたらドラフトPRをReady for reviewに変更し、スカッシュマージする。
 - スカッシュコミットのメッセージも[コミットメッセージの指示](conventional-commits.md)に従う。
@@ -252,3 +266,6 @@ gh api --method POST \
 [^github-app-user-access]: [GitHub App user access tokenのアクセス範囲](https://docs.github.com/en/apps/creating-github-apps/authenticating-with-a-github-app/generating-a-user-access-token-for-a-github-app)。Appとユーザー双方のアクセス範囲に限定される仕組みと、同一タスクの成功操作を候補判定に使う根拠。
 [^github-app-installation-api]: [Repository installation API](https://docs.github.com/en/rest/apps/apps#get-a-repository-installation-for-the-authenticated-app)。確認対象App自身のJWTが必要なAPIの認証条件。
 [^github-app-user-installations]: [User access tokenで参照できるinstallations](https://docs.github.com/en/rest/apps/installations#list-app-installations-accessible-to-the-user-access-token)。認証したGitHub Appに限定された導入情報の範囲。
+[^ruleset-rules]: [Rulesetで利用できるルール](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-rulesets/available-rules-for-rulesets)。必須Approve数とCode Ownerレビュー要件の根拠。
+[^code-owners]: [Code Ownersについて](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners)。CODEOWNERSの適用と複数owner時の承認条件。
+[^approval-code-owner-exception]: Issue #165 で採用した、唯一のCode OwnerがPR authorの場合の実効承認条件。
