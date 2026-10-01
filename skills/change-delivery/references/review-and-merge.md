@@ -253,11 +253,13 @@ Copilotへのレビュー依頼後は、`requested_reviewers` と完了済みrev
 
 状態は次の順に確認する。
 
-1. `GET /repos/{owner}/{repo}/pulls/{pull_number}/reviews` でCopilotのreview submissionを確認する。対象reviewの `commit_id` が現在のHEAD SHAに一致すれば、そのHEADに対する完了結果として扱う。`APPROVED`・`COMMENTED` 等のstateはそのまま扱い、本文の「Approval recommended」を `APPROVED` に読み替えない。
-2. 最新HEADに対する完了reviewがなければ、PRのIssue eventsまたはtimelineを確認する。`requested_reviewer.login` がCopilotの `review_requested` は依頼済み、`performed_via_github_app.slug == "copilot-pull-request-reviewer"` の `copilot_work_started` は実行開始済みのシグナルとして扱う。
-3. `copilot_work_started` を確認できたら実行中として待機を継続し、同じHEADへの再依頼やCodexへの切り替えを行わない。
-4. `copilot_work_started` が見つからないことだけで未実行とは断定しない。イベント取得権限・ページング・反映遅延などで観測できない可能性があるため、依頼APIの成功、`review_requested`、既存の進行表示など利用可能な証拠を合わせて受理済み・不明を判断する。
-5. HEADが更新された場合は、旧HEADの `copilot_work_started` やreview submissionを最新HEADの完了根拠にしない。最新HEADへのレビュー依頼履歴と `commit_id` を改めて確認する。
+1. 現在の完全HEAD SHAを先に記録する。レビュー依頼時にも対象HEAD SHAを保持し、後続確認でHEADが変わっていないことを照合する。
+2. `GET /repos/{owner}/{repo}/pulls/{pull_number}/reviews` でCopilotのreview submissionを確認する。対象reviewの `commit_id` が現在のHEAD SHAに一致すれば、そのHEADに対する完了結果として扱う。`APPROVED`・`COMMENTED` 等のstateはそのまま扱い、本文の「Approval recommended」を `APPROVED` に読み替えない。
+3. 最新HEADに対する完了reviewがなければ、PRのIssue eventsまたはtimelineを確認する。`requested_reviewer.login` がCopilotの `review_requested` は依頼済み、`performed_via_github_app.slug == "copilot-pull-request-reviewer"` の `copilot_work_started` は実行開始済みのシグナル候補とする。
+4. `copilot_work_started` を実行中の根拠にできるのは、現在のHEADを対象にしたCopilotの `review_requested` より後に発生し、その依頼以降にHEADが更新されていないことを確認できる場合だけとする。依頼時にHEAD SHAと時刻を保持していればそれを使い、再開時に保持情報がなければtimeline上で最新HEADへの更新と、その後の `review_requested`・`copilot_work_started` の順序を確認する。対応関係を確立できなければ実行中と断定せず `unknown` とする。
+5. 現HEADに対応する `copilot_work_started` を確認できたら実行中として待機を継続し、同じHEADへの再依頼やCodexへの切り替えを行わない。
+6. `copilot_work_started` が見つからないことだけで未実行とは断定しない。イベント取得権限・ページング・反映遅延などで観測できない可能性があるため、依頼APIの成功、現HEADへの `review_requested`、既存の進行表示など利用可能な証拠を合わせて受理済み・不明を判断する。
+7. HEADが更新された場合は、旧HEADの `copilot_work_started` やreview submissionを最新HEADの実行中・完了根拠にしない。最新HEADへのレビュー依頼履歴と `commit_id` を改めて確認する。
 
 例として、現在の実行状態を確認するときは次を使える。
 
@@ -281,7 +283,7 @@ gh api "repos/$OWNER/$REPO/pulls/$PR_NUMBER/reviews" \
     {state, submitted_at, commit_id, html_url}'
 ```
 
-Issue eventsに現れる `copilot_work_started` は進行確認の運用シグナルとして使い、永続的な公開API契約とはみなさない。取得できない環境では未実行と断定せず、上記の他の証拠で状態を判断する。PR #166 では `requested_reviewers=[]` かつreview未提出の期間にも `copilot_work_started` が記録され、その後reviewが正常完了した。
+Issue eventsに現れる `copilot_work_started` は進行確認の運用シグナルとして使い、永続的な公開API契約とはみなさない。取得できない環境では未実行と断定せず、上記の他の証拠で状態を判断する。PR #166 では `requested_reviewers=[]` かつreview未提出の期間にも `copilot_work_started` が記録され、その後reviewが正常完了した。このイベントはHEADを直接含まないため、必ず現HEADへの `review_requested` 以後かつHEAD未更新の条件と組み合わせて使う。
 
 ### Copilot Code Reviewの依頼
 
