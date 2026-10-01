@@ -68,7 +68,7 @@ sources:
 
 事前確認は下記の手順を各サービスにつき最大1回実施する。Copilotを先に確認し、選べるならCodexを調べない。判定・対象repo・認証条件・根拠・確認日時をタスク内で保持し、同じ条件で設定画面・契約・利用枠・別APIを探し直さない。対象PRが変わればCopilot、対象repoや認証・導入設定が変われば関連する判定を更新する。HEAD更新だけでConnectorの導入確認を繰り返さない。永続キャッシュや専用設定は追加しない。
 
-同じHEADへの依頼が既にある場合は、先に依頼履歴・保留中の依頼・Botの実行状態を確認する。進行中なら通常の完了待ちを続け、受理されたか不明なら状態を1回取得する。それでも不明なら再依頼や切替を止め、未確認範囲と再開条件を記録する。候補探索の上限を、受理済みレビューやCIの通常の進捗確認に適用しない。
+同じHEADへの依頼が既にある場合は、先に依頼履歴・Botの実行状態・完了済みレビューを確認する。Copilotは [依頼後の実行状態を確認する](#copilot依頼後の実行状態を確認する) に従い、進行中なら通常の完了待ちを続ける。受理されたか不明なら状態を1回取得し、それでも不明なら再依頼や切替を止め、未確認範囲と再開条件を記録する。候補探索の上限を、受理済みレビューやCIの通常の進捗確認に適用しない。
 
 - 未依頼でCopilotが `available` ならCopilotへ依頼する。
 - Copilotが `unavailable` または `unknown` で、Codexが `available` ならCodexを選ぶ。前者の理由は「候補なし」「利用不能」、後者は「候補確認不能」と区別し、恒久的な利用不能を証明する追加調査や切替の再承認を要求しない。依頼済みの進行中・受理不明をこの条件で迂回しない。
@@ -247,6 +247,44 @@ main復旧時間は失敗検知から復旧コミットの必要チェック（�
 - `git fetch --prune origin` の後、`git status --short --branch`、`git branch -vv`、`git ls-remote --heads origin` でmainの同期、作業ツリー、削除対象ブランチが残っていないことを確認する。
 - mainの更新やブランチ削除が完了していない場合は、マージ完了と区別して未完了の操作と理由を報告する。
 
+### Copilot依頼後の実行状態を確認する
+
+Copilotへのレビュー依頼後は、`requested_reviewers` と完了済みreviewだけで実行状態を判定しない。レビュー依頼が受理された後、`requested_reviewers` が空になり、まだreview submissionが存在しない期間でもCopilotが実行中であることがある。空配列を「未依頼」「停止」「利用不能」の根拠にしない。
+
+状態は次の順に確認する。
+
+1. 現在の完全HEAD SHAを先に記録する。レビュー依頼時にも対象HEAD SHAを保持し、後続確認でHEADが変わっていないことを照合する。
+2. `GET /repos/{owner}/{repo}/pulls/{pull_number}/reviews` でCopilotのreview submissionを確認する。対象reviewの `commit_id` が現在のHEAD SHAに一致すれば、そのHEADに対する完了結果として扱う。`APPROVED`・`COMMENTED` 等のstateはそのまま扱い、本文の「Approval recommended」を `APPROVED` に読み替えない。
+3. 最新HEADに対する完了reviewがなければ、PRのIssue eventsまたはtimelineを確認する。`requested_reviewer.login` がCopilotの `review_requested` は依頼済み、`performed_via_github_app.slug == "copilot-pull-request-reviewer"` の `copilot_work_started` は実行開始済みのシグナル候補とする。
+4. `copilot_work_started` を実行中の根拠にできるのは、現在のHEADを対象にしたCopilotの `review_requested` より後に発生し、その依頼以降にHEADが更新されていないことを確認できる場合だけとする。依頼時にHEAD SHAと時刻を保持していればそれを使い、再開時に保持情報がなければtimeline上で最新HEADへの更新と、その後の `review_requested`・`copilot_work_started` の順序を確認する。対応関係を確立できなければ実行中と断定せず `unknown` とする。
+5. 現HEADに対応する `copilot_work_started` を確認できたら実行中として待機を継続し、同じHEADへの再依頼やCodexへの切り替えを行わない。
+6. `copilot_work_started` が見つからないことだけで未実行とは断定しない。イベント取得権限・ページング・反映遅延などで観測できない可能性があるため、依頼APIの成功、現HEADへの `review_requested`、既存の進行表示など利用可能な証拠を合わせて受理済み・不明を判断する。
+7. HEADが更新された場合は、旧HEADの `copilot_work_started` やreview submissionを最新HEADの実行中・完了根拠にしない。最新HEADへのレビュー依頼履歴と `commit_id` を改めて確認する。
+
+例として、現在の実行状態を確認するときは次を使える。
+
+```bash
+gh api "repos/$OWNER/$REPO/issues/$PR_NUMBER/events?per_page=100" --paginate \
+  --jq '.[] |
+    select(
+      .event == "review_requested"
+      or .event == "copilot_work_started"
+    ) |
+    {
+      event,
+      created_at,
+      requested_reviewer: .requested_reviewer.login,
+      app: .performed_via_github_app.slug
+    }'
+
+gh api "repos/$OWNER/$REPO/pulls/$PR_NUMBER/reviews" \
+  --jq '.[] |
+    select(.user.login == "copilot-pull-request-reviewer[bot]") |
+    {state, submitted_at, commit_id, html_url}'
+```
+
+Issue eventsに現れる `copilot_work_started` は進行確認の運用シグナルとして使い、永続的な公開API契約とはみなさない。取得できない環境では未実行と断定せず、上記の他の証拠で状態を判断する。PR #166 では `requested_reviewers=[]` かつreview未提出の期間にも `copilot_work_started` が記録され、その後reviewが正常完了した。このイベントはHEADを直接含まないため、必ず現HEADへの `review_requested` 以後かつHEAD未更新の条件と組み合わせて使う。
+
 ### Copilot Code Reviewの依頼
 
 「レビュー候補の高速判定」と同じ `OWNER`・`REPO`・`PR_NUMBER` を設定し、次のREST APIを1回呼ぶ。固定Bot IDやPRのNode IDの取得は不要。既存の他のレビュアーを削除しない。[^docs-request-a-code-review-use-code-review]
@@ -257,7 +295,7 @@ gh api --method POST \
   -f 'reviewers[]=copilot-pull-request-reviewer[bot]'
 ```
 
-成功応答は依頼受理であり、レビュー完了ではない。タイムアウト等で受理が不明なら「レビュー候補の高速判定」の状態確認を行い、無条件に再送しない。
+成功応答は依頼受理であり、レビュー完了ではない。依頼後は「Copilot依頼後の実行状態を確認する」に従う。`requested_reviewers` やreviewsが空であることだけを失敗根拠にせず、タイムアウト等で受理が不明でも無条件に再送しない。
 
 [^docs-request-a-code-review-use-code-review]: [Copilot Code Review](https://docs.github.com/en/copilot/how-tos/use-copilot-agents/request-a-code-review/use-code-review)。本文に記した参照範囲と採用判断の根拠。
 [^codex-github-review]: [CodexのGitHubレビュー](https://developers.openai.com/codex/integrations/github)。レビューの設定・依頼・結果確認と、導入だけで完了としない判断の根拠。
