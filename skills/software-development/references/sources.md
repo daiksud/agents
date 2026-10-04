@@ -3,6 +3,10 @@ type: Reference
 title: 設計とテストの出典
 description: 実装・設計・テストの出典、既存の確認履歴と採用判断を保持します。
 sources:
+  - id: beck-andres-getting-started-xp
+    resource: https://www.informit.com/articles/article.aspx?p=390816
+  - id: beck-andres-primary-practices
+    resource: https://www.informit.com/articles/article.aspx?p=390816&seqNum=3
   - id: ron-jeffries-xp
     resource: https://ronjeffries.com/xprog/what-is-extreme-programming/
   - id: fowler-beck-design-rules
@@ -49,6 +53,12 @@ sources:
 
 2026-09-25にMartin FowlerのBeck Design Rules[^fowler-beck-design-rules]とYagni[^fowler-yagni]を確認した。現在のテスト・契約、意図の明瞭さ、同じルールの重複、必要な要素から設計を判断する。仮想の将来機能を先取りせず、実際のフィードバックで小さく改善する。明瞭さと重複の間に機械的な優先順位や点数を付けず、必要なテスト・Refactor・CIを省略しない。アサートファーストと同じNavigatorの段階確認は本環境の方針で、XP原典の要件として帰属させない。
 
+### 一人でのXP導入の採用判断
+
+2026-10-04にKent Beck / Cynthia Andresの導入記事[^beck-andres-getting-started-xp]とPrimary Practicesの要約[^beck-andres-primary-practices]を確認した。導入記事は一つずつ実践を試す方法や個人からの改善を認める。要約はTest-first Programming、Incremental Design、Stories、Weekly Planning、Slack、Ten-minute Build、Continuous Integration、Energized Workを挙げる。原典のCIは共有コードへの統合を数時間以内に行う実践であり、自動ビルド・テストは短いフィードバックを支える。活動日ごとのmain統合目安は本環境の既存運用で、原典の頻度と同一視しない。
+
+TDD・漸進設計・自動検証から始める順序、週初めの成果選択と週末の短い振り返り、既存Issue・ToDoの再利用、品質を保つ範囲調整、休息時の引き継ぎは本環境の一人向け提案である。原典の逐語的な規定や、XP全実践を導入済みという意味ではない。人間一人でもAIの協働・レビュー条件を維持し、固定の会議・週次自動化・疲労の推測を追加しない。
+
 ### 指示例の参照元と適用判断
 
 2026-09-11に確認したGitHub awesome-copilotの以下の指示例を要約・再構成した。リンクは確認コミットに固定する。これらはコミュニティの指示例であり、OOP・テストの普遍的な必須規則として扱わない。
@@ -73,6 +83,8 @@ sources:
 [^ron-jeffries-xp]: [What is Extreme Programming?](https://ronjeffries.com/xprog/what-is-extreme-programming/)。5価値と実践を状況に合わせて適用する考え方。
 [^fowler-beck-design-rules]: [Beck Design Rules](https://martinfowler.com/bliki/BeckDesignRules.html)。Kent Beck本人のレビューを受けたFowlerの定式化。
 [^fowler-yagni]: [Yagni](https://martinfowler.com/bliki/Yagni.html)。未要求の機能と現在の変更を支える健全性を区別する。
+[^beck-andres-getting-started-xp]: [Getting Started with eXtreme Programming: Toe Dipping, Racing Dives, and Cannonballs](https://www.informit.com/articles/article.aspx?p=390816)。2005-06-10公開。段階的に実践を試し、個人からも改善を始める考え方。
+[^beck-andres-primary-practices]: [Appendix: Primary Practices](https://www.informit.com/articles/article.aspx?p=390816&seqNum=3)。同記事の実践の要約。具体的な一人向け手順とは区別する。
 [^github-instructions-oop-design-patterns-instructions-md]: [OOP Design Patterns](https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/instructions/oop-design-patterns.instructions.md)。本文に記した参照範囲と採用判断の根拠。
 [^github-instructions-self-explanatory-code-commenting-instructions-md]: [Self-explanatory Code Commenting](https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/instructions/self-explanatory-code-commenting.instructions.md)。本文に記した参照範囲と採用判断の根拠。
 [^github-instructions-qa-engineering-best-practices-instructions-md]: [QA Engineering Best Practices](https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/instructions/qa-engineering-best-practices.instructions.md)。本文に記した参照範囲と採用判断の根拠。
