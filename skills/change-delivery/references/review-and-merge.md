@@ -3,6 +3,10 @@ type: Instruction
 title: レビューとマージ
 description: PR作成、レビュー対応、CI確認、リベース、スカッシュマージと作業環境の整理の手順を定めます。
 sources:
+  - id: gh-pr-edit
+    resource: https://cli.github.com/manual/gh_pr_edit
+  - id: github-rest-review-requests
+    resource: https://docs.github.com/en/rest/pulls/review-requests#request-reviewers-for-a-pull-request
   - id: docs-request-a-code-review-use-code-review
     resource: https://docs.github.com/en/copilot/how-tos/use-copilot-agents/request-a-code-review/use-code-review
   - id: github-graphql-pulls
@@ -68,7 +72,9 @@ sources:
 | `unavailable` | Copilotの候補なし、対象repoへのConnector未導入・対象外、またはサービス固有の明示的な利用不能を確認した。この選択では候補から除外する |
 | `unknown` | 権限不足、取得失敗、不完全な一覧、確認手段の非対応などで候補を判定できない。未導入・利用不能と断定しない |
 
-事前確認は下記の手順を各サービスにつき最大1回実施する。Copilotを先に確認し、選べるならCodexを調べない。判定・対象repo・認証条件・根拠・確認日時をタスク内で保持し、同じ条件で設定画面・契約・利用枠・別APIを探し直さない。対象PRが変わればCopilot、対象repoや認証・導入設定が変われば関連する判定を更新する。HEAD更新だけでConnectorの導入確認を繰り返さない。永続キャッシュや専用設定は追加しない。
+事前確認は下記の手順を各サービスにつき最大1回実施する。Copilotを先に確認し、選べるならCodexを調べない。判定・対象repo・認証条件・根拠・確認日時をタスク内で保持し、同じ条件で設定画面・契約・利用枠・別APIを探し直さない。対象PRが変わればCopilotのPR固有の候補判定、対象repoや認証・導入設定が変われば関連する判定を更新する。HEAD更新だけでConnectorの導入確認を繰り返さない。永続キャッシュや専用設定は追加しない。
+
+明示的な利用枠上限エラーは候補判定と分け、エラーの根拠、確認日時、対象の利用者・課金主体、確認できた適用範囲を既存のタスク文脈に保持する。同じ主体・同じ利用枠への適用を確認できる間は `unavailable` として扱い、HEAD・PRの変更や候補が `available` になったことだけで根拠を破棄したり再依頼したりしない。枠の更新・回復、または利用者・課金主体の変更について信頼できる根拠が得られた場合に再評価する。PR固有のエラー、汎用的な403・422、通信失敗、権限不足をアカウント全体の利用枠上限へ一般化せず、適用範囲が分からない場合は不明として扱う。進行中・受理不明の依頼を迂回しない条件は下記のまま維持する。
 
 同じHEADへの依頼が既にある場合は、先に依頼履歴・Botの実行状態・完了済みレビューを確認する。Copilotは [依頼後の実行状態を確認する](#copilot依頼後の実行状態を確認する) に従い、進行中なら通常の完了待ちを続ける。受理されたか不明なら状態を1回取得し、それでも不明なら再依頼や切替を止め、未確認範囲と再開条件を記録する。候補探索の上限を、受理済みレビューやCIの通常の進捗確認に適用しない。
 
@@ -256,7 +262,7 @@ Copilotへのレビュー依頼後は、`requested_reviewers` と完了済みrev
 状態は次の順に確認する。
 
 1. 現在の完全HEAD SHAを先に記録する。レビュー依頼時にも対象HEAD SHAを保持し、後続確認でHEADが変わっていないことを照合する。
-2. `GET /repos/{owner}/{repo}/pulls/{pull_number}/reviews` でCopilotのreview submissionを確認する。対象reviewの `commit_id` が現在のHEAD SHAに一致すれば、そのHEADに対する完了結果として扱う。`APPROVED`・`COMMENTED` 等のstateはそのまま扱い、本文の「Approval recommended」を `APPROVED` に読み替えない。
+2. `GET /repos/{owner}/{repo}/pulls/{pull_number}/reviews` でCopilotのreview submissionを確認する。対象reviewの `commit_id` が現在のHEAD SHAに一致すれば、そのHEADに対する結果として確認する。ただし、本文が明示的な利用枠上限エラーなら正常なレビュー完了とは扱わず、「レビュー候補の高速判定」に従って根拠と適用範囲を保持する。正常なreviewの `APPROVED`・`COMMENTED` 等のstateはそのまま扱い、本文の「Approval recommended」を `APPROVED` に読み替えない。
 3. 最新HEADに対する完了reviewがなければ、PRのIssue eventsまたはtimelineを確認する。`requested_reviewer.login` がCopilotの `review_requested` は依頼済み、`performed_via_github_app.slug == "copilot-pull-request-reviewer"` の `copilot_work_started` は実行開始済みのシグナル候補とする。
 4. `copilot_work_started` を実行中の根拠にできるのは、現在のHEADを対象にしたCopilotの `review_requested` より後に発生し、その依頼以降にHEADが更新されていないことを確認できる場合だけとする。依頼時にHEAD SHAと時刻を保持していればそれを使い、再開時に保持情報がなければtimeline上で最新HEADへの更新と、その後の `review_requested`・`copilot_work_started` の順序を確認する。対応関係を確立できなければ実行中と断定せず `unknown` とする。
 5. 現HEADに対応する `copilot_work_started` を確認できたら実行中として待機を継続し、同じHEADへの再依頼やCodexへの切り替えを行わない。
@@ -282,14 +288,20 @@ gh api "repos/$OWNER/$REPO/issues/$PR_NUMBER/events?per_page=100" --paginate \
 gh api "repos/$OWNER/$REPO/pulls/$PR_NUMBER/reviews" \
   --jq '.[] |
     select(.user.login == "copilot-pull-request-reviewer[bot]") |
-    {state, submitted_at, commit_id, html_url}'
+    {state, submitted_at, commit_id, body, html_url}'
 ```
 
 Issue eventsに現れる `copilot_work_started` は進行確認の運用シグナルとして使い、永続的な公開API契約とはみなさない。取得できない環境では未実行と断定せず、上記の他の証拠で状態を判断する。PR #166 では `requested_reviewers=[]` かつreview未提出の期間にも `copilot_work_started` が記録され、その後reviewが正常完了した。このイベントはHEADを直接含まないため、必ず現HEADへの `review_requested` 以後かつHEAD未更新の条件と組み合わせて使う。
 
 ### Copilot Code Reviewの依頼
 
-「レビュー候補の高速判定」と同じ `OWNER`・`REPO`・`PR_NUMBER` を設定し、次のREST APIを1回呼ぶ。固定Bot IDやPRのNode IDの取得は不要。既存の他のレビュアーを削除しない。[^docs-request-a-code-review-use-code-review]
+「レビュー候補の高速判定」と同じ `OWNER`・`REPO`・`PR_NUMBER` を設定し、通常は公式CLIで1回依頼する。既存の他のレビュアーを削除しない。[^gh-pr-edit]
+
+```bash
+gh pr edit "$PR_NUMBER" --repo "$OWNER/$REPO" --add-reviewer "@copilot"
+```
+
+専用CLIが利用できない実行環境など、必要な場合だけ次の正式REST API経路を使う。固定Bot IDやPRのNode IDの取得は不要。[^github-rest-review-requests][^docs-request-a-code-review-use-code-review]
 
 ```bash
 gh api --method POST \
@@ -297,7 +309,7 @@ gh api --method POST \
   -f 'reviewers[]=copilot-pull-request-reviewer[bot]'
 ```
 
-成功応答は依頼受理であり、レビュー完了ではない。依頼後は「Copilot依頼後の実行状態を確認する」に従う。`requested_reviewers` やreviewsが空であることだけを失敗根拠にせず、タイムアウト等で受理が不明でも無条件に再送しない。
+CLI・APIの成功は依頼受理であり、実行開始・正常なレビュー完了とは分ける。依頼後は「Copilot依頼後の実行状態を確認する」に従う。CLIの失敗・タイムアウトを理由にAPIへ自動で再送せず、先に既存の依頼・実行状態を確認する。`requested_reviewers` やreviewsが空であることだけを失敗根拠にせず、受理が不明なら状態を1回取得し、それでも不明なら再依頼・別経路への切替を止め、未確認範囲と再開条件を記録する。
 
 [^docs-request-a-code-review-use-code-review]: [Copilot Code Review](https://docs.github.com/en/copilot/how-tos/use-copilot-agents/request-a-code-review/use-code-review)。本文に記した参照範囲と採用判断の根拠。
 [^codex-github-review]: [CodexのGitHubレビュー](https://developers.openai.com/codex/integrations/github)。レビューの設定・依頼・結果確認と、導入だけで完了としない判断の根拠。
@@ -309,3 +321,5 @@ gh api --method POST \
 [^ruleset-rules]: [Rulesetで利用できるルール](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-rulesets/available-rules-for-rulesets)。必須Approve数とCode Ownerレビュー要件の根拠。
 [^code-owners]: [Code Ownersについて](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners)。CODEOWNERSの適用と複数owner時の承認条件。
 [^approval-code-owner-exception]: Issue #165 で採用した、唯一のCode OwnerがPR authorの場合の実効承認条件。
+[^gh-pr-edit]: [GitHub CLI: gh pr edit](https://cli.github.com/manual/gh_pr_edit)。`--add-reviewer "@copilot"` による通常依頼の根拠。
+[^github-rest-review-requests]: [REST API: Request reviewers](https://docs.github.com/en/rest/pulls/review-requests#request-reviewers-for-a-pull-request)。必要時に使う正式API経路の根拠。
