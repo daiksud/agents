@@ -288,7 +288,7 @@ gh api "repos/$OWNER/$REPO/issues/$PR_NUMBER/events?per_page=100" --paginate \
 gh api "repos/$OWNER/$REPO/pulls/$PR_NUMBER/reviews" \
   --jq '.[] |
     select(.user.login == "copilot-pull-request-reviewer[bot]") |
-    {state, submitted_at, commit_id, html_url}'
+    {state, submitted_at, commit_id, body, html_url}'
 ```
 
 Issue eventsに現れる `copilot_work_started` は進行確認の運用シグナルとして使い、永続的な公開API契約とはみなさない。取得できない環境では未実行と断定せず、上記の他の証拠で状態を判断する。PR #166 では `requested_reviewers=[]` かつreview未提出の期間にも `copilot_work_started` が記録され、その後reviewが正常完了した。このイベントはHEADを直接含まないため、必ず現HEADへの `review_requested` 以後かつHEAD未更新の条件と組み合わせて使う。
