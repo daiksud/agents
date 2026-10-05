@@ -1,100 +1,100 @@
 ---
 type: Reference
-title: OKF v0.2の仕様監査と採用判断
-description: 固定した仕様の節ごとに規範、利用場面、文書作成時の採用判断を対応づけ、参考実装との差を記録します。
+title: OKF v0.2 specification audit and adoption decisions
+description: Map norms, use cases, and document-authoring adoption decisions to each pinned specification section, and record differences from the reference implementation.
 sources:
   - id: spec
     resource: https://github.com/GoogleCloudPlatform/open-knowledge-format/blob/ad30107c31c06aec8a7d5636e0d1058118604e6f/SPEC.md
-    title: OKF v0.2正本
+    title: Authoritative OKF v0.2
   - id: migration
     resource: https://github.com/GoogleCloudPlatform/knowledge-catalog/blob/62651738dab0b497b0e3fd804c87bcd235f027b8/okf/README.md
-    title: 移管と凍結コピーの案内
+    title: Migration and frozen-copy guidance
   - id: frozen-spec
     resource: https://github.com/GoogleCloudPlatform/knowledge-catalog/blob/62651738dab0b497b0e3fd804c87bcd235f027b8/okf/SPEC.md
-    title: 移管元の凍結仕様
+    title: Frozen specification at the former location
   - id: timestamps
     resource: https://github.com/GoogleCloudPlatform/open-knowledge-format/commit/3dc3029168d2f98e331feeb4ca05c9178973a9b9
-    title: UTC offset付き日時への変更
+    title: Change to datetimes with UTC offsets
   - id: conformance-edit
     resource: https://github.com/GoogleCloudPlatform/open-knowledge-format/commit/0b87c52c6ef999286c745e19998fdfcd03d5dbee
-    title: 重複した日時の適合条件の削除
+    title: Removal of duplicate datetime conformance conditions
   - id: document
     resource: https://github.com/GoogleCloudPlatform/open-knowledge-format/blob/ad30107c31c06aec8a7d5636e0d1058118604e6f/src/reference_agent/bundle/document.py
-    title: 参考パーサと信頼・鮮度処理
+    title: Reference parser and trust/freshness handling
   - id: writer
     resource: https://github.com/GoogleCloudPlatform/open-knowledge-format/blob/ad30107c31c06aec8a7d5636e0d1058118604e6f/src/reference_agent/tools/bundle_tools.py
-    title: 参考書き込み処理
+    title: Reference writing process
   - id: viewer
     resource: https://github.com/GoogleCloudPlatform/open-knowledge-format/blob/ad30107c31c06aec8a7d5636e0d1058118604e6f/src/reference_agent/viewer/generator.py
-    title: 参考viewerのリンクとメタデータ処理
+    title: Reference viewer link and metadata handling
   - id: attester
     resource: https://github.com/GoogleCloudPlatform/open-knowledge-format/blob/ad30107c31c06aec8a7d5636e0d1058118604e6f/bundles/acme_retail/attesters/sql_equality.py
-    title: 参考SQL attester
+    title: Reference SQL attester
 ---
 
-## 正本と読み方
+## Authoritative source and interpretation
 
-採用する正本は移管先 `open-knowledge-format` の完全SHA `ad30107c31c06aec8a7d5636e0d1058118604e6f` のSPEC v0.2。移管元は凍結コピーで新規開発の基準にしないよう案内している。確認した凍結版のSPEC本文は固定した正本と一致した。[^migration][^frozen-spec][^spec]
+The adopted authoritative source is SPEC v0.2 at full SHA `ad30107c31c06aec8a7d5636e0d1058118604e6f` in the migration destination, `open-knowledge-format`. The former location advises that it is a frozen copy and should not guide new development. The inspected frozen SPEC body matched the pinned authoritative source.[^migration][^frozen-spec][^spec]
 
-以下の「必須・推奨・任意」は仕様における強さを示す。作成側の要件と§11の最小適合判定を混同しない。特に任意familyの形式は作成側で確認するが、記載の不備をすべて外部Bundle拒否の理由にはしない。[^spec]
+“Required,” “recommended,” and “optional” below indicate specification strength. Do not confuse authoring requirements with §11 minimum conformance. In particular, authors check optional family formats, but not every deficiency is grounds for rejecting external Bundles.[^spec]
 
-## 節別の対応
+## Section mapping
 
-| 節 | 要件・推奨・任意 | 利用場面 | 本環境の採用判断 |
+| Section | Requirements, recommendations, and options | Use case | Local adoption decision |
 | --- | --- | --- | --- |
-| §1 Motivation | 目的と非目標。ランタイム・分類登録・ドメインスキーマの置換は対象外 | 適用判断 | 既存契約形式を維持 |
-| §2 Terminology | Bundle・Concept・ID・Source・Actor等の定義 | 配置・参照 | IDはBundle内パスから `.md` を除く |
-| §3 / §3.1 | 配布形態は任意。予約名を概念に使わない | 文書の配置 | `docs/` を既定Bundleとする |
-| §4.1 | `type` 必須。表示項目は推奨。未知型・キーの許容、未知キー保持推奨 | 通常概念 | 自作のみtitle・descriptionを追加要求 |
-| §4.2 | 構造化Markdown推奨。固定本文節なし | 本文作成 | GFM、featureの固有記法を併用 |
-| §4.3–4.4 | 資産あり・なしの例 | resourceの判断 | 抽象概念にURIを新設しない |
-| §5前文 | 各family任意。日時値はoffset付きISO datetime | 日時記録 | 不明日時を補完しない |
-| §5.1 | sourceのresourceは記載時必須。ID・信号は任意、引用時ID推奨 | 出典付き作成・更新 | sourcesと安定ID脚注を使用 |
-| §5.2 | generated.byは記載時必須。verifiedはイベントリスト、単一mappingも可 | 作成・内容照合 | 作成と照合、履歴と現在内容を区別 |
-| §5.3 | verifiedから信頼段階を導出。未検証を拒否しない | 信頼表示 | CI成功を人間確認に変換しない |
-| §5.4 | statusはdraft / stable / deprecated、省略時stable | ライフサイクル | stableと検証済みを混同しない |
-| §5.5 | stale_afterは任意、期限以上でstale | 鮮度判断 | 未設定を保証とせず、期限切れは注意 |
-| §6.1 | Bundle基準リンク推奨、相対可、リンク切れ許容必須 | 関連文書 | GitHub・APM向けにファイル相対を採用 |
-| §6.2–6.3 | URL・Bundle基準・相対パス。referencesは慣例 | パス項目 | 外部出典は完全URL。scope descriptorを許容 |
-| §7 | Actorの慣例。人の作成・確認にはhuman:必須 | 主体記録 | 実在する主体だけ記録 |
-| §8 | indexは任意、見出しとリンク一覧。frontmatterはroot版宣言だけ | 索引 | 新設を強制しない |
-| §9 | logは任意、日付見出しはYYYY-MM-DD、新しい順 | 履歴 | 実在日を記録。太字ラベルは必須にしない |
-| §10.1–10.2 | 計算を独立概念にする。runtime必須、契約fieldを定義 | 計算契約の作成 | runtime・parameters・参照を記述 |
-| §10.3–10.4 | 本文の一つの計算フェンスまたはファイル。利用者は宣言値のみ指定 | 計算の利用 | 定義変更と値の指定を分離 |
-| §10.5 | informative。実行・証明・提示のモデル | 確認手順 | 実行基盤は追加せず、証跡をBundleへ格納しない |
-| §10.6 | verifiedは定義、attestationは一回の実行 | 証明の解釈 | 一方の成功を他方の証明としない |
-| §11 | 最小適合条件。任意family欠落・未知型/キー・リンク切れ・索引不在で拒否しない | 仕様の理解 | 適合判定は提供しない |
-| §12 | root版宣言任意、未知版もbest effort推奨。ABI等は保留 | 版の扱い | 版宣言保持、未採用提案を必須にしない |
-| §13.1–13.2 | timestampとCitationsを移行。旧形式fallbackは任意 | 既存文書更新 | 根拠を確認して移行、Actorを推測しない |
-| Appendix A | 移行のworked example | 理解の補助 | 仮想Actor・日時・全familyをコピーしない |
+| §1 Motivation | Goals and non-goals. Replacing runtimes, taxonomy registration, or domain schemas is outside scope | Applicability | Retain existing contract formats |
+| §2 Terminology | Definitions of Bundle, Concept, ID, Source, Actor, and others | Placement and references | ID is the within-Bundle path without `.md` |
+| §3 / §3.1 | Distribution form is optional. Do not use reserved names for concepts | Document placement | Default Bundle is `docs/` |
+| §4.1 | `type` required; display items recommended. Unknown types/keys permitted; retaining unknown keys recommended | Ordinary concepts | Additionally require title and description only for self-authored documents |
+| §4.2 | Structured Markdown recommended. No fixed body sections | Body authoring | Use GFM alongside feature-specific notation |
+| §4.3–4.4 | Examples with and without assets | Resource decisions | Do not invent URIs for abstract concepts |
+| §5 preamble | Each family optional. Datetimes use ISO datetime with offsets | Datetime recording | Do not fill in unknown datetimes |
+| §5.1 | Source resource required when included. IDs/signals optional; IDs recommended when citing | Source-backed creation and updates | Use sources and stable-ID footnotes |
+| §5.2 | generated.by required when included. verified is an event list; a single mapping is also permitted | Creation and content cross-checking | Distinguish creation from cross-checking and history from current content |
+| §5.3 | Derive trust tiers from verified. Do not reject unverified documents | Trust display | Do not convert CI success into human verification |
+| §5.4 | status is draft / stable / deprecated, default stable | Lifecycle | Do not equate stable with verified |
+| §5.5 | stale_after optional; stale at or beyond the deadline | Freshness decisions | Absence is not a guarantee; warn on expiration |
+| §6.1 | Bundle-root links recommended; relative links allowed; broken links must be tolerated | Related documents | Adopt file-relative links for GitHub and APM |
+| §6.2–6.3 | URLs, Bundle-root and relative paths. references is conventional | Path fields | Use full URLs for external sources; permit scope descriptors |
+| §7 | Actor conventions. Human generation and verification require human: | Actor recording | Record only real actors |
+| §8 | index optional, with headings and link lists. Frontmatter only for root version declaration | Indexes | Do not force new indexes |
+| §9 | log optional, YYYY-MM-DD date headings, newest first | History | Record real dates; do not require bold labels |
+| §10.1–10.2 | Computations are separate concepts. runtime required; contract fields defined | Computation contracts | State runtime, parameters, and references |
+| §10.3–10.4 | One body computation fence or a file. Consumers specify only declared values | Computation use | Separate definition changes from value specification |
+| §10.5 | Informative model of execution, attestation, and presentation | Verification procedures | Do not add execution platforms or store evidence in Bundles |
+| §10.6 | verified concerns definitions; attestation concerns one execution | Interpreting proof | Do not treat success of one as proof of the other |
+| §11 | Minimum conformance. Do not reject for absent optional families, unknown types/keys, broken links, or missing index | Specification understanding | Do not provide conformance judgments |
+| §12 | Root version declaration optional; best effort recommended for unknown versions. ABI and others deferred | Version handling | Retain version declarations; do not mandate unadopted proposals |
+| §13.1–13.2 | Migrate timestamps and Citations. Legacy fallback optional | Existing document updates | Check grounds for migration; do not infer Actors |
+| Appendix A | Migration worked example | Understanding | Do not copy hypothetical Actors, datetimes, or all families |
 
-節ごとの仕様の要約は固定SPECに基づく。本環境の採用判断は文書作成の運用方針であり、OKF適合検証は提供しない。[^spec]
+Section summaries follow the pinned SPEC. Local adoption decisions are document-authoring operational policies, not OKF conformance validation.[^spec]
 
-## 日時処理の変更
+## Changes to datetime handling
 
-日時変更では、従来日付だけだった `stale_after`・source更新日時・利用期間もUTC offset付きdatetimeへ統一された。ログの日付見出しはその対象ではない。参考Python実装はPyYAMLのtimestamp暗黙変換を除き、日時表記を文字列として保持するよう変わった。[^timestamps][^document]
+The datetime change unified formerly date-only `stale_after`, source update datetimes, and usage periods as datetimes with UTC offsets. Log date headings are excluded. The reference Python implementation removed PyYAML's implicit timestamp conversion to retain datetime notation as strings.[^timestamps][^document]
 
-変更途中に存在した§11の日時に関するconsumer MUSTは、重複を除く後続コミットで削除された。採用する最終版には§5の日時形式の記述があるが、旧コミット本文の強い拒否・無視規則を現行の適合条件として引用しない。参考実装の `is_stale` はoffsetや `T` がない値を無視するが、これも実装上のふるまいと区別する。[^conformance-edit][^document]
+A consumer MUST concerning datetimes in §11 during the change was removed by a later deduplication commit. The adopted final version describes datetime formats in §5; do not cite strong rejection or ignoring rules from older commit text as current conformance conditions. The reference implementation's `is_stale` ignores values lacking offsets or `T`; distinguish that implementation behavior too.[^conformance-edit][^document]
 
-## 参考実装を規範にしない
+## Do not make reference implementations normative
 
-| 対象 | 読み取れたふるまい・限界 | 本環境での扱い |
+| Target | Observed behavior and limits | Local treatment |
 | --- | --- | --- |
-| document.py | validateはtypeのtruthinessのみ。未知キーをmappingで保持し、verified mappingを正規化する | 参考パーサの成功を文書内容や品質の保証にしない |
-| bundle_tools.py | 渡されたfrontmatterを書き込み、generatedを補完する。既存内容を自動mergeしない。web passのBigQuery保護はsource件数の比較 | 同数のsource置換・未知キー消失を防ぐ一般保証とはみなさず差分を読む |
-| viewer/generator.py | 先頭 `/` のリンクを無視し、本文の限定された `.md` リンクを抽出。表示データは既知キー中心。logを予約名として除外しない | viewer表示で参照・未知メタデータの完全性や予約ファイル適合を証明しない |
-| sample sql_equality.py | 束縛値を検査せず、receiptのSQLと結果を比較。job結果の再取得なし | 完全な実行証明と呼ばず、契約ごとに必要な証拠を確認 |
+| document.py | validate checks only type truthiness. Retains unknown keys in mappings and normalizes verified mappings | Reference parser success does not guarantee document content or quality |
+| bundle_tools.py | Writes supplied frontmatter and supplements generated. Does not automatically merge existing content. BigQuery protection in web pass compares source counts | Read diffs; this is not a general guarantee against same-count source replacement or unknown-key loss |
+| viewer/generator.py | Ignores leading `/` links, extracts limited body `.md` links. Display data centers on known keys. Does not exclude log as reserved | Viewer display does not prove reference/unknown metadata completeness or reserved-file conformance |
+| sample sql_equality.py | Does not inspect bound values; compares SQL and results in receipts. Does not retrieve job results again | Do not call this complete execution proof; check necessary evidence per contract |
 
-これは固定SHAのコードを読んだ結果であり、上流の実行・クラウド接続を再現した結果ではない。[^document][^writer][^viewer][^attester]
+These are findings from reading fixed-SHA code, not reproducing upstream execution or cloud connections.[^document][^writer][^viewer][^attester]
 
-仕様内のサンプルには `team:` のsource authorやインデントされた計算コード例など、本文規約と単純に一致しない表現もある。サンプルの値を独自の必須要件に昇格させず、作成時は規約本文を優先する。外部資料の拡張を自動削除・変換しない。将来のruntime protocol・ABI・cache・semantic-layer templateは§12で保留されており、未採用提案をv0.2の要件へ混ぜない。[^spec]
+Specification samples include expressions not straightforwardly matching body rules, such as `team:` source authors or indented computation examples. Do not elevate sample values into independent mandatory requirements; prioritize normative text when authoring. Do not automatically delete or convert extensions in external materials. Future runtime protocols, ABI, cache, and semantic-layer templates are deferred in §12; do not mix unadopted proposals into v0.2 requirements.[^spec]
 
-[^migration]: 移管元READMEの移管・凍結案内。
-[^frozen-spec]: 確認対象の凍結SPEC。
-[^spec]: 正本SPEC v0.2。規範とinformativeを本文に従って分類した。
-[^timestamps]: 日時統一の変更とその理由。
-[^document]: 参考パーサ・信頼段階・鮮度判定のコード。
-[^conformance-edit]: 後続の重複した適合条件削除。
-[^writer]: 参考書き込み処理のコード。
-[^viewer]: 参考viewerのコード。
-[^attester]: 参考SQL attesterのコード。
+[^migration]: Migration and frozen-copy guidance in the former README.
+[^frozen-spec]: Inspected frozen SPEC.
+[^spec]: Authoritative SPEC v0.2. Normative and informative provisions classified according to its text.
+[^timestamps]: Datetime unification change and reasons.
+[^document]: Reference parser, trust tiers, and freshness logic.
+[^conformance-edit]: Subsequent removal of duplicate conformance conditions.
+[^writer]: Reference writing code.
+[^viewer]: Reference viewer code.
+[^attester]: Reference SQL attester code.

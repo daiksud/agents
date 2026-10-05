@@ -22,11 +22,11 @@ Build systems and features story-first: before design, describe who can do what,
 
 ## Evolve design from current requirements
 
-Make XP's five values concrete in shared ToDos, short tests, and pair feedback through the [Mapping in the bundled design material](references/design.md#xpの5価値を実装の判断へ使う). For Simple Design, check that current contracts and tests are satisfied, intent is clear, duplication of the same rules decreases, and unnecessary elements are not added. Follow YAGNI; do not preemptively add interfaces, extension points, or configuration for hypothetical future features. Introduce structure needed by actual requirements or feedback in small Refactor steps. See [Design material](references/design.md#simple-designとyagni) for evidence and the adopted scope in this environment.
+Make XP's five values concrete in shared ToDos, short tests, and pair feedback through the [Mapping in the bundled design material](references/design.md#using-the-five-xp-values-in-implementation-decisions). For Simple Design, check that current contracts and tests are satisfied, intent is clear, duplication of the same rules decreases, and unnecessary elements are not added. Follow YAGNI; do not preemptively add interfaces, extension points, or configuration for hypothetical future features. Introduce structure needed by actual requirements or feedback in small Refactor steps. See [Design material](references/design.md#simple-design-and-yagni) for evidence and the adopted scope in this environment.
 
 ## Starting XP alone
 
-For learning or practice by one human, propose beginning with this Skill's small TDD cycles, design evolving from current requirements, and short feedback from existing automated builds and tests. This is an adoption proposal for this environment, not a fixed sequence in the original sources. Check [Sources and adoption decisions](references/sources.md#一人でのxp導入の採用判断). Distinguish human numbers from AI Driver/Navigator roles, and preserve existing staged checks, ordinary review, required CI, and integration conditions.
+For learning or practice by one human, propose beginning with this Skill's small TDD cycles, design evolving from current requirements, and short feedback from existing automated builds and tests. This is an adoption proposal for this environment, not a fixed sequence in the original sources. Check [Sources and adoption decisions](references/sources.md#adoption-decisions-for-introducing-xp-alone). Distinguish human numbers from AI Driver/Navigator roles, and preserve existing staged checks, ordinary review, required CI, and integration conditions.
 
 - Follow “Start with a story,” dividing work by small meaningful user outcomes and completion conditions. Do not use commit counts or one TDD iteration as outcome units.
 - Run existing fast automated checks for each change, and slower overall checks at necessary stages. CI is frequent integration and validation of shared code; small commits or pushes alone do not achieve it. Follow `change-delivery` for execution, integration, and main checks. Releases deliver something users can actually use; distinguish integration, deployment, and release, and follow existing publication permission.
@@ -36,7 +36,7 @@ For learning or practice by one human, propose beginning with this Skill's small
 
 ## Design scope and change decomposition
 
-When judging design policy, impact, change size, or decomposition into Sub-issues or small integration units, read [Responsibilities, contracts, and comments](references/design.md#変更の範囲と分割). Follow `issue-management` execution scope for changes requiring confirmation; if scope grows during implementation, reassess decomposition and execution scope before exceeding approval.
+When judging design policy, impact, change size, or decomposition into Sub-issues or small integration units, read [Responsibilities, contracts, and comments](references/design.md#change-scope-and-decomposition). Follow `issue-management` execution scope for changes requiring confirmation; if scope grows during implementation, reassess decomposition and execution scope before exceeding approval.
 
 ## Shared understanding and acceptance conditions
 
@@ -61,4 +61,4 @@ For changes only to internal technical processing, do not create feature documen
 
 ## Validation and reporting
 
-Read [Change units and reproducible validation](references/testing.md#欠陥の再現と報告) for reproduction tests, specification mappings, test layers, and exploratory/acceptance validation. Report executed tests, Red / Green, other validation, and unverified scope, without treating unexecuted checks or environment deficiencies as success.
+Read [Change units and reproducible validation](references/testing.md#reproducing-and-reporting-defects) for reproduction tests, specification mappings, test layers, and exploratory/acceptance validation. Report executed tests, Red / Green, other validation, and unverified scope, without treating unexecuted checks or environment deficiencies as success.
