@@ -1,16 +1,16 @@
 ---
 type: Guide
-title: ペア内の段階別コードレビュー
-description: DriverとNavigatorのRed / Green / Refactor各段階で、通常レビューと混同せず確認する観点を示します。
+title: Staged code review within the pair
+description: Show checks for each Driver/Navigator Red / Green / Refactor stage without confusing them with ordinary review.
 ---
 
-## ペア内の段階別レビュー
+## Staged review within the pair
 
-共通指示で定めるDriver/Navigatorのペア内確認を依頼されたNavigatorは、このスキルの調査・指摘基準を選んだTDD段階の目的へ適用する。通常のPRレビュー、必須CI、承認、マージを代替せず、レビュー担当者は読み取り専用を維持する。
+A Navigator asked to perform Driver/Navigator pair checks under the common instructions applies this skill's investigation and finding criteria to the selected TDD stage's purpose. Do not substitute them for ordinary PR review, required CI, approval, or merging; reviewers remain read-only.
 
-ペア内で共通スタンダード候補に当たるユーザー判断を見つけたNavigatorは、未公開の判断・理由・例外を公開先へ転載せずDriverに引き渡す。候補Issueの記録はDriverが `issue-management` の公開許可と記録手順に従って担当し、Navigator自身は投稿しない。
+A Navigator who finds user decisions qualifying as common standard candidates within the pair hands them to the Driver without copying unpublished decisions, reasons, or exceptions to public destinations. The Driver records candidate Issues under `issue-management` publication permission and recording procedures; the Navigator does not post.
 
-- **Red**では、元の要件、最小のテスト差分、失敗結果を照合する。期待値が契約に合い、未実装の対象ふるまいによる意図した失敗であることを確認し、環境不備やテスト自体の誤りをRedと扱わない。まだ実装がないことや選んだ項目以外のテストが未着手であることを欠陥にしない。
-- **Green**では、最小実装と新規・関連テストの結果から契約、回帰、変更の必要性を確認する。テストを通すための期待値弱体化、未要求の機能や一般化を指摘する。一時的な重複は、その理由と設計改善事項が同じサイクルのRefactorへ追跡されるなら欠陥にしない。
-- **Refactor**では、引き継いだ設計改善の解消または対応不要の判断、振るまいと検証力の維持、意味の異なるルールを無理に共通化していないことを確認する。改善不要なら変更を求めず、ふるまい不変の整理で人工的なRedや不要なテストを要求しない。
-- 確認対象が変われば、差分・テスト結果・レビュー結果が同じコード状態を指すよう再確認する。要対応指摘、任意提案、同じサイクルのRefactorへ引き継ぐ事項を区別し、Driverの回答や修正だけで解消済みとしない。
+- In **Red**, compare original requirements, minimal test diffs, and failure results. Check that expectations match contracts and failure is intentional due to unimplemented target behavior; environment deficiencies or test errors are not Red. Do not treat missing implementation or unstarted tests outside the selected item as defects.
+- In **Green**, check contracts, regressions, and necessity from minimal implementation and new/related test results. Identify weakened expectations used to pass tests, unrequested features, or generalization. Temporary duplication is not a defect if its reasons and design improvements are tracked into Refactor in the same cycle.
+- In **Refactor**, check resolution of carried design improvements or judgments that they need no action, preservation of behavior and validation effectiveness, and that rules with differing meanings were not forced into common structures. Do not demand changes when no improvement is needed, or artificial Red or unnecessary tests for behavior-preserving cleanup.
+- When targets change, recheck that diffs, test results, and review results refer to the same code state. Distinguish findings requiring action, optional suggestions, and items carried into Refactor in the same cycle; Driver answers or fixes alone do not establish resolution.

@@ -1,64 +1,64 @@
 ---
 name: software-development
-description: コードの追加・変更、バグ修正、リファクタリングを実装するときに使う。TDD、Simple Design、小さなフィードバックで実装・検証する。仕様整理、相談、調査、文書作成だけには使わない。
+description: Use to implement code additions or changes, bug fixes, and refactoring. Implement and validate through TDD, Simple Design, and small feedback cycles. Do not use for specification work, consultation, investigation, or document creation alone.
 ---
 
-# 小さなフィードバックでソフトウェアを開発する
+# Develop software through small feedback cycles
 
-コードの追加・変更・修正では、Issue計画・公開許可・実行範囲に `issue-management`、承認済み変更のbranch・PR・CI・統合後mainに `change-delivery` を併用する。`issue-management` を利用できなければIssueへ投稿せず、他のSkillで代用せずに未保存案と制約を示す。`change-delivery` を利用できなければコード変更を開始せず、他のSkillで代用せずに未完了範囲を示す。以下の `docs/` は作業対象リポジトリを指す。
-工程に対応する資料を読む。関係のないUI・性能検証や設計パターンを追加しない。
+For code additions, changes, or fixes, also use `issue-management` for Issue plans, publication permission, and execution scope, and `change-delivery` for approved changes through branches, PRs, CI, and post-integration main verification. If `issue-management` is unavailable, do not post Issues or substitute another Skill; show unsaved drafts and restrictions. If `change-delivery` is unavailable, do not begin code changes or substitute another Skill; show incomplete scope. `docs/` below refers to the working repository.
+Read material corresponding to the stage. Do not add unrelated UI/performance validation or design patterns.
 
-- 責務・依存・コメントの設計を判断する場合: [責務・契約とコメント](references/design.md)。
-- ドメインのルールや共有する外部契約、受け入れ条件を発見・仕様化する場合: 依存スキル [behavior-specification](../behavior-specification/SKILL.md)。合意済み仕様は再利用する。
-- アサーションからのテスト作成、テスト層・再現性・UI・性能の検証を設計する場合: [変更単位と再現可能な検証](references/testing.md)。
-- 定義や採用理由の根拠を確認する場合: [一次資料と採用判断](references/sources.md)。
-- コード変更で最初のNavigator依頼を送る前: [DriverとNavigatorの内部通信](references/agent-communication.md)。共通指示の適用・停止条件に従い、Navigatorにも内容を共有する。
-- 起動済みNavigatorとの継続不能時: 共通指示に従って後続コード変更を一時停止し、[引き継ぎと再確認](references/navigator-recovery.md)を読んで、ユーザー確認を待たず新Navigatorへ可能な限りのコンテキストを引き継ぐ。通常の初回起動では不要。
-- GitHub Copilot CLIで同じNavigatorへ継続して確認を依頼する場合: [runtime固有の実現方法](references/copilot-cli-pairing.md)。他runtimeへ同じツールや引数を要求しない。
+- For responsibility, dependency, or comment design decisions: [Responsibilities, contracts, and comments](references/design.md).
+- For discovering or specifying domain rules, shared external contracts, or acceptance conditions: the dependency [behavior-specification](../behavior-specification/SKILL.md). Reuse agreed specifications.
+- For tests starting from assertions, test layers, reproducibility, UI, or performance validation design: [Change units and reproducible validation](references/testing.md).
+- For checking definitions or adoption reasons: [Primary sources and adoption decisions](references/sources.md).
+- Before the first Navigator request for code changes: [Internal Driver/Navigator communication](references/agent-communication.md). Follow common application/stop conditions and share the contents with the Navigator.
+- When continuation with a launched Navigator is impossible: pause subsequent code changes under common instructions, read [Handoff and rechecking](references/navigator-recovery.md), and transfer as much context as possible to a new Navigator without waiting for user confirmation. Not needed for ordinary initial launch.
+- For continued checking requests to the same Navigator in GitHub Copilot CLI: [Runtime-specific implementation](references/copilot-cli-pairing.md). Do not require the same tools or arguments in other runtimes.
 
-## ストーリーから始める
+## Start with a story
 
-システム・機能の構築はストーリーファーストとし、設計より先に、誰が、どの状況で、完成後に何をできるかを語る。ストーリー・受け入れ条件が未確定なら `behavior-specification` で具体例と未回答事項を整理する。既存の合意済みストーリーは再利用し、技術的な修正や整理は既存の目的・期待結果へ結びつける。
+Build systems and features story-first: before design, describe who can do what, in which situation, after completion. If stories or acceptance conditions are unsettled, organize concrete examples and unanswered questions through `behavior-specification`. Reuse existing agreed stories; connect technical fixes or cleanup to existing purposes and expected results.
 
-## 現在の要求から設計を育てる
+## Evolve design from current requirements
 
-XPの5価値を、[同梱設計資料の対応付け](references/design.md#xpの5価値を実装の判断へ使う)に従って共有ToDo・短いテスト・ペアのフィードバックへ具体化する。Simple Designでは、現在の契約とテストを満たすこと、意図が伝わること、同じルールの重複を減らすこと、不要な要素を増やさないことを確認する。YAGNIに従い、仮想の将来機能のためにinterface・拡張点・configurationを先行追加しない。実際の要求やフィードバックで必要になった構造を小さなRefactorで取り入れる。根拠と本環境への採用範囲は[設計資料](references/design.md#simple-designとyagni)を確認する。
+Make XP's five values concrete in shared ToDos, short tests, and pair feedback through the [Mapping in the bundled design material](references/design.md#xpの5価値を実装の判断へ使う). For Simple Design, check that current contracts and tests are satisfied, intent is clear, duplication of the same rules decreases, and unnecessary elements are not added. Follow YAGNI; do not preemptively add interfaces, extension points, or configuration for hypothetical future features. Introduce structure needed by actual requirements or feedback in small Refactor steps. See [Design material](references/design.md#simple-designとyagni) for evidence and the adopted scope in this environment.
 
-## 一人でXPを始める
+## Starting XP alone
 
-人間一人での学習・実践では、まず本Skillの小さいTDD、現在の要求から育てる設計、既存の自動ビルド・テストによる短いフィードバックから始めることを提案する。これは本環境での導入案であり、原典の固定順序ではない。[出典と採用判断](references/sources.md#一人でのxp導入の採用判断)を確認する。人間の人数とAI Driver/Navigatorの役割を区別し、既存の段階確認・通常レビュー・必須CI・統合条件を維持する。
+For learning or practice by one human, propose beginning with this Skill's small TDD cycles, design evolving from current requirements, and short feedback from existing automated builds and tests. This is an adoption proposal for this environment, not a fixed sequence in the original sources. Check [Sources and adoption decisions](references/sources.md#一人でのxp導入の採用判断). Distinguish human numbers from AI Driver/Navigator roles, and preserve existing staged checks, ordinary review, required CI, and integration conditions.
 
-- 作業は「ストーリーから始める」に従い、利用者に意味のある小さな成果と完成条件で区切る。commit数やTDD一反復を成果の単位にしない。
-- 既存の速い自動検証を変更ごとに実行し、遅い全体検証も必要な工程で行う。CIは共有コードへの頻繁な統合と検証であり、小さなcommit・pushだけでは達成しない。実行・統合・main確認は `change-delivery` に従う。リリースは利用者が実際に使える形で届けることとし、統合・配備・公開を区別して既存の公開許可に従う。
-- 継続的な個人の取り組みや計画相談では、週初めに今週届けたい小さな成果と完成条件を選び、週末に結果・困った点・次に一つ変えることを短く振り返る方法を提案する。既存のIssue・ToDoを再利用し、毎回の短いコードタスクに週次の儀式や専用文書を要求しない。統合単位間の計画再評価は既存手順に従う。
-- 計画では必須の成果と余裕があれば行うことを分ける。時間が足りなければ品質・テスト・レビューを削らず範囲を調整する。合意済みの成果・受け入れ条件の縮小は `issue-management` に従って相談し、勝手に任意へ移さない。
-- 人間は疲労を押して続けず、休息を含む持続可能な働き方を選ぶ。エージェントは疲労を推測せず、利用者が休息・作業中断を求めた場合は確認済みの結果・未完了事項・次の一手を残して応じる。未依頼のリマインダーや週次自動化を作らない。
+- Follow “Start with a story,” dividing work by small meaningful user outcomes and completion conditions. Do not use commit counts or one TDD iteration as outcome units.
+- Run existing fast automated checks for each change, and slower overall checks at necessary stages. CI is frequent integration and validation of shared code; small commits or pushes alone do not achieve it. Follow `change-delivery` for execution, integration, and main checks. Releases deliver something users can actually use; distinguish integration, deployment, and release, and follow existing publication permission.
+- For ongoing personal work or planning consultation, propose choosing small outcomes and completion conditions to deliver at the week's start, and briefly reflecting on results, difficulties, and one next change at week's end. Reuse existing Issues and ToDos; do not require weekly rituals or dedicated documents for every short code task. Follow existing procedures for reassessing plans between integration units.
+- Separate required outcomes from work to do if time allows. If time is insufficient, adjust scope without cutting quality, tests, or review. Consult through `issue-management` before reducing agreed outcomes or acceptance conditions; do not arbitrarily move them to optional.
+- Humans should choose sustainable work including rest rather than push through fatigue. Agents do not infer fatigue; when users request rest or interruption, respond by preserving confirmed results, incomplete items, and the next step. Do not create unrequested reminders or weekly automations.
 
-## 設計範囲と変更の分割
+## Design scope and change decomposition
 
-設計方針、波及範囲、変更量、Sub-issueや小さい統合単位への分割を判断するときは[責務・契約とコメント](references/design.md#変更の範囲と分割)を読む。確認が必要な変更は `issue-management` の実行範囲に従い、実装中に範囲が広がった場合も承認済み範囲を超える前に分割と実行範囲を見直す。
+When judging design policy, impact, change size, or decomposition into Sub-issues or small integration units, read [Responsibilities, contracts, and comments](references/design.md#変更の範囲と分割). Follow `issue-management` execution scope for changes requiring confirmation; if scope grows during implementation, reassess decomposition and execution scope before exceeding approval.
 
-## 共有理解と受け入れ条件
+## Shared understanding and acceptance conditions
 
-実装前に目的・ルール・代表例・未回答の質問を整理し、対応する受け入れ条件を定める。既存の合意と仮定を区別し、未合意の業務判断をAI同士の一致で確定しない。
+Before implementation, organize purposes, rules, representative examples, and unanswered questions, and define corresponding acceptance conditions. Distinguish existing agreements from assumptions; do not settle unagreed business decisions through agreement between AIs.
 
-ドメインのルールを追加・変更するときは、ルールが合意済みでも `behavior-specification` の[共有理解とfeature文書](../behavior-specification/references/behavior.md)に従い、`document-authoring` を併用して `docs/behavior/<機能名>.feature.md` を実装より先に保存する。正しい既存仕様は不要に書き換えず、テストとの対応を追えるようにする。
+When adding or changing domain rules, even agreed ones, follow [Shared understanding and feature documents](../behavior-specification/references/behavior.md) in `behavior-specification`, also using `document-authoring` to save `docs/behavior/<feature-name>.feature.md` before implementation. Do not unnecessarily rewrite correct existing specifications; keep mappings to tests traceable.
 
-## テスト駆動開発（TDD）
+## Test-driven development (TDD)
 
-[インクリメンタルな設計](../../.apm/instructions/development.instructions.md#インクリメンタルな設計)に従い、まず代表的な正常系を、テスト項目を含むToDoリストにする。変種・境界・失敗条件は、明示された要求・既存契約・確認済みの不具合や具体的な危険への最低限の保護に必要なものだけを含め、想像上のケースを網羅しない。バグ修正は対象の再現テストから始め、インクリメンタルな設計を理由に保護する既存のふるまいや必要な設計改善を省かない。
-全テストを一度に実装せず、リストから一つずつ次を反復する。ペア作業では共通指示に従い、DriverとNavigatorが同じ共有ToDoを育て、次の一項目と選ぶ理由を相談する。このスキルはTDDの対象・検証を定め、役割、編集権限、段階間レビュー、停止条件は共通指示に従う。
-内部の技術的処理だけを変更する場合はfeature文書を作らず、必要な仕様をテストへ記述する。
+Follow [Incremental design](../../.apm/instructions/development.instructions.md#incremental-design), first listing representative normal paths in a ToDo list including test items. Include variants, boundaries, and failure conditions only as needed for explicit requirements, existing contracts, confirmed defects, or minimal protection against concrete risks, without covering imaginary cases. Begin bug fixes with reproduction tests, without using incremental design to omit existing behavior protection or necessary design improvements.
+Do not implement all tests at once; repeat the following one item at a time from the list. In pair work, follow common instructions: Driver and Navigator evolve the same shared ToDo list and discuss the next single item and its selection reasons. This skill defines TDD targets and validation; common instructions govern roles, edit authority, between-stage review, and stop conditions.
+For changes only to internal technical processing, do not create feature documents; write necessary specifications in tests.
 
-1. **レッド**: テストファーストとして、実装後にこう動くという期待を、対応する実装コードより先に実行可能なテストで表現する。アサートファーストで最後にパスすべきアサーションを最初に書き、必要な対象操作と準備を補う。その仕様を満たさないために失敗することを確認する。
-2. **グリーン**: 新しいテストと既存の関連テストを通す最小の実装を行う。まだ要求されない機能や一般化を先回りしない。
-3. **リファクタリング**: グリーンを維持して実装とテストの設計を改善する。改善が不要なら変更を増やさず、次のテストへ進む。
+1. **Red**: As test-first work, express expected post-implementation behavior in executable tests before the corresponding implementation code. Use assert-first: write the assertion that must ultimately pass first, then add necessary target operations and setup. Confirm failure because the specification is unmet.
+2. **Green**: Implement the minimum that passes the new test and existing related tests. Do not anticipate unrequired features or generalization.
+3. **Refactor**: Improve implementation and test design while keeping Green. If no improvement is needed, do not add changes; proceed to the next test.
 
-- 速い単体テストを優先し、欠陥の性質に応じて契約・統合・受け入れテストを選ぶ。実際のDBや通信境界が原因なら、それを検出できないモックだけで代用しない。
-- 環境不備やテスト自体の誤りをレッドの確認として扱わない。
-- ふるまいを変えない整理では、先に既存テストの検証範囲と成功を確認する。十分なら再利用し、不足があれば既存仕様のアサーションからテストを補い、その成功を確認してから整理する。グリーンを維持し、形式のための追加テストや意図的な失敗を作らない。
-- アサーションを弱めたり、実装の出力をそのまま期待値にコピーしたりして成功にしない。新しく判明したケースは現在の変更の範囲と照合し、現在の要求・契約を満たすために必要なものだけをToDoリストへ追加する。将来の改善案を今回の必須項目にせず、記録した別の項目を、現在の段階を成立させる修正や回帰の代わりにしない。
+- Prefer fast unit tests, choosing contract, integration, or acceptance tests according to the defect's nature. If actual DB or communication boundaries cause the problem, do not substitute only mocks unable to detect it.
+- Do not treat environment deficiencies or test errors as confirmed Red.
+- For behavior-preserving cleanup, first confirm existing test coverage and success. Reuse sufficient tests; if insufficient, supplement them from assertions of existing specifications and confirm success before cleanup. Keep Green; do not create additional tests or intentional failures for formality.
+- Do not achieve success by weakening assertions or copying implementation output directly into expectations. Compare newly discovered cases with current scope, adding only those needed for current requirements and contracts to the ToDo list. Do not make future improvements mandatory now, or substitute another recorded item for fixes establishing the current stage or regressions.
 
-## 検証と報告
+## Validation and reporting
 
-欠陥の再現テスト、仕様との対応、テスト層、探索・受け入れ検証の扱いは[変更単位と再現可能な検証](references/testing.md#欠陥の再現と報告)を読む。最終報告には実行したテスト、Red / Green、その他の検証と未確認範囲を示し、未実行や環境不備を成功としない。
+Read [Change units and reproducible validation](references/testing.md#欠陥の再現と報告) for reproduction tests, specification mappings, test layers, and exploratory/acceptance validation. Report executed tests, Red / Green, other validation, and unverified scope, without treating unexecuted checks or environment deficiencies as success.

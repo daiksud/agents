@@ -1,25 +1,25 @@
 ---
 name: behavior-specification
-description: 利用者向けのふるまい、ドメインルール、外部契約、受け入れ条件を発見・仕様化するときに使う。コードを書かない仕様整理にも使う。合意済み契約を変えない内部技術修正や実装方法だけの設計には使わない。
+description: Use to discover and specify user-facing behavior, domain rules, external contracts, and acceptance conditions, including specification work without code. Do not use for internal technical fixes that preserve agreed contracts or design limited to implementation methods.
 ---
 
-# ふるまいを発見・仕様化する
+# Discover and specify behavior
 
-利用者や外部システムに約束する結果を、実装方法を決める前に整理する。以下の `docs/` は作業対象リポジトリを指す。
+Organize results promised to users or external systems before deciding how to implement them. `docs/` below refers to the working repository.
 
-## 目的から受け入れ条件へ
+## From purpose to acceptance conditions
 
-1. 既存のストーリー、用語集、feature、API仕様と合意済みルールを確認し、正本を再利用する。新しい機能では誰が、どの状況で、完成後に何をできるかを語る。技術修正・整理は既存の目的・期待結果へ結びつける。
-2. [共有理解とfeature文書](references/behavior.md)を読み、BDD・ATDD・Example Mappingの観点からルール、意味のある具体例、未回答の質問を分ける。未合意の業務判断をAI同士の一致や技術的な試作で確定しない。
-3. 対応する実装より先に受け入れ条件を定め、通常・境界・失敗のどの結果を観測すればよいかを示す。内部の実装手順を業務仕様に混ぜず、外部に約束する応答・保存結果・通知は契約として保持する。
-4. ドメインルールの追加・変更では、合意済みのルールでも実装前に `docs/behavior/<機能名>.feature.md` を保存する。正しい既存仕様は不要に書き換えない。外部の技術契約は既存API仕様等の正本を優先し、共有仕様が必要な場合に読者と観測結果を明示してfeatureを使える。
+1. Check existing stories, glossaries, features, API specifications, and agreed rules, and reuse authoritative sources. For new features, describe who can do what, in which situation, after completion. Connect technical fixes and cleanup to existing purposes and expected results.
+2. Read [Shared understanding and feature documents](references/behavior.md), and separate rules, meaningful concrete examples, and unanswered questions using BDD, ATDD, and Example Mapping perspectives. Do not settle unagreed business decisions through agreement between AIs or technical prototypes.
+3. Define acceptance conditions before the corresponding implementation, and show which normal, boundary, or failure results should be observed. Do not mix internal implementation procedures into business specifications; preserve externally promised responses, saved results, and notifications as contracts.
+4. For domain-rule additions or changes, save `docs/behavior/<feature-name>.feature.md` before implementation, even for agreed rules. Do not unnecessarily rewrite correct existing specifications. For external technical contracts, prioritize existing authoritative API specifications or similar sources; when a shared specification is needed, features may be used with explicit readers and observable results.
 
-文書を保存するときは依存スキル `document-authoring` を併用し、featureは[共有仕様の形式](references/behavior.md#feature文書の形式)の日本語Markdown with Gherkinに従う。定義・出典・採用理由を確認するときは[一次資料](references/sources.md)を読む。会議、参加人数、自動化ツールを一律に要求しない。
+When saving documents, also use the dependency `document-authoring`; features follow the Japanese Markdown with Gherkin in [Shared specification format](references/behavior.md#feature-document-format). Read [Primary sources](references/sources.md) when checking definitions, sources, or adoption reasons. Do not uniformly require meetings, participant counts, or automation tools.
 
-## 引き渡しと完了
+## Handoff and completion
 
-- コードを変更しない仕様整理だけの依頼は、ストーリー、具体例、受け入れ条件、未回答の質問を提示して終了する。Issue作成、公開、TDDを暗黙に開始しない。
-- Issue計画の作成・更新を依頼された場合は `issue-management` で公開許可・実行範囲・保存後の確認を扱う。計画だけの依頼では `change-delivery` や `document-authoring` の導入を前提にしないで、Issue計画の保存・再取得・本文と表示・URLの提示で終了し、文書保存や実装へ進まない。
-- 承認済みのリポジトリ内feature文書の保存には `document-authoring` と `change-delivery` を併用し、保存済みのIssue計画と承認を作り直さず、統合後mainの確認まで進める。Plan Mode・読み取り限定では文案を提示し、保存や実装を実施済みとしない。
-- `issue-management` を利用できなければIssueへ投稿せず、他のSkillで代用せずに未保存案と制約を示す。`change-delivery` を利用できなければ文書を保存せず、他のSkillで代用せずに未完了範囲を示す。`document-authoring` を利用できなければ文書を保存せず、必要な形式と依存を示す。
-- コード変更が依頼された場合は依存スキル [software-development](../software-development/SKILL.md) へ、合意済み仕様・具体例・未回答事項とテストの対応を引き渡す。仕様保存だけを実装承認にしない。実装が承認済みならその承認を保持し、同じ承認を再質問しない。
+- For specification-only requests without code changes, present stories, concrete examples, acceptance conditions, and unanswered questions, then stop. Do not implicitly start Issue creation, publication, or TDD.
+- When asked to create or update an Issue plan, use `issue-management` for publication permission, execution scope, and post-save checks. For planning-only requests, do not require installation of `change-delivery` or `document-authoring`; stop after saving and retrieving the Issue plan, checking its body and display, and presenting its URL, without saving documents or implementing.
+- For approved feature documents in the repository, use `document-authoring` and `change-delivery`, without recreating saved Issue plans or approval, and proceed through post-integration main verification. In Plan Mode or read-only environments, present drafts without claiming saving or implementation occurred.
+- If `issue-management` is unavailable, do not post to Issues or substitute another Skill; show the unsaved draft and restrictions. If `change-delivery` is unavailable, do not save documents or substitute another Skill; show incomplete scope. If `document-authoring` is unavailable, do not save documents; show required formats and dependencies.
+- When code changes are requested, hand agreed specifications, concrete examples, unanswered questions, and their mapping to tests to the dependency [software-development](../software-development/SKILL.md). Saving specifications alone does not approve implementation. Retain existing implementation approval without asking for the same approval again.

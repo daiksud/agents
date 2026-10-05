@@ -67,4 +67,4 @@ DORAを使う診断では、[DORAのCapability lens](dora.md)でCore / Catalog /
 
 診断レポート・計画文書などの文書成果物が終端成果物なら、上記内容を `document-authoring` へ引き渡す。リポジトリ内文書を保存する場合は `issue-management` の通常計画を補助成果物として保存・確認し、`change-delivery` で要求された文書を統合後mainまで届ける。文書を届けた時点で終了し、改善施策の実装は別途依頼されていない限り開始しない。
 
-Issue記録だけが終端成果物なら、保存・重複確認・履歴保持・再取得・表示・提示は依存スキル `issue-management` の[診断・計画専用経路](../../issue-management/references/issue-recording.md#診断計画専用のissue記録)に従う。Issue記録と実装の両方が依頼されている場合は診断専用経路で停止せず、同スキルの通常計画経路でIssueを実装の補助成果物として保存・確認し、実装範囲・受け入れ条件・検証と承認を確認して[承認済み変更のdelivery](../../change-delivery/SKILL.md)に渡す。Issueを記録しただけでSub-issueを実行対象として確定したり、実装承認を得たことにしたりしない。
+Issue記録だけが終端成果物なら、保存・重複確認・履歴保持・再取得・表示・提示は依存スキル `issue-management` の[診断・計画専用経路](../../issue-management/references/issue-recording.md#issue-recording-for-diagnosis-and-planning-only)に従う。Issue記録と実装の両方が依頼されている場合は診断専用経路で停止せず、同スキルの通常計画経路でIssueを実装の補助成果物として保存・確認し、実装範囲・受け入れ条件・検証と承認を確認して[承認済み変更のdelivery](../../change-delivery/SKILL.md)に渡す。Issueを記録しただけでSub-issueを実行対象として確定したり、実装承認を得たことにしたりしない。

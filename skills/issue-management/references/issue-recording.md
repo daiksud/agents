@@ -1,92 +1,92 @@
 ---
 type: Instruction
-title: Issueの記録と提示
-description: Issueの内容・保存確認・表示と、診断のみや後続依頼の記録経路を定めます。
+title: Recording and presenting Issues
+description: Define Issue content, save/display verification, and recording paths for diagnosis-only or follow-up requests.
 ---
 
-## Issueの記録と提示
+## Recording and presenting Issues
 
-### Issueの記述
+### Issue content
 
-変更・成果物作成をIssueに紐づけ、既存Issueを検索して番号・URLを明確にする。対応するIssueがなければ、計画を記録してから実装する。Issue・Sub-issueにはタスク指示者をアサインし、特定できなければ確認する。認証ユーザーを無条件に指示者とみなさない。
+Associate changes and artifact creation with Issues, search existing Issues, and identify numbers and URLs. If none corresponds, record a plan before implementation. Assign Issues/Sub-issues to the task requester; ask if unidentified. Do not unconditionally equate the authenticated user with the requester.
 
-- タイトルと本文は[IssueとPRの書き方](github-writing.md)に従う。計画を記録するIssueでは、本文に誰が実現したい状態か（目的）、達成を判定できる仕様・制約（成功条件）、作業範囲・変更ファイル・順序（計画）、確認方法と結果（検証）、完了を判断する条件を書く。目的・目標・手段を混同しない。
-- 導入先の指定テンプレートに従う。指定がなければ内容に合う構成を選び、固定見出し・不要な表やAlerts・空の節・「なし」の埋め草を要求しない。未実行の検証と承認待ちなどの重要な制約は本文で明示する。
-- 作成時はリポジトリのラベル一覧と説明を確認し、内容に合うラベルを設定する。範囲変更時も見直す。
-- 投稿前の整形・チェックと、保存後の本文一致・表示確認は[GitHub向けMarkdownの品質](markdown-quality.md)に従う。Issue本文にOKFは付けない。
+- Follow [Writing Issues and PRs](github-writing.md) for titles and bodies. Plan Issues state whose desired state this is (purpose), specifications/constraints judging achievement (success conditions), scope/files/order (plan), checking methods/results (validation), and completion conditions. Do not confuse purposes, goals, and means.
+- Follow destination templates. If none is specified, choose content-appropriate structure without requiring fixed headings, unnecessary tables/Alerts, empty sections, or “none” filler. Explicitly state important restrictions such as unexecuted validation or pending approval.
+- Check repository label names/descriptions at creation and set appropriate labels; reassess when scope changes.
+- Follow [Markdown quality for GitHub](markdown-quality.md) for pre-post formatting/checks and post-save body agreement/display. Do not add OKF to Issue bodies.
 
-### 親IssueとSub-issueの記録
+### Parent Issues and Sub-issues
 
-親の目的・成功条件を満たす作業を独立して計画・検証できる単位に分ける場合は、無関係な後続Issueではなく、親に紐づくSub-issueを作成する。
+When splitting work meeting the parent's purpose and success conditions into independently plannable/verifiable units, create linked Sub-issues rather than unrelated follow-up Issues.
 
-1. 親の計画に分割理由・実施順序を残し、子ごとの作業範囲、検証・完了条件、子同士の依存を記録する。親の成功条件を子の完了条件へ結びつけ、作成前の子番号やURLを推測で記入しない。
-2. 親の更新本文と各子の本文全体を投稿・更新前に共通rumdl設定で整形・チェックする。子を作成して得た実番号で依存先を記録し、GitHub上で親のSub-issueとして紐づける。親と各子を再取得し、**最終の整形済み本文との一致、GitHubでの表示、保存された親子関係**を確認してから、確認済みの本文と取得URLを提示する。保存・一致・紐づけを確認できなければ未完了とし、ブラウザの扱いは[保存後手順](#issue保存後のブラウザ起動)に従う。
-3. 子を作成しただけでは実装の承認や着手とみなさない。親から実行承認を保持して同じ成功条件内で分割した場合は、計画保存・確認後、分割だけを理由に再承認を求めず承認済み範囲を引き渡す。計画だけの依頼なら記録・提示で停止する。
+1. Preserve decomposition reasons/order in the parent plan, and record each child's scope, validation/completion conditions, and dependencies. Connect parent success conditions to child completion conditions; do not guess child numbers/URLs before creation.
+2. Format/check the updated parent and each complete child body with common rumdl configuration before posting/updating. Record dependencies using actual numbers from created children, and link them as parent Sub-issues on GitHub. Retrieve parent and children, and check **agreement with final formatted bodies, GitHub rendering, and saved parent/child relationships** before presenting verified bodies and retrieved URLs. If saving, agreement, or relationships are unconfirmed, work is incomplete; follow [Post-save procedures](#opening-the-browser-after-saving-an-issue) for browsers.
+3. Child creation alone does not approve or start implementation. With retained parent execution approval and decomposition within the same success conditions, hand off approved scope after plan saving/verification without reapproval solely for decomposition. For planning-only requests, stop at recording/presentation.
 
-親Issueは各Sub-issueの完了と親自身の成功条件の確認後に完了を判断する。子の作成・計画保存だけで親を完了扱いにしない。
+Judge parent completion after every Sub-issue completes and the parent's own success conditions are confirmed. Child creation or plan saving alone does not complete the parent.
 
-### Issue保存後のブラウザ起動
+### Opening the browser after saving an Issue
 
-ここを新規Issue（Sub-issue・計画なしの後続Issueを含む）と計画の保存・更新後の共通手順とする。ブラウザ起動の有無にかかわらず、保存・本文一致・表示を確認してから各経路の提示と承認へ進む。
+These common procedures apply to new Issues (including Sub-issues and follow-up Issues without plans) and saved/updated plans. Regardless of browser opening, verify saving, body agreement, and display before each path's presentation and approval.
 
-1. 保存したIssueを再取得し、[投稿品質の手順](markdown-quality.md)で整形・チェックした本文との一致を確認する。保存失敗・本文未確認の間は起動しない。
-2. 利用者が起動を求めている場合、再取得したURLをOS標準のURL起動手段で一度開く。macOSでは `open <URL>` を使い、URLを1つの引数として渡す。都度の起動許可や設定変更・専用スクリプトは不要。
-3. 同じ保存操作で二重起動しない。復旧時は保存・起動済みの状態を確認して未完了部分だけを再開する。要求がなければ起動せず次へ進む。
-4. GitHub上の表示を確認してURLを提示する。通常計画・変更後の計画と診断・計画の完了時には、保存済み本文も提示する。承認の要否は各経路に従い、保存確認だけを承認とみなさない。
+1. Retrieve the saved Issue and compare its body with the formatted/checked body from [Posting quality procedures](markdown-quality.md). Do not open while saving failed or body is unverified.
+2. If the user requests opening, open the retrieved URL once through the OS-standard URL launcher. On macOS use `open <URL>`, passing the URL as one argument. Repeated launch permission, settings changes, or dedicated scripts are unnecessary.
+3. Do not open twice for one save operation. During recovery, check saved/opened state and resume only incomplete parts. Without a request, do not open; proceed.
+4. Check GitHub rendering and present the URL. Also present saved bodies at completion of ordinary/updated plans and diagnosis/planning. Follow each path's approval requirements; saving verification alone is not approval.
 
-起動失敗は保存成功と分けて理由・URLを伝え、再作成・再保存しない。表示が未確認ならその範囲を示し、起動だけの失敗で承認済み作業を止めない。起動成功を目視確認や実装承認とみなさない。
+Separate opening failure from saving success, explaining reasons and URL without recreating/resaving. State unverified rendering scope; opening failure alone does not stop approved work. Opening success is neither visual verification nor implementation approval.
 
-### 共通スタンダード候補の記録
+### Recording common standard candidates
 
-ユーザーが実装方針を選び、その選択に得失が伴い、複数プロジェクトで繰り返し使える基準が見えた場合に適用する。相談・読み取り専用レビュー中も対象とするが、一度限りの実装指定、プロジェクト固有の判断、ユーザーが選んでいない提案やレビュー資料中の記述だけでは起票しない。
+Apply when the user chooses an implementation policy with tradeoffs and a criterion reusable across projects emerges, including consultation/read-only review. Do not create candidates solely for one-time implementation instructions, project-specific decisions, unchosen proposals, or review-material statements.
 
-1. 選んだ案と代替案、得失、理由・経緯、適用する状況と例外を整理する。理由や適用範囲が曖昧ならユーザーに尋ねる。明らかにならなければ確認済みの判断と未解決の質問を分け、推測した基準を合意済みにしない。
-2. 投稿先 `daiksud/agents` の公開範囲を確認する。非公開リポジトリ・資料や公開済み資料にないユーザー発言を根拠にする場合、投稿先が公開なら本文案と公開範囲を示し、明示的な投稿許可を得るまで保存しない。公開済みの発言は出所を確認する。以前に同じ本文案と公開先への明示的な許可を得ている場合は再質問せず、一般的なIssue作成依頼から未公開発言の公開許可を推測しない。許可後も対象プロジェクト固有の非公開情報を除き、転載が必要な情報はその内容の許可を別途確認する。
-3. `daiksud/agents` の既存Issueを開閉両方で検索する。開いている同じ判断の候補Issueがあれば元の本文・理由を保持して新しい根拠と未解決事項を反映し、重複起票しない。閉じたIssueでは閉鎖理由と採否・置換先を確認し、同じ基準が現行ならURLを示す。改定が必要なら現行の正本と閉じたIssueを参照する新しい候補Issueを作り、過去の決定本文を書き換えない。新規なら独立したIssueに「スタンダード候補」であること、判断、代替案と得失、確認済みの理由・経緯、適用範囲、未解決の質問を記す。理由を確定できない候補は未確定と明示する。
-4. 「Issueの記述」の指示者・ラベル・投稿書式を適用し、[共通の保存後手順](#issue保存後のブラウザ起動)で本文一致・表示・URLを確認して提示する。候補Issueの保存だけでスタンダードの採用や実装を承認済みと扱わない。現在の作業は回答に依存する部分を除いて継続する。
+1. Organize the chosen option, alternatives, tradeoffs, reasons/history, applicability, and exceptions. Ask the user if reasons or scope are unclear. If unresolved, separate confirmed decisions from unanswered questions without treating inferred criteria as agreed.
+2. Check visibility of the posting destination `daiksud/agents`. If grounds include private repositories/material or user statements absent from published material and the destination is public, show draft and publication scope and do not save before explicit posting permission. Verify sources of published statements. Do not ask again when explicit permission exists for the same draft/destination, or infer permission to publish unpublished statements from general Issue-creation requests. Even after permission, exclude project-specific private information; separately confirm permission for content needing transcription.
+3. Search both open and closed `daiksud/agents` Issues. For open candidates on the same judgment, preserve original bodies/reasons and add new evidence/unresolved matters without duplicates. For closed Issues, check closure reasons, adoption/rejection, and replacements; show URLs if the same criterion is current. If revision is needed, create a new candidate referencing current authoritative material and the closed Issue, without rewriting historical decision bodies. New independent Issues state “standard candidate,” judgment, alternatives/tradeoffs, confirmed reasons/history, applicability, and unresolved questions. Explicitly mark candidates with unsettled reasons as provisional.
+4. Apply requester, labels, and posting format from “Issue content,” then verify/present body agreement, rendering, and URL through [Common post-save procedures](#opening-the-browser-after-saving-an-issue). Candidate saving alone does not approve standard adoption or implementation. Continue current work except parts depending on answers.
 
-明示的なIssue投稿禁止、Plan Mode、未公開内容を公開する許可の未取得、接続・権限の制約では投稿せず、未保存の本文案と理由を示す。相談・レビュー中にこの経路を使う場合、候補Issueの記録を変更計画やブランチ・PR・マージへ広げない。後にスタンダードを採用・変更する作業は、別途その変更の承認範囲と通常のIssue計画に従う。
+Do not post when explicitly prohibited, in Plan Mode, without permission to publish unpublished content, or under connection/permission restrictions; show unsaved drafts and reasons. During consultation/review, do not expand candidate records into change plans, branches, PRs, or merges. Later standard adoption/change follows separate approval scope and ordinary Issue planning.
 
-### 改善の記録と次回確認
+### Recording improvements and checking next time
 
-スキル利用後のKPTから `daiksud/agents` の改善へつなぐ場合、既存の関連Issue・PRを使い、Problemの観測根拠、対応するTry、試す適用範囲、次の関連作業での確認方法、採否と実装状況を短く記録する。既存記録を開閉両方で検索し、同じ改善を重複起票しない。現在の作業の記録が別リポジトリにある場合は、必要な改善だけをagentsの既存候補または小さな後続Issueへ結びつけ、機密情報や公開許可のないタスクデータを転載しない。投稿・保存確認は既存の手順を適用する。
+When connecting post-skill KPT to improvements in `daiksud/agents`, use related existing Issues/PRs and briefly record observed Problem evidence, corresponding Try, experimental scope, checking method in the next related task, adoption/rejection, and implementation status. Search open and closed records to avoid duplicates. If current work records are in another repository, connect only necessary improvements to existing agents candidates or small follow-up Issues; do not copy confidential information or task data without publication permission. Apply existing posting/save verification procedures.
 
-- 観測したProblemと未検証の仮説を区別し、Tryは一つのProblemに対応する小さな実験として記す。Keepは役立った範囲を保持し、問題がなければ改善Issueを形式的に作らない。
-- 改善をagentsへ反映する依頼・継続的な実行承認がある場合は、その範囲内の小さな変更を通常の計画・deliveryへ渡す。KPTや候補Issueの存在だけでは実装承認にせず、無関係なリポジトリ、認証・セキュリティ、費用・グローバル設定の変更へ広げない。範囲外のTryは提案・未実装として残す。
-- 採用済みで次回確認を待つTryは、`daiksud/agents` の既存または小さな後続Issueの本文に `KPT Try`、対象スキル名・適用範囲・確認方法と追跡先リンクを記す。引き継ぎ時もそのIssue URLを渡し、次の作業は開いたIssueの本文検索から関連する記録を発見できるようにする。実装PRと結果の追跡先を結びつける。実装済みと改善効果確認済みを分け、次回確認が残る場合は記録を開いたまま残すか、既存の後続Issueへ確認方法を引き継いでから実装Issueを閉じる。専用DB・スクリプト・自動スケジュールは要求しない。
-- 次の関連作業では、着手時にそのTryと確認方法を読み、終了時に観測した結果と根拠から継続・修正・終了を判断する。投稿が承認された作業だけ同じ追跡先へ記録し、読み取り専用Reviewerや投稿禁止の作業は結果と追跡先をDriverまたはユーザーへ許可された経路で引き渡す。引き渡し不能なら記録未完了とし、公開許可・出力契約を破らない。機会がなかった・検証できなかった場合は未確認と記し、成功や効果を推測しない。新しい証拠のない指示追加や、終了したTryの再実行を繰り返さない。
+- Distinguish observed Problems from unverified hypotheses; describe Try as a small experiment addressing one Problem. Retain Keep's useful scope; do not formally create improvement Issues without problems.
+- With requests or continuing execution approval to reflect improvements in agents, hand small in-scope changes to ordinary planning/delivery. KPT or candidate existence alone does not approve implementation, or expand into unrelated repositories, authentication/security, cost, or global settings. Leave out-of-scope Try items proposed/unimplemented.
+- For adopted Try items awaiting later checks, put `KPT Try`, target skill names, applicability, checking methods, and tracking links in existing or small follow-up `daiksud/agents` Issue bodies. Hand off those URLs so later work can find related records by searching open Issue bodies. Link implementation PRs and outcome tracking. Separate implemented from confirmed improvement effects; if later checking remains, keep records open or transfer checking methods to existing follow-up Issues before closing implementation Issues. No dedicated DB, script, or automatic schedule is required.
+- At the next related task's start, read the Try and checking method; at completion judge continuation, revision, or closure from observed results/evidence. Record to the same destination only in work approved to post; read-only Reviewers or posting-prohibited work hand results and tracking destinations to Driver/user through permitted routes. If handoff is impossible, recording is incomplete; do not break publication permission or output contracts. If no opportunity arose or validation was impossible, state unverified; do not infer success/effects. Do not repeat instruction additions without new evidence or rerun closed Try items.
 
-### 関連の薄い追加依頼の記録
+### Recording loosely related additional requests
 
-現在のタスクを継続しながら追加要望を失わず残すため、関連の薄い依頼の記録だけは、通常のIssueの計画形式と[着手と計画](planning.md#着手と計画)の計画作成・承認フローの例外とする。
+To preserve additional requests while continuing current work, recording loosely related requests alone is an exception to ordinary Issue planning format and the planning/approval flow in [Starting and planning](planning.md#着手と計画).
 
-| 追加依頼と現在のタスクの関係 | 対応 |
+| Relationship to current task | Action |
 | --- | --- |
-| 現在の目的・成功条件を満たすために必要 | 承認済み範囲内なら反映し、目的・成果・受け入れ条件や外部影響を変える変更なら[着手と計画](planning.md#着手と計画)の計画更新・再承認手順を適用する |
-| 独立した目的で、現在の目的・成功条件との関連が薄い | 別途対応する旨を伝え、以下の手順で独立した後続Issueへ記録する。現在のタスクは承認済み範囲で継続する |
-| 関連性を判断できない | ユーザーに確認して回答後に振り分ける。回答に依存しない現在の作業は継続する |
+| Needed for current purpose/success conditions | Reflect within approved scope; for changes to purpose, outcomes, acceptance conditions, or external impact, apply plan update/reapproval in [Starting and planning](planning.md#着手と計画) |
+| Independent purpose, loosely related to current purpose/success conditions | Explain separate handling and record in an independent follow-up Issue below. Continue current approved work |
+| Relationship unclear | Ask the user and classify after the answer. Continue current work not depending on the answer |
 
-1. 既存Issueを検索し、同じ依頼が記録済みなら重複起票せず既存IssueのURLを案内する。
-2. 新規記録には依頼を端的に示すタイトル、依頼内容、「後続対応・計画未作成」の状態を記載する。仕様・実装方法・検証計画を推測して追加しない。現在のタスクのSub-issueにはせず、独立したIssueとして扱う。
-3. 「Issueの記述」の指示者・アサイン・ラベル・投稿書式を適用し、[共通の保存後手順](#issue保存後のブラウザ起動)で保存確認とURL提示まで行う。記録のために実装計画の承認を求めない。
-4. 記録しただけで計画作成・実装へ進まず、現在のタスクを承認済み範囲で継続する。
+1. Search existing Issues; if recorded, provide its URL without duplication.
+2. New records contain a concise request title, request content, and “follow-up work; plan not yet created” status. Do not infer specifications, implementation methods, or validation plans. Treat as an independent Issue, not a current-task Sub-issue.
+3. Apply requester, assignment, labels, and posting format from “Issue content,” and [Common post-save procedures](#opening-the-browser-after-saving-an-issue) through saved-state checking and URL presentation. Do not ask implementation-plan approval merely to record.
+4. Recording alone does not start planning/implementation; continue current approved work.
 
-投稿失敗や保存未確認は起票済みと報告しない。保存成功を確認できても、要求された起動や表示が未確認なら記録手順全体の完了とは扱わず、保存成功と失敗・未確認の範囲を分けて伝える。再開時に保存状態を確認して成功済みの操作を重複させない。回答や復旧に依存しない現在の作業は継続する。
+Do not claim creation after posting failure or unverified saving. Even with confirmed saving, unverified requested opening/rendering leaves the overall recording procedure incomplete; separately explain saving success and failed/unverified scope. On resumption check saved state without repeating successful operations. Continue current work independent of answers/recovery.
 
-後続Issueへの実装着手時は、元の要望を保持して「Issueの記述」[着手と計画](planning.md#着手と計画)の通常形式で計画を作成・保存・再取得・提示する。開発実践の現状診断・導入計画だけの依頼は「診断・計画専用のIssue記録」に従う。通常の変更の実装計画を作る依頼は[着手と計画](planning.md#着手と計画)に従う。計画作成だけの依頼を実装承認として扱わない。実装開始は通常の承認手順に従い、Issue指定のゴール開始による承認も同じ条件で適用する。
+Before implementing follow-up Issues, preserve original requests and create/save/retrieve/present ordinary plans under “Issue content” and [Starting and planning](planning.md#着手と計画). Follow “Issue recording for diagnosis and planning only” for development-practice diagnosis/adoption planning alone, and [Starting and planning](planning.md#着手と計画) for individual change implementation plans. Planning-only requests do not approve implementation. Start implementation through ordinary approval procedures, including the same conditions for approval by instructions to start a specified Issue goal.
 
-### 診断・計画専用のIssue記録
+### Issue recording for diagnosis and planning only
 
-この経路は診断という話題ではなく、Issueへの診断・導入計画の記録だけが終端成果物として依頼された場合に使う。診断結果・改善提案・比較・計画案を回答として求められただけならIssueを作成しない。Issue記録と実装の両方が依頼されている場合はこの経路で停止せず、[着手と計画](planning.md#着手と計画)の通常経路を使う。
+Use this path for terminal deliverables limited to Issue records of diagnosis/adoption plans, rather than based on the topic of diagnosis. Do not create Issues for requests merely seeking answers with diagnosis, proposals, comparisons, or draft plans. For both Issue recording and implementation, do not stop here; use ordinary [Starting and planning](planning.md#着手と計画).
 
-開発実践の現状診断・導入計画のIssue作成・更新だけが依頼された場合は、実装計画の承認待ちを作らず、次の経路で成果物を渡す。個別の変更・障害対応の実装計画や診断後の実装も依頼されている場合は、原因の診断を含んでいても[着手と計画](planning.md#着手と計画)を優先する。
+For requests only to create/update development-practice diagnosis/adoption-plan Issues, deliver through this path without introducing a wait for implementation-plan approval. If individual change/incident implementation plans or post-diagnosis implementation are also requested, prioritize [Starting and planning](planning.md#着手と計画) even when cause diagnosis is included.
 
-1. 対象リポジトリと目的・範囲を確認し、既存Issueを検索する。再診断では元の証拠・本文を保持し、変更した判断と理由を履歴に残す。
-2. 診断の証拠、未確認事項、優先順位、最初の小さな導入単位、順序・依存、期待する変化、検証・見直し条件を本文へまとめる。開発実践の導入診断には依存スキル `engineering-assessment` を使う。
-3. 「Issueの記述」の指示者・ラベル・投稿書式を適用して保存する。依頼された診断・計画の記録に、実装開始の承認を要求しない。
-4. [共通の保存後手順](#issue保存後のブラウザ起動)で、保存確認からURLと保存済み本文の提示まで行う。
-5. 診断完了と導入未実施を区別し、Issueを開いたまま残す。Sub-issue作成・コードや設定の変更・組織変更・ブランチ・PR・マージへ進まない。
+1. Check target repository, purpose, and scope, and search existing Issues. For repeated diagnosis, preserve original evidence/bodies and record changed judgments/reasons in history.
+2. Summarize diagnosis evidence, uncertainties, priorities, the first small adoption unit, order/dependencies, expected changes, validation, and reassessment conditions in the body. Use the dependency `engineering-assessment` for development-practice adoption diagnosis.
+3. Save with requester, labels, and posting format from “Issue content.” Do not require implementation-start approval for requested diagnosis/plan records.
+4. Apply [Common post-save procedures](#opening-the-browser-after-saving-an-issue) through saved-state verification and presenting URL/saved body.
+5. Distinguish completed diagnosis from unimplemented adoption and leave the Issue open. Do not proceed to Sub-issues, code/settings/organization changes, branches, PRs, or merge.
 
-投稿禁止のPlan Modeや明示的な読み取り限定では保存操作を行わず、未保存の本文案と制約を提示する。保存不能・保存確認不能も成功とせず、再開条件を示す。再開時は保存状態を確認し、重複起票を避ける。
+Do not save in posting-prohibited Plan Mode or explicitly read-only work; show unsaved drafts and restrictions. Saving failure or inability to verify is not success; show resumption conditions. On resumption check saved state and avoid duplicates.
 
-診断でmainの失敗を発見した場合は、証拠と復旧の優先度を計画に記録する。診断依頼だけで復旧の実装を開始しない。後から実装を依頼された場合は、既存Issueを引き継いで[着手と計画](planning.md#着手と計画)の通常経路を使う。その計画への明示的承認が既にある場合は再確認せず、対象範囲を確認して実行する。
+If diagnosis discovers failing main, record evidence and recovery priority in the plan; diagnosis alone does not start recovery implementation. If implementation is requested later, inherit the existing Issue through ordinary [Starting and planning](planning.md#着手と計画). If explicit approval for that plan already exists, do not ask again; check scope and execute.

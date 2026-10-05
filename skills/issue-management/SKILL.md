@@ -1,27 +1,27 @@
 ---
 name: issue-management
-description: GitHub Issueの検索・計画保存・作成・更新、Sub-issue、後続依頼、Issue・PRのタイトル・本文の作成・更新、共通スタンダード候補の記録で使う。計画だけは保存・確認・提示で終了する。branch・commit・PR作成・CI・mergeはchange-delivery、通常の読み取り・概念説明・レビューだけには使わない。
+description: Use for GitHub Issue searches, plan saving, creation and updates, Sub-issues, follow-up requests, writing or updating Issue/PR titles and bodies, and recording common standard candidates. For planning alone, finish after saving, verifying, and presenting. Use change-delivery for branches, commits, PR creation, CI, and merge. Do not use for ordinary reading, conceptual explanation, or review alone.
 ---
 
-# Issueと計画を記録する
+# Record Issues and plans
 
-Issueの計画と記録を担当する。Issueを作成・更新した事実や計画の存在を、変更実行の承認に読み替えない。明確な変更依頼の実行承認は保存後も保持し、承認済みの範囲だけを対象作業のスキルへ引き渡す。Git管理ファイルの変更は `change-delivery`、GitHub側のリポジトリ設定のみの変更は `github-repo` が実行と完了確認を担当する。
+Own Issue plans and records. Do not reinterpret Issue creation/update or the existence of a plan as approval to execute changes. Retain execution approval from clear change requests after saving, and hand only approved scope to the responsible skill. `change-delivery` owns Git-managed file changes; `github-repo` owns execution and completion verification for GitHub-side repository settings alone.
 
-## 工程ごとに読む資料
+## Material to read at each stage
 
-今の工程に必要な資料だけを読む。`docs/` は作業対象リポジトリを指し、同梱資料のリンクは参照元ファイルから解決する。
+Read only material needed for the current stage. `docs/` refers to the working repository; resolve bundled links from the referring file.
 
-| 工程・条件 | 読む資料 |
+| Stage or condition | Material |
 | --- | --- |
-| 個別変更の調査・計画、実行範囲や追加確認の判断、検証依存の準備 | [計画と実行範囲](references/planning.md) |
-| Issueの検索・作成・更新、Sub-issue、後続依頼、診断計画、共通スタンダード候補 | [Issueの記録と提示](references/issue-recording.md) |
-| Issue・PRのタイトル・本文の作成・更新 | [IssueとPRの書き方](references/github-writing.md) |
-| Issue・PR本文・コメントの投稿・更新、またはその具体的な手順の判断・提示 | [GitHub向けMarkdownの品質](references/markdown-quality.md) |
+| Investigation and planning for individual changes, execution scope and additional-confirmation decisions, validation dependencies | [Planning and execution scope](references/planning.md) |
+| Searching, creating, or updating Issues, Sub-issues, follow-up requests, diagnostic plans, common standard candidates | [Recording and presenting Issues](references/issue-recording.md) |
+| Writing or updating Issue/PR titles and bodies | [Writing Issues and PRs](references/github-writing.md) |
+| Posting or updating Issue/PR bodies or comments, or deciding/presenting concrete procedures for them | [Markdown quality for GitHub](references/markdown-quality.md) |
 
-## 記録後の停止と引き渡し
+## Stopping and handoff after recording
 
-- Issue本文を投稿・更新する前に必要な公開許可と整形を確認する。元の本文・理由と指示者を保持し、保存後は再取得した本文の一致と表示、URLを確認する。模擬評価では実施していない投稿や確認を済ませたと報告しない。
-- Issue記録だけが終端成果物である計画・診断の依頼では、保存済みIssueの本文とURLを提示して終了する。回答だけが終端成果物の診断ではIssueを暗黙に作成せず、Issue記録と実装の両方が依頼されている場合は通常の計画経路で保存後も実装へ引き渡す。Issue記録だけの依頼から実装・ブランチ準備・PRや定型の実装承認質問へ進まず、Issueを自動で閉じない。
-- Git管理ファイル変更の実行承認がある場合は、計画保存と確認後に `change-delivery` のブランチ準備以降へ引き渡し、コード変更なら `software-development`、文書変更なら `document-authoring` を併用する。依存するスキルが利用できなければdeliveryを開始せず、保存済み計画を重複作成しない。同じ目的・成功条件内の手順変更を都度再承認させず、目的・成果・受け入れ条件・外部影響・権限を変える場合は計画資料の境界に従って確認する。
-- GitHub側のリポジトリ設定のみを適用する承認がある場合は、同じ計画保存・確認後に `github-repo` へ引き渡す。空のcommit・PRを作らず、設定の適用・再取得・再診断まで行う。必要な依存がなければ該当操作を止め、前提のファイル変更が必要なら通常のdeliveryへ分ける。
-- 共通スタンダード候補の記録だけを依頼された相談・レビューでは、Issue記録を変更計画やdeliveryの承認へ広げない。未公開の判断や資料を公開する場合は、投稿先と本文案への明示的な許可を確認する。
+- Check necessary publication permission and formatting before posting or updating Issue bodies. Preserve original content, reasons, and requester, and after saving retrieve the body to check agreement and rendering, and confirm the URL. Do not claim unperformed posting or checks in simulated evaluations.
+- For planning/diagnosis requests whose terminal deliverable is an Issue record only, present the saved Issue body and URL, then stop. For diagnoses ending in an answer, do not implicitly create Issues. When both Issue recording and implementation are requested, use the ordinary planning path and hand off to implementation after saving. Do not proceed from Issue-record-only requests to implementation, branch preparation, PRs, or formulaic implementation-approval questions, or automatically close the Issue.
+- With approval to change Git-managed files, after saving and verifying the plan hand off from branch preparation onward to `change-delivery`, also using `software-development` for code or `document-authoring` for documents. If necessary dependencies are unavailable, do not begin delivery or duplicate saved plans. Do not repeatedly reapprove procedure changes within the same purpose and success conditions; when changing purpose, outcomes, acceptance conditions, external impact, or authority, follow the planning material's boundaries for confirmation.
+- With approval to apply only GitHub-side repository settings, hand off to `github-repo` after the same plan saving and verification. Do not create empty commits or PRs; apply settings, retrieve them, and diagnose again. Stop affected operations if necessary dependencies are missing, and separate prerequisite file changes into ordinary delivery.
+- In consultation or review requesting only common standard candidate records, do not expand Issue recording into change-plan or delivery approval. Obtain explicit permission for the posting destination and draft when publishing unpublished decisions or material.

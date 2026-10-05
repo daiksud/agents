@@ -1,7 +1,7 @@
 ---
 type: Reference
-title: 共有理解とfeature文書
-description: BDD・ATDDの共有理解、宣言的な具体例、日本語Markdown with Gherkinの形式を定めます。
+title: Shared understanding and feature documents
+description: Define shared understanding in BDD/ATDD, declarative examples, and Japanese Markdown with Gherkin.
 sources:
   - id: practice-sources
     resource: sources.md
@@ -11,41 +11,41 @@ sources:
     resource: https://github.com/cucumber/gherkin/blob/5c869e7b75c7d1a40f70b8ab2bd1148600467fab/gherkin-languages.json#L1944-L1994
 ---
 
-## 共有理解とfeature文書
+## Shared understanding and feature documents
 
-コードを書かない仕様整理・文書作成にもこの資料を使い、TDDを開始しない。コード変更を依頼された場合は、依存スキル [software-development](../../software-development/SKILL.md) に合意済み仕様を引き渡す。
+Use this material for specification work and document creation without code, without starting TDD. When code changes are requested, hand agreed specifications to the dependency [software-development](../../software-development/SKILL.md).
 
-### 共有理解と受け入れ条件（BDD・ATDD）
+### Shared understanding and acceptance conditions (BDD/ATDD)
 
-- システム・機能の構築では、設計より先に「誰が、どの状況で、完成後に何をできるか」というストーリーを語る。既存Issueの目的やfeatureの機能説明へ記録し、受け入れ条件と具体例で観測可能にする。固定の構文や独立したストーリー文書は要求しない。
-- 合意済みのストーリーは再利用する。誰のどの困りごとを解消するか、完成後の結果が未確定なら質問として残し、AIが仮定したストーリーを合意済みにしない。技術修正・整理は既存の目的・期待結果へ結びつけ、新しいストーリーを毎回書く工程を加えない。
-- 実装前に、利用者・業務・開発・検証の観点から目的、ルール、代表的な具体例、未回答の質問を整理する。BDDのDiscovery・Formulation・Automationは小さく往復する。
-- 既存の合意済み仕様から分かる期待値と、新しい提案・仮定を区別する。結果が未確定の例は質問として保持し、業務判断を確認してから実装する。
-- 必要な知識を持つ人との確認方法を選ぶ。毎回の同期会議や固定人数を必須にせず、AI同士の役割演技を関係者の合意として記録しない。
-- 受け入れ条件とその意味を示す例を、対応する実装より先に定める。何を観測すれば受け入れられるかを明確にし、期待を検証する自動テストへつなげる。
-- ドメインのルールを追加・変更する場合は、実装前に `docs/behavior/<機能名>.feature.md` を作成・更新する。API利用者・運用者に対する契約を共有仕様として定める場合も、読者と観測可能な結果を明示して同形式で記述できる。
-- 抽象的なルールと具体的なシナリオを分ける。ルールや境界の理解に意味を持つ金額・日時・入出力例はシナリオに含め、無関係なデータや内部実装の手順は省く。
-- UIのクリック列、内部クラス、通信・永続化の方式を業務仕様へ混ぜない。ただし外部に約束する応答、保存結果、通知等まで実装詳細として除外しない。
-- 人が読む仕様と自動テストの対応を追えるようにし、仕様変更時に両者を整合させる。自然言語ファイルの直接実行やCucumberの導入は必須にしない。
+- For systems and features, tell the story of “who can do what, in which situation, after completion” before design. Record it in existing Issue purposes or feature descriptions, making it observable through acceptance conditions and concrete examples. Do not require fixed syntax or separate story documents.
+- Reuse agreed stories. If whose problem is resolved or the completed result is unsettled, retain questions; do not treat AI-assumed stories as agreed. Connect technical fixes and cleanup to existing purposes and expected results, without adding a stage of writing a new story every time.
+- Before implementation, organize purposes, rules, representative examples, and unanswered questions from user, business, development, and validation perspectives. Iterate BDD Discovery, Formulation, and Automation in small cycles.
+- Distinguish expectations established by agreed specifications from new proposals or assumptions. Retain examples with unsettled outcomes as questions, and confirm business decisions before implementation.
+- Choose how to check with people having necessary knowledge. Do not require synchronous meetings or fixed participant counts every time, or record AI role-playing as stakeholder agreement.
+- Define acceptance conditions and examples showing their meaning before corresponding implementation. Clarify observable acceptance results and connect them to automated tests checking expectations.
+- For domain-rule additions or changes, create or update `docs/behavior/<feature-name>.feature.md` before implementation. Shared specifications of contracts with API users or operators may use the same format with explicit readers and observable results.
+- Separate abstract rules from concrete scenarios. Include amounts, dates, and input/output examples meaningful for understanding rules or boundaries; omit unrelated data and internal implementation steps.
+- Do not mix UI click sequences, internal classes, communication methods, or persistence methods into business specifications. However, do not exclude externally promised responses, saved results, or notifications as implementation detail.
+- Keep human-readable specifications and automated tests traceable and consistent when specifications change. Direct execution of natural-language files or installing Cucumber is not mandatory.
 
-### feature文書の形式
+### Feature document format
 
-- 文書作成には `document-authoring` を適用し、Markdown with Gherkin[^gherkin-markdown]に従う。
-- 日本語キーワード[^gherkin-ja]を使う。見出しは `機能`・`背景`・`ルール`・`シナリオ`、箇条書きのステップは `前提`・`もし`・`ならば`・`かつ`・`しかし` とする。
-- 解析する場合はパーサーで日本語（`ja`）を指定する。rumdlで整形後も見出し・ステップ構造を確認する。
-- Planモードで編集できない間は文案を計画内に示し、編集可能になってから実装コードより先に保存する。
+- Apply `document-authoring` and follow Markdown with Gherkin.[^gherkin-markdown]
+- Use Japanese keywords.[^gherkin-ja] Headings are `機能`, `背景`, `ルール`, and `シナリオ`; bulleted steps are `前提`, `もし`, `ならば`, `かつ`, and `しかし`.
+- When parsing, specify Japanese (`ja`) in the parser. Check heading and step structure after rumdl formatting.
+- While editing is unavailable in Plan mode, show drafts within the plan; save before implementation code once editing is possible.
 
-### 関係と適用判断
+### Relationships and application decisions
 
-BDDは具体例による共有理解を育てる協働の実践で、CucumberはDiscovery・Formulation・Automationの反復として説明します。ATDDは実装前に受け入れテストを考え、要求と検証を結ぶ実践です。両者の対象は重なり、別々の必須会議や工程を増やす意味ではありません。TDDは期待するふるまいのテストリストから一つずつテストと実装を進めるプログラミングの反復です。
+BDD is collaborative practice developing shared understanding through examples; Cucumber describes it as iterating Discovery, Formulation, and Automation. ATDD considers acceptance tests before implementation, connecting requirements and validation. Their subjects overlap; this does not mean adding separate mandatory meetings or stages. TDD is programming iteration that progresses tests and implementation one at a time from a list of expected-behavior tests.
 
-本スキルでは、ストーリーから目的とルールの確認、意味のある具体例、受け入れ条件、未回答事項を整理します。コード変更も依頼された場合にだけ、合意済み仕様と例を `software-development` へ引き渡し、同スキルのテスト先行・アサート先行の実装へつなぎます。仕様整理だけの依頼では実装やTDDを始めません。このストーリーファーストと条件付きの引き渡しは本環境の運用方針です。BDD・ATDD・TDDを同義語とせず、全組織共通の唯一の手順という主張もしません。
+This skill starts with stories to organize purposes, rules, meaningful examples, acceptance conditions, and unanswered questions. Only when code changes are also requested does it hand agreed specifications and examples to `software-development`, connecting to that skill's test-first and assert-first implementation. Specification-only requests do not start implementation or TDD. Story-first work and conditional handoff are this environment's operating policy. Do not treat BDD, ATDD, and TDD as synonyms or claim one universal procedure for all organizations.
 
-人が読む要求と自動テストの対応は必要ですが、同じファイルを直接実行することは必須にしません。Hendricksonの2024年の再評価は、自然言語自動化と全員同期協働が重くなった経験から、少数の例と必要な参加者を勧めています。一方、Cucumberは異なる専門性の間の対話を重視します。この違いを消さず、当事者の知識を得て共有理解を確かめる方法を選びます。
+Human-readable requirements must map to automated tests, but direct execution of the same file is not mandatory. Hendrickson's 2024 reassessment recommends few examples and necessary participants from experience of natural-language automation and synchronous collaboration involving everyone becoming burdensome. Cucumber, meanwhile, emphasizes dialogue across differing expertise. Preserve this difference and choose methods that obtain stakeholders' knowledge and confirm shared understanding.
 
-### 具体的で宣言的な例
+### Concrete, declarative example
 
-次は「購入者が注文時に適用送料を把握できる」というストーリーと、「税込商品合計5,000円以上なら送料を無料にする」というルールが合意済みの場合の例です。この金額や合計の定義を別の業務へ流用して確定事項にしません。
+The following example assumes agreement on the story “buyers can understand applicable shipping costs when ordering” and the rule “shipping is free when the tax-inclusive product total is at least 5,000 yen.” Do not reuse this amount or total definition as settled facts in another business.
 
 ```markdown
 ## 機能: 注文の送料を決定する
@@ -61,12 +61,12 @@ BDDは具体例による共有理解を育てる協働の実践で、Cucumberは
 - ならば: 送料は0円になる
 ```
 
-同じルールの4,999円での例や異常系も、ルールの解釈を確認するために使えます。金額の具体性は保ち、カート画面のクリック列や内部関数名を露出させる必要はありません。未確定の送料・割引後金額の扱いなどは、期待値を推測せず質問として残します。
+Examples at 4,999 yen or exceptional paths for the same rule can also check rule interpretation. Keep amounts concrete without exposing cart-screen click sequences or internal function names. Retain unsettled shipping charges or treatment of discounted amounts as questions rather than guessing expectations.
 
-上の本文を保存するときは `document-authoring` に従うfrontmatterを付けます。ファイルパス・日本語形式は本環境の運用規約で、BDDの普遍的定義ではありません。
+When saving the content above, add frontmatter following `document-authoring`. File paths and Japanese format are this environment's operating conventions, not universal definitions of BDD.
 
-共有理解と例の出典・採用判断は[一次資料](sources.md)に保持する。[^practice-sources]
+Preserve sources and adoption decisions for shared understanding and examples in [Primary sources](sources.md).[^practice-sources]
 
-[^gherkin-markdown]: 既存SKILL.mdの形式規則と参照先を移動。原文の参照先を保持したもので、新たな仕様変更や確認履歴ではない。
-[^gherkin-ja]: 既存SKILL.mdで指定していた日本語キーワードの固定版。
-[^practice-sources]: BDD・ATDD、ルール・例・質問の参照と適用判断。
+[^gherkin-markdown]: Moved the format rule and reference from the existing SKILL.md, preserving the original reference rather than adding a specification change or checking history.
+[^gherkin-ja]: The fixed version of Japanese keywords specified in the existing SKILL.md.
+[^practice-sources]: References and application decisions for BDD/ATDD and rules, examples, and questions.

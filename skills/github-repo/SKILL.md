@@ -1,40 +1,40 @@
 ---
 name: github-repo
-description: GitHubリポジトリ設定の診断・整備・適用で使う。イミュータブルリリース、Squash限定、mainのRuleset、ActionsのSHA必須設定、無料セキュリティ機能を扱う。通常のIssue・PR操作、workflow本文だけの修正、GitHub一般の説明には使わない。
+description: Use to diagnose, maintain, or apply GitHub repository settings. Covers immutable releases, squash-only merges, main Rulesets, required Actions SHAs, and free security features. Do not use for ordinary Issue/PR operations, workflow-content-only fixes, or general GitHub explanation.
 ---
 
-# GitHubリポジトリの設定を診断・実現する
+# Diagnose and realize GitHub repository settings
 
-個人的な設定基準と対象リポジトリの実効設定を比較し、依頼された範囲だけを実現する。初版はGitHub.comの指定された単一リポジトリを対象とする。以下のリポジトリ・ブランチ・設定は配布元ではなく作業対象を指す。
+Compare personal setting standards with the target repository's effective settings, and realize only the requested scope. The initial version targets one specified repository on GitHub.com. Repositories, branches, and settings below refer to the working target, not the distribution source.
 
-## 入口と責務
+## Entry and responsibilities
 
-対象の完全な `owner/repo`、依頼された成果物、実行承認、対象リポジトリ自身の方針を確認する。APMでの導入や診断依頼を設定変更の承認にしない。個人基準を他リポジトリのレビュー方針として外部レビュアーへ押し付けず、方針の衝突は差分と選択肢を提示する。
+Check the complete target `owner/repo`, requested deliverable, execution approval, and target repository policy. APM installation or a diagnosis request does not approve setting changes. Do not impose personal standards on external reviewers as another repository's review policy; present differences and options for policy conflicts.
 
-| 依頼された成果物 | 経路と終了条件 |
+| Requested deliverable | Path and endpoint |
 | --- | --- |
-| 診断・比較・改善提案の回答 | 読み取りだけで根拠・判定・未確認事項を回答し終了。Issue投稿・設定変更を始めない |
-| 計画・診断結果のIssue記録だけ | `issue-management` で保存・再取得・表示確認し本文とURLを提示して終了。設定は未適用とする |
-| 診断文書の保存 | `document-authoring` を使う。Git管理ファイルなら補助Issue計画と `change-delivery` で文書を届け、設定適用には進まない |
-| 設定の適用・是正 | `issue-management` の通常計画で承認を保持し、[適用手順](references/operations.md)で差分適用・再診断まで進む。計画提示だけで停止しない |
+| Answer with diagnosis, comparison, or improvement proposals | Read only, report evidence, judgments, and uncertainties, then stop. Do not start Issue posting or setting changes |
+| Issue record of a plan or diagnosis only | Use `issue-management` to save, retrieve, and check display, present the body and URL, then stop. Settings remain unapplied |
+| Save a diagnosis document | Use `document-authoring`. For Git-managed files, deliver the document through a supporting Issue plan and `change-delivery`, without applying settings |
+| Apply or correct settings | Retain approval in an ordinary `issue-management` plan, and use [Application procedure](references/operations.md) through applying differences and diagnosing again. Do not stop at plan presentation |
 
-設定変更だけなら空のcommit・PRは作らない。前提となるworkflow等のファイル変更は `github-actions` と `change-delivery`、文書は `document-authoring`、実装コードは `software-development` へ引き渡す。必要な依存スキルが使えなければ、その操作を止めて未完了範囲を示し、可能な読み取りは続ける。既存の実行承認や確認済み計画を取り直さない。
+Do not create empty commits or PRs for settings-only changes. Hand prerequisite workflows or other files to `github-actions` and `change-delivery`, documents to `document-authoring`, and implementation code to `software-development`. If necessary dependencies are unavailable, stop that operation and state incomplete scope while continuing possible reading. Do not obtain existing execution approval or verified plans again.
 
-## 工程ごとに読む資料
+## Material to read at each stage
 
-診断では最初に[操作と判定](references/operations.md)の読み取り・報告部分を読む。対象項目だけを追加し、無関係な全資料を常時読み込まない。
+For diagnosis, first read the reading/reporting parts of [Operations and judgments](references/operations.md). Add only target items, without always loading all unrelated material.
 
-| 条件 | 参照資料 |
+| Condition | Reference material |
 | --- | --- |
-| release・merge・main保護・Actionsポリシー | [設定基準](references/settings.md) |
-| 無料セキュリティ機能、可用性・課金・前提条件 | [セキュリティ](references/security.md) |
-| 設定取得、差分適用、失敗・競合・再実行、結果確認 | [操作と判定](references/operations.md) |
-| 仕様・採用理由・APIや無料条件の再確認 | [出典と適用判断](references/sources.md) |
+| Releases, merges, main protection, Actions policy | [Setting standards](references/settings.md) |
+| Free security features, availability, billing, prerequisites | [Security](references/security.md) |
+| Retrieving settings, applying differences, failures, conflicts, reruns, result verification | [Operations and judgments](references/operations.md) |
+| Rechecking specifications, adoption reasons, APIs, or free-use conditions | [Sources and application decisions](references/sources.md) |
 
-## 共通の境界
+## Common boundaries
 
-- public/private、個人/Organization所有、default branch、権限、上位ポリシーを調べる。取得不能・フィールド欠落・非対応を「無効」や「適合」に置き換えない。
-- 既存の強い保護・必須チェック・承認要件を保持する。特定のRuleset ID・チェック名・レビュアーを配布先へ固定しない。
-- Organization・Enterprise・個人アカウント全体の変更、公開範囲変更、権限昇格、有料契約・試用の開始は対象外。費用が未確認なら該当操作を保留する。
-- 無関係な改善、脆弱性の一括修正、アラートdismiss、修正PRの自動マージは含めない。無料機能の有効化とマージ必須化も別判断とする。
-- 適用前後の根拠を残し、再取得と必要な動作確認で判定する。成功済み・未完了・適用外・承認済み例外を区別し、API成功だけで完了にしない。
+- Investigate public/private visibility, personal/Organization ownership, default branch, permissions, and higher-level policies. Do not replace inaccessible, missing, or unsupported fields with “disabled” or “conforming.”
+- Preserve stronger existing protection, required checks, and approval requirements. Do not fix particular Ruleset IDs, check names, or reviewers at distribution destinations.
+- Organization-, Enterprise-, or account-wide changes, visibility changes, permission escalation, and starting paid subscriptions or trials are out of scope. Hold operations where costs are unverified.
+- Do not include unrelated improvements, bulk vulnerability fixes, dismissing alerts, or automatic merging of fix PRs. Enabling free features and making them merge requirements are separate decisions.
+- Preserve evidence before and after application, and judge through retrieval and necessary behavior checks. Distinguish successful, incomplete, inapplicable, and approved exceptions; API success alone is not completion.
