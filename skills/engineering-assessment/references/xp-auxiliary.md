@@ -1,7 +1,7 @@
 ---
 type: Reference
-title: XP個別項目の軽量lookup
-description: XP-primary診断または他lensの補助判断で、個別のXP Value / Principle / Practiceの診断意味だけを読むための軽量lookupです。
+title: Lightweight lookup of individual XP items
+description: Read only diagnostic meanings of individual XP Values / Principles / Practices for XP-primary assessment or support for other lenses.
 sources:
   - id: xp-second-edition
     resource: https://www.informit.com/store/extreme-programming-explained-embrace-change-9780134051987
@@ -15,87 +15,87 @@ sources:
     resource: https://www.oreilly.com/library/view/extreme-programming-explained/0321278658/ch09.xhtml
 ---
 
-## XP個別項目の軽量lookup
+## Lightweight lookup of individual XP items
 
-XP-primary診断でnamed itemの意味を確認するとき、またはArchitecture・DORA・Lean等の別lensで一つまたは少数のXP項目だけを補助判断に使うときに読む。taxonomyの分類・全体関係は[XP taxonomy](xp.md)を入口にし、item semanticsはこのlookupを共通で使う。[^xp-second-edition]
+Read when checking named-item meanings in XP-primary assessment, or using one or a few XP items to support Architecture, DORA, Lean, or other lenses. Enter through [XP taxonomy](xp.md) for classification and overall relationships; use this shared lookup for item semantics.[^xp-second-edition]
 
-このreferenceを「XP全項目の必須チェックリスト」にはしない。XP-primary診断でも現在のproblemに関係するitemだけを選び、全項目を未確認一覧へ展開しない。
+Do not make this reference a mandatory checklist of every XP item. Even in XP-primary assessment, select only items relevant to the current problem; do not expand every item into unknowns lists.
 
 ### Values
 
-5 Valuesの意味はXPの公開説明とも照合する。[^ron-jeffries-xp]
+Cross-check meanings of the five Values against public XP explanations.[^ron-jeffries-xp]
 
 | Value | Compact diagnostic cue |
 | --- | --- |
-| Communication | 目的・制約・具体例・未回答事項の共有と早い認識合わせ |
-| Simplicity | 現在要求を満たす最小の理解しやすい設計。将来予測だけの複雑化を避ける |
-| Feedback | test・統合・利用者・運用から短い間隔で結果を得て次へ反映する |
-| Courage | 欠陥・不確実性・不要な設計を隠さず、証拠から必要な変更へ進む |
-| Respect | 利用者の判断権限、関係者の知識・時間、持続可能な働き方を尊重する |
+| Communication | Share purposes, constraints, concrete examples, and unanswered questions; align understanding early |
+| Simplicity | Smallest understandable design meeting current requirements; avoid complexity based solely on future predictions |
+| Feedback | Obtain results from tests, integration, users, and operations at short intervals and apply them to next steps |
+| Courage | Do not hide defects, uncertainty, or unnecessary design; proceed to necessary changes from evidence |
+| Respect | Respect user decision authority, stakeholder knowledge/time, and sustainable work |
 
 ### Principles
 
-Principlesの位置づけは第2版のPrinciples章を参照する。[^xp-second-edition-principles]
+Refer to the second edition's Principles chapter for their role.[^xp-second-edition-principles]
 
 | Principle | Compact diagnostic cue |
 | --- | --- |
-| Humanity | 人が継続して良い仕事をできるneeds・関係・安全性 |
-| Economics | time・cost・value・opportunity costを含む経済的判断 |
-| Mutual Benefit | 今日と将来、複数関係者の利益を同時に増やす選択 |
-| Self-Similarity | 別context・別scaleで機能したfeedback、solution structure、design / delivery patternを仮説として再利用し、現在の制約へ適合するか検証する |
-| Improvement | 完璧を待たず現在状態から小さく改善する |
-| Diversity | 異なる経験・専門性・観点を早く意思決定へ入れる |
-| Reflection | 結果と進め方を振り返り、次の行動へfeedbackする |
-| Flow | queue・handoff・WIP・batchによる滞留を減らし価値を流す |
-| Opportunity | problem・変更・制約をsystem改善の学習機会として扱う |
-| Redundancy | 重大な失敗を一つの防御に依存せず、相補的な安全策を必要に応じて持つ |
-| Failure | 安全に小さく試し、失敗を隠さず次の学習へつなげる |
-| Quality | speedのためにqualityを恒常的に下げず、scope・方法・順序を調整する |
-| Baby Steps | reversibleで検証可能な最小stepへ分割する |
-| Accepted Responsibility | 責任を引き受ける人・teamへ必要な権限と情報を対応させる |
+| Humanity | Needs, relationships, and safety enabling people to sustain good work |
+| Economics | Economic decisions including time, cost, value, and opportunity cost |
+| Mutual Benefit | Choices increasing benefits for today and the future and multiple stakeholders simultaneously |
+| Self-Similarity | Reuse feedback, solution structures, and design/delivery patterns that worked at other contexts/scales as hypotheses; verify fit to current constraints |
+| Improvement | Improve incrementally from the current state without waiting for perfection |
+| Diversity | Bring different experiences, expertise, and perspectives into decisions early |
+| Reflection | Reflect on results and methods and feed back into next actions |
+| Flow | Reduce queues, handoffs, WIP, and batch delays to let value flow |
+| Opportunity | Treat problems, changes, and constraints as learning opportunities for system improvement |
+| Redundancy | Avoid relying on one defense against major failures; use complementary safeguards as needed |
+| Failure | Try small experiments safely, do not hide failures, and connect them to learning |
+| Quality | Do not persistently reduce quality for speed; adjust scope, methods, and order |
+| Baby Steps | Split into minimal reversible, verifiable steps |
+| Accepted Responsibility | Match necessary authority and information to people/teams accepting responsibility |
 
 ### Primary Practices
 
-Primary Practicesの位置づけは第2版のPrimary Practices章を参照する。[^xp-second-edition-primary-practices]
+Refer to the second edition's Primary Practices chapter for their role.[^xp-second-edition-primary-practices]
 
 | Primary Practice | Compact diagnostic cue |
 | --- | --- |
-| Sit Together | 必要な人が低いcommunication costで継続的に協働できる状態 |
-| Whole Team | 価値を届けるために必要な視点へアクセスし、handoffだけに責任を分断しない |
-| Informative Workspace | 進捗・quality・risk等を必要な人が容易に把握できる |
-| Energized Work | qualityと判断を維持できる持続可能な働き方 |
-| Pair Programming | 実装中に複数視点で連続的なdesign・review・knowledge sharingを行う |
-| Stories | 利用者価値の単位でscope・cost・期待を会話し、小さく優先順位を変える |
-| Weekly Cycle | 近い期間のplan・delivery・feedbackを短いcadenceで見直す |
-| Quarterly Cycle | 大きなtheme・investment・directionを定期的に見直す |
-| Slack | uncertainty・改善・予期せぬworkを吸収する余地を持つ |
-| Ten-Minute Build | build / test feedbackを頻繁に回せる十分な速さを保つ |
-| Continuous Integration | 小さな変更を頻繁にshared mainへ統合し、失敗を早く修復する |
-| Test-First Programming | 実装より先に期待behaviorをtestで表し、失敗→最小実装→整理を反復する |
-| Incremental Design | 現在要求に必要なdesignを継続的に改善する |
+| Sit Together | Necessary people can collaborate continuously at low communication cost |
+| Whole Team | Access perspectives needed to deliver value; do not fragment responsibility into handoffs alone |
+| Informative Workspace | Necessary people can readily understand progress, quality, risks, and similar information |
+| Energized Work | Sustainable work preserving quality and judgment |
+| Pair Programming | Continuous design, review, and knowledge sharing from multiple perspectives during implementation |
+| Stories | Discuss scope, cost, and expectations in user-value units; adjust priorities in small increments |
+| Weekly Cycle | Reconsider near-term planning, delivery, and feedback at a short cadence |
+| Quarterly Cycle | Periodically reconsider broad themes, investment, and direction |
+| Slack | Allow room for uncertainty, improvement, and unexpected work |
+| Ten-Minute Build | Keep build/test feedback fast enough for frequent use |
+| Continuous Integration | Frequently integrate small changes into shared main and repair failures quickly |
+| Test-First Programming | Express expected behavior in tests before implementation; iterate failure → minimal implementation → cleanup |
+| Incremental Design | Continuously improve design needed for current requirements |
 
 ### Corollary Practices
 
-Corollary Practicesの適用注意は第2版のCorollary Practices章を参照する。Primary Practicesや必要なdelivery / feedback capabilityの土台がないまま名前だけ導入すると難しい・危険になり得るため、関連するfoundationと現在の制約を先に確認する。[^xp-second-edition-corollary-practices]
+Refer to the second edition's Corollary Practices chapter for application cautions. Introducing names without Primary Practices or necessary delivery/feedback foundations can be difficult or dangerous; check related foundations and current constraints first.[^xp-second-edition-corollary-practices]
 
 | Corollary Practice | Compact diagnostic cue |
 | --- | --- |
-| Real Customer Involvement | 実際に影響を受けるcustomer / userから継続的にfeedbackを得る |
-| Incremental Deployment | 大きな一括移行を避け、小さいsliceで導入・学習・rollbackする |
-| Team Continuity | 有効なteam関係・domain knowledgeを不必要な再編で失わない |
-| Shrinking Teams | capability向上で生じた余力を新しい価値へ移す。人員削減を目的化しない |
-| Root-Cause Analysis | defect / incidentを個人責任で終わらせずsystem / process条件を改善する |
-| Shared Code | collective ownershipと安全策の下でcodebase全体を改善できる |
-| Code and Tests | codeとautomated testsを主要なexecutable変更契約として一緒に維持する |
-| Single Code Base | 同じproductのsource of truthを不要に分岐・複製しない |
-| Daily Deployment | safety foundationの上でproduction feedbackを短くする。deploy回数をquota化しない |
-| Negotiated Scope Contract | 短い契約・scope再交渉でcost / value / learningを反映する |
-| Pay-Per-Use | 実利用と経済的feedbackを近づけるbusiness modelが有効か確認する |
+| Real Customer Involvement | Obtain continuous feedback from actually affected customers/users |
+| Incremental Deployment | Avoid large migrations; adopt, learn, and roll back in small slices |
+| Team Continuity | Avoid losing effective team relationships/domain knowledge through unnecessary restructuring |
+| Shrinking Teams | Move spare capacity gained from improved capability to new value; do not make staff reduction the goal |
+| Root-Cause Analysis | Improve system/process conditions rather than ending defect/incident analysis at individual blame |
+| Shared Code | Improve the whole codebase under collective ownership and safeguards |
+| Code and Tests | Maintain code and automated tests together as principal executable change contracts |
+| Single Code Base | Do not unnecessarily fork or duplicate the same product's source of truth |
+| Daily Deployment | Shorten production feedback on safety foundations; do not turn deployment counts into quotas |
+| Negotiated Scope Contract | Reflect cost, value, and learning through short contracts and scope renegotiation |
+| Pay-Per-Use | Check whether a business model connecting actual use with economic feedback is effective |
 
-個別項目の分類や他XP項目との関係まで必要になった場合は[XP taxonomy](xp.md)も読む。item semanticsの診断自体はこのlookupを引き続き使う。
+If classification or relationships to other XP items become necessary, also read [XP taxonomy](xp.md). Continue using this lookup for item-semantics assessment itself.
 
-[^xp-second-edition]: [Extreme Programming Explained: Embrace Change, 2nd Edition — Kent Beck / Cynthia Andres](https://www.informit.com/store/extreme-programming-explained-embrace-change-9780134051987)。XP第2版のtaxonomy。2026-09-27確認。
-[^ron-jeffries-xp]: [What is Extreme Programming? — Ron Jeffries](https://ronjeffries.com/xprog/what-is-extreme-programming/)。5 Valuesと小さいfeedbackの適用。2026-09-27確認。
-[^xp-second-edition-principles]: [Chapter 5. Principles — Extreme Programming Explained, 2nd Edition](https://www.oreilly.com/library/view/extreme-programming-explained/0321278658/ch05.xhtml)。Principlesの位置づけ。2026-09-27確認。
-[^xp-second-edition-primary-practices]: [Chapter 7. Primary Practices — Extreme Programming Explained, 2nd Edition](https://www.oreilly.com/library/view/extreme-programming-explained/0321278658/ch07.xhtml)。Primary Practicesの位置づけ。2026-09-27確認。
-[^xp-second-edition-corollary-practices]: [Chapter 9. Corollary Practices — Extreme Programming Explained, 2nd Edition](https://www.oreilly.com/library/view/extreme-programming-explained/0321278658/ch09.xhtml)。Corollary Practicesの適用注意。2026-09-27確認。
+[^xp-second-edition]: [Extreme Programming Explained: Embrace Change, 2nd Edition — Kent Beck / Cynthia Andres](https://www.informit.com/store/extreme-programming-explained-embrace-change-9780134051987). Second-edition XP taxonomy. Checked 2026-09-27.
+[^ron-jeffries-xp]: [What is Extreme Programming? — Ron Jeffries](https://ronjeffries.com/xprog/what-is-extreme-programming/). Five Values and applying small feedback. Checked 2026-09-27.
+[^xp-second-edition-principles]: [Chapter 5. Principles — Extreme Programming Explained, 2nd Edition](https://www.oreilly.com/library/view/extreme-programming-explained/0321278658/ch05.xhtml). Role of Principles. Checked 2026-09-27.
+[^xp-second-edition-primary-practices]: [Chapter 7. Primary Practices — Extreme Programming Explained, 2nd Edition](https://www.oreilly.com/library/view/extreme-programming-explained/0321278658/ch07.xhtml). Role of Primary Practices. Checked 2026-09-27.
+[^xp-second-edition-corollary-practices]: [Chapter 9. Corollary Practices — Extreme Programming Explained, 2nd Edition](https://www.oreilly.com/library/view/extreme-programming-explained/0321278658/ch09.xhtml). Corollary Practices application cautions. Checked 2026-09-27.

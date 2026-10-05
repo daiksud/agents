@@ -1,81 +1,81 @@
 ---
 type: Reference
-title: 開発実践の原則と関係
-description: 開発実践の役割と重なりを短く整理し、必要なfocused referenceへ案内します。
+title: Principles and relationships of development practices
+description: Briefly organize practice roles and overlap, and guide readers to necessary focused references.
 ---
 
-## 開発実践の原則と関係
+## Principles and relationships of development practices
 
-各概念は別々の必須チェックリストではない。利用者の成果を起点に、理解・設計・実装・統合・配布・運用のfeedbackをつなぐ。
+These concepts are not separate mandatory checklists. Start from user outcomes and connect feedback across understanding, design, implementation, integration, delivery, and operations.
 
-詳細を毎回ここへ重複記載せず、problemに応じて必要なfocused referenceだけを読む。
+Do not duplicate details here every time. Read only focused references needed for the problem.
 
-### Lensの役割
+### Roles of the lenses
 
-| Lens | 主に答える問い | 詳細 |
+| Lens | Main question | Details |
 | --- | --- | --- |
-| XP | 小さく作り、feedbackから学び、現在の要求へ設計を進化させられるか | [XP taxonomy](xp.md) |
-| Lean | 利用者価値のend-to-end flowを改善し、WIP・待ち・手戻り・handoffを減らしながら人を尊重する。人員削減や各担当者の局所的な稼働率最大化を改善そのものとみなさない | この文書と[診断手順](assessment.md) |
-| DDD | 何をモデル化し、どこまで同じ意味・言語が通用するか | semantic / architectureの関係は[ArchitectureとOrganization](architecture-and-organization.md) |
-| CI | 小さな変更が頻繁にmainへ統合され、速いfeedbackと修復が続いているか | 実装は `change-delivery`、診断は[診断手順](assessment.md) |
-| Continuous Delivery | 必要なときに検証済み変更を安全に配布可能な状態へ保てるか。Continuous Deploymentは検証済み変更を自動でproductionへ配備する別のpracticeであり、手動承認があってもCDは成立し得る | DORA Capabilityとの関係は[DORA lens](dora.md) |
-| DevOps | developmentからoperationsまで利用者成果・品質・運用のfeedback loopを閉じられるか。CALMSはCulture / Automation / Lean / Measurement / Sharingの5観点として、組織・自動化・flow・測定・知識共有を一緒に診断する | 証拠は[診断手順](assessment.md)、CALMS等の出典・採用判断は[一次資料](sources.md) |
-| Team Topologies / Conway | ownership・interaction・cognitive loadとsoftware boundaryをどう整えるか | [ArchitectureとOrganization](architecture-and-organization.md) |
-| DORA | Capability・Performance・Outcomeを証拠からどう診断するか | [DORA lens](dora.md) |
+| XP | Can we build in small increments, learn from feedback, and evolve design toward current requirements? | [XP taxonomy](xp.md) |
+| Lean | Improve end-to-end user-value flow, reduce WIP, waiting, rework, and handoffs, and respect people. Do not equate improvement with staff reductions or maximizing each worker's local utilization | This document and [assessment procedures](assessment.md) |
+| DDD | What is modeled, and how far do the same meanings and language apply? | Semantic/architecture relationships: [Architecture and Organization](architecture-and-organization.md) |
+| CI | Are small changes integrated frequently into main, with fast feedback and continued repair? | Implementation: `change-delivery`; assessment: [assessment procedures](assessment.md) |
+| Continuous Delivery | Can verified changes remain safely deliverable when needed? Continuous Deployment is a separate practice of automatically deploying verified changes to production; manual approval can coexist with CD | DORA Capability relationships: [DORA lens](dora.md) |
+| DevOps | Can the feedback loop for user outcomes, quality, and operations close from development through operations? CALMS uses Culture / Automation / Lean / Measurement / Sharing to assess organization, automation, flow, measurement, and knowledge sharing together | Evidence: [assessment procedures](assessment.md); CALMS and other sources/adoption decisions: [primary materials](sources.md) |
+| Team Topologies / Conway | How should ownership, interaction, cognitive load, and software boundaries align? | [Architecture and Organization](architecture-and-organization.md) |
+| DORA | How can Capability, Performance, and Outcome be assessed from evidence? | [DORA lens](dora.md) |
 
-### 重なる概念を別ルールへ複製しない
+### Do not duplicate overlapping concepts into separate rules
 
-同じ概念は体系によって分類や用途が変わる。
+The same concept changes classification and use across frameworks.
 
-| 概念 | 一つのlensでの扱い | 別lensでの扱い |
+| Concept | One lens | Another lens |
 | --- | --- | --- |
-| Continuous Integration | XPのPrimary Practice | DORAのFast feedback Capability |
-| Continuous Delivery | delivery system / capability | DORAのFast flow Capability |
-| Small Batches | Lean / XPのflow・feedbackを支えるPractice | DORA Capability |
-| Loosely Coupled Teams | Architecture / Organization上の独立性 | DORA Fast flow Capability |
-| Documentation Quality | 文書作成そのものではなく利用可能な知識の状態 | DORA Climate for learning Capability |
+| Continuous Integration | XP Primary Practice | DORA Fast feedback Capability |
+| Continuous Delivery | Delivery system / capability | DORA Fast flow Capability |
+| Small Batches | Practice supporting Lean / XP flow and feedback | DORA Capability |
+| Loosely Coupled Teams | Architecture / Organization independence | DORA Fast flow Capability |
+| Documentation Quality | Usable knowledge state rather than document creation itself | DORA Climate for learning Capability |
 
-分類差を矛盾とみなさず、現在のproblemで何を観測するかを明示する。
+Do not treat classification differences as contradictions. State what to observe for the current problem.
 
-### BDD・ATDD・TDDの関係を保つ
+### Preserve the relationships among BDD, ATDD, and TDD
 
-この3つはテスト成果物の種類だけでなく、どのfeedbackをいつ作るかが異なる。
+These differ not only in test artifacts, but in which feedback is created when.
 
-| Practice | 最小の診断契約 |
+| Practice | Minimum assessment contract |
 | --- | --- |
-| BDD | 関係者が具体例を使い、Discovery → Formulation → Automationをつないで期待するふるまいの理解を深める |
-| ATDD | 対応する実装より前に、顧客・開発・検証の観点から受け入れ条件・テストを具体化する |
-| TDD | test listから一つずつ、失敗するテスト → 最小実装 → 必要な整理を反復し、設計へfeedbackする |
+| BDD | Stakeholders use concrete examples to connect Discovery → Formulation → Automation and deepen understanding of expected behavior |
+| ATDD | Make acceptance conditions and tests concrete from customer, development, and testing perspectives before corresponding implementation |
+| TDD | From a test list, iterate one at a time through failing test → minimal implementation → necessary cleanup, feeding back into design |
 
-BDDとATDDは具体例・共同理解で重なるため、別々の会議や二重の仕様書を必須にしない。TDDは合意したふるまいの内側で短い設計・検証loopとして使える。完成したGherkinやテストだけでは、Discovery・実装前合意・Red-firstの過程を確認済みとはしない。
+BDD and ATDD overlap in concrete examples and shared understanding; do not require separate meetings or duplicate specifications. TDD can provide a short design/validation loop inside agreed behavior. Completed Gherkin or tests alone do not establish Discovery, agreement before implementation, or Red-first processes.
 
-詳細な出典・版差は[一次資料](sources.md)、実際に集める証拠は[診断手順](assessment.md)を使う。
+Use [primary materials](sources.md) for detailed sources/version differences and [assessment procedures](assessment.md) for evidence to gather.
 
-### 成果物だけで実践を断定しない
+### Do not infer practices from artifacts alone
 
-| 概念 | 成果物だけでは分からないこと |
+| Concept | What artifacts alone cannot establish |
 | --- | --- |
-| BDD | Gherkinの存在だけでは共同のDiscovery / Formulationを示さない |
-| ATDD | 受け入れテストの存在だけでは実装前に条件を共有した証拠にならない |
-| TDD | 完成したテストだけではRedを先に確認した過程を示さない |
-| DDD | 用語集やclass名だけではshared meaningやmodel boundaryを示さない |
-| CI | workflow YAMLだけでは頻繁なmain統合やbroken build修復を示さない |
-| CD | deploy jobだけではon-demandで安全に配布できることを示さない |
-| Team Topologies | CODEOWNERSやteam名だけでは責任・interaction・cognitive loadを示さない |
-| DORA Capability | tool / configの存在だけでは観測可能なCapabilityを示さない |
+| BDD | Gherkin alone does not show collaborative Discovery / Formulation |
+| ATDD | Acceptance tests alone do not prove conditions were shared before implementation |
+| TDD | Completed tests alone do not show Red was checked first |
+| DDD | Glossaries or class names alone do not show shared meaning or model boundaries |
+| CI | Workflow YAML alone does not show frequent main integration or broken-build repair |
+| CD | Deploy jobs alone do not show safe on-demand delivery |
+| Team Topologies | CODEOWNERS or team names alone do not show responsibilities, interactions, or cognitive load |
+| DORA Capability | Tools/configuration alone do not show observable capabilities |
 
-実際の変更、履歴、待ち、失敗、配布、関係者の経験などを[診断手順](assessment.md)に従って確認する。
+Check actual changes, history, waiting, failures, delivery, and stakeholder experience through [assessment procedures](assessment.md).
 
-### 必要なlensだけを組み合わせる
+### Combine only necessary lenses
 
-例:
+Examples:
 
-- Ubiquitous Languageの食い違いだけ → DDD中心。DORAやArchitectureを無関係に展開しない。
-- release承認待ち → Lean / CD + 関連DORA Fast flow Capability。
-- cross-team dependency → Architecture / Organization + Team Topologies、必要ならDORA Loosely Coupled Teams。
-- Microservices採否 → Architecture / Organization + DDD + XP Simplicity。DORA Catalog全件は評価しない。
-- XPの設計・feedback診断 → XP focused lens。全Practiceの導入数を採点しない。
+- Only a Ubiquitous Language mismatch → focus on DDD. Do not expand into unrelated DORA or Architecture.
+- Release approval waiting → Lean / CD + related DORA Fast flow Capability.
+- Cross-team dependencies → Architecture / Organization + Team Topologies; add DORA Loosely Coupled Teams if needed.
+- Whether to adopt Microservices → Architecture / Organization + DDD + XP Simplicity. Do not assess the entire DORA Catalog.
+- XP design/feedback assessment → focused XP lens. Do not score how many practices are adopted.
 
-診断対象を広げる場合は、利用者の目的への影響を説明できることを条件にする。
+Expand assessment scope only when its effect on the user's purpose can be explained.
 
-出典・版差は[一次資料と適用判断](sources.md)で確認する。
+Check sources and version differences in [primary materials and application decisions](sources.md).

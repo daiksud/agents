@@ -1,21 +1,21 @@
 ---
 type: Reference
-title: XP taxonomyとfocused lensを選ぶ
-description: Extreme Programming第2版のValues、Principles、Primary / Corollary Practicesを区別し、診断対象に必要なfocused lensだけを選びます。
+title: Choose XP taxonomy and focused lenses
+description: Distinguish Values, Principles, and Primary / Corollary Practices in Extreme Programming, second edition, and select only focused lenses needed for the assessment.
 sources:
   - id: xp-second-edition
     resource: https://www.informit.com/store/extreme-programming-explained-embrace-change-9780134051987
 ---
 
-## XP taxonomyとfocused lensを選ぶ
+## Choose XP taxonomy and focused lenses
 
-XPそのもの、XP第2版、Values / Principles / Practices、Primary / Corollary Practicesの分類や関係を診断するときに読む。
+Read when assessing XP itself, its second edition, or classifications and relationships among Values / Principles / Practices and Primary / Corollary Practices.
 
-目的はXP項目を全部導入・採点することではない。taxonomyを確認したら、現在のproblemに関係するカテゴリだけをfocused referenceで読む。
+The purpose is not to adopt or score every XP item. After checking taxonomy, read only categories relevant to the current problem through focused references.
 
-### Taxonomyを平坦化しない
+### Do not flatten the taxonomy
 
-XP第2版は抽象度の異なる分類を区別する。[^xp-second-edition]
+XP's second edition distinguishes categories at different abstraction levels.[^xp-second-edition]
 
 ```text
 Values
@@ -27,15 +27,15 @@ Practices
     └─ Corollary Practices
 ```
 
-- **Values**: 判断で何を大切にするか。
-- **Principles**: Valuesを状況へ適用するときの橋渡し。
-- **Practices**: 日常で実行できる具体的な行動。
+- **Values**: What matters in decisions.
+- **Principles**: Bridges for applying Values to situations.
+- **Practices**: Concrete actions executable in daily work.
 
-この矢印を成熟度の点数や強制的な導入順にしない。Practiceの数をXP成熟度スコアにせず、Value名だけで実践済みとも判定しない。
+Do not make these arrows maturity scores or mandatory adoption order. Do not score XP maturity by Practice counts or infer implementation from Value names alone.
 
 ### Values
 
-5 Values:
+Five Values:
 
 - Communication
 - Simplicity
@@ -43,11 +43,11 @@ Practices
 - Courage
 - Respect
 
-Valueを実際の判断へ適用するときは[XP個別項目の軽量lookup](xp-auxiliary.md#values)だけを読む。個別Valueを他のengineering lensへ補助的に使う場合も、全taxonomyを読まず同referenceを使う。
+When applying a Value to actual decisions, read only the [lightweight lookup of individual XP items](xp-auxiliary.md#values). Use the same reference for individual Values supporting other engineering lenses, without reading the full taxonomy.
 
 ### Principles
 
-InformITのTable of Contentsは次の14 named Principlesを列挙する。同じpublisherページの紹介文には「Eleven principles」という不一致があるため、本リポジトリでは列挙されたTOCをtaxonomyの根拠にし、この差をprovenanceへ残す。[^xp-second-edition]
+InformIT's Table of Contents lists these 14 named Principles. The introduction on the same publisher page inconsistently says “Eleven principles”; this repository bases taxonomy on the listed TOC and retains the discrepancy in provenance.[^xp-second-edition]
 
 - Humanity
 - Economics
@@ -64,7 +64,7 @@ InformITのTable of Contentsは次の14 named Principlesを列挙する。同じ
 - Baby Steps
 - Accepted Responsibility
 
-Principleを実際のproblemへ適用するときは[XP個別項目の軽量lookup](xp-auxiliary.md#principles)だけを読む。個別PrincipleをArchitecture / Delivery / DORA等の補助lensへ使う場合も、全taxonomyを読まない。
+When applying a Principle to an actual problem, read only the [lightweight lookup of individual XP items](xp-auxiliary.md#principles). Do not read the full taxonomy when using individual Principles to support Architecture / Delivery / DORA or other lenses.
 
 ### Primary Practices
 
@@ -100,29 +100,29 @@ Principleを実際のproblemへ適用するときは[XP個別項目の軽量look
 - Negotiated Scope Contract
 - Pay-Per-Use
 
-Primary Practiceの意味や観測証拠が必要なときは[Primary Practices](xp-auxiliary.md#primary-practices)、Corollary Practiceなら[Corollary Practices](xp-auxiliary.md#corollary-practices)だけを読む。Practiceの採用数を成熟度や必須導入数にしない。
+Read only [Primary Practices](xp-auxiliary.md#primary-practices) when their meaning or evidence is needed, or [Corollary Practices](xp-auxiliary.md#corollary-practices) for those practices. Do not make adopted Practice counts maturity measures or required adoption counts.
 
-### Problemから必要なカテゴリだけを選ぶ
+### Select only necessary categories from the problem
 
-| Problem | 最初に使うXP lens |
+| Problem | First XP lens |
 | --- | --- |
-| 要件の認識違い | [Values](xp-auxiliary.md#values)のCommunication / Feedback。必要なら[Practices](xp-auxiliary.md#primary-practices)のStories / Whole Team |
-| 設計の先回り・複雑化 | [Values](xp-auxiliary.md#values)のSimplicity、[Principles](xp-auxiliary.md#principles)のEconomics / Baby Steps、必要なら[Practices](xp-auxiliary.md#primary-practices)のIncremental Design |
-| feedbackの遅さ・大きな変更 | [Values](xp-auxiliary.md#values)のFeedback、[Principles](xp-auxiliary.md#principles)のFlow / Baby Steps、必要なら[Practices](xp-auxiliary.md#primary-practices)のCI / Test-First / Incremental Design |
-| 継続できない働き方 | [Values](xp-auxiliary.md#values)のRespect、[Principles](xp-auxiliary.md#principles)のHumanity、必要なら[Practices](xp-auxiliary.md#primary-practices)のEnergized Work / Slack |
-| 同じ失敗の再発 | [Values](xp-auxiliary.md#values)のCourage、[Principles](xp-auxiliary.md#principles)のReflection / Failure、必要なら[Corollary Practices](xp-auxiliary.md#corollary-practices)のRoot-Cause Analysis |
-| 責任と権限のずれ | [Values](xp-auxiliary.md#values)のRespect、[Principles](xp-auxiliary.md#principles)のAccepted Responsibility、必要なら[Practices](xp-auxiliary.md#primary-practices)のWhole Team |
+| Requirements misunderstanding | Communication / Feedback in [Values](xp-auxiliary.md#values); if needed, Stories / Whole Team in [Practices](xp-auxiliary.md#primary-practices) |
+| Premature or complex design | Simplicity in [Values](xp-auxiliary.md#values), Economics / Baby Steps in [Principles](xp-auxiliary.md#principles); if needed, Incremental Design in [Practices](xp-auxiliary.md#primary-practices) |
+| Slow feedback or large changes | Feedback in [Values](xp-auxiliary.md#values), Flow / Baby Steps in [Principles](xp-auxiliary.md#principles); if needed, CI / Test-First / Incremental Design in [Practices](xp-auxiliary.md#primary-practices) |
+| Unsustainable work | Respect in [Values](xp-auxiliary.md#values), Humanity in [Principles](xp-auxiliary.md#principles); if needed, Energized Work / Slack in [Practices](xp-auxiliary.md#primary-practices) |
+| Recurring failures | Courage in [Values](xp-auxiliary.md#values), Reflection / Failure in [Principles](xp-auxiliary.md#principles); if needed, Root-Cause Analysis in [Corollary Practices](xp-auxiliary.md#corollary-practices) |
+| Responsibility and authority mismatch | Respect in [Values](xp-auxiliary.md#values), Accepted Responsibility in [Principles](xp-auxiliary.md#principles); if needed, Whole Team in [Practices](xp-auxiliary.md#primary-practices) |
 
-表は唯一のmappingではない。現在のproblemに関係するカテゴリ・項目だけを選び、無関係なXP項目を未確認一覧へ追加しない。
+This table is not the only mapping. Select only categories and items relevant to the current problem; do not add unrelated XP items to unknowns lists.
 
-### Runtimeでの役割分担
+### Runtime division of responsibilities
 
-- Valuesと常時使う短い判断原則は共通Instructionへ置く。
-- TDD、Pair Programming、Incremental Design等の具体的実行は `software-development` が担当する。
-- 診断時のtaxonomy・選択・証拠判断は `engineering-assessment` が担当する。
-- Architecture / Organizationの詳細は[専用lens](architecture-and-organization.md)を読む。
-- DORAのCore / Capability / metricsは[DORA lens](dora.md)を読む。
+- Put Values and short continuously used decision principles in shared Instructions.
+- `software-development` handles concrete execution of TDD, Pair Programming, Incremental Design, and similar practices.
+- `engineering-assessment` handles taxonomy, selection, and evidence judgments during assessment.
+- Read the [dedicated lens](architecture-and-organization.md) for Architecture / Organization details.
+- Read the [DORA lens](dora.md) for Core / Capability / metrics.
 
-XP-primary診断では、このtaxonomy fileを入口にし、具体的な項目の意味が必要なときだけ[XP個別項目の軽量lookup](xp-auxiliary.md)を追加で読む。分類確認だけならlookupを読まず、全項目を未確認一覧へ展開しない。
+For XP-primary assessment, enter through this taxonomy file and add the [lightweight lookup of individual XP items](xp-auxiliary.md) only when concrete item meanings are needed. If only classification is needed, do not read the lookup or expand every item into the unknowns list.
 
-[^xp-second-edition]: [Extreme Programming Explained: Embrace Change, 2nd Edition — Kent Beck / Cynthia Andres](https://www.informit.com/store/extreme-programming-explained-embrace-change-9780134051987)。2004年版のTable of Contentsは5 Values、14個のnamed Principles、13 Primary Practices、11 Corollary Practicesを列挙する。同じpublisherページの紹介文には「Eleven principles」とあるため、Principles数はTOCの列挙を採用し不一致を明記する。2026-09-27確認。
+[^xp-second-edition]: [Extreme Programming Explained: Embrace Change, 2nd Edition — Kent Beck / Cynthia Andres](https://www.informit.com/store/extreme-programming-explained-embrace-change-9780134051987). The 2004 edition's Table of Contents lists five Values, 14 named Principles, 13 Primary Practices, and 11 Corollary Practices. The same publisher page's introduction says “Eleven principles,” so use the TOC list for Principle counts and state the discrepancy. Checked 2026-09-27.
