@@ -1,7 +1,7 @@
 ---
 type: Instruction
-title: レビューとマージ
-description: PR作成、レビュー対応、CI確認、リベース、スカッシュマージと作業環境の整理の手順を定めます。
+title: Review and merge
+description: Define PR creation, review responses, CI checks, rebasing, squash merge, and workspace cleanup.
 sources:
   - id: gh-pr-edit
     resource: https://cli.github.com/manual/gh_pr_edit
@@ -29,64 +29,64 @@ sources:
     resource: https://github.com/daiksud/agents/issues/165
 ---
 
-## レビューとマージ
+## Review and merge
 
-### PRとレビュー
+### PRs and review
 
-- 明示された停止条件がなく、変更作業の実行承認とプッシュ済み差分がある場合、PR作成は任意の追加作業ではなく直後の既定工程とする。PR作成の可否を再質問せずドラフトPRを作成する。
-- PR作成後もCI・競合確認、レビュー、指摘修正、再検証、マージ、統合後確認まで継続する。CI待ちやレビュー待ちを完了報告にせず、利用可能な待機・再取得手段で状態を確認する。
-- プッシュ後にドラフトPRを作成し、対象のIssueまたはSub-issueに紐づける。
-- PRのAssigneeには、Issueで確認したタスク指示者を設定する。特定できない場合はユーザーに確認し、認証ユーザーを無条件に指示者とみなさない。
-- PR作成時はリポジトリのラベル一覧と説明を確認し、変更内容に合うラベルを設定する。
-- PRのタイトルと本文は依存スキル `issue-management` の[IssueとPRの書き方](../../issue-management/references/github-writing.md)に従う。PR本文には最終的な変更内容、変更が必要な理由、検証結果と未確認範囲を書く。重要な制約・対象外も明示する。導入先の指定テンプレートに従い、指定がなければ必要な構成を選ぶ。固定見出し・不要な表やAlerts・空の節・「なし」の埋め草を要求しない。
-- 投稿・更新・レビュー返信は依存スキル `issue-management` の「GitHub向けMarkdownの品質」に従い、本文全体を整形・チェックし、保存後に本文一致と表示を確認する。
-- レビュー対応で目的・成果・受け入れ条件や外部影響を変える場合は、縮小も含め依存スキル `issue-management` の「計画と実行範囲」に従って具体案を保存・提示して確認する。同じ成功条件を満たすファイル・手順の調整は記録して継続する。
-- 承認済み範囲でレビューとその対応により変更内容・理由・検証結果・重要な制約に変化があった場合は、対応と同時にPR本文を更新する。
-- 変更内容が変わった場合はPRのラベルも見直す。
-- ドラフトPRでは [レビュー候補の高速判定](#レビュー候補の高速判定)でCopilot Code Review[^docs-request-a-code-review-use-code-review]を優先して選ぶ。Codexを選ぶ場合は「代替レビュー」に従う。CI待ち中に先行できるのは読み取りだけで完結する候補確認に限り、正式なレビュー依頼APIを判定兼依頼として使う経路は下記の安定HEAD確認後まで行わない。
-- 通常レビューを依頼する前に、現在HEADの必須CIが成功し、現在のbaseとのコンフリクトがないことを確認する。対象リポジトリがレビュー前に必要と定めた自動検証もここで確認するが、requiredでないCodeQL等を共通要件として一律に追加しない。
-- 必須CIが失敗した、またはコンフリクトがある場合は、レビューを依頼せず先に修正・検証・コミット・プッシュする。新HEADで必須CIとコンフリクトを再確認し、成功・解消するまでこの手順を繰り返す。
-- CIが未設定の場合は、既存のマージ例外としてCI条件を満たしたと扱う。[CI未設定の場合](#ci未設定の場合)に従い、実行成功とは区別する。
-- 必須CI成功とコンフリクトなしを確認した現在HEADをレビュー対象として記録し、そのHEADへ通常レビューを依頼する。Copilotへの依頼にはこの文書の「Copilot Code Reviewの依頼」を使用する。
-- 外部レビュアーへ適用するレビュー方針は、対象リポジトリ自身のInstructions・レビューガイド・Skill・テンプレート等を優先する。APMでローカルに導入された `daiksud/agents` の `code-review` を、別リポジトリのCopilot Code ReviewやCodex Reviewへ追加指示として渡さない。対象リポジトリ自身にレビュアー向け資料がある場合だけ、そのリポジトリ内の原本を案内できる。`daiksud/agents` 自身のレビューでは、このリポジトリ内の `skills/code-review/SKILL.md` を対象リポジトリ自身の方針として案内できる。
-- 初回・再レビューの依頼後は、レビュー完了までセルフレビューを行う。
-- セルフレビュー、レビュー指摘、base更新や競合解消などでレビュー対象HEADが変わる修正が必要なら、修正・検証・コミット・プッシュした後、再レビューを依頼する前に新HEADの必須CI成功とコンフリクトなしを確認する。旧HEADのレビューは新HEADの完了根拠にしない。
-- レビュー指摘は、現在の要求・契約との不一致、根拠の確かさ、発生条件、具体的な影響を確認し、正式な修正指摘、任意提案、追加調査、対応不要を判断する。重要度・緊急度・発生可能性・対応コストは優先順位や修正方法の判断に使い、レビュアーの分類や承認状態だけで採否を決めない。
-- 再現に必要な前提条件の多さ、再現頻度の低さ、再現の難しさだけを対応不要の理由にしない。現行契約との不一致と具体的な影響を根拠から説明できる指摘は、発生条件が限定的でも正式な修正指摘として扱う。成立条件や根拠が不足する場合は追加調査とし、推測だけで修正もしない。
-- レビュー結果で「Suppressed comments」などと分類された指摘も同じ基準で内容を評価する。抑制という分類やCopilotのApprove有無だけで修正要否を決めない。Approve未取得時の扱いは次の「抑制指摘とApprove未取得時の扱い」に従う。
-- レビューへの返信は次の「返信の記載先と公開手順」に従い、個別指摘への回答とレビュー全体への説明を分ける。
-- 修正する指摘は、修正・検証・コミット・プッシュし、新HEADの必須CI成功とコンフリクトなしを確認した後に再レビューを依頼する。
-- セルフレビュー、CI対応、リベース、base更新への追従でレビュー対象のコミットが変わった場合も、同じ安定HEAD確認を済ませてから最新コミットへの再レビューを依頼する。
-- 対応が必要な指摘がゼロになるまでレビューと修正を繰り返す。
-- Copilotを選んだ場合は最新コミットのApproveを得るまで完了としない。「レビュー候補の高速判定」でCodexを選んだ場合はCodexの完了条件を適用する。候補判定をレビュー完了の代わりにしない。
+- With no explicit stop condition, approved change execution, and pushed diffs, PR creation is the immediate default stage, not optional extra work. Create a draft without asking again whether PR creation is permitted.
+- Continue after PR creation through CI/conflicts, review, fixes, revalidation, merge, and post-integration checks. CI/review waits are not completion; check through available waiting/retrieval means.
+- Create draft PRs after pushing, linked to target Issues/Sub-issues.
+- Assign PRs to the requester confirmed in the Issue. Ask if unidentified; do not unconditionally equate authenticated users with requesters.
+- At creation, check label names/descriptions and apply appropriate labels.
+- Follow [Writing Issues and PRs](../../issue-management/references/github-writing.md) in `issue-management` for titles/bodies. State final changes, reasons, results, unverified scope, and important constraints/exclusions. Follow specified templates or needed structure without fixed headings, unnecessary tables/Alerts, empty sections, or “none” filler.
+- Posting, updates, and review replies follow `issue-management` “Markdown quality for GitHub”: format/check complete bodies and verify saved agreement/display.
+- If review changes purpose, outcomes, acceptance conditions, or external impact, including reductions, save/present concrete proposals and confirm through `issue-management` “Planning and execution scope.” Record and continue adjustments meeting the same success conditions.
+- Within approval, update PR bodies alongside review responses changing content, reasons, results, or important constraints.
+- Reassess labels if content changes.
+- On drafts prioritize Copilot Code Review[^docs-request-a-code-review-use-code-review] through [Quick reviewer candidate assessment](#quick-reviewer-candidate-assessment). For Codex follow “Alternative review.” Only read-only candidate checks may precede CI completion; formal review-request APIs used as assessment/request below wait for stable-HEAD checks.
+- Before ordinary review requests, confirm successful required CI on current HEAD and no conflicts with current base. Also check repository-required pre-review automation, without uniformly adding nonrequired CodeQL or similar checks.
+- If required CI fails or conflicts exist, fix, validate, commit, and push before review requests. Repeat checks on new HEAD until successful/resolved.
+- With no configured CI, apply the existing merge exception under [When CI is unconfigured](#when-ci-is-unconfigured), distinguishing it from execution success.
+- Record current HEAD with successful required CI/no conflicts as the review target and request ordinary review for it. For Copilot use “Requesting Copilot Code Review” below.
+- Prioritize target repository review Instructions, guides, Skills, and templates for external reviewers. Do not give locally APM-installed `daiksud/agents` `code-review` as additional instructions to other repositories' Copilot/Codex reviewers. Point to originals only when reviewer material exists in the target repository. For `daiksud/agents` itself, `skills/code-review/SKILL.md` is its own policy and may be referenced.
+- After initial/re-review requests, self-review until external review completes.
+- If self-review, findings, base updates, or conflict resolution change reviewed HEAD, fix, validate, commit, and push, then verify new required CI/no conflicts before re-review. Old-HEAD reviews do not complete new HEAD.
+- Assess findings from current requirement/contract discrepancies, evidence, triggering conditions, and impact, classifying formal fixes, optional suggestions, investigation, or no action. Severity, urgency, likelihood, and cost guide priority/fixes; reviewer classification/approval alone does not decide adoption.
+- Many prerequisites, low frequency, or difficult reproduction alone do not justify no action. Evidence-based contract discrepancies with concrete impact remain formal findings even under limited conditions. Investigate inadequate conditions/evidence without speculative fixes.
+- Evaluate “Suppressed comments” by the same criteria, without deciding solely from suppression labels or Copilot Approve. For missing Approve follow “Suppressed findings and missing Approve.”
+- Follow “Reply placement and publication procedure” below, separating individual responses from overall explanations.
+- Fix, validate, commit, and push actionable findings, then confirm new required CI/no conflicts before re-review.
+- Changes to reviewed commits through self-review, CI fixes, rebase, or base updates require the same stable-HEAD checks before latest-commit review requests.
+- Repeat review/fixes until zero actionable findings.
+- With Copilot, completion requires Approve on the latest commit. With Codex selected through quick assessment, apply Codex completion conditions. Candidate assessment does not replace completed review.
 
-### レビュー候補の高速判定
+### Quick reviewer candidate assessment
 
-ここで判断するのは依頼先の候補であり、利用枠・実行成功・レビュー完了の保証ではない。Codexも導入確認だけでレビュー完了とはせず、依頼後の実行結果を確認する。[^codex-github-review]
+This selects a candidate, not a guarantee of quota, execution success, or completed review. Codex installation alone also does not complete review; verify execution after requesting.[^codex-github-review]
 
-通常レビューを起動し得る判定は、前節で現在HEADの必須CI成功とコンフリクトなしを確認した後に行う。Copilotの `suggestedReviewerActors` やCodex Connectorの導入確認など読み取りだけで完結する確認はCI待ち中に先行できるが、候補照会を提供しない環境で正式なレビュー依頼APIを判定兼依頼として使うfallbackは安定HEAD確認前に実行しない。
+Assessments potentially starting ordinary review occur after current-HEAD required CI/no conflicts. Read-only Copilot `suggestedReviewerActors` or Codex Connector installation checks may precede CI completion, but fallback formal-request APIs in environments without candidate queries wait for stable-HEAD checks.
 
-| 状態 | 意味 |
+| State | Meaning |
 | --- | --- |
-| `available` | Copilotのレビュー候補・依頼受理、または対象repoへのCodex Connector導入を確認できた。依頼先として選べる |
-| `unavailable` | Copilotの候補なし、対象repoへのConnector未導入・対象外、またはサービス固有の明示的な利用不能を確認した。この選択では候補から除外する |
-| `unknown` | 権限不足、取得失敗、不完全な一覧、確認手段の非対応などで候補を判定できない。未導入・利用不能と断定しない |
+| `available` | Copilot candidate/request acceptance, or Codex Connector installation for the target repo, is confirmed. May select as reviewer |
+| `unavailable` | No Copilot candidate, absent/out-of-scope Connector, or explicit service-specific unavailability is confirmed. Exclude for this selection |
+| `unknown` | Permissions, retrieval failures, incomplete lists, or unsupported checking prevent judgment. Do not assert absence/unavailability |
 
-事前確認は下記の手順を各サービスにつき最大1回実施する。Copilotを先に確認し、選べるならCodexを調べない。判定・対象repo・認証条件・根拠・確認日時をタスク内で保持し、同じ条件で設定画面・契約・利用枠・別APIを探し直さない。対象PRが変わればCopilotのPR固有の候補判定、対象repoや認証・導入設定が変われば関連する判定を更新する。HEAD更新だけでConnectorの導入確認を繰り返さない。永続キャッシュや専用設定は追加しない。
+Perform the checks below at most once per service. Check Copilot first; if selectable, do not investigate Codex. Retain judgment, repo, authentication conditions, evidence, and checking time within the task; do not search settings, subscriptions, quotas, or other APIs again under unchanged conditions. New PRs update Copilot's PR-specific assessment; repo/authentication/installation changes update relevant assessments. HEAD changes alone do not repeat Connector checks. Do not add persistent caches or dedicated settings.
 
-明示的な利用枠上限エラーは候補判定と分け、エラーの根拠、確認日時、対象の利用者・課金主体、確認できた適用範囲を既存のタスク文脈に保持する。同じ主体・同じ利用枠への適用を確認できる間は `unavailable` として扱い、HEAD・PRの変更や候補が `available` になったことだけで根拠を破棄したり再依頼したりしない。枠の更新・回復、または利用者・課金主体の変更について信頼できる根拠が得られた場合に再評価する。PR固有のエラー、汎用的な403・422、通信失敗、権限不足をアカウント全体の利用枠上限へ一般化せず、適用範囲が分からない場合は不明として扱う。進行中・受理不明の依頼を迂回しない条件は下記のまま維持する。
+Keep explicit quota-limit errors separate from candidate assessment, retaining evidence, time, affected user/billing entity, and confirmed scope in task context. Treat as `unavailable` while applicability to the same entity/quota is confirmed; HEAD/PR changes or `available` candidates alone do not discard evidence or justify requests again. Reassess with reliable evidence of quota renewal/recovery or user/billing-entity changes. Do not generalize PR-specific errors, generic 403/422, network failures, or permission gaps to account-wide quota limits; unclear scope remains unknown. Preserve the no-bypass conditions below for running/uncertain requests.
 
-同じHEADへの依頼が既にある場合は、先に依頼履歴・Botの実行状態・完了済みレビューを確認する。Copilotは [依頼後の実行状態を確認する](#copilot依頼後の実行状態を確認する) に従い、進行中なら通常の完了待ちを続ける。受理されたか不明なら状態を1回取得し、それでも不明なら再依頼や切替を止め、未確認範囲と再開条件を記録する。候補探索の上限を、受理済みレビューやCIの通常の進捗確認に適用しない。
+For existing requests on the same HEAD, first check history, Bot state, and completed reviews. For Copilot follow [Checking execution after Copilot requests](#checking-execution-after-copilot-requests), waiting if running. If acceptance is unclear, retrieve state once; if still unknown, stop duplicate requests/switches and record uncertainties/resumption conditions. Candidate-search limits do not apply to ordinary progress checking of accepted reviews/CI.
 
-- 未依頼でCopilotが `available` ならCopilotへ依頼する。
-- Copilotが `unavailable` または `unknown` で、Codexが `available` ならCodexを選ぶ。前者の理由は「候補なし」「利用不能」、後者は「候補確認不能」と区別し、恒久的な利用不能を証明する追加調査や切替の再承認を要求しない。依頼済みの進行中・受理不明をこの条件で迂回しない。
-- 両方とも `available` でなければ探索を打ち切る。セルフレビュー・CI確認は継続できるが、外部レビュー完了やマージ可とは扱わない。必要な導入・権限・確認手段をブロッカーとして報告し、保護設定を緩めない。
+- If unrequested and Copilot is `available`, request Copilot.
+- If Copilot is `unavailable` or `unknown` and Codex `available`, choose Codex. Distinguish “no candidate/unavailable” from “candidate unverifiable”; do not require extra proof of permanent unavailability or reapproval for switching. Do not bypass running/uncertain existing requests.
+- If neither is `available`, stop searching. Self-review and CI checks may continue, but do not claim completed external review or mergeability. Report installation/permission/checking blockers without relaxing protections.
 
-#### Copilotの候補を1回取得する
+#### Retrieve Copilot candidates once
 
-対象PRの `suggestedReviewerActors` を照会する。これはレビュー候補のAPIであり、Issue担当者用の `suggestedActors` を代用しない。[^github-graphql-pulls]
+Query target PR `suggestedReviewerActors`, a reviewer-candidate API; do not substitute Issue-assignee `suggestedActors`.[^github-graphql-pulls]
 
-`OWNER`・`REPO`・`PR_NUMBER` を対象に置き換える。以下は読み取りだけで、レビューを依頼しない。
+Replace `OWNER`, `REPO`, and `PR_NUMBER` with targets. The following reads only and does not request review.
 
 ```bash
 OWNER=daiksud
@@ -128,148 +128,148 @@ gh api graphql \
   '
 ```
 
-コマンド失敗・GraphQLエラーは `unknown` とする。候補なしはこの選択での除外根拠であり、契約全体の利用不能の証明ではない。ページが残るのに見つからない場合も `unknown` とし、探索のための追加ページ取得は行わない。
+Command/GraphQL failures are `unknown`. No candidates excludes Copilot for this selection without proving subscription-wide unavailability. Missing candidates with remaining pages are also `unknown`; do not fetch more pages for exploration.
 
-候補照会を提供しない実行環境では、未依頼を確認したうえで「Copilot Code Reviewの依頼」の正式APIを1回だけ判定兼依頼として使ってよい。成功は依頼受理として記録して完了待ちへ進み、確認目的で再送しない。利用枠上限・無効化などの明示的な利用不能だけを `unavailable` とし、汎用的な403・422・通信失敗だけでサービス利用不能を断定しない。失敗後に別の候補APIを探索しない。
+Where candidate queries are unavailable, after confirming no existing request, the formal API in “Requesting Copilot Code Review” may be used once as assessment/request. Record successful acceptance and wait without resending to confirm. Only explicit quota-limit/disabled-service errors establish `unavailable`; generic 403/422/network failures alone do not establish service unavailability. Do not search other candidate APIs after failure.
 
-#### Codex Connectorの対象repoへの導入を確認する
+#### Check Codex Connector installation for the target repo
 
-`ChatGPT Codex Connector`（slug: `chatgpt-codex-connector`）が対象repoのインストール済みGitHub Appに含まれるかを確認する。既に対象repoについて確認済みの導入結果、または下記の同一タスクの成功イベントがあれば先に再利用する。どちらもなければ、利用可能な認証済みGitHub設定画面のGitHub Apps、または対象repoの導入情報を返す既存ツールのいずれか1つを使う。対応する確認手段がなければ呼び出しを試行錯誤せず `unknown` とする。[^github-installed-apps]
+Check whether `ChatGPT Codex Connector` (slug `chatgpt-codex-connector`) is installed for the target repo. First reuse already verified installation or same-task successful events below. Otherwise use one available authenticated GitHub Apps settings view or existing tool returning target-repo installation. Without supported checking, use `unknown` instead of trial-and-error calls.[^github-installed-apps]
 
-上記の既存ツールには、同一タスク・同じ認証条件で対象repoへの既存操作が成功した際の、GitHubの返却データや既知のイベントを読む方法も含む。`performed_via_github_app.slug` が `chatgpt-codex-connector` と一致し、対象repo・操作時刻・今回の成功操作との対応を確認できれば `available` の根拠として再利用する。Appとユーザーの双方がアクセスできるリソースに限定される仕組みに基づく運用上の判定であり、導入一覧の直接取得やレビュー成功の保証とは区別する。コメント本文の自己申告や過去タスクの記録は代用せず、確認だけのためのラベル変更・コメント投稿などの書き込みは行わない。[^github-app-user-access]
+Existing tools include reading GitHub-returned data/known events from successful existing operations on the target repo under the same task/authentication. If `performed_via_github_app.slug` is `chatgpt-codex-connector` and repo, time, and current successful operation are matched, reuse as `available` evidence. This is an operating assessment based on access limited to both App/user permissions, separate from direct installation-list retrieval or guaranteed review success. Self-claims in comment bodies or past-task records do not substitute; do not change labels/post comments merely to check.[^github-app-user-access]
 
-対象repoへの導入を確認できれば `available`、完全な対象一覧で未導入・対象外と確認できれば `unavailable` とする。アカウント単位の情報を使う場合はownerの一致と、All repositoriesまたはSelected repositoriesに対象repoが含まれることまで確認できなければ `unknown` とする。明示的に停止・無効化されていれば `unavailable` とする。公開Appページの存在、過去のBotコメント、ローカルの `codex login status` は現在の対象repoへの導入証拠にしない。
+Confirmed installation means `available`; confirmed absence/out-of-scope in complete target lists means `unavailable`. For account-level information, require matching owner and All repositories or target inclusion in Selected repositories; otherwise `unknown`. Explicit suspension/disablement means `unavailable`. Public App pages, past Bot comments, and local `codex login status` are not current target-repo installation evidence.
 
-通常の `gh` ユーザートークンで `GET /repos/{owner}/{repo}/installation` を汎用のApp一覧APIとして使わない。このAPIは確認対象App自身のJWTを必要とする。`GET /user/installations` も認証したGitHub Appの導入情報であり、無関係なAppを横断する確認には使わない。これらの認証条件を満たさない環境で、別トークン・別API・ブラウザ内部APIの探索を続けない。[^github-app-installation-api][^github-app-user-installations]
+Do not use `GET /repos/{owner}/{repo}/installation` with ordinary `gh` user tokens as a general App list; it requires the target App's own JWT. `GET /user/installations` also covers the authenticated App's installations, not unrelated Apps. Without these authentication conditions, do not continue searching tokens/APIs/browser-internal APIs.[^github-app-installation-api][^github-app-user-installations]
 
-### 代替レビュー
+### Alternative review
 
-レビュー依頼と完了判定は本手順が担当する。差分をレビューするときだけ `code-review` を読み、そのスキルから依頼・修正・マージを開始しない。
+This procedure owns requests/completion decisions. Read `code-review` only when reviewing diffs, without starting requests/fixes/merge from that skill.
 
-1. 「レビュー候補の高速判定」でCodexを選んだ理由、CopilotとCodexの判定、証拠URLまたは取得結果、確認日時をPRに記録する。Copilotへの依頼後に明示的な利用不能が判明した場合も、その結果を保持して同じ選択手順へ進む。利用不能と候補確認不能を混同せず、切替の都度ユーザー承認を求めない。
-2. 指摘への不同意、Approve未取得、単なる待機時間、一時的な結果取得失敗だけを切替理由にしない。依頼済みのレビューは「レビュー候補の高速判定」の進行中・受理不明の手順に従い、同じHEADへの依頼を重複させない。
-3. PRコメントで `@codex review` を依頼する。対象リポジトリ自身にレビュアー向けInstructions・ガイド・Skill等があり、外部レビュアーから読める場合だけ、そのリポジトリ内の原本パスと適用指示を添える。APMでローカルに導入された共通 `code-review` や、その原本が別リポジトリにあるという理由だけで追加指示しない。対象リポジトリに固有のレビュー資料がなければ、Codex自身の通常レビューに委ねる。送信前後に依頼コメントを確認し、タイムアウト時も保存済みの可能性を調べてから再送する。新しい依頼が必要なのは未送信の確認、HEAD変更、または失敗原因を解消して再実行するとき。
+1. Record reasons for Codex selection, Copilot/Codex judgments, evidence URLs/results, and time in the PR. Preserve explicit unavailability discovered after Copilot requests and follow the same selection. Distinguish unavailability from unverified candidates without reapproval for each switch.
+2. Disagreement with findings, missing Approve, elapsed waiting, or temporary retrieval failure alone do not justify switching. Follow running/uncertain-request conditions without duplicates on the same HEAD.
+3. Request `@codex review` in a PR comment. Add original paths/application instructions only when target-repository reviewer Instructions/guides/Skills exist and are externally readable. Do not add locally APM-installed common `code-review` or material merely because originals exist in another repository. Without target-specific reviewer material, defer to Codex's ordinary review. Check request comments before/after sending, investigating possible saved requests after timeouts before resending. New requests are needed only for confirmed nonsending, changed HEAD, or reruns after resolved failures.
 
-### Codexの完了判定
+### Codex completion assessment
 
-以下のすべてを満たすまでレビューは未完了とする。修正・リベースでHEADが変われば再レビューする。
+Review remains incomplete until all conditions below pass. Re-review after fixes/rebases change HEAD.
 
-| 確認対象 | 必要な根拠 |
+| Target | Required evidence |
 | --- | --- |
-| 投稿者・実行結果 | Codex Bot本人のサマリー・レビュー本文・指摘・依頼コメントと紐づくセッションを突き合わせ、正常完了を明示的に確認する。失敗・中断・実行中は除外する |
-| 対象コミット | レビューの対象SHAが現在の完全HEAD SHAに一致する。短縮SHAはリポジトリのコミットで一意に完全SHAへ解決する。依頼時HEADだけから対象SHAを推測しない |
-| 残る指摘 | 今回だけでなく過去の通常指摘・レビュー本文の指摘も確認する。Copilotから引き継いだ要対応指摘も修正・公開返信・Resolveまで追跡する |
-| マージ条件 | CI、競合、公開返信、スレッド解決、リポジトリ側の必須承認を確認する。Codex切り替えを理由に保護設定を緩めない |
+| Author/execution result | Compare actual Codex Bot summaries, review bodies, findings, and sessions linked to request comments, explicitly confirming normal completion. Exclude failures, interruptions, and running work |
+| Target commit | Reviewed SHA matches current complete HEAD. Resolve shortened SHAs uniquely through repository commits; do not infer from request-time HEAD alone |
+| Remaining findings | Check past ordinary/body findings as well as current ones. Track actionable findings inherited from Copilot through fixes, published replies, and Resolve |
+| Merge conditions | Check CI, conflicts, published replies, thread resolution, and required repository approvals. Switching to Codex does not relax protections |
 
-👀、👍、コメント件数、第三者の「完了」という記述だけでは正常完了・対象SHA・指摘解消を判定しない。SHA不明や結果取得失敗は未完了として、未確認範囲と再開条件を記録する。
+👀, 👍, comment counts, or third-party “completed” claims alone do not establish normal completion, target SHA, or resolved findings. Unknown SHAs or failed retrieval remain incomplete; record uncertainties/resumption conditions.
 
-Codexの「重大な問題なし」はそのレビュー範囲の結果であり、公式に案内されるP0・P1中心のレビューを全品質の保証とは扱わない。CopilotのApproveとCodexの正常完了を同じ承認イベントと表現しない。
+Codex's “no major issues” is a scoped review result; officially described P0/P1-focused review does not guarantee all quality. Do not describe Copilot Approve and Codex normal completion as identical approval events.
 
-### Copilotが人手確認を求めた場合
+### When Copilot requests human review
 
-Copilot Code Reviewのサマリー・レビュー本文・指摘で「人手の確認が必要」「human review required」など、人間による確認・判断へのエスカレーションが明示された場合は、通常のApprove未取得やCopilotの利用不能と区別する。
+If Copilot summaries, review bodies, or findings explicitly escalate to human checking/judgment, such as “human review required,” distinguish this from ordinary absence of Approve or Copilot unavailability.
 
-- 人手確認要求を `unavailable` と扱わず、Codex Reviewへの切り替えや別Botのレビューで代替しない。
-- 任意のユーザー・チーム・第三者へレビュー依頼を追加しない。Issue・PRで確認したタスク指示者を原則の人手レビュー先とし、GitHub上で本人を特定でき、レビュー依頼可能な場合はその本人にだけ依頼する。認証ユーザーやリポジトリ所有者を無条件に指示者とみなさない。
-- タスク指示者を特定できない、本人へレビュー依頼できない、または別の人間の判断が必要な場合は、代わりのレビュアーを推測せず、必要な判断と理由を示して指示者またはユーザーへ戻す。
-- 必要な人手確認が未解決の間はマージしない。指示者レビューによる修正でHEADが変わった場合は、通常の最新HEADレビュー手順へ戻る。
+- Do not treat human-review requests as `unavailable`, or substitute Codex Review or another Bot.
+- Do not add arbitrary users, teams, or third parties as reviewers. Normally use the requester confirmed in the Issue/PR; request only that person if identifiable and requestable on GitHub. Do not unconditionally equate authenticated users or repository owners with requesters.
+- If the requester is unidentified/unrequestable, or another human decision is needed, return needed judgments/reasons to the requester/user without guessing replacements.
+- Do not merge while required human review remains unresolved. If requester review fixes change HEAD, return to ordinary latest-HEAD review procedures.
 
-### 必須ApproveとCODEOWNERSの判定
+### Required Approve and CODEOWNERS assessment
 
-Rulesetの `required_approving_review_count` と `require_code_owner_review` を別の条件として確認する。前者はPR全体で必要なApprove数、後者は変更パスに適用されるCode Ownerレビュー要件である。Code Ownerが複数いる場合はいずれか1人のApproveでCode Owner要件を満たす。設定値だけでブロック状態を推測せず、PR author、変更パスに適用されるCODEOWNERS、最新review state、GitHubのmergeabilityを照合する。[^ruleset-rules][^code-owners]
+Check Ruleset `required_approving_review_count` and `require_code_owner_review` separately. The former is overall required approvals; the latter concerns Code Owners for changed paths. With multiple Code Owners, one owner's Approve meets that condition. Do not infer blocking from settings alone; compare PR author, applicable CODEOWNERS, latest review state, and GitHub mergeability.[^ruleset-rules][^code-owners]
 
-変更パスに適用されるCode Ownerが1人だけで、その本人がPR authorの場合は、本人の自己Approveや存在しない別Code Ownerを待たない。このケースではGitHubの実効判定上、Code Owner以外の有効なApproveで必須Approve数を満たせるため、別の有効なApproveとGitHubのマージ可否を確認して先へ進む。Copilot Approvalsが有効で、最新HEADに対するCopilotレビューが `APPROVED` として必須承認に数えられている場合は、そのApproveで問題ない。既定のコメントだけのCopilotレビューはApproveとして扱わない。[^approval-code-owner-exception][^docs-request-a-code-review-use-code-review]
+If the sole applicable Code Owner is the PR author, do not wait for self-approval or nonexistent other owners. GitHub's effective assessment permits valid non-owner approval to meet the required count in this case; check another valid Approve and GitHub mergeability, then proceed. If Copilot Approvals is enabled and its latest-HEAD review is `APPROVED` and counted toward required approval, it suffices. Default comment-only Copilot reviews are not Approve.[^approval-code-owner-exception][^docs-request-a-code-review-use-code-review]
 
-この例外は、Copilotが明示的にhuman reviewを要求した場合、未解決のRequest changes、最新pushを別主体が承認する要件、その他GitHubが未充足としている保護条件を迂回しない。満たせない保護条件が残る場合は、CODEOWNERS設定を緩めたり任意の人間へレビュー依頼したりせず、実際に未充足の条件を特定する。
+This exception does not bypass explicit Copilot human-review requests, unresolved Request changes, requirements for another actor to approve the latest push, or other unmet GitHub protections. If protections remain unmet, identify actual conditions without weakening CODEOWNERS or requesting arbitrary humans.
 
-### 抑制指摘とApprove未取得時の扱い
+### Suppressed findings and missing Approve
 
-「Suppressed comments」などの抑制指摘は、Approveの有無にかかわらず通常のレビュー指摘と同じ基準で採否を判断する。この節は、最新コミットのCopilotレビューが完了してもApproveが得られていない場合のマージ条件の扱いだけを定める。CopilotのApprove必須というマージ条件は維持し、Approve取得を指摘の妥当性の根拠にしない。
+Judge “Suppressed comments” by the same criteria as ordinary findings regardless of Approve. This section defines only merge handling when latest-commit Copilot review completes without Approve. Preserve mandatory Copilot Approve; obtaining it does not prove finding validity.
 
-1. レビュー対象のコミットと完了状態、Approveの有無を確認し、過去の通常指摘と抑制指摘を含めて未対応の正式な修正指摘がないことを確認する。「新規コメント0件」だけでは判定しない。レビュー未完了・取得失敗は承認済みとも、指摘なしとも扱わない。
-2. 抑制指摘を、現在の要求・契約との不一致、根拠、発生条件、具体的な影響から評価する。正式な修正指摘なら通常のレビュー対応へ戻し、根拠不足なら追加調査する。追加調査に必要な証拠を取得できない場合は、不足する証拠と未確認範囲を示してユーザー判断に戻し、Approve再取得のための再レビューへ進まない。現状が契約を満たす任意提案や対応不要の指摘は、Approve取得だけを目的に必須修正へ引き上げない。
-3. 正式な修正指摘が承認済み範囲に収まる場合は、追加確認なしで修正・検証・コミット・プッシュする。目的・成果・受け入れ条件や外部影響・権限を変える場合は、依存スキル `issue-management` の「計画と実行範囲」に従って確認する。
-4. 未対応の正式な修正指摘と未解決の追加調査がなくてもApproveが得られていない場合は、修正内容・検証結果、または任意提案・対応不要と判断した根拠を、対象レビューへのリンク付きレビュー全体コメントに記録する。次の「返信の記載先と公開手順」に従って公開を確認してから再レビューを1回依頼する。公開未確認なら依頼せず、再開時は公開済みコメントと依頼履歴を確認して重複を避ける。
-5. この再レビューでも同じ任意提案または対応不要の指摘を理由にApproveが得られない場合は、承認目的だけの修正や自動再依頼を繰り返さない。指摘の採否判断は維持したまま、判断根拠・実施済み対応と残る選択肢を提示してユーザー判断に戻す。新しい指摘は同じ基準で改めて評価するが、同じ論点への反復制限はリセットしない。
+1. Check reviewed commit, completion, and Approve, confirming no unresolved formal findings including past ordinary/suppressed findings. “Zero new comments” alone is insufficient. Incomplete reviews or failed retrieval are neither approval nor no findings.
+2. Evaluate suppressed findings against current requirements/contracts, evidence, triggering conditions, and impact. Return formal findings to ordinary handling; investigate insufficient evidence. If necessary evidence is unobtainable, show gaps/unverified scope and return to user judgment without re-review merely for Approve. Do not promote optional/no-action findings that meet contracts to mandatory fixes solely for approval.
+3. Fix, validate, commit, and push formal findings within approval without additional confirmation. For changed purpose, outcomes, acceptance conditions, external impact, or permissions, confirm under `issue-management` “Planning and execution scope.”
+4. If no unresolved formal findings or investigations remain but Approve is absent, record fixes/validation or reasons for optional/no-action judgments in an overall review comment linked to the target review. Verify publication under “Reply placement and publication procedure” below, then request re-review once. Do not request before confirmed publication; on resumption inspect published comments/request history to avoid duplicates.
+5. If that re-review still withholds Approve for the same optional/no-action findings, do not repeat approval-only fixes or automatic requests. Retain finding judgments and present evidence, completed responses, and options for user judgment. Evaluate new findings by the same criteria without resetting repetition limits on the same issue.
 
-### 返信の記載先と公開手順
+### Reply placement and publication procedure
 
-レビュアーが各指摘の対応とレビュー全体の説明を適切な場所で確認できるよう、返信を次のように分ける。
+Separate replies so reviewers can check individual responses and overall explanations in appropriate places.
 
-| 対象 | 記載先と内容 |
+| Target | Placement and content |
 | --- | --- |
-| 個別スレッドの指摘 | 対象スレッドに、その指摘の対応内容・変更コミット・検証結果、または対応しない判断理由を書く |
-| `Suppressed comments`などレビュー本文にだけ存在する指摘 | レビュー全体コメントに、対象レビューへのリンクと、正式な修正指摘として対応した場合の修正内容・変更コミット・検証結果、または任意提案・対応不要と判断した根拠を書く。Approveの有無で記載要否を変えず、返信先のスレッドを代用しない |
-| レビュー全体に関わる説明 | レビュー全体コメントに、対象レビューへのリンクと全体の説明を書く。個別スレッドに混在させない |
+| Individual thread findings | In that thread, record response, change commit, and validation, or reasons for no action |
+| Findings only in review bodies, such as `Suppressed comments` | In an overall review comment, link the review and record fixes/commits/validation for formal findings, or reasons for optional/no-action judgments. Do not change necessity based on Approve or substitute a reply thread |
+| Overall review explanation | In an overall review comment, link the target review and give the explanation; do not mix into individual threads |
 
-1. 指摘を確認し、既存の修正判断基準に従って対応する。修正した指摘では検証・コミット・プッシュまで完了させ、返信の根拠を揃える。
-2. 個別返信を保留中のレビューにまとめ、必要なレビュー全体コメントを用意する。全体コメントが不要なら作成を強制せず、個別返信がない場合は全体コメントだけを用意する。
-3. 一連の返信をsubmitする。レビュー全体コメントが必要な場合はともにsubmitし、不要な場合は個別返信だけをsubmitする。全体コメントだけの場合もレビューとしてsubmitする。
-4. submit後に公開済みの個別返信とレビュー全体コメントを再取得し、対象と内容が正しいことを確認する。保留中の返信やsubmit要求の成功だけを公開確認の代わりにしない。
-5. 公開済みの対応内容または対応しない理由を確認できたスレッドだけをResolveする。投稿に失敗した、または公開を確認できないスレッドはResolveしない。再開時は公開済みの返信を確認し、成功済みの投稿を重複させない。
+1. Check findings and respond under existing fix criteria. Complete validation, commits, and push for fixes, gathering reply evidence.
+2. Group individual replies in a pending review and prepare necessary overall comments. Do not force unnecessary overall comments; if no individual replies exist, prepare only overall comments.
+3. Submit the replies, including necessary overall comments; otherwise submit only individual replies. Submit overall-only comments as reviews too.
+4. Retrieve published individual/overall replies after submission and verify targets/content. Pending replies or successful submit requests do not substitute for publication verification.
+5. Resolve only threads with confirmed published actions or no-action reasons. Do not Resolve failed/unverified posts. On resumption check published replies without duplicate successful posting.
 
-使用するAPIやUIで個別返信を保留中のレビューにまとめてsubmitできない場合は、その制約を報告する。個別返信は対象スレッドに投稿し、全体説明は対象レビューへのリンクを付けたレビュー全体コメントとして別に記録する。全体説明を個別スレッドで代用せず、公開確認後にResolveする順序を守る。レビュー全体コメントも投稿できない場合は未完了として報告し、投稿できた範囲と再開に必要な手段を明記する。
+If APIs/UI cannot group individual replies in pending reviews and submit them, report the restriction. Post individual replies to target threads and separately record overall explanations as overall review comments linked to target reviews. Do not substitute individual threads for overall explanations; preserve publication-before-Resolve order. If overall comments also cannot be posted, report incomplete work, posted scope, and means needed to resume.
 
-### リベースとマージ
+### Rebase and merge
 
-- マージ先の更新を作業ブランチに取り込むときはリベースし、Git履歴をLinear historyに保つ。
-- リベース後は関連する検証を再実行し、リモートへプッシュする。
-- プッシュ済みの履歴をリベースした場合は `git push --force-with-lease` を使い、リモートに未知の更新があれば上書きせず確認する。
-- マージ直前に、最新コミットのレビューが完了し、対応が必要な指摘がゼロ、CIがパス、コンフリクトがゼロであることを確認する。必須ApproveとCODEOWNERSは「必須ApproveとCODEOWNERSの判定」に従い、唯一のCode OwnerがPR authorであることだけを理由に自己Approve待ちへ入らない。
-- マージ直前に最新mainのSHAとそのpushで動いた必要チェック・配布検証を再確認する。開始時の確認だけで代用せず、実行中・未確認なら待ち、失敗していれば復旧を優先して通常PRをマージしない。当該失敗を解消する承認済み復旧PRはこのmain成功条件の対象外とし、復旧PR自体のレビュー・必要チェック・必須承認を満たして進める。CIが存在しない場合だけ既存の未設定例外に従う。
-- すべての条件を満たしたらドラフトPRをReady for reviewに変更し、スカッシュマージする。
-- スカッシュコミットのメッセージも[コミットメッセージの指示](conventional-commits.md)に従う。
-- PRがマージ済みで、マージ先の履歴が直線状であることを確認する。
+- Rebase target-branch updates into working branches, keeping Git history linear.
+- Rerun relevant validation after rebasing and push remotely.
+- For rebased published history use `git push --force-with-lease`; check unknown remote updates without overwriting.
+- Immediately before merge, confirm latest-commit review completed, zero findings requiring action, passing CI, and zero conflicts. Apply “Required Approve and CODEOWNERS assessment”; sole-owner authorship alone does not justify waiting for self-approval.
+- Immediately before merge, recheck latest main SHA and required checks/distribution validation triggered by its push. Initial checks do not substitute; wait for running/unverified results and prioritize recovery on failures without merging ordinary PRs. Approved recovery PRs resolving that failure are exempt from this main-success condition, while meeting their own reviews/checks/approvals. Use existing unconfigured-CI exceptions only if CI is absent.
+- Once all conditions pass, mark the draft Ready for review and squash-merge.
+- Squash messages also follow [Commit-message instructions](conventional-commits.md).
+- Confirm the PR merged and target history is linear.
 
-### 統合後mainの確認と復旧
+### Post-integration main verification and recovery
 
-変更担当者はマージ後の確認まで担当する。PRの統合候補とマージ後mainのSHAは異なるため、PRのCI成功だけでmainを検証済みにしない。
+Change owners also own post-merge verification. PR integration-candidate and merged-main SHAs differ; PR CI alone does not verify main.
 
-1. スカッシュマージのコミットSHAと、そのmainへのpushで動いた必要チェックを照合する。配布検証があるプロジェクトでは公開された同じSHAの導入経路も確認する。
-2. 実行中なら完了を待つ。失敗・キャンセル・未実行・結果取得不能は成功にせず、理由と未確認範囲を記録する。必要なCIが起動していない状態を「CI未設定」の例外にしない。
-3. 失敗を検出したら通常作業を止め、影響と検知時刻、最後に正常だったSHA、失敗したチェック・ログを記録する。原因変更がある場合は、そのrevertまたは最小修正を独立した復旧PRにする。外部サービス・runnerの一時障害でリポジトリ変更が不要と確認できた場合は、根拠と再試行理由を記録し、障害解消後に同じmain SHAの必要チェック・配布経路を再検証する。空の復旧PRは作らず、成功確認までは後続作業を止める。原因不明なら調査を続け、外部障害と推測で決めつけない。変更不要の場合は手順4〜6を行わず、再検証後の手順7へ進む。
-4. リポジトリ変更が必要な復旧計画はIssueへ保存・再取得・提示し、依存スキル `issue-management` の「計画と実行範囲」で実行範囲を判断する。自身の依頼範囲内の回帰修正や明確な復旧依頼では同じ承認を再要求しない。別の目的・受け入れ条件・外部影響・権限を変える復旧は確認し、無関係な障害の実装へ承認を広げない。実行範囲を確認後は差分とworktreeの使用状況を確認して保護し、`git switch main` でmainへ切り替え、`git pull --ff-only` で更新して、そのmainから専用の復旧ブランチを作成する。mainが他worktreeで使用中なら、そこを変更せず `git fetch origin` で取得した `origin/main` のSHAを失敗対象と照合し、現在の作業場所でそのSHAから専用復旧ブランチを作る。未知のmain更新があれば先に確認し、checkoutの保護を強制回避したりマージ済みの旧作業ブランチへ復旧変更を追加したりしない。
-5. 欠陥が原因なら再現可能な最も小さい検証を追加し、修正前の失敗と修正後の成功を確認する。コードは `software-development`、スキルの判断は模擬評価を使う。外部障害など再現できない場合は証拠と未検証範囲を記録し、失敗テストを作ったと偽らない。
-6. 通常の最新HEADレビュー・公開返信・Resolve・必須承認・必要チェックを通して復旧PRをマージする。保護設定や検査を弱めて正常に見せない。
-7. 復旧コミット（変更不要なら再検証した同じmain SHA）の必要チェックと配布経路が成功した時刻を記録し、正常化を確認してから後続作業を再開する。検証できない間は復旧済み・作業全体完了としない。
+1. Compare squash-merge SHA with required checks triggered by that main push. For projects with distribution validation, also check installation paths for the same published SHA.
+2. Wait for running checks. Failed, canceled, unexecuted, or unobtainable results are not success; record reasons/unverified scope. Required CI not starting is not an “unconfigured CI” exception.
+3. On failure, stop ordinary work and record impact, detection time, last healthy SHA, failed checks/logs. If a causative change exists, make a revert/minimal fix a separate recovery PR. If evidence confirms temporary external-service/runner failure requiring no repository changes, record evidence/retry reasons and revalidate required checks/distribution paths on the same main SHA after recovery. Do not create empty recovery PRs; stop subsequent work until success is confirmed. Continue investigation when causes are unknown without assuming external failures. Without changes, skip steps 4–6 and proceed to step 7 after revalidation.
+4. Save/retrieve/present recovery plans requiring repository changes in Issues, judging execution scope through `issue-management` “Planning and execution scope.” Do not reapprove regression fixes within the original request or clear recovery requests. Confirm recovery changing purposes, acceptance conditions, external impact, or authority; do not extend approval to unrelated incidents. After confirming scope, protect diffs/worktree usage, `git switch main`, `git pull --ff-only`, and create a dedicated recovery branch from that main. If another worktree uses main, leave it unchanged, compare `origin/main` SHA fetched through `git fetch origin` with the failed target, and create a dedicated recovery branch from that SHA at the current location. Check unknown main updates first; do not bypass checkout protection or add recovery changes to merged former working branches.
+5. For defects, add the smallest reproducible validation and confirm failure before fixes and success afterward. Use `software-development` for code and simulated evaluations for skill judgments. For unreproducible external failures or similar cases, record evidence/unverified scope without claiming failed tests were created.
+6. Merge recovery PRs through ordinary latest-HEAD review, published replies, Resolve, required approvals, and checks. Do not weaken protection/checks to appear healthy.
+7. Record the time all required checks/distribution paths pass for the recovery commit (or the same revalidated main SHA without changes), and confirm health before resuming. Do not claim recovery/overall completion while unverifiable.
 
-main復旧時間は失敗検知から復旧コミットの必要チェック（必須の配布検証を含む）がすべて成功するまでとして、APMなどの導入済み環境を正常SHAへ戻す工程時間と分ける。外部障害で変更不要なら同じmain SHAで同じ必要チェックがすべて成功した時刻を終点と明記する。新しい合否閾値を共通スキルで設けず、プロジェクトで決めた目標と実測を記録する。
+Measure main recovery time from failure detection until all recovery-commit required checks (including required distribution validation) pass, separate from time restoring installed environments such as APM to healthy SHAs. For external failures without changes, explicitly define the endpoint as all same required checks passing on the same main SHA. Do not add common pass/fail thresholds; record project goals/measurements.
 
-障害記録には、影響、発生・検知・復旧時刻、確認できた原因、検出できなかった理由、追加した検証、残る改善を短く残す。分からない原因や時刻を推測で確定せず、担当者を責める記録にしない。
+Briefly record incident impact, occurrence/detection/recovery times, confirmed causes, missed-detection reasons, added validation, and remaining improvements. Do not infer unknown causes/times or blame people.
 
-### CI未設定の場合
+### When CI is unconfigured
 
-- CIが存在しないプロジェクトでは、マージ条件上の既存例外を維持する。ローカルで行った検証と結果、CIが未設定である事実、例外として扱う旨、CI設定を強く推奨する旨をPRに記録する。
-- 例外は「CIを実行して成功した」「CDを達成した」という意味ではない。マージ後もローカル検証など確認できた範囲と限界を示す。
-- 既存の必須CI、失敗・キャンセル・未実行のジョブ、取得不能な結果には適用しない。保護ルールを緩めず、設定変更が必要なら承認済み範囲を確認する。
+- Preserve existing merge exceptions in projects without CI. Record local validation/results, absent CI, treatment as an exception, and strong recommendation to configure CI in the PR.
+- This does not mean CI executed successfully or CD was achieved. After merge, show confirmed scope/limits such as local checks.
+- Do not apply to existing required CI, failed/canceled/unexecuted jobs, or inaccessible results. Do not relax protection rules; check approval scope if settings must change.
 
-### マージ後の作業環境の整理
+### Post-merge workspace cleanup
 
-- PRのマージを確認したら、作業ツリーに未コミットの変更がないことを確認して `git switch main` を実行する。
-- `main` で `git pull --ff-only` を実行する。失敗した場合は原因を確認し、ローカルの変更や履歴を強制的に上書きしない。
-- mainが他worktreeで使用中なら、上記の切り替え・pullの代わりに `git fetch origin` 後の `origin/main` とマージSHA・main検証結果を照合し、現在の作業場所を `git switch --detach origin/main` で切り離して下記の削除へ進む。他worktreeやそのローカルmainは変更せず、checkout保護を回避しない。この場合はリモートmainと現在の作業場所の同期を確認して整理完了とし、他worktreeのローカルmainは未更新として区別して報告する。
-- マージ済みのリモート・ローカルブランチを確認し、削除する。削除前に対応PRのマージ状態、ブランチ先端とPRの最終コミットの一致、`git worktree list` で使用状況を確認する。
-- マージ後に追加コミットがあるブランチや、他のworktreeで使用中のブランチは削除せず、残した理由を報告する。`main` とマージ先ブランチは削除対象に含めない。
-- リモートブランチは `git push origin --delete <branch>`、ローカルブランチは `git branch -d <branch>` で削除する。既に削除済みの場合は再実行しない。
-- スカッシュマージにより `git branch -d` が拒否された場合は、対応PRのマージと先端の一致を再確認したうえで `git branch -D <branch>` を使う。
-- `git fetch --prune origin` の後、`git status --short --branch`、`git branch -vv`、`git ls-remote --heads origin` でmainの同期、作業ツリー、削除対象ブランチが残っていないことを確認する。
-- mainの更新やブランチ削除が完了していない場合は、マージ完了と区別して未完了の操作と理由を報告する。
+- After confirmed merge, check for no uncommitted changes, then `git switch main`.
+- Run `git pull --ff-only` on main; on failure investigate without forcibly overwriting local changes/history.
+- If another worktree uses main, instead fetch and compare `origin/main`, merge SHA, and main validation, then `git switch --detach origin/main` at the current location and proceed to deletion below. Do not alter other worktrees/their main or bypass checkout protection. In this case verify remote-main/current-location synchronization for completed cleanup, separately reporting other worktree local main unupdated.
+- Check and delete merged remote/local branches. Before deletion check corresponding PR merge state, branch-tip/final-PR-commit agreement, and usage through `git worktree list`.
+- Do not delete branches with post-merge commits or used by other worktrees; report why retained. Exclude main and merge-target branches.
+- Delete remote branches with `git push origin --delete <branch>` and local ones with `git branch -d <branch>`; do not repeat already-completed deletion.
+- If squash merge causes `git branch -d` rejection, recheck PR merge and tip agreement before `git branch -D <branch>`.
+- After `git fetch --prune origin`, use `git status --short --branch`, `git branch -vv`, and `git ls-remote --heads origin` to verify main synchronization, working tree, and absence of deletion targets.
+- Report incomplete main updates/deletion and reasons separately from merged status.
 
-### Copilot依頼後の実行状態を確認する
+### Checking execution after Copilot requests
 
-Copilotへのレビュー依頼後は、`requested_reviewers` と完了済みreviewだけで実行状態を判定しない。レビュー依頼が受理された後、`requested_reviewers` が空になり、まだreview submissionが存在しない期間でもCopilotが実行中であることがある。空配列を「未依頼」「停止」「利用不能」の根拠にしない。
+After requesting Copilot review, do not judge execution only from `requested_reviewers` and completed reviews. Copilot may be running after acceptance even with empty `requested_reviewers` and no review submission yet. Empty arrays do not establish “unrequested,” “stopped,” or “unavailable.”
 
-状態は次の順に確認する。
+Check state in this order.
 
-1. 現在の完全HEAD SHAを先に記録する。レビュー依頼時にも対象HEAD SHAを保持し、後続確認でHEADが変わっていないことを照合する。
-2. `GET /repos/{owner}/{repo}/pulls/{pull_number}/reviews` でCopilotのreview submissionを確認する。対象reviewの `commit_id` が現在のHEAD SHAに一致すれば、そのHEADに対する結果として確認する。ただし、本文が明示的な利用枠上限エラーなら正常なレビュー完了とは扱わず、「レビュー候補の高速判定」に従って根拠と適用範囲を保持する。正常なreviewの `APPROVED`・`COMMENTED` 等のstateはそのまま扱い、本文の「Approval recommended」を `APPROVED` に読み替えない。
-3. 最新HEADに対する完了reviewがなければ、PRのIssue eventsまたはtimelineを確認する。`requested_reviewer.login` がCopilotの `review_requested` は依頼済み、`performed_via_github_app.slug == "copilot-pull-request-reviewer"` の `copilot_work_started` は実行開始済みのシグナル候補とする。
-4. `copilot_work_started` を実行中の根拠にできるのは、現在のHEADを対象にしたCopilotの `review_requested` より後に発生し、その依頼以降にHEADが更新されていないことを確認できる場合だけとする。依頼時にHEAD SHAと時刻を保持していればそれを使い、再開時に保持情報がなければtimeline上で最新HEADへの更新と、その後の `review_requested`・`copilot_work_started` の順序を確認する。対応関係を確立できなければ実行中と断定せず `unknown` とする。
-5. 現HEADに対応する `copilot_work_started` を確認できたら実行中として待機を継続し、同じHEADへの再依頼やCodexへの切り替えを行わない。
-6. `copilot_work_started` が見つからないことだけで未実行とは断定しない。イベント取得権限・ページング・反映遅延などで観測できない可能性があるため、依頼APIの成功、現HEADへの `review_requested`、既存の進行表示など利用可能な証拠を合わせて受理済み・不明を判断する。
-7. HEADが更新された場合は、旧HEADの `copilot_work_started` やreview submissionを最新HEADの実行中・完了根拠にしない。最新HEADへのレビュー依頼履歴と `commit_id` を改めて確認する。
+1. Record current complete HEAD first. Also retain target HEAD when requesting, and compare later to confirm no changes.
+2. Check Copilot submissions through `GET /repos/{owner}/{repo}/pulls/{pull_number}/reviews`. Matching `commit_id` establishes results for current HEAD. Explicit quota-limit bodies are not normal completion; retain evidence/scope under “Quick reviewer candidate assessment.” Preserve actual states such as `APPROVED`/`COMMENTED`; “Approval recommended” in prose is not `APPROVED`.
+3. Without completed latest-HEAD review, check PR Issue events/timeline. Copilot `review_requested` with its `requested_reviewer.login` signals requested; `copilot_work_started` with `performed_via_github_app.slug == "copilot-pull-request-reviewer"` is a candidate execution-start signal.
+4. Use `copilot_work_started` as running evidence only when after Copilot `review_requested` for current HEAD and HEAD has not changed since. Use retained request SHA/time if available; on resumption without them, check timeline order of latest-HEAD updates, subsequent `review_requested`, and `copilot_work_started`. If correspondence cannot be established, use `unknown`, not asserted running.
+5. With matching current-HEAD `copilot_work_started`, continue waiting without duplicate requests or switching to Codex.
+6. Missing `copilot_work_started` alone does not prove unexecuted; permissions, paging, or propagation delays may obscure it. Combine available request API success, current-HEAD `review_requested`, existing progress displays, and other evidence to assess accepted/unknown.
+7. After HEAD changes, old-HEAD events/submissions do not establish latest-HEAD running/completion. Recheck latest request history and `commit_id`.
 
-例として、現在の実行状態を確認するときは次を使える。
+For example, the following can check current execution state.
 
 ```bash
 gh api "repos/$OWNER/$REPO/issues/$PR_NUMBER/events?per_page=100" --paginate \
@@ -291,17 +291,17 @@ gh api "repos/$OWNER/$REPO/pulls/$PR_NUMBER/reviews" \
     {state, submitted_at, commit_id, body, html_url}'
 ```
 
-Issue eventsに現れる `copilot_work_started` は進行確認の運用シグナルとして使い、永続的な公開API契約とはみなさない。取得できない環境では未実行と断定せず、上記の他の証拠で状態を判断する。PR #166 では `requested_reviewers=[]` かつreview未提出の期間にも `copilot_work_started` が記録され、その後reviewが正常完了した。このイベントはHEADを直接含まないため、必ず現HEADへの `review_requested` 以後かつHEAD未更新の条件と組み合わせて使う。
+Treat Issue-event `copilot_work_started` as an operational progress signal, not a permanent public API contract. Where inaccessible, judge through other evidence without asserting unexecuted. PR #166 recorded it while `requested_reviewers=[]` and reviews were absent, followed by normal completion. Because this event lacks HEAD, always combine with occurrence after current-HEAD `review_requested` and unchanged HEAD.
 
-### Copilot Code Reviewの依頼
+### Requesting Copilot Code Review
 
-「レビュー候補の高速判定」と同じ `OWNER`・`REPO`・`PR_NUMBER` を設定し、通常は公式CLIで1回依頼する。既存の他のレビュアーを削除しない。[^gh-pr-edit]
+Set the same `OWNER`, `REPO`, and `PR_NUMBER` as quick assessment, normally requesting once through the official CLI. Do not remove other existing reviewers.[^gh-pr-edit]
 
 ```bash
 gh pr edit "$PR_NUMBER" --repo "$OWNER/$REPO" --add-reviewer "@copilot"
 ```
 
-専用CLIが利用できない実行環境など、必要な場合だけ次の正式REST API経路を使う。固定Bot IDやPRのNode IDの取得は不要。[^github-rest-review-requests][^docs-request-a-code-review-use-code-review]
+Use the formal REST path below only when needed, such as environments lacking the dedicated CLI. Fixed Bot IDs or PR Node IDs are unnecessary.[^github-rest-review-requests][^docs-request-a-code-review-use-code-review]
 
 ```bash
 gh api --method POST \
@@ -309,17 +309,17 @@ gh api --method POST \
   -f 'reviewers[]=copilot-pull-request-reviewer[bot]'
 ```
 
-CLI・APIの成功は依頼受理であり、実行開始・正常なレビュー完了とは分ける。依頼後は「Copilot依頼後の実行状態を確認する」に従う。CLIの失敗・タイムアウトを理由にAPIへ自動で再送せず、先に既存の依頼・実行状態を確認する。`requested_reviewers` やreviewsが空であることだけを失敗根拠にせず、受理が不明なら状態を1回取得し、それでも不明なら再依頼・別経路への切替を止め、未確認範囲と再開条件を記録する。
+CLI/API success means acceptance, separate from execution start/normal completion. Follow “Checking execution after Copilot requests.” Do not automatically resend via API after CLI failures/timeouts; first check existing requests/execution. Empty reviewer/review arrays alone do not establish failure. Retrieve state once if acceptance is unclear; if still unknown, stop re-requesting or switching paths and record unverified scope/resumption conditions.
 
-[^docs-request-a-code-review-use-code-review]: [Copilot Code Review](https://docs.github.com/en/copilot/how-tos/use-copilot-agents/request-a-code-review/use-code-review)。本文に記した参照範囲と採用判断の根拠。
-[^codex-github-review]: [CodexのGitHubレビュー](https://developers.openai.com/codex/integrations/github)。レビューの設定・依頼・結果確認と、導入だけで完了としない判断の根拠。
-[^github-graphql-pulls]: [GitHub GraphQL Pull requests](https://docs.github.com/en/graphql/reference/pulls)。PRのレビュー候補取得フィールドと引数の根拠。
-[^github-installed-apps]: [Installed GitHub Appsの確認](https://docs.github.com/en/apps/using-github-apps/reviewing-and-modifying-installed-github-apps)。導入済みAppとリポジトリアクセス範囲の確認方法。
-[^github-app-user-access]: [GitHub App user access tokenのアクセス範囲](https://docs.github.com/en/apps/creating-github-apps/authenticating-with-a-github-app/generating-a-user-access-token-for-a-github-app)。Appとユーザー双方のアクセス範囲に限定される仕組みと、同一タスクの成功操作を候補判定に使う根拠。
-[^github-app-installation-api]: [Repository installation API](https://docs.github.com/en/rest/apps/apps#get-a-repository-installation-for-the-authenticated-app)。確認対象App自身のJWTが必要なAPIの認証条件。
-[^github-app-user-installations]: [User access tokenで参照できるinstallations](https://docs.github.com/en/rest/apps/installations#list-app-installations-accessible-to-the-user-access-token)。認証したGitHub Appに限定された導入情報の範囲。
-[^ruleset-rules]: [Rulesetで利用できるルール](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-rulesets/available-rules-for-rulesets)。必須Approve数とCode Ownerレビュー要件の根拠。
-[^code-owners]: [Code Ownersについて](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners)。CODEOWNERSの適用と複数owner時の承認条件。
-[^approval-code-owner-exception]: Issue #165 で採用した、唯一のCode OwnerがPR authorの場合の実効承認条件。
-[^gh-pr-edit]: [GitHub CLI: gh pr edit](https://cli.github.com/manual/gh_pr_edit)。`--add-reviewer "@copilot"` による通常依頼の根拠。
-[^github-rest-review-requests]: [REST API: Request reviewers](https://docs.github.com/en/rest/pulls/review-requests#request-reviewers-for-a-pull-request)。必要時に使う正式API経路の根拠。
+[^docs-request-a-code-review-use-code-review]: [Copilot Code Review](https://docs.github.com/en/copilot/how-tos/use-copilot-agents/request-a-code-review/use-code-review). Evidence for reference scope and adoption decisions stated in the text.
+[^codex-github-review]: [Codex GitHub review](https://developers.openai.com/codex/integrations/github). Evidence for review configuration, requests, result checks, and installation alone not establishing completion.
+[^github-graphql-pulls]: [GitHub GraphQL Pull requests](https://docs.github.com/en/graphql/reference/pulls). Evidence for PR reviewer-candidate fields/arguments.
+[^github-installed-apps]: [Checking installed GitHub Apps](https://docs.github.com/en/apps/using-github-apps/reviewing-and-modifying-installed-github-apps). Checking installed Apps and repository access.
+[^github-app-user-access]: [GitHub App user access token scope](https://docs.github.com/en/apps/creating-github-apps/authenticating-with-a-github-app/generating-a-user-access-token-for-a-github-app). Evidence for access limited by both App/user and same-task successful operations used in candidate assessment.
+[^github-app-installation-api]: [Repository installation API](https://docs.github.com/en/rest/apps/apps#get-a-repository-installation-for-the-authenticated-app). Authentication requires the checked App's own JWT.
+[^github-app-user-installations]: [Installations accessible to user access tokens](https://docs.github.com/en/rest/apps/installations#list-app-installations-accessible-to-the-user-access-token). Installation scope limited to the authenticated GitHub App.
+[^ruleset-rules]: [Available Ruleset rules](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-rulesets/available-rules-for-rulesets). Required approval counts and Code Owner requirements.
+[^code-owners]: [About Code Owners](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners). CODEOWNERS application and approval with multiple owners.
+[^approval-code-owner-exception]: Effective approval conditions adopted in Issue #165 when the sole Code Owner is the PR author.
+[^gh-pr-edit]: [GitHub CLI: gh pr edit](https://cli.github.com/manual/gh_pr_edit). Evidence for ordinary requests with `--add-reviewer "@copilot"`.
+[^github-rest-review-requests]: [REST API: Request reviewers](https://docs.github.com/en/rest/pulls/review-requests#request-reviewers-for-a-pull-request). Formal API path used when needed.

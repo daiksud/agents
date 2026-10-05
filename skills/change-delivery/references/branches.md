@@ -28,7 +28,7 @@ Validate changes early and integrate into main, reducing drift from long-lived b
 - Record work start time, the next integration unit, and validation method in the Issue. After more than one active workday, update confirmed reasons such as waiting for approval/review or failure investigation, and the next integration unit.
 - Do not skip approvals, review, or CI to meet the guideline, or merge unverified changes solely for a deadline.
 - Update reasons and plans and continue adjustments to decomposition, order, or files within the purpose. Follow “Planning and execution scope” in the dependency `issue-management` for changes needing confirmation. Sub-issue existence alone is not an execution request.
-- At the start, check required validation on target main. If main is failing, prioritize [Recovery procedures](review-and-merge.md#統合後mainの確認と復旧) and do not start subsequent work until healthy.
+- At the start, check required validation on target main. If main is failing, prioritize [Recovery procedures](review-and-merge.md#post-integration-main-verification-and-recovery) and do not start subsequent work until healthy.
 
 Record active workdays, stagnation, review waits, validation time, and main recovery time from timestamps/URLs in Issues, PRs, and existing Actions. State missing data, substitute timestamps, incomplete results, and unavailability; do not use them for individual evaluation or assertions of improvement effects from single comparisons. Keep project definitions and actual measurements in project documents, Issues, and PRs, without embedding individual results in common skills.
 
