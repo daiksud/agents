@@ -1,84 +1,84 @@
 ---
 type: Guide
-title: OKFの出典・信頼・ライフサイクル
-description: 主張と出典の対応、生成と確認の区別、内容更新と鮮度の扱いを示します。
+title: OKF provenance, trust, and lifecycle
+description: Show claim/source mappings, generation versus verification, and handling content updates and freshness.
 sources:
   - id: okf-spec
     resource: https://github.com/GoogleCloudPlatform/open-knowledge-format/blob/ad30107c31c06aec8a7d5636e0d1058118604e6f/SPEC.md
     title: Open Knowledge Format v0.2
 ---
 
-## 主張と出典を結ぶ
+## Connect claims to sources
 
-外部資料に依拠する文書では、その資料を `sources` のリストへ記録する。本環境では資料全体への関連リンクだけで済ませず、個別の主張を安定した `id` の脚注へ結ぶ。各sourceの `resource` は記載時に必須、`id`・`title` は任意だが、引用するsourceには `id` が推奨される。[^okf-spec]
+For externally grounded documents, record material in a `sources` list. In this environment, link individual claims to footnotes with stable `id` values rather than only general related-material links. Each source requires `resource` when present; `id` and `title` are optional, but `id` is recommended for cited sources.[^okf-spec]
 
 ```markdown
 ---
 type: Guide
-title: 注文の保存期間
-description: 保存期間を確認する際の正本を示す。
+title: Order retention period
+description: Identify the authoritative source for checking retention periods.
 sources:
   - id: retention-policy
     resource: https://example.com/policies/retention
-    title: 保存方針
+    title: Retention policy
 ---
 
-注文の保存期間は保存方針で定める。[^retention-policy]
+The retention policy defines order retention periods.[^retention-policy]
 
-[^retention-policy]: 保存方針。
+[^retention-policy]: Retention policy.
 ```
 
-上記は形式の例であり、実際の保存期間や取得結果を証明しない。作成時は読んだ資料と実在する主張に置き換える。
+This is a format example, not proof of actual retention periods or retrieval results. Replace it with read material and actual claims when authoring.
 
-脚注ラベルが `sources[].id` への結合キーとなり、脚注の説明文を解析して出典を決めない。並べ替えても意味が変わらないIDを使い、位置番号 `sources[0]` に依存させない。本環境では重複ID、未定義の脚注、脚注に対応しないsourceを確認する。本文で引用しないsourceにまで脚注を新設させない。[^okf-spec]
+Footnote labels join to `sources[].id`; do not determine sources by parsing footnote prose. Use IDs whose meanings survive reordering, without depending on position numbers such as `sources[0]`. This environment checks duplicate IDs, undefined footnotes, and sources without matching footnotes. Do not force footnotes for sources not cited in content.[^okf-spec]
 
-出典の `resource` は外部URL、Bundle基準・ファイル相対パス、母集団・範囲の記述を取れる。範囲記述を存在しないファイルとして拒否しない。配布する資料の外部出典は完全URLで保持し、Gitの実装根拠は完全SHAで版を固定する。後者は本環境の再現性のための選択である。[^okf-spec]
+Source `resource` may be external URLs, Bundle-relative/file-relative paths, or population/scope descriptions. Do not reject scope descriptions as nonexistent files. Preserve distributed material's external sources as complete URLs, and pin Git implementation evidence with complete SHAs. The latter is this environment's reproducibility choice.[^okf-spec]
 
-## 客観的な信号を保持する
+## Preserve objective signals
 
-`sources` の `author`・`usage_count`・`last_modified` は任意の客観的な信号であり、信頼スコアではない。`last_modified` は資料自体の更新時刻であり、概念を作った時刻とは区別する。閲覧時刻を資料更新時刻として記録しない。[^okf-spec]
+Source `author`, `usage_count`, and `last_modified` are optional objective signals, not trust scores. `last_modified` is the source's own update time, separate from concept creation. Do not record viewing times as source update times.[^okf-spec]
 
-`usage_count` を記録する場合は観測した回数と観測期間を対応づける。`usage_window: { from, to }` は `sources` と同階層に置き、各sourceに置いた期間は共有期間を上書きする。スケジュール実行回数と人の閲覧回数を同じ精度のランキングとして比較しない。未知の回数をゼロにしない。[^okf-spec]
+When recording `usage_count`, connect observed counts to observation periods. Put `usage_window: { from, to }` at the same level as `sources`; periods on individual sources override the shared period. Do not compare scheduled execution counts and human views as rankings of equal precision. Unknown counts are not zero.[^okf-spec]
 
-内部概念が出典なら、その `sources` を辿って根拠を追える。v0.2では外部データ系譜の専用フィールドを標準化していない。独自のキーを既存文書から削除したり、独自の評価値をOKF標準の信頼判定として追加したりしない。[^okf-spec]
+If internal concepts are sources, follow their `sources` to trace evidence. v0.2 does not standardize dedicated external-data-lineage fields. Do not delete custom keys from existing documents or add custom evaluation values as OKF-standard trust judgments.[^okf-spec]
 
-## 生成と確認を分ける
+## Separate generation and verification
 
-`generated` は現在の内容の作成を、`verified` は出典・資産と照合した確認イベントを表す。すべて任意であり、値は根拠がある場合だけ記録する。`generated.by` は記載時に必須、`generated.at` は最後の意味ある変更の日時。整形しただけで事実を更新したように見せない。[^okf-spec]
+`generated` represents creation of current content; `verified` represents checking events against sources/assets. All are optional; record only evidence-based values. `generated.by` is mandatory when present; `generated.at` is the last meaningful-change time. Do not make formatting alone appear to update facts.[^okf-spec]
 
-`verified` は `{ by, at }` のリスト、または同じ意味の単一mappingを取る。単一mappingを不適合としない。最新の `at` が直近の確認を表すが、内容更新と再確認は独立している。[^okf-spec]
+`verified` accepts a list of `{ by, at }` or a single mapping with the same meaning. Single mappings are not nonconforming. The latest `at` indicates the latest check, but content updates and rechecking are independent.[^okf-spec]
 
 ```yaml
 verified: { by: 'human:reviewer-id', at: '2026-09-11T09:00:00+09:00' }
 ```
 
-この例を実際の確認がない文書へコピーしない。確認者・時刻・対象の内容を実際の証拠で特定する。
+Do not copy this into documents without actual verification. Identify verifier, time, and target content from actual evidence.
 
-| 記録 | 意味 |
+| Record | Meaning |
 | --- | --- |
-| `verified` なし | 未検証。利用可能だが確認済みとは主張しない |
-| 非 `human:` Actorだけによる確認 | machine-confirmed |
-| `human:<id>` による確認あり | human-reviewed |
+| No `verified` | Unverified; usable, but do not claim verified |
+| Verification only by non-`human:` Actors | machine-confirmed |
+| Verification by `human:<id>` present | human-reviewed |
 
-Actorはエージェント・ツールなら `<producer>/<version>`、人なら `human:<id>`、自動処理なら `process:<id>`。人が作成・確認した内容には `human:` を使う。CIの成功を人間の確認へ置き換えず、静的検査しかしていないCIを内容の照合として記録しない。信頼段階はアクセス制御ではない。[^okf-spec]
+Actors are `<producer>/<version>` for agents/tools, `human:<id>` for people, and `process:<id>` for automation. Use `human:` for human creation/verification. Do not substitute CI success for human checking, or record static-only CI as content comparison. Trust levels are not access controls.[^okf-spec]
 
-## 状態・日時・期限
+## Status, datetimes, and expiry
 
-`status` は `draft`（未レビュー・未完の場合あり）、`stable`（利用可能）、`deprecated`（履歴とリンク用に保持）のいずれか。省略時は `stable` であり、人間による確認済みを意味しない。[^okf-spec]
+`status` is `draft` (possibly unreviewed/incomplete), `stable` (usable), or `deprecated` (retained for history/links). Omission means `stable`, not human verification.[^okf-spec]
 
-日時値にはISO 8601のUTC offset付きdatetimeを使う。例は `2026-09-11T09:00:00+09:00` または `2026-09-11T00:00:00Z`。対象は `generated.at`・`verified[].at`・`sources[].last_modified`・`usage_window.from/to`・`stale_after`。日付だけの古い値へタイムゾーンを推測で足さず、根拠を確認する。[^okf-spec]
+Use ISO 8601 datetimes with UTC offsets, such as `2026-09-11T09:00:00+09:00` or `2026-09-11T00:00:00Z`, for `generated.at`, `verified[].at`, `sources[].last_modified`, `usage_window.from/to`, and `stale_after`. Do not assume time zones for old date-only values; check evidence.[^okf-spec]
 
-`stale_after` は絶対時刻で、`now >= stale_after` のとき期限切れとなる。期限ちょうども含む。期限・未検証という状態自体は構文エラーではない。期限がない文書を鮮度が証明された文書とみなさず、期限を慣例だけで新設しない。[^okf-spec]
+`stale_after` is an absolute time; expiry occurs when `now >= stale_after`, including exactly at expiry. Expired/unverified status alone is not a syntax error. Absence of expiry does not prove freshness; do not add expiry solely by convention.[^okf-spec]
 
-## 更新と移行
+## Updates and migration
 
-1. 既存の `sources`、未知キー、`generated`、`verified`、期限と本文を先に読む。引用IDは並べ替えで変更しない。
-2. 変更する主張とその根拠を特定する。既存sourceは数が同じでも別資料への置換になっていないか確認する。
-3. 軽微修正では生成日時・確認日時・期限を機械的に更新しない。意味が変わる場合は実際の生成事実を確認し、過去の確認履歴を保持したうえで、それが変更前の内容に対する確認であることを本文等で明示する。
-4. 再確認を実施した場合だけ新しい `verified` イベントを追加する。確認対象・範囲を記録できない場合は、その不確実性を残し、最新内容が確認済みとは報告しない。
-5. v0.1の本文 `Citations` は根拠を確認して `sources` と脚注へ移す。旧 `timestamp` だけではActorが分からないため、`generated.by` を捏造しない。外部v0.1資料を受け入れるだけなら無理に書き換えない。
-6. 保存後の差分で出典・未知キー・履歴の消失がないか確認する。YAMLの読み書きで日時の表記や値が変わっていないかも確認する。
+1. First read existing `sources`, unknown keys, `generated`, `verified`, expiry, and content. Do not change citation IDs due to reordering.
+2. Identify changed claims and their evidence. Even with equal source counts, check existing sources have not been replaced with different material.
+3. Do not mechanically update generation/checking times or expiry for minor corrections. For meaning changes, verify actual generation facts and preserve prior checking history, explicitly stating in content or similar places that it checked pre-change content.
+4. Add new `verified` events only after rechecking. If checking targets/scope cannot be recorded, retain uncertainty rather than reporting current content verified.
+5. Migrate v0.1 content `Citations` to `sources` and footnotes after checking evidence. Old `timestamp` alone does not identify Actors; do not fabricate `generated.by`. Do not force rewrites merely to accept external v0.1 material.
+6. Check saved diffs for lost sources, unknown keys, or history, and for altered datetime notation/values through YAML reading/writing.
 
-これらは仕様の保持推奨と生成・確認の意味に基づく本環境の更新手順である。仕様は履歴の版識別スキーマを規定していないため、既存の履歴管理を使い、独自キーを規範として要求しない。[^okf-spec]
+These are this environment's update procedures based on specification preservation recommendations and generation/verification semantics. The specification defines no history-version-identification schema; use existing history management without requiring custom keys as norms.[^okf-spec]
 
-[^okf-spec]: 固定版SPEC §§4.1、5、7、11、13。本環境の更新手順と追加検査は適用判断である。
+[^okf-spec]: Fixed SPEC §§4.1, 5, 7, 11, 13. This environment's update procedures and additional checks are application decisions.

@@ -1,7 +1,7 @@
 ---
 type: Instruction
-title: IssueとPRの書き方
-description: GitHub IssueとPull Requestのタイトル・本文に残す情報と役割の違いを定めます。
+title: Writing Issues and PRs
+description: Define information retained in GitHub Issue and Pull Request titles and bodies, and their distinct roles.
 sources:
   - id: conventional-commits
     resource: https://www.conventionalcommits.org/en/v1.0.0/
@@ -15,60 +15,60 @@ sources:
     resource: https://google.github.io/eng-practices/review/developer/cl-descriptions.html
 ---
 
-## IssueとPRの書き方
+## Writing Issues and PRs
 
-Issueは実現したい状態と完了条件を、Pull Requestは実際に行った変更とその検証を記録する。両者を同じテンプレートの複製にせず、将来の読み手がタイトルと本文から「何を変える・変えたのか」と「なぜ必要なのか」を追えるようにする。GitHubはIssueに一目で内容が分かるタイトルと目的・解決に必要な情報を、PRに問題・アプローチ・結果を理解できる文脈を勧めている。Googleの変更説明ガイドも、変更内容と理由を将来の履歴に残すことを重視する。[^github-issue-quickstart] [^github-review-changes] [^google-cl-descriptions]
+Issues record desired states and completion conditions; Pull Requests record actual changes and validation. Do not duplicate the same template for both; future readers should trace “what changes/changed” and “why needed” from titles/bodies. GitHub recommends immediately understandable titles and purpose/resolution information for Issues, and context explaining problems, approaches, and results for PRs. Google's change-description guide also emphasizes preserving changes/reasons in future history.[^github-issue-quickstart] [^github-review-changes] [^google-cl-descriptions]
 
-### タイトル
+### Titles
 
-IssueとPRのタイトルは、次のConventional Commits形式で記述する。
+Write Issue/PR titles in this Conventional Commits format.
 
 ```text
 <type>[(scope)][!]: <description>
 ```
 
-Conventional Commits 1.0.0が規定する対象はコミットメッセージであり、Issue・PRタイトルへの適用は、作業項目・変更・スカッシュコミットで同じ語彙を使うための本環境のローカル規約とする。標準仕様そのものがIssue・PRタイトルを要求しているとは扱わない。[^conventional-commits]
+Conventional Commits 1.0.0 specifies commit messages. Applying it to Issue/PR titles is a local convention in this environment for shared vocabulary across work items, changes, and squash commits; the standard itself does not require Issue/PR titles.[^conventional-commits]
 
-- `feat`、`fix`、`docs`、`refactor`、`test`、`chore` など、対象リポジトリのコミット規約と変更の意図に合うtypeを使う。リポジトリ固有の許可typeがあればそれを優先する。
-- scopeは安定したドメイン・コンポーネント・責務を短い名詞で示せる場合だけ付ける。意味のないscopeを埋めるために追加しない。
-- descriptionは英語の命令形で、対象と変化が分かるよう具体的かつ簡潔に書き、末尾にピリオドを付けない。「fix bug」「update docs」「phase 1」のように、対象や変化が分からない表現だけで済ませない。[^google-cl-descriptions]
-- `!` は対象リポジトリのコミット規約が破壊的変更を許可するtypeに限り、互換性を壊す変更であることを確認できる場合だけ使う。本環境の既定規約では `feat` または `fix` に限る。Issueの段階で未確認の破壊的変更を推測して付けない。
+- Use types such as `feat`, `fix`, `docs`, `refactor`, `test`, or `chore` appropriate to target commit conventions and change intent. Prioritize repository-specific permitted types.
+- Add scope only when a short noun can express a stable domain, component, or responsibility. Do not add meaningless scope as filler.
+- Write specific concise descriptions in English imperative form, identifying targets/changes without final periods. Do not use only unclear expressions such as “fix bug,” “update docs,” or “phase 1.”[^google-cl-descriptions]
+- Use `!` only for types whose repository conventions permit breaking changes, and only when incompatibility is confirmed. This environment's default permits only `feat` or `fix`. Do not assume unverified breaking changes at the Issue stage.
 
-### 共通の本文原則
+### Common body principles
 
-- 本文だけで目的・変更理由・重要な文脈が分かるようにする。Issue、設計文書、外部資料へのリンクは根拠や詳細への導線として使い、リンク先を読まなければ理由が分からない本文にしない。[^google-cl-descriptions]
-- 対象リポジトリにIssue Form、Issue template、PR templateがある場合はその構造を優先する。指定がなければ内容に合う構成を選び、固定見出し、空の節、「なし」の埋め草を共通要件にしない。
-- 確認済みの事実、計画、実施済みの結果、未確認事項を区別する。予定を実施済みの変更や検証結果として書かず、分からない原因・効果を推測で補わない。
-- 短いIssue・PRは短く書いてよい。情報量ではなく、現在の判断と将来の検索・理解に必要な文脈が残っているかで判断する。
+- Bodies alone should convey purpose, reasons, and important context. Links to Issues, design documents, or external material provide evidence/details; do not make reasons understandable only after following links.[^google-cl-descriptions]
+- Prioritize target Issue Forms, Issue templates, or PR templates. If unspecified, choose appropriate structure without common requirements for fixed headings, empty sections, or “none” filler.
+- Distinguish confirmed facts, plans, executed results, and uncertainties. Do not describe plans as executed changes/validation or infer unknown causes/effects.
+- Short Issues/PRs may be short. Judge retained context for current decisions and future retrieval/understanding rather than volume.
 
-### Issue本文
+### Issue bodies
 
-Issueは「どう実装したか」ではなく「どの状態を実現したいか」を中心に書く。GitHubもIssue本文には目的と解決に役立つ情報を求め、バグでは再現手順・期待結果・実際の結果を例示している。[^github-issue-quickstart]
+Center Issues on “what state to achieve,” rather than “how it was implemented.” GitHub likewise asks for purpose and helpful resolution information, including reproduction, expected results, and actual results for bugs.[^github-issue-quickstart]
 
-- 目的・問題・現在との差分を示す。
-- 完了を判定できる成功条件と、守る必要がある制約を示す。
-- 実装計画が決まっている場合は、作業範囲・順序・検証方法を記録する。未決定の実装方法、変更ファイル、設計を推測して成功条件へ固定しない。
-- バグでは必要に応じて再現条件、期待する結果、実際の結果を記録する。
-- 承認待ち、未実行の検証、依存関係など、完了判断に影響する状態を明示する。
+- Show purpose, problems, and differences from the current state.
+- Show success conditions judging completion and constraints to preserve.
+- When implementation plans are settled, record scope, order, and validation. Do not infer unsettled methods, files, or designs and fix them as success conditions.
+- For bugs, record reproduction conditions, expected results, and actual results as needed.
+- State pending approval, unexecuted validation, dependencies, and other statuses affecting completion judgments.
 
-### PR本文
+### PR bodies
 
-PRはレビュー対象となる「実際の変更」を記録する。GitHubは明確なタイトルと説明によって、問題、アプローチ、結果、レビューで注目すべき点を理解できるようにすることを勧めている。[^github-review-changes]
+PRs record actual changes being reviewed. GitHub recommends clear titles/descriptions explaining problems, approaches, results, and points needing review attention.[^github-review-changes]
 
-- 何を変更したかと、なぜその変更が必要だったかを書く。
-- 実行した検証と結果を示し、未確認の範囲があれば区別する。
-- 重要な制約、既知の限界、意図的な対象外、レビューで特に確認してほしい点は、判断に必要な場合だけ記載する。
-- Issue本文をそのまま複製せず、Issueが目標を、PRが実際の差分を説明するように役割を分ける。
-- レビュー対応で変更内容・理由・検証結果・重要な制約が変わった場合は、PR本文も現在のHEADに合わせて更新する。
+- Write what changed and why it was necessary.
+- Show executed validation/results, separating unverified scope.
+- Include important constraints, known limits, intentional exclusions, or particular review focus only when needed for decisions.
+- Do not copy Issue bodies verbatim; let Issues explain goals and PRs explain actual diffs.
+- If review changes content, reasons, validation results, or important constraints, update descriptions to current HEAD.
 
-PRがIssueを完全に解決する場合は、対象リポジトリの既定ブランチへ向けたPR本文で `Closes #123`、`Fixes #123`、`Resolves #123` などのclosing keywordを使える。部分対応や後続作業が残る場合は自動closeを使わず、通常の参照として関連付ける。GitHubではclosing keywordでリンクしたPRが既定ブランチへマージされると、関連Issueが自動的にcloseされる。[^github-link-pr-issue]
+When a PR completely resolves an Issue, closing keywords such as `Closes #123`, `Fixes #123`, or `Resolves #123` may be used in PR bodies targeting the default branch. For partial resolution or remaining follow-up work, use ordinary references without automatic closure. On GitHub, merging linked PRs with closing keywords into the default branch automatically closes related Issues.[^github-link-pr-issue]
 
-### 参照元と適用判断
+### Sources and application decisions
 
-Conventional Commitsの構文とtype・scope・破壊的変更の表現をタイトル形式の基礎にするが、Issue・PRへの適用自体は本環境の規約である。GitHubのIssue・PRガイドから、目的が分かるタイトル、解決・レビューに必要な文脈、問題・アプローチ・結果の説明、Issue連携を採用する。Google Engineering Practicesから、変更内容と理由を将来の履歴に残し、短い要約だけでなく必要な文脈を本文へ残す考え方を採用する。固定テンプレート、必須の本文長、全Issue・PRへの同一見出しは導入しない。
+Use Conventional Commits syntax, types, scopes, and breaking-change notation as the title-format basis; applying them to Issues/PRs is this environment's convention. Adopt purpose-expressive titles, resolution/review context, problem/approach/result explanations, and Issue linking from GitHub guides. Adopt preserving changes/reasons in future history and retaining needed body context beyond short summaries from Google Engineering Practices. Do not introduce fixed templates, mandatory body lengths, or identical headings for every Issue/PR.
 
-[^github-issue-quickstart]: GitHub Docs「Quickstart for GitHub Issues」。Issueの説明的なタイトル、目的、バグ報告での再現・期待・実際の結果の例。
-[^github-review-changes]: GitHub Docs「Helping others review your changes」。PRを小さく明確にし、問題・アプローチ・結果とレビューに必要な文脈を示す指針。
-[^google-cl-descriptions]: Google Engineering Practices「Writing good CL descriptions」。変更内容と理由を将来の履歴へ残し、短い要約と必要な文脈を記述する指針。
-[^conventional-commits]: Conventional Commits 1.0.0。コミットメッセージの構文、type・scope・破壊的変更の仕様。
-[^github-link-pr-issue]: GitHub Docs「Linking a pull request to an issue」。closing keywordによるIssue連携と既定ブランチへのマージ時の自動close。
+[^github-issue-quickstart]: GitHub Docs, “Quickstart for GitHub Issues.” Descriptive Issue titles, purpose, and bug reproduction/expected/actual result examples.
+[^github-review-changes]: GitHub Docs, “Helping others review your changes.” Guidance on small clear PRs and context about problems, approaches, results, and review needs.
+[^google-cl-descriptions]: Google Engineering Practices, “Writing good CL descriptions.” Guidance on preserving changes/reasons in future history, with short summaries and needed context.
+[^conventional-commits]: Conventional Commits 1.0.0. Commit syntax, types, scopes, and breaking-change specifications.
+[^github-link-pr-issue]: GitHub Docs, “Linking a pull request to an issue.” Issue links through closing keywords and automatic closure on default-branch merge.

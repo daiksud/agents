@@ -58,11 +58,11 @@ When connecting post-skill KPT to improvements in `daiksud/agents`, use related 
 
 ### Recording loosely related additional requests
 
-To preserve additional requests while continuing current work, recording loosely related requests alone is an exception to ordinary Issue planning format and the planning/approval flow in [Starting and planning](planning.md#着手と計画).
+To preserve additional requests while continuing current work, recording loosely related requests alone is an exception to ordinary Issue planning format and the planning/approval flow in [Starting and planning](planning.md#starting-and-planning).
 
 | Relationship to current task | Action |
 | --- | --- |
-| Needed for current purpose/success conditions | Reflect within approved scope; for changes to purpose, outcomes, acceptance conditions, or external impact, apply plan update/reapproval in [Starting and planning](planning.md#着手と計画) |
+| Needed for current purpose/success conditions | Reflect within approved scope; for changes to purpose, outcomes, acceptance conditions, or external impact, apply plan update/reapproval in [Starting and planning](planning.md#starting-and-planning) |
 | Independent purpose, loosely related to current purpose/success conditions | Explain separate handling and record in an independent follow-up Issue below. Continue current approved work |
 | Relationship unclear | Ask the user and classify after the answer. Continue current work not depending on the answer |
 
@@ -73,13 +73,13 @@ To preserve additional requests while continuing current work, recording loosely
 
 Do not claim creation after posting failure or unverified saving. Even with confirmed saving, unverified requested opening/rendering leaves the overall recording procedure incomplete; separately explain saving success and failed/unverified scope. On resumption check saved state without repeating successful operations. Continue current work independent of answers/recovery.
 
-Before implementing follow-up Issues, preserve original requests and create/save/retrieve/present ordinary plans under “Issue content” and [Starting and planning](planning.md#着手と計画). Follow “Issue recording for diagnosis and planning only” for development-practice diagnosis/adoption planning alone, and [Starting and planning](planning.md#着手と計画) for individual change implementation plans. Planning-only requests do not approve implementation. Start implementation through ordinary approval procedures, including the same conditions for approval by instructions to start a specified Issue goal.
+Before implementing follow-up Issues, preserve original requests and create/save/retrieve/present ordinary plans under “Issue content” and [Starting and planning](planning.md#starting-and-planning). Follow “Issue recording for diagnosis and planning only” for development-practice diagnosis/adoption planning alone, and [Starting and planning](planning.md#starting-and-planning) for individual change implementation plans. Planning-only requests do not approve implementation. Start implementation through ordinary approval procedures, including the same conditions for approval by instructions to start a specified Issue goal.
 
 ### Issue recording for diagnosis and planning only
 
-Use this path for terminal deliverables limited to Issue records of diagnosis/adoption plans, rather than based on the topic of diagnosis. Do not create Issues for requests merely seeking answers with diagnosis, proposals, comparisons, or draft plans. For both Issue recording and implementation, do not stop here; use ordinary [Starting and planning](planning.md#着手と計画).
+Use this path for terminal deliverables limited to Issue records of diagnosis/adoption plans, rather than based on the topic of diagnosis. Do not create Issues for requests merely seeking answers with diagnosis, proposals, comparisons, or draft plans. For both Issue recording and implementation, do not stop here; use ordinary [Starting and planning](planning.md#starting-and-planning).
 
-For requests only to create/update development-practice diagnosis/adoption-plan Issues, deliver through this path without introducing a wait for implementation-plan approval. If individual change/incident implementation plans or post-diagnosis implementation are also requested, prioritize [Starting and planning](planning.md#着手と計画) even when cause diagnosis is included.
+For requests only to create/update development-practice diagnosis/adoption-plan Issues, deliver through this path without introducing a wait for implementation-plan approval. If individual change/incident implementation plans or post-diagnosis implementation are also requested, prioritize [Starting and planning](planning.md#starting-and-planning) even when cause diagnosis is included.
 
 1. Check target repository, purpose, and scope, and search existing Issues. For repeated diagnosis, preserve original evidence/bodies and record changed judgments/reasons in history.
 2. Summarize diagnosis evidence, uncertainties, priorities, the first small adoption unit, order/dependencies, expected changes, validation, and reassessment conditions in the body. Use the dependency `engineering-assessment` for development-practice adoption diagnosis.
@@ -89,4 +89,4 @@ For requests only to create/update development-practice diagnosis/adoption-plan 
 
 Do not save in posting-prohibited Plan Mode or explicitly read-only work; show unsaved drafts and restrictions. Saving failure or inability to verify is not success; show resumption conditions. On resumption check saved state and avoid duplicates.
 
-If diagnosis discovers failing main, record evidence and recovery priority in the plan; diagnosis alone does not start recovery implementation. If implementation is requested later, inherit the existing Issue through ordinary [Starting and planning](planning.md#着手と計画). If explicit approval for that plan already exists, do not ask again; check scope and execute.
+If diagnosis discovers failing main, record evidence and recovery priority in the plan; diagnosis alone does not start recovery implementation. If implementation is requested later, inherit the existing Issue through ordinary [Starting and planning](planning.md#starting-and-planning). If explicit approval for that plan already exists, do not ask again; check scope and execute.

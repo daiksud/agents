@@ -1,7 +1,7 @@
 ---
 type: Instruction
-title: コミットメッセージ
-description: コミットメッセージは Conventional Commits の仕様に従います。
+title: Commit messages
+description: Commit messages follow the Conventional Commits specification.
 sources:
   - id: conventional-commits
     resource: https://www.conventionalcommits.org/en/v1.0.0/
@@ -13,41 +13,41 @@ sources:
     resource: https://github.com/github/awesome-copilot/blob/4f4796f0bf30e105700f97ed8408c12b6aa95e06/skills/git-commit/SKILL.md
 ---
 
-## コミットメッセージ
+## Commit messages
 
-### 対象と根拠を確認する
+### Check targets and evidence
 
-- 文案は提示された差分・変更説明、または依頼対象の差分から作る。リポジトリを調べる場合は `git status`、`git diff --cached`、`git diff` でstagedとunstagedを区別し、対象外の変更を混ぜない。[^git-commit]
-- type・scope・説明はファイル名だけで決めず、実際の変更の目的と既存の用語から選ぶ。本文には確認済みの背景を使い、原因・意図・代替案・性能値・検証結果・Issue番号を推測で補わない。[^commit-message-storyteller]
-- 情報が不足する場合は既存のIssue・仕様・差分を確認し、それでも目的や対象を決められない点だけ質問する。単純な変更の文案に不要な背景の回答を必須にしない。
+- Draft from supplied diffs/change descriptions or requested target diffs. When investigating repositories, use `git status`, `git diff --cached`, and `git diff` to distinguish staged/unstaged work without mixing out-of-scope changes.[^git-commit]
+- Choose types, scopes, and descriptions from actual purposes and existing terminology, not filenames alone. Use confirmed background in bodies without guessing causes, intentions, alternatives, performance figures, validation, or Issue numbers.[^commit-message-storyteller]
+- If information is insufficient, check existing Issues, specifications, and diffs, asking only about unresolved purpose/target. Do not require unnecessary background answers for simple-change drafts.
 
-### 件名・本文・フッター
+### Subjects, bodies, and footers
 
-- タイトルの形式は `<type>[(scope)][!]: <description>`（`[]` 内は任意）。コロンの後にスペースを入れる。[^conventional-commits]
-- 新機能は `feat`、バグ修正は `fix`。その他は `docs`、`refactor`、`test`、`chore` など、変更内容に合う型を使う。スコープは既存の領域・モジュールを表す名詞にし、不要なら省略する（例: `fix(parser): handle empty input`）。[^conventional-commits]
-- 英語の命令形で具体的かつ簡潔に書き、件名末尾にピリオドを付けない。件名全体は72文字以内を目安とするが、機械的な切り詰めや新しい強制チェックを要求しない。[^commit-message-storyteller]
-- 本文は件名や差分だけでは分からない問題・変更理由・影響・判断上の制約を補う場合に追加する。単純な変更は件名だけでよく、未置換の欄や応答文をメッセージへ残さない。[^commit-message-storyteller]
-- 本文・フッターは必要な場合のみ追加し、前のセクションとの間に空行を入れる。フッターは `Token: 値` または `Token #値` の形式にし、トークン内の空白は `-` にする（`BREAKING CHANGE` は例外）。[^conventional-commits]
-- 関連Issueへの参照は確認できた番号を使う。`Closes`・`Fixes` などの終了指定は、その変更でIssueを解決することを確認できる場合だけ使い、一部対応では `Refs` などの参照にする。
-- 本環境では破壊的変更を `feat` または `fix` の場合のみ許可する。これは任意のtypeで破壊的変更を表せる標準仕様に対するローカル規約である。[^conventional-commits]
-- 破壊的変更は `:` の直前に `!` を付けてタイトルで説明するか、フッターに `BREAKING CHANGE: <説明>` を書く。利用者への互換性の影響と既知の移行方法を説明し、Issue参照がないことを理由に必要な説明を削除しない。[^conventional-commits]
+- Title format is `<type>[(scope)][!]: <description>` (`[]` is optional), with a space after the colon.[^conventional-commits]
+- Use `feat` for features, `fix` for bugs, and appropriate other types such as `docs`, `refactor`, `test`, or `chore`. Scope is a noun for an existing area/module, omitted if unnecessary (for example `fix(parser): handle empty input`).[^conventional-commits]
+- Write specific concise English imperative subjects without final periods. Aim for 72 characters overall, without mechanical truncation or new enforced checks.[^commit-message-storyteller]
+- Add bodies to supplement problems, reasons, impact, or decision constraints unclear from subjects/diffs. Simple changes may use subjects alone; do not leave unfilled fields or response prose.[^commit-message-storyteller]
+- Add bodies/footers only as needed, separated from preceding sections by blank lines. Footers use `Token: value` or `Token #value`, replacing token spaces with `-` (except `BREAKING CHANGE`).[^conventional-commits]
+- Use confirmed related Issue numbers. Use closing directives such as `Closes` or `Fixes` only when resolution by this change is confirmed; partial changes use references such as `Refs`.
+- This environment permits breaking changes only with `feat` or `fix`. This is a local convention differing from the standard's allowance of any type for breaking changes.[^conventional-commits]
+- For breaking changes, put `!` immediately before `:` and explain in the title, or add `BREAKING CHANGE: <description>` in the footer. Explain compatibility impact and known migration methods; absence of Issue references does not justify removing necessary explanations.[^conventional-commits]
 
-### コミットする場合
+### When committing
 
-文案だけの依頼ではコピーできるメッセージを提示して終了する。Git操作を行う範囲は依存スキル `issue-management` の「計画と実行範囲」、他セッションの作業保護と変更単位は[ブランチと統合単位](branches.md)に従う。承認済みの同じ範囲について、コミットごとの再承認を要求しない。
+For drafting-only requests, present copyable messages and stop. Follow “Planning and execution scope” in the dependency `issue-management` for Git operations, and [Branches and integration units](branches.md) for protecting other sessions' work and change units. Do not require approval for every commit within the same approved scope.
 
-1. 承認対象の関連する実装・テスト・文書を、同じ目的を検証できる変更単位として扱う。ファイル数や拡張子だけで分けず、無関係な整理は含めない。分割案の提示を対象外のコミットの承認とみなさない。[^git-commit]
-2. stageが必要なら、対象ファイル・差分範囲を確認して承認対象だけを追加する。同じファイルに対象外のunstaged変更があれば、ファイル全体の追加で取り込まない。他者のstaged変更が混在していれば、勝手に解除・移動したり、そのままコミットしたりせず、必要な調整を確認する。
-3. 文案を書いた後、コミット直前にstaged差分全体が承認対象と一致することを確認する。続けて文案の各主張を差分・確認済みの背景と照合し、対象外の変更や未確認の理由が含まれていないことを確かめてからコミットする。作成後も結果を確認し、指定された停止条件に従う。[^conventional-commit]
-4. hook等で失敗した場合は成功と報告せず、HEAD・status・staged/unstaged差分を再確認する。hookによる変更も承認範囲と照合し、必要な修正・再検証と最終index確認後に通常のコミットを再試行する。自動的なhook回避やamendは行わない。[^git-commit]
+1. Treat related approved implementation, tests, and documents as units validating the same purpose. Do not split solely by file counts/extensions or include unrelated cleanup. Presenting decomposition proposals does not approve out-of-scope commits.[^git-commit]
+2. If staging is needed, check files/diff scope and add only approved targets. Do not stage whole files containing out-of-scope unstaged work. If others' staged changes are mixed in, do not arbitrarily unstage/move or commit them; confirm necessary coordination.
+3. After drafting, immediately before committing check the complete staged diff matches approval. Compare every message claim with diffs/confirmed background and exclude unrelated changes or unverified reasons before committing. Check results after creation and follow explicit stop conditions.[^conventional-commit]
+4. For hook or other failures, do not claim success; recheck HEAD, status, and staged/unstaged diffs. Compare hook changes with approved scope, then retry ordinary commits after necessary fixes/revalidation and final index checks. Do not automatically bypass hooks or amend.[^git-commit]
 
-### 参照元と適用判断
+### Sources and application decisions
 
-GitHub awesome-copilotの3資料を固定版で確認し、commit-message-storytellerの目的・理由を伝える文章作法[^commit-message-storyteller]、conventional-commitの差分確認と構造[^conventional-commit]、git-commitの目的に沿う変更単位と失敗時の扱い[^git-commit]を要約・再構成した。
+Checked fixed versions of three GitHub awesome-copilot resources, summarizing/restructuring commit-message-storyteller's purpose/reason writing guidance,[^commit-message-storyteller] conventional-commit's diff checks/structure,[^conventional-commit] and git-commit's purpose-based units and failure handling.[^git-commit]
 
-本環境では既存の承認・変更保護へ統合する。固定XML、文案生成後の無条件コミット、毎回の「Story told」説明、Issueがなければフッターを全廃する指示は採用しない。72文字は読みやすさの目安とし、本文の一律文字数制限は設けない。
+Integrate with existing approval/change protection in this environment. Do not adopt fixed XML, unconditional commits after drafting, repeated “Story told” explanations, or removal of all footers without Issues. 72 characters guides readability; no uniform body-length limit is established.
 
-[^git-commit]: Git Commit。実際の差分・目的による変更単位とhook失敗時の扱いを採用し、stage例は既存の変更保護に従って適用する。
-[^commit-message-storyteller]: Commit Message Storyteller。変更の目的・背景・影響と件名の文章作法を採用し、未確認の背景の推測と固定出力形式は採用しない。
-[^conventional-commits]: Conventional Commits 1.0.0。形式・type・scope・本文・フッターと破壊的変更の標準仕様。
-[^conventional-commit]: Conventional Commit。差分とメッセージの対応・構造を採用し、XMLと文案からの自動実行は採用しない。
+[^git-commit]: Git Commit. Adopt actual-diff/purpose-based units and hook-failure handling, applying staging examples under existing change protection.
+[^commit-message-storyteller]: Commit Message Storyteller. Adopt purpose/background/impact and subject writing, without guessing unverified background or fixed output formats.
+[^conventional-commits]: Conventional Commits 1.0.0. Standard syntax, types, scopes, bodies, footers, and breaking changes.
+[^conventional-commit]: Conventional Commit. Adopt diff/message agreement and structure, without XML or automatic execution from drafts.

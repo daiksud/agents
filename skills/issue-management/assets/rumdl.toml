@@ -1,4 +1,4 @@
-# GitHubでの表示を基準にする共通設定。
+# Common configuration based on GitHub rendering.
 [global]
 disable = ["MD013", "MD033", "MD034", "MD041"]
 

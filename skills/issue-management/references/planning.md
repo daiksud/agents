@@ -1,7 +1,7 @@
 ---
 type: Instruction
-title: 計画と実行範囲
-description: 依頼から実行範囲を判断し、影響・不確実性と検証環境を計画へ結びつけます。
+title: Planning and execution scope
+description: Determine execution scope from requests and connect impact, uncertainty, and validation environments to plans.
 sources:
   - id: github-instructions-spec-driven-workflow-v1-instructions-md
     resource: https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/instructions/spec-driven-workflow-v1.instructions.md
@@ -15,97 +15,97 @@ sources:
     resource: https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/instructions/taming-copilot.instructions.md
 ---
 
-## 計画と実行範囲
+## Planning and execution scope
 
-### 着手と計画
+### Starting and planning
 
-ユーザーの依頼と会話で得た承認を根拠に、次の条件で実行範囲を決める。計画・Issue・Sub-issueの存在や無回答だけでは実行依頼にならない。
+Determine execution scope from user requests and conversation approval under the following conditions. Plans, Issues, Sub-issues, or silence alone are not execution requests.
 
-| 状況 | 判断 |
+| Situation | Judgment |
 | --- | --- |
-| 目的・範囲が明確な変更・実装依頼 | 依頼を実行承認とし、下記の計画保存・確認・提示後に実装する |
-| 提示済み計画への「実装して」、Issueを指定した対応・ゴール開始の指示 | 対象を読み取り、会話の承認を保持して進める。保存の前後に同じ承認を再質問しない |
-| 相談・調査・計画作成だけの依頼 | 依頼された成果物で終了し、実装へ進まない。個別変更の計画も同じ |
-| 同じ目的・成功条件を満たす手順、ファイル、試作、分割・順序の調整 | 変更理由と計画を更新し、目的内で継続する |
-| 目的・成果・受け入れ条件の変更、外部への影響の増加、未合意の業務判断、追加権限 | 具体案と理由を示して確認し、回答に依存する実行を待つ |
+| Change/implementation request with clear purpose and scope | Treat the request as execution approval; implement after saving, verifying, and presenting the plan below |
+| “Implement it” for presented plans, instructions to address a specified Issue or start its goal | Read targets and retain conversation approval. Do not ask the same approval before/after saving |
+| Consultation, investigation, or planning only | Stop at the requested deliverable without implementation, including individual change plans |
+| Adjustments to procedures, files, prototypes, decomposition, or order meeting the same purpose/success conditions | Update reasons/plan and continue within the purpose |
+| Changed purpose, outcomes, acceptance conditions, increased external impact, unagreed business decisions, additional permissions | Present concrete proposals/reasons, confirm, and wait for dependent execution |
 
-1. 対象の指示と実際のファイルを読み、目的・成功条件・変更・検証・完了条件を具体化する。調査の深さは影響と不確実性に合わせ、誤記修正に全リポジトリの構成調査を追加しない。
-2. 変更対象・依存・参照元・既存テスト等を[影響範囲の調査](#変更の影響範囲を調べるコンテキストマップ)で確認し、判断に必要な根拠を計画へ含める。重要な未合意事項は質問し、回答に依存しない調査を進める。
-3. [Issueの記述](issue-recording.md#issue-content)に従って計画を保存する。依頼と承認の根拠、実施範囲・順序を記録する。計画更新では変更前の本文と変更理由を保持する。
-4. [保存後手順](issue-recording.md#opening-the-browser-after-saving-an-issue)で再取得による本文一致・表示とURL・本文の提示を確認する。保存不能・未確認なら理由を示し、実装は保存確認できるまで待つ。
-5. 上表で実行承認がある場合は、計画の保存確認後に対象作業のスキルへ引き渡す。Git管理ファイルの変更は `change-delivery` でブランチ準備から統合後mainの確認・整理まで進める。GitHub側のリポジトリ設定のみの変更は `github-repo` で差分適用・再取得・再診断まで行い、空のcommit・PRを作らない。前提のファイル変更には通常のdeliveryを適用する。保存済み計画を再作成せず、明示された「PRまで」等の停止条件に従う。実装・コミット・プッシュ・PR作成を既定の終了点にせず、次工程の実行可否を再質問しない。
-6. 確認が必要な変更は、具体案と理由をIssueへ記録・再取得・提示して質問する。承認後はその範囲で継続し、回答に依存しない既存作業は進める。成果の縮小や受け入れ条件の緩和も対象にする。
+1. Read target instructions and actual files, concretizing purpose, success conditions, changes, validation, and completion. Scale investigation to impact/uncertainty; do not add repository-wide structural investigation for spelling fixes.
+2. Check targets, dependencies, referrers, existing tests, and similar evidence through [Impact investigation](#investigating-change-impact-context-map), including decision evidence in the plan. Ask about important unagreed matters and continue independent investigation.
+3. Save plans under [Issue content](issue-recording.md#issue-content), recording request/approval grounds and scope/order. Preserve prior bodies/reasons for plan updates.
+4. Through [Post-save procedures](issue-recording.md#opening-the-browser-after-saving-an-issue), verify retrieved body agreement/display and URL/body presentation. Explain inability to save/verify; implementation waits until saving is confirmed.
+5. With execution approval above, hand off to the responsible skill after saved-plan verification. For Git-managed files use `change-delivery` through branch preparation, post-integration main verification, and cleanup. For GitHub-side settings only use `github-repo` through applying differences, retrieval, and diagnosis, without empty commits/PRs. Apply ordinary delivery to prerequisite file changes. Do not recreate saved plans; honor explicit stops such as “through PR.” Implementation, commits, pushes, or PRs are not default endpoints; do not ask again whether to execute the next stage.
+6. For changes needing confirmation, record/retrieve/present concrete proposals and reasons in Issues and ask. Continue within approval afterward and continue independent existing work. Reduced outcomes or relaxed acceptance conditions also require this.
 
-承認は継続・再開でも保持する。引用されたゴール指示やIssueの閲覧依頼を実行指示と混同せず、別の目的・他セッションの担当・環境権限へ広げない。会話から実行意図を確定できず、結果を左右する場合は確認する。
+Retain approval across continuation/resumption. Do not confuse quoted goal instructions or Issue-viewing requests with execution instructions, or extend them to another purpose, other sessions' responsibilities, or environment permissions. Confirm when execution intent cannot be established and affects outcomes.
 
-Plan Mode・読み取り限定など実行環境やユーザーの制約を優先する。投稿禁止なら未保存の計画案として提示し、ブランチ・ファイル・評価データ・生成物を変更しない。計画作成依頼だけで実装承認待ちの定型質問を追加しない。
+Prioritize execution-environment/user restrictions such as Plan Mode or read-only access. If posting is prohibited, present unsaved plans without changing branches, files, evaluation data, or generated artifacts. Do not add formulaic implementation-approval questions for planning-only requests.
 
-### 変更の影響範囲を調べる（コンテキストマップ）
+### Investigating change impact (context map)
 
-Issueへ計画を保存する前に、実際のファイルと根拠から次を整理する。ユーザーが対象・依存・検証・リスクを把握できるよう、ファイル名の列挙だけでなく変更との関係を示す。
+Before saving Issue plans, organize the following from actual files/evidence. Show relationships with changes, not only filenames, so users understand targets, dependencies, validation, and risks.
 
-- 変更対象を検索し、各ファイルの役割と必要な変更を確認する。
-- 対象が直接依存する先と対象の参照元を調べ、更新が必要かと影響を確認する。文書ではリンク先・リンク元と関連指示の整合も対象にする。
-- 関連テストを読み、どの振る舞いを確認できるか、変更後に追加・更新・実行する検証を整理する。テストの存在を検証成功とは扱わない。
-- 仕様・契約・設定の正本を特定し、類似する既存の実装・記述を探す。参考にするパターンの具体的な参照先と、今回の境界・要求に合う採用理由を示す。[^context-engineering]
-- バージョンに依存する判断では、設定・lockファイル・実装から対象の版を確認し、その版に対応する公式資料と照合する。最新資料や記憶をそのまま対象版の根拠にせず、照合できない点は未確認として残す。[^taming-copilot]
-- 公開APIの互換性、データ移行、設定変更など、変更に関係するリスクを根拠とともに確認する。
+- Search targets and check each file's role and needed changes.
+- Investigate direct dependencies and referrers, needed updates, and impact. Documents include link targets, incoming links, and related-instruction consistency.
+- Read related tests and organize behavior they check and validation to add, update, or run. Test presence is not validation success.
+- Identify authoritative specifications, contracts, and configuration; find analogous implementation/descriptions. Show concrete reference patterns and reasons fitting the current boundaries/requirements.[^context-engineering]
+- For version-dependent judgments, check versions from configuration, locks, and implementation against corresponding official material. Latest material or memory alone does not establish target-version evidence; retain unconfirmed comparisons.[^taming-copilot]
+- Check evidence-based risks relevant to changes, such as public API compatibility, data migration, or configuration changes.
 
-結果は参照したファイルや調査範囲とともに、既存Issueの計画・検証・リスクに組み込む。小さな変更は短い記述でよく、固定の表・空欄・専用ファイルを要求しない。見つからない・読めない事項は「影響なし」と断定せず、未確認の範囲と確認方法を残し、重要なものは[重要な未確認事項の検証](#重要な未確認事項の検証)へつなぐ。
+Integrate results and referenced files/scope into existing Issue plans, validation, and risks. Small changes may use short descriptions without fixed tables, empty fields, or dedicated files. Missing/inaccessible matters do not prove “no impact”; retain unverified scope/checking methods, connecting important matters to [Validation of important uncertainties](#validation-of-important-uncertainties).
 
-マップは[着手と計画](#着手と計画)の計画記録に含め、別の承認待ちを追加しない。確認が必要な変更は同手順に従う。
+Include maps in [Starting and planning](#starting-and-planning) records without another approval wait. Changes needing confirmation follow the same procedures.
 
-ブランチ切り替えや関連変更で調査の前提が変わった場合は、判断に使うファイル・参照版を必要な範囲で読み直し、計画の根拠を更新する。開いたタブや過去の要約だけで最新状態を把握したとみなさない。変更はファイル数で区切らず、関連する契約・実装・テストを検証可能な単位で進める。[^context-engineering]
+If branch switches or related changes alter investigation assumptions, reread needed files/reference versions and update plan evidence. Open tabs or past summaries alone do not establish current state. Divide changes into verifiable related contracts, implementation, and tests rather than by file counts.[^context-engineering]
 
-### 残り計画の再評価
+### Reassessing the remaining plan
 
-複数の独立した統合単位で進める計画では、各単位をmainへ統合し必要な検証を確認した後、次の単位へ着手する前に残り計画を短く再評価する。初回計画を固定して守ること自体を目的にせず、実装・テスト・レビュー・統合結果から得た新しい事実を次の判断へ反映する。
+For multiple independent integration units, after integrating each unit and confirming main validation, briefly reassess remaining plans before starting the next. Do not aim solely to follow the initial plan; reflect new implementation/test/review/integration facts in next decisions.
 
-- 残り計画の前提、範囲、順序、分割、依存、所有境界、検証方法のうち、今回得た事実で変わるものがあるか確認する。
-- 変更がなければ、確認した事実だけを保持して計画本文を形式的に書き直さず、そのまま次の統合単位へ進む。
-- 同じ目的・成功条件の範囲で変更が必要なら、変更理由と更新後の計画を記録し、再承認を増やさず継続する。目的・成果・受け入れ条件・外部影響・権限が変わる場合は[着手と計画](#着手と計画)の確認条件に従う。
-- 新しい証拠がない限り、完了済みの統合単位を別方式でやり直さない。後続の改善で足りる場合は残り計画を更新し、巻き戻しを品質向上の既定手段にしない。
-- 再評価のために網羅的な再調査や定型文書を追加しない。次の判断を変え得る範囲だけを、最新mainと今回の検証結果から確認する。
+- Check whether new facts change remaining assumptions, scope, order, decomposition, dependencies, ownership boundaries, or validation methods.
+- If unchanged, retain confirmed facts without formally rewriting plans and proceed.
+- If changes are needed within the same purpose/success conditions, record reasons and updated plans without extra approval. For changes to purpose, outcomes, acceptance conditions, external impact, or permissions, confirm through [Starting and planning](#starting-and-planning).
+- Do not redo completed units differently without new evidence. If later improvements suffice, update remaining plans rather than defaulting to rollback for quality.
+- Do not add comprehensive reinvestigation or formulaic documents for reassessment. Check only decision-relevant scope against latest main and current validation results.
 
-### 重要な未確認事項の検証
+### Validation of important uncertainties
 
-結果や実現性を左右する未確認事項がある場合は、何の判断に影響するか、確認方法、どの結果なら次の判断へ進めるかを計画に含める。確認済みの事実と仮説を分け、合意済みの成功条件に結びつけることで、調査や試作の目的と終わりを明確にする。
+For uncertainties affecting outcomes/feasibility, include affected judgments, checking methods, and results allowing subsequent decisions in plans. Separate facts from hypotheses and connect them to agreed success conditions to clarify investigation/prototype purposes/endpoints.
 
-- 技術的な疑問は既存コード・公式資料等を調査し、それだけで判断できない場合に必要最小限の試作を計画する。観測する結果と判断条件を先に定め、満たさない場合や確認できない場合は結果を記録して方針を見直す。試作の成功を本実装全体の検証成功へ広げない。
-- 業務ルールや受け入れ条件が未合意なら、判断権限を持つユーザーへの質問として残す。技術調査や試作、仮の数値で合意済みにせず、回答に依存しない読み取り調査を進める。
-- 試作の編集・実行も[着手と計画](#着手と計画)の承認範囲に従う。未承認なら計画への記録までとし、承認済み範囲なら操作ごとの再確認はしない。目的・成果・受け入れ条件や外部影響を変える変更には同手順の再承認を適用する。
-- 判断に影響する不明点がない誤記修正などでは、このための試作や定型欄を追加しない。既存の計画・検証で足りるかを変更の影響から判断する。
+- Investigate technical questions through existing code/official material; plan minimal prototypes only when insufficient. Define observable outcomes/judgment criteria first; if unmet/unconfirmed, record and reassess. Prototype success does not validate entire implementations.
+- Retain unsettled business rules/acceptance conditions as questions to authorized users. Technical investigation, prototypes, or assumed figures do not establish agreement; continue independent read-only investigation.
+- Prototype edits/execution also follow [Starting and planning](#starting-and-planning) approval scope. Without approval, record only; within approval, do not reconfirm each operation. Changes to purpose, outcomes, acceptance conditions, or external impact require the same reapproval.
+- Do not add prototypes/formal fields for spelling fixes with no decision-relevant uncertainty. Judge sufficiency of existing plans/validation from impact.
 
-### 検証環境の準備
+### Preparing the validation environment
 
-依頼の検証に必要な既知のツール・固定依存は、既存環境を確認してから一時ディレクトリやプロジェクト専用環境へ導入できる。`uvx` 等のダウンロードを伴う一時実行も同じ基準を使う。導入対象・版・配置先と理由を記録し、既存のグローバル環境を上書きしない。
+Known necessary tools/pinned dependencies may be installed in temporary/project-specific environments after checking existing environments. Temporary download-based execution such as `uvx` follows the same criteria. Record targets, versions, locations, and reasons without overwriting global environments.
 
-グローバル設定変更、追加権限、費用発生、出所や実行内容を確認できない導入は、必要な対象と理由を示して確認する。拒否・環境制約を回避せず、既に許可された代替手段を確認し、検証不能を成功にしない。実行承認はサンドボックスやネットワークの権限を増やさない。
+For global settings, additional permissions, costs, or installations with unverifiable provenance/execution, show necessary targets/reasons and confirm. Do not bypass refusals/restrictions; check authorized alternatives and do not treat inability to validate as success. Execution approval does not increase sandbox/network permissions.
 
-### 実行権限とツール呼び出し
+### Execution permissions and tool calls
 
-- Git管理ファイルを変更する計画にはコミット、プッシュ、PR作成、レビュー依頼・返信、修正、スカッシュマージ、mainへの切り替えとgit pull、マージ済みブランチの削除までの操作を含める。同じ目的・成功条件内ではこれらを個別の追加依頼に分割せず、前工程の成功確認後に次工程へ進む。
-- 「必要ならPRを作成する」「マージまで進めるか確認する」のような任意提案に置き換えない。停止条件がないGit管理ファイルの変更作業ではPR作成以降も既定の実行範囲とする。
-- 計画時に、必要なコマンド、書き込み先、ネットワーク接続と現在の許可を確認し、不足する権限を明示する。
-- 計画の承認を環境の権限付与とみなさず、追加権限や上記の確認条件に当たる場合は理由と対象を示して確認する。
-- 関連する読み取りや独立した確認は一度のツール呼び出しにまとめ、同じ情報を変化の根拠なく再取得しない。
-- 権限昇格が必要なコマンドと通常権限で実行できるコマンドは、同じシェルコマンド列にまとめず、それぞれの権限で実行する。
-- 結果に依存する操作は、前の操作の成功を確認してから実行する。
-- レビューやCIの待機では、完了待機機能を利用するか確認間隔を空け、過剰なポーリングを避ける。
-- ツール呼び出し回数の削減と実行表示の非表示を区別し、提供されていない表示制御を約束しない。
+- Git-managed-file plans include commits, pushes, PRs, review requests/replies, fixes, squash merges, main switch and git pull, and deletion of merged branches. Do not split them into individual additional requests within the same purpose/success conditions; proceed after preceding success is verified.
+- Do not replace them with optional suggestions such as “create a PR if needed” or “confirm whether to merge.” Without stop conditions, PR creation onward is default scope for Git-managed-file work.
+- During planning check commands, write destinations, network access, and current permission; state missing permissions.
+- Plan approval is not environment permission; confirm reasons/targets for additional permissions or conditions above.
+- Batch related reading/independent checks in one tool call without repeatedly fetching unchanged information.
+- Do not combine commands requiring elevation with ordinary-permission commands in the same shell sequence; execute each with appropriate permissions.
+- Execute dependent operations after preceding success is confirmed.
+- Use completion waits or spaced checks for review/CI, avoiding excessive polling.
+- Distinguish fewer tool calls from hiding execution display; do not promise unavailable display controls.
 
-### 参照元と適用判断
+### Sources and application decisions
 
-GitHub awesome-copilotのSpec Driven Workflow v1[^github-instructions-spec-driven-workflow-v1-instructions-md]とTechnical spike research mode[^github-agents-research-technical-spike-agent-md]を2026-09-11に確認し、不確実性に応じた調査・試作、実験前の成功条件、証拠による判断の更新を要約・再構成した。
+Checked GitHub awesome-copilot Spec Driven Workflow v1[^github-instructions-spec-driven-workflow-v1-instructions-md] and Technical spike research mode[^github-agents-research-technical-spike-agent-md] on 2026-09-11, summarizing/restructuring uncertainty-scaled investigation/prototypes, pre-experiment success conditions, and evidence-based decision updates.
 
-本環境では結果や実現性を左右する未確認事項に限定し、業務上の合意と技術的な検証を分け、既存Issueと実行承認へ統合する。参照元の固定3文書、確信度スコア、6段階の一律適用、全操作ログ、調査の網羅や専用の試作文書は要求しない。これは本環境への適用判断であり、参照元全体の採用ではない。
+This environment limits them to important outcome/feasibility uncertainties, distinguishes business agreement from technical validation, and integrates existing Issues/approval. It does not require the sources' fixed three documents, confidence scores, uniform six stages, complete operation logs, comprehensive investigation, or dedicated prototype documents. This is an application decision, not wholesale adoption.
 
-GitHub awesome-copilotのcontext-map[^github-context-map-skill-md]を2026-09-11に確認し、変更対象・依存・テスト・参考パターン・リスクの調査観点を要約・再構成した。本環境では文書のリンク・関連指示と参照元への影響も含め、既存Issueの計画へ組み込む。固定の表やチェックリスト、独立したマップのレビュー待ちは導入せず、確認を既存の計画承認に統合する。
+Checked GitHub awesome-copilot context-map[^github-context-map-skill-md] on 2026-09-11, summarizing/restructuring target, dependency, test, pattern, and risk perspectives. Include document links, related instructions, and referrer impact in existing Issue planning here. Do not introduce fixed tables/checklists or separate map review waits; integrate checking into existing plan approval.
 
-Context Engineering[^context-engineering]とTaming Copilot[^taming-copilot]を2026-09-13に確認し、具体的な参考パターンと対象版の根拠、前提が変わった際の再確認を既存の調査へ統合した。IDEのタブ・カーソル操作、`COPILOT.md` の新設、1ファイルずつの変更や全ツール前の宣言は共通要件にしない。
+Checked Context Engineering[^context-engineering] and Taming Copilot[^taming-copilot] on 2026-09-13, integrating concrete reference patterns, target-version evidence, and rechecking changed assumptions. IDE tab/cursor operations, creating `COPILOT.md`, one-file-at-a-time changes, or announcements before every tool are not common requirements.
 
-[^context-engineering]: [Context Engineering](https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/instructions/context-engineering.instructions.md)。関連情報・参考パターンとコンテキストの更新を本環境の調査へ適用する。
-[^taming-copilot]: [Taming Copilot](https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/instructions/taming-copilot.instructions.md)。版に依存する情報をツールで確認する考え方を対象版の照合へ適用する。
-[^github-instructions-spec-driven-workflow-v1-instructions-md]: [GitHub awesome-copilotのSpec Driven Workflow v1](https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/instructions/spec-driven-workflow-v1.instructions.md)。本文に記した参照範囲と採用判断の根拠。
-[^github-agents-research-technical-spike-agent-md]: [Technical spike research mode](https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/agents/research-technical-spike.agent.md)。本文に記した参照範囲と採用判断の根拠。
-[^github-context-map-skill-md]: [GitHub awesome-copilotのcontext-map](https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/skills/context-map/SKILL.md)。本文に記した参照範囲と採用判断の根拠。
+[^context-engineering]: [Context Engineering](https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/instructions/context-engineering.instructions.md). Apply related information, reference patterns, and context updates to investigation here.
+[^taming-copilot]: [Taming Copilot](https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/instructions/taming-copilot.instructions.md). Apply tool checking of version-dependent information to target-version comparisons.
+[^github-instructions-spec-driven-workflow-v1-instructions-md]: [GitHub awesome-copilot Spec Driven Workflow v1](https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/instructions/spec-driven-workflow-v1.instructions.md). Evidence for reference scope and adoption decisions stated in the text.
+[^github-agents-research-technical-spike-agent-md]: [Technical spike research mode](https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/agents/research-technical-spike.agent.md). Evidence for reference scope and adoption decisions stated in the text.
+[^github-context-map-skill-md]: [GitHub awesome-copilot context-map](https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/skills/context-map/SKILL.md). Evidence for reference scope and adoption decisions stated in the text.

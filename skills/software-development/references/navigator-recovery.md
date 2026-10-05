@@ -1,7 +1,7 @@
 ---
 type: Reference
-title: Navigator喪失後の引き継ぎと再確認
-description: 共通の自動再ペア条件を前提に、保持する証拠と再開前の照合手順を示します。
+title: Handoff and rechecking after Navigator loss
+description: Under common automatic re-pairing conditions, show retained evidence and comparison procedures before resumption.
 sources:
   - id: issue-140
     resource: https://github.com/daiksud/agents/issues/140
@@ -11,35 +11,35 @@ sources:
     resource: https://github.com/daiksud/agents/issues/161
 ---
 
-## 読む条件
+## Reading conditions
 
-Driverは起動済みNavigatorとの継続が失われたとき、確認が必要な後続のコード変更を一時停止し、復旧・再ペアの手順へ進む前にこの資料を読む。継続不能を確認した後はユーザーの追加確認を待たず、新しいNavigatorを起動してよい。再開前に関連する協働契約と資料を新Navigatorへ共有する。直接参照できなければ内容を渡し、必要な確認ができるまで対象工程を保留する。通常の初回起動、相談・計画・文書だけの作業では読まない。[^issue-140] [^issue-161]
+When continuity with a launched Navigator is lost, the Driver pauses subsequent code changes needing checking and reads this before recovery/re-pairing procedures. After confirming continuation is impossible, a new Navigator may be launched without additional user confirmation. Before resuming, share relevant collaboration contracts and material with the replacement. If direct access is impossible, provide contents and hold affected stages until necessary confirmation. Do not read for ordinary initial launch, consultation, planning, or documentation-only work.[^issue-140] [^issue-161]
 
-初回起動失敗の再試行、起動成否不明時の重複起動防止、起動済みNavigatorの喪失判定と自動再ペアの開始条件は共通の協働指示を正本とする。初回応答後の継続不能もコード編集前だからと初回起動のやり直しにはしない。通信内容の形式は[内部通信](agent-communication.md)、Copilot CLIの操作は該当環境でのみ[CLI資料](copilot-cli-pairing.md)を使う。[^issue-140] [^issue-161]
+Common collaboration instructions are authoritative for retrying failed initial launches, avoiding duplicates when launch outcome is unknown, judging launched-Navigator loss, and starting automatic re-pairing. Loss after an initial response is not an initial-launch restart merely because code editing has not begun. Use [Internal communication](agent-communication.md) for message formats and [CLI material](copilot-cli-pairing.md) only in applicable Copilot CLI environments.[^issue-140] [^issue-161]
 
-## 保持する証拠と引き継ぎ
+## Retained evidence and handoff
 
-復旧調査では確認済み・未確認の範囲を保ち、元のNavigatorへ継続連絡できるかを実際の応答と利用可能な状態・履歴から確認する。既存差分を失わず、欠けた履歴を推測で埋めない。[^issue-100]
+During recovery investigation, preserve confirmed/unconfirmed scope and check continuation with the original Navigator from actual responses and available states/history. Do not lose existing diffs or invent missing history.[^issue-100]
 
-継続不能を確認して自動再ペアへ進むときは、元のNavigatorを担当から外した記録を残す。遅れて届いた旧担当の応答は新ペアの段階確認の証拠にせず、必要なら未確認の資料として新Navigatorに渡す。旧担当が復旧してもペアを切り戻さない。[^issue-100] [^issue-161]
+When confirmed inability to continue leads to automatic re-pairing, record removal of the original Navigator. Delayed responses from it are not new-pair stage evidence; if necessary, hand them to the new Navigator as unverified material. Do not switch back if the former Navigator recovers.[^issue-100] [^issue-161]
 
-再開前にDriverは、次の情報を新Navigatorへ共有する。[^issue-100]
+Before resuming, the Driver shares the following with the replacement.[^issue-100]
 
-- 元の依頼、受け入れ条件、適用指示、作業範囲、関連するユーザー判断。
-- 共有ToDo、現在のTDD段階、次に予定していた作業、未解決指摘、同じ論点の往復回数。
-- 対象ブランチ・HEAD・worktreeの状態、未コミット差分、実行したコマンド・テスト・検証と結果。
-- 確認済み・未確認の段階、完了済み項目の証拠、現在の最終差分、既に採用・却下した判断と根拠。
-- 関連Issue・PR・レビュー・参照資料、旧Navigatorの利用可能な応答履歴や、再開判断に必要なその他の取得可能な文脈。
+- Original request, acceptance conditions, applicable instructions, scope, and related user decisions.
+- Shared ToDos, current TDD stage, planned next work, unresolved findings, and exchange counts on the same issue.
+- Branch, HEAD, and worktree state; uncommitted diffs; executed commands, tests, validation, and results.
+- Confirmed/unconfirmed stages, evidence of completed items, current final diffs, and adopted/rejected decisions with reasons.
+- Related Issues, PRs, reviews, references, available former-Navigator response history, and other retrievable context needed for resumption decisions.
 
-## 再開前の照合
+## Comparison before resuming
 
-1. 必要な前提と証拠を共有し、新Navigatorが継続して応答できることを実応答で確かめる。起動成功や状態表示だけで代替しない。
-2. 欠けた履歴や検証を成功済みと推測せず、旧ペアが確認していない最初の段階から実差分とテストを再確認する。
-3. 完了済み項目の証拠と現在の最終差分も照合する。対象が変わっていれば影響する検証と確認をやり直す。
-4. 未解決指摘と同じ論点の2往復上限を引き継ぎ、交代でリセットしない。新ペアも継続不能なら同じ手順で可能な限りのコンテキストを次のNavigatorへ引き継ぎ、自動再ペアを繰り返す。
+1. Share necessary assumptions/evidence and confirm actual continuing responses from the replacement. Launch success or state displays are not substitutes.
+2. Do not assume missing history/validation succeeded; recheck actual diffs/tests from the first stage the former pair did not confirm.
+3. Compare completed-item evidence with current final diffs. Rerun affected validation/checks if targets changed.
+4. Retain unresolved findings and the two-exchange limit on the same issue without resetting for replacement. If the new pair cannot continue, use the same process to pass as much context as possible to the next Navigator, repeating automatic re-pairing.
 
-以上の照合を終えるまでコード変更を再開しない。ペアの確認を通常のPRレビュー・必須CI・マージ条件の代わりにせず、資料を読んだ事実や新Navigatorの起動成功だけを復旧完了や検証成功とは扱わない。[^issue-100] [^issue-161]
+Do not resume code changes until these comparisons finish. Do not replace ordinary PR review, required CI, or merge conditions with pair checks, or treat reading material or launching a replacement alone as completed recovery or successful validation.[^issue-100] [^issue-161]
 
-[^issue-140]: [Issue #140](https://github.com/daiksud/agents/issues/140) の、復旧時だけ読む詳細資料と必須契約を入口に残す境界。
-[^issue-161]: [Issue #161](https://github.com/daiksud/agents/issues/161) の、ユーザー確認不要の自動再ペアと可能な限りのコンテキスト引き継ぎ。
-[^issue-100]: [Issue #100](https://github.com/daiksud/agents/issues/100) の、証拠保持、旧担当の退役、未確認段階からの再検証。
+[^issue-140]: [Issue #140](https://github.com/daiksud/agents/issues/140) on recovery-only detail and retaining mandatory contracts at entry points.
+[^issue-161]: [Issue #161](https://github.com/daiksud/agents/issues/161) on automatic re-pairing without user confirmation and transferring as much context as possible.
+[^issue-100]: [Issue #100](https://github.com/daiksud/agents/issues/100) on evidence preservation, retiring the former Navigator, and revalidation from unconfirmed stages.
