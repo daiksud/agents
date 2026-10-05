@@ -30,7 +30,7 @@ Read only applicable material, combining it when multiple areas are involved.
 3. For each change, check effective `permissions`, Secret destinations, executed-code provenance, runners, external input, and referenced Actions, artifacts, and caches. Do not judge safety solely by trigger name or fork status. Read safety material when boundaries are affected.
 4. Pin external Actions and external reusable workflows to full commit SHAs checked against releases in the target repository, and verify agreement with version comments. Do not reuse example SHAs as recommended versions. Use verified digests for container references, and check the checkout provenance for same-repository relative references.
 5. Choose minimal changes and validation meeting the purpose. Do not uniformly require manual approval, particular branching strategies, large matrices, or Canary.
-6. For runner/shell selection or changes, read [Runners and shells in workflow design](references/workflow-design.md#runnerとshell), checking actual available runners, provider/repository access, shell compatibility, and existing contracts.
+6. For runner/shell selection or changes, read [Runners and shells in workflow design](references/workflow-design.md#runners-and-shells), checking actual available runners, provider/repository access, shell compatibility, and existing contracts.
 
 ## Outcomes and checks
 

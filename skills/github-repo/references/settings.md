@@ -1,7 +1,7 @@
 ---
 type: Instruction
-title: GitHubリポジトリの設定基準
-description: リリース・マージ・main保護・Actionsポリシーの期待値と診断方法を定めます。
+title: GitHub repository setting standards
+description: Define expected values and diagnosis for releases, merges, main protection, and Actions policy.
 sources:
   - id: personal-policy
     resource: https://github.com/daiksud/agents/issues/152
@@ -27,65 +27,65 @@ sources:
     resource: https://docs.github.com/en/rest/actions/permissions
 ---
 
-## 基準の適用
+## Applying standards
 
-次の期待値は個人の採用方針であり、GitHub全利用者に対する必須仕様ではない。診断は期待値と観測値を分け、書き込みは[操作と判定](operations.md)に従う。無料セキュリティ機能は[別資料](security.md)で機能単位に診断する。[^personal-policy]
+These expectations are personal adoption policy, not mandatory specifications for all GitHub users. Separate expected/observed values; follow [Operations and judgments](operations.md) for writes. Diagnose free security per feature in [Separate material](security.md).[^personal-policy]
 
-## イミュータブルリリース
+## Immutable releases
 
-期待値はリポジトリのrelease immutabilityが有効であること。リリース未作成でも設定を調べる。公式UIの `Settings` → `General` の `Releases` → `Enable release immutability` で現在値を確認し、承認済みなら有効化後に再表示して確認する。APIを使う場合は実行時の公式仕様で設定取得・更新のサポートを確認し、架空のendpointやフィールドを作らない。[^release-setting]
+Expect repository release immutability enabled; inspect settings even without releases. Check official UI `Settings` → `General` → `Releases` → `Enable release immutability`; with approval enable and re-display. For APIs check current official read/update support without invented endpoints/fields.[^release-setting]
 
-適用されるのは今後のリリースであり、既存リリースの非遡及性を報告する。公開後のタグ・アセット更新を前提とする運用を調べ、必要ならdraft作成・全アセット添付・公開の順へ先に変更する。設定の検証名目でリリースを勝手に公開しない。承認済みの次回公開がある場合だけ、そのreleaseのimmutable表示も確認する。[^release-setting][^immutable-release]
+It applies to future releases; report no retroactivity. Investigate operations assuming post-publication tag/asset updates; if necessary first change to draft creation, all assets attached, then publication. Do not publish merely to validate settings. Check individual immutable display only for approved upcoming releases.[^release-setting][^immutable-release]
 
-タグ・アセットを削除・再作成して移行せず、設定を戻すことと既に公開したimmutable releaseの制約を取り消すことを混同しない。リリース本文やタイトルの編集まで禁止されたとは説明しない。[^immutable-release]
+Do not migrate through tag/asset deletion/recreation, or confuse reverting settings with undoing published immutable-release restrictions. Do not claim release titles/bodies are uneditable.[^immutable-release]
 
-## SquashのみのPRマージ
+## Squash-only PR merge
 
-`GET /repos/{owner}/{repo}` または `Settings` → `General` の `Pull Requests` で、次の3値を確認する。[^repository-api]
+Check three values through `GET /repos/{owner}/{repo}` or `Settings` → `General` → `Pull Requests`.[^repository-api]
 
-| 設定 | 期待値 |
+| Setting | Expected |
 | --- | --- |
 | `allow_squash_merge` | `true` |
 | `allow_merge_commit` | `false` |
 | `allow_rebase_merge` | `false` |
 
-承認済みなら同じrepository endpointの `PATCH` で差分の3値だけを送るか、対応するUIを変更し、再取得して全3値を確認する。返却されない値を既定値で補完しない。Rulesetやmerge queue等との整合を先に確認し、既存制約と両立しなければ該当変更を保留する。auto-merge、自動ブランチ削除、コミットメッセージ形式を同時に変更しない。[^repository-api][^ruleset-rules]
+With approval, PATCH only changed values at the same endpoint or UI, then retrieve/check all three. Do not fill absent values with defaults. First check Ruleset/merge-queue compatibility; hold conflicting changes. Do not simultaneously change auto-merge, automatic branch deletion, or commit formats.[^repository-api][^ruleset-rules]
 
-## mainのRuleset保護
+## main Ruleset protection
 
-期待値は `refs/heads/main` にactiveなbranch Rulesetが適用され、PR経由の変更・削除防止・force push防止が実効的に成立すること。継承されたRulesetで満たす場合も適合とし、重複するリポジトリRulesetは作らない。従来のbranch protectionだけでは、この個人基準のRuleset要件を満たさない。[^personal-policy][^ruleset-rules]
+Expect active branch Rulesets on `refs/heads/main` effectively requiring PRs and preventing deletion/force pushes. Inherited conformance suffices without duplicate repository Rulesets. Legacy branch protection alone does not meet this personal Ruleset standard.[^personal-policy][^ruleset-rules]
 
-1. `GET /repos/{owner}/{repo}/branches/main` 等でmainの実在とdefault branchを確認する。別名・空リポジトリ・main不在を、暗黙の改名・作成・対象変更で解決しない。
-2. `GET /repos/{owner}/{repo}/rulesets?includes_parents=true` を全ページ取得し、関連するRulesetの詳細でtarget、enforcement、include/exclude、source、bypassを確認する。
-3. `GET /repos/{owner}/{repo}/rules/branches/main` を全ページ取得し、activeな実効ルールを照合する。このAPIは存在しないブランチにもルールを返すため、mainの実在確認の代わりにしない。[^rules-api]
-4. `pull_request`、`deletion`、`non_fast_forward` と既存の追加制約を確認する。evaluate/disabled、main除外、不要なbypassは見逃さない。bypass情報を閲覧できない場合は「例外なし」と断定しない。
-5. 不足を対象リポジトリ自身のRulesetへ追加する。UIは `Settings` → `Rules` → `Rulesets`、APIは既存IDへの `PUT /repos/{owner}/{repo}/rulesets/{ruleset_id}`。新規 `POST /repos/{owner}/{repo}/rulesets` は必要な場合だけ使う。今回の承認済み変更の対象外である条件・ルール・パラメーター・例外を保持し、上位Rulesetを変更しない。[^rules-api]
-6. 詳細と実効ルールを再取得する。従来保護の削除は初版の適用に含めず、保護に空白を作らない。検証目的のmain直接push・削除・force pushを行わない。
+1. Check main existence/default branch through `GET /repos/{owner}/{repo}/branches/main` or equivalent. Do not implicitly rename/create/change targets for alternate names, empty repos, or absent main.
+2. Fetch all `GET /repos/{owner}/{repo}/rulesets?includes_parents=true` pages and relevant details: target, enforcement, includes/excludes, source, bypass.
+3. Fetch all `GET /repos/{owner}/{repo}/rules/branches/main` pages and compare active effective rules. It also returns rules for nonexistent branches, not proof main exists.[^rules-api]
+4. Check `pull_request`, `deletion`, `non_fast_forward`, and existing extras; do not miss evaluate/disabled, main exclusion, or unnecessary bypass. Inaccessible bypass information does not establish no exceptions.
+5. Add gaps to target-owned Rulesets through `Settings` → `Rules` → `Rulesets` or existing-ID `PUT /repos/{owner}/{repo}/rulesets/{ruleset_id}`. Use new `POST /repos/{owner}/{repo}/rulesets` only when necessary. Preserve out-of-scope conditions, rules, parameters, and exceptions; do not change parent Rulesets.[^rules-api]
+6. Retrieve details/effective rules. Initial application excludes deleting legacy protections; leave no protection gap. Do not directly push/delete/force-push main to validate.
 
-Pull Requestルールでは `required_approving_review_count` と `require_code_owner_review` を別の条件として記録する。前者はPR全体で必要なApprove数、後者は変更されたパスのCode Ownerによるレビュー要件であり、Code Ownerが複数いる場合はいずれか1人のApproveでCode Owner要件を満たす。設定値だけで実際のPRが未承認と断定せず、対象PRのauthor、変更パスに適用されるCODEOWNERS、review state、GitHubのmergeabilityを照合する。[^ruleset-rules][^code-owners]
+Record `required_approving_review_count` and `require_code_owner_review` separately: overall approvals versus applicable Code Owner reviews; one of multiple owners suffices. Do not infer unapproved PRs from settings alone; compare author, applicable CODEOWNERS, review states, and mergeability.[^ruleset-rules][^code-owners]
 
-変更パスに適用されるCode Ownerが1人だけで、その本人がPR authorの場合は、自己Approve不能を理由に別のCode Ownerや人間レビュアーを作り出して要求しない。このケースではGitHubの実効判定上、Code Owner以外の有効なApproveで `required_approving_review_count` を満たせるため、そのApproveとGitHubのマージ可否を確認して条件充足を判断する。Copilot Approvalsが対象リポジトリで有効で、Copilotのレビューが `APPROVED` として必須承認に数えられている場合は、そのApproveも利用できる。既定のコメントのみのCopilotレビューをApproveに読み替えず、Copilotが明示的にhuman reviewを要求した場合の人手確認手順も上書きしない。[^approval-code-owner-exception][^copilot-code-review]
+If the sole applicable Code Owner is the PR author, do not invent other owners/human reviewers because self-approval is impossible. Valid non-owner approval can meet GitHub's effective required count; check approval/mergeability. Enabled Copilot Approvals counted as `APPROVED` may be used. Default comment-only reviews are not approvals, and explicit human-review escalation remains applicable.[^approval-code-owner-exception][^copilot-code-review]
 
-既存の必須チェック、承認人数、CODEOWNERS等は維持する。新しい必須チェックは対象側の方針、実際のチェック名・発行元・実行条件・成功履歴を確認して選び、存在しないチェックでマージを止めない。CodeQL有効化をCodeQL必須化に読み替えず、単独開発で満たせない承認人数、署名必須、線形履歴を一律追加しない。不要なbypassを新設せず、既存例外の廃止にも影響と承認を確認する。非対応プランは利用不可として理由を残し、有料プランへ変更しない。[^personal-policy][^ruleset-rules]
+Preserve required checks, approver counts, and CODEOWNERS. Choose new checks from target policy, actual names/issuers/events/success history without blocking nonexistent checks. Enabling CodeQL does not make it mandatory; do not uniformly add unsatisfiable solo approvals, signing, or linear history. Do not add unnecessary bypasses; confirm impact/approval before removing existing exceptions. Record unsupported plans as unavailable without paid upgrades.[^personal-policy][^ruleset-rules]
 
-## 外部ActionのフルSHA必須化
+## Require full SHAs for external Actions
 
-期待値はネイティブの `Require actions to be pinned to a full-length commit SHA` が有効で、対象workflowが適合していること。公式Action・同じ所有者の別リポジトリも対象とする。`GET /repos/{owner}/{repo}/actions/permissions` の `sha_pinning_required` または `Settings` → `Actions` → `General` で確認する。[^actions-settings][^actions-permissions-api]
+Expect native `Require actions to be pinned to a full-length commit SHA` enabled and workflows conforming, including official Actions and other same-owner repositories. Check `GET /repos/{owner}/{repo}/actions/permissions` `sha_pinning_required` or `Settings` → `Actions` → `General`.[^actions-settings][^actions-permissions-api]
 
-先にworkflow・ローカルcomposite action・呼び出し先の依存を調べ、必要な修正を `github-actions` へ渡す。参照は対象リリースと照合した完全コミットSHAへ固定し、承認済みの必要なファイル変更をPR・CI・統合後確認まで完了してからポリシーを強制する。mainだけでなく有効な他ブランチ・リリース経路への影響も確認し、未確認の実行経路を安全とみなさない。
+First inspect workflows, local composites, and downstream dependencies, handing fixes to `github-actions`. Pin full SHAs checked against releases; complete approved file PRs/CI/main verification before enforcement. Check active other branches/releases as well as main; unverified paths are not safe.
 
-APIの適用は `PUT /repos/{owner}/{repo}/actions/permissions`。必須の `enabled` と既存 `allowed_actions` を直前の取得値から保持し、`sha_pinning_required=true` を送る。Actionsが無効なら有効化を黙って追加せず、無効理由と対象範囲を確認する。許可リストや上位ポリシーを緩めない。適用後は同じ設定と対象workflowを再確認する。[^actions-permissions-api]
+Apply `PUT /repos/{owner}/{repo}/actions/permissions`, preserving required `enabled` and existing `allowed_actions` from immediate retrieval and setting `sha_pinning_required=true`. Disabled Actions do not justify silent enablement; check reasons/scope. Do not relax allowlists/upper policies. Retrieve settings/workflows afterward.[^actions-permissions-api]
 
-ネイティブ設定は再利用workflowのタグ参照を禁止しないため、設定が有効でも外部再利用workflowは別途フルSHA固定を診断する。同一リポジトリの相対参照をGitのSHAに置換せず、コンテナのdigest固定をGit参照と混同しない。これらの実装基準は `github-actions` を正本として使う。[^actions-settings]
+Native settings do not prohibit reusable-workflow tags; diagnose full SHAs separately even when enabled. Do not replace same-repo relative paths with SHAs or confuse container digests with Git references. Use `github-actions` as authoritative implementation policy.[^actions-settings]
 
-[^personal-policy]: Issue #152 の初期5項目と既存保護・適用範囲の制約。
-[^release-setting]: リポジトリでの有効化と将来のリリースへの適用。
-[^immutable-release]: 保護対象、draft公開手順、既存immutable releaseの制約。
-[^repository-api]: repositoryの取得・更新とマージ方式のフィールド。
-[^ruleset-rules]: Rulesetの提供条件、branch保護、マージ関連ルール。
-[^rules-api]: Rulesetの取得・更新、継承とbranchの実効ルール。
-[^code-owners]: CODEOWNERSの適用、Code Ownerレビュー必須化、複数owner時の承認条件。
-[^approval-code-owner-exception]: Issue #165 で採用した、唯一のCode OwnerがPR authorの場合の実効承認条件。
-[^copilot-code-review]: Copilot Code ReviewのApproveが有効化時に必須承認へ数えられる条件。
-[^actions-settings]: ネイティブSHA必須設定の対象と再利用workflowへの制約。
-[^actions-permissions-api]: Actions permissionsの取得・更新と必須パラメーター。
+[^personal-policy]: Initial five items and existing-protection/scope constraints in Issue #152.
+[^release-setting]: Repository enablement and future-release application.
+[^immutable-release]: Protected objects, draft-publication steps, existing immutable-release restrictions.
+[^repository-api]: Repository retrieval/updates and merge fields.
+[^ruleset-rules]: Availability, branch protection, merge rules.
+[^rules-api]: Retrieval/updates, inheritance, effective branch rules.
+[^code-owners]: CODEOWNERS application, required reviews, multiple-owner approvals.
+[^approval-code-owner-exception]: Effective conditions adopted in Issue #165 for sole-owner PR authors.
+[^copilot-code-review]: Conditions for enabled Copilot Approve counting toward required approvals.
+[^actions-settings]: Native SHA-setting scope and reusable-workflow limits.
+[^actions-permissions-api]: Actions permissions reads/updates and required parameters.

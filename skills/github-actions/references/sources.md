@@ -1,7 +1,7 @@
 ---
 type: Reference
-title: GitHub Actionsスキルの出典と適用判断
-description: 取り込み元の固定版、帰属、確認範囲と統合時に修正した判断を記録します。
+title: GitHub Actions skill sources and application decisions
+description: Record fixed imported versions, attribution, checking scope, and judgments revised during integration.
 sources:
   - id: copilot-cicd
     resource: https://github.com/github/awesome-copilot/blob/4f4796f0bf30e105700f97ed8408c12b6aa95e06/instructions/github-actions-ci-cd-best-practices.instructions.md
@@ -37,73 +37,73 @@ sources:
     resource: https://github.com/actions/runner/blob/80bb1fb827fa44d489263061e71ef4adba7ad8cd/src/Runner.Worker/Handlers/ScriptHandler.cs
 ---
 
-## 取り込み元と帰属
+## Imported sources and attribution
 
-2026-09-20にawesome-copilotの以下4資料と関連資料を確認し、日本語で要約・再構成した。固定コミットは `4f4796f0bf30e105700f97ed8408c12b6aa95e06`。確認は資料と公式仕様の照合であり、各サンプルの実ワークフロー実行や人間による承認を示すものではない。
+On 2026-09-20 checked these four awesome-copilot resources and related material, summarizing/restructuring them in Japanese. Fixed commit: `4f4796f0bf30e105700f97ed8408c12b6aa95e06`. Checking compared material with official specifications, not actual execution of every sample or human approval.
 
-| 原典 | 取り込んだ範囲と配置 |
+| Source | Imported scope and placement |
 | --- | --- |
-| CI/CD Best Practices[^copilot-cicd] | トリガー、ジョブ、再利用、テスト、成果物、配備・復旧を設計資料へ、安全性と効率の観点を対応資料へ統合 |
-| Efficiency[^copilot-efficiency] | SKILL.md、actions.md、reporting.md、patterns.md、review-rubric.mdの測定・候補選択・検証を効率資料へ統合 |
-| Hardening[^copilot-hardening] | SKILL.mdと同梱referencesの入力・トリガー・権限・実行経路の点検を安全性資料へ統合 |
-| Runtime Upgrade Conventions[^copilot-runtime] | 警告の調査、互換性、SHA固定、小さい更新、成果物検証を更新資料へ統合 |
+| CI/CD Best Practices[^copilot-cicd] | Triggers, jobs, reuse, tests, artifacts, deployment/recovery into design; safety/efficiency into corresponding material |
+| Efficiency[^copilot-efficiency] | Measurement, candidate selection, validation from SKILL.md, actions.md, reporting.md, patterns.md, review-rubric.md into efficiency |
+| Hardening[^copilot-hardening] | Input, trigger, permission, execution-path inspection from SKILL.md/bundled references into safety |
+| Runtime Upgrade Conventions[^copilot-runtime] | Warning investigation, compatibility, SHA pinning, small upgrades, artifact validation into upgrades |
 
-原典はMIT License、Copyright GitHub, Inc.。著作権表示・許諾・免責の全文を [LICENSE.txt](../LICENSE.txt) に保持する。[^copilot-license]
+Originals are MIT License, Copyright GitHub, Inc. Preserve complete copyright, permission, and disclaimer in [LICENSE.txt](../LICENSE.txt).[^copilot-license]
 
-## 採用・修正・不採用
+## Adoption, revision, and rejection
 
-| 論点 | 統合した判断 |
+| Topic | Integrated judgment |
 | --- | --- |
-| 4資料の重複 | 入口と共通の安全・検証条件を1スキルにまとめ、詳細は作業別に読む |
-| 作業の境界 | 原典hardeningの編集禁止は監査・レビューだけに適用。修正依頼のIssue計画・公開許可はissue-management、承認済み変更はchange-deliveryへ接続する。独自の重要度・報告形式・Issue手順を増やさない |
-| 権限 | 「tokenは既定で常にwrite」「イベント名だけで全Secretへアクセス」「fork PRは無条件に安全」を採用しない。実効権限・渡すSecret・実行元・runnerを確認する |
-| 未信頼出力 | 非特権buildのartifactをtrustedと呼ばない。特権のworkflow_runへ渡しても未信頼として検証し、コードとして実行しない |
-| Actionの固定 | 完全SHAとリリース・コメントの一致を採用。原典の可変タグ例やSHAと版コメントが一致しない例は転記しない |
-| 設計 | develop/releaseブランチ、手動承認、Canary、特定サービスや全検査ツールの導入を一律に要求しない |
-| 効率 | 少数の根拠ある改善と実測の区別を採用。固定3件や待ち時間1.25倍を成功基準にしない |
-| マトリクス | 未文書化の対応環境を削除せず、契約・実際の利用を確認する |
-| スキップとキャンセル | pathフィルターで必須チェックを壊さず、全workflowへのcancelを要求しない。pending置換とqueueの対象環境での仕様を確認する |
-| キャッシュ | 毎回変わるrun IDのキーやnode_modules保存を定番にしない。互換性・保存費用・信頼境界を確認する |
-| 更新と検証 | Action内部とアプリ用ランタイムを区別する。ローカル成功をActionの実実行成功の代用にしない |
+| Overlap among four sources | One skill for entry/common safety/validation conditions; read task-specific detail |
+| Work boundaries | Original hardening edit prohibition applies only to audits/review. Connect fix plans/publication permission to issue-management and approved changes to change-delivery without extra severity/report/Issue procedures |
+| Permissions | Do not adopt “tokens always default write,” “event names alone grant all Secrets,” or “fork PRs are unconditionally safe.” Check effective permissions, passed Secrets, code provenance, runners |
+| Untrusted output | Unprivileged-build artifacts remain untrusted, even in privileged workflow_run; validate without executing as code |
+| Action pinning | Full SHA/release/comment agreement; do not copy mutable-tag or mismatched examples |
+| Design | Do not uniformly require develop/release branches, manual approval, Canary, particular services, or every checking tool |
+| Efficiency | A few evidence-based improvements and separate measurements; no fixed three items or 1.25× wait threshold |
+| Matrices | Preserve undocumented supported environments until contracts/actual use are checked |
+| Skips/cancellation | Do not break required checks with path filters or require cancellation everywhere; check pending replacement and queue in target environments |
+| Caches | Run-ID keys or saving node_modules are not universal patterns; check compatibility, storage cost, trust |
+| Upgrades/validation | Separate internal/application runtimes; local success does not replace actual Action runs |
 
-この表は本スキルへの適用判断であり、原典全体の採用を意味しない。
+These are this skill's application decisions, not wholesale adoption.
 
-## 公式仕様の確認と見直し条件
+## Official checks and reassessment conditions
 
-2026-09-20にGitHub公式のworkflow syntax、reusable workflows、cache、secure use、events、workflow commands、OIDC、Action metadata、およびcheckout・setup-nodeの現行資料と照合した。主張とURLは各参照資料の `sources` と脚注へ結んでいる。仕様の転記を増やさず、版に依存する判断を行う時点で対象環境に対応する正本を読み直す。
+On 2026-09-20 compared official GitHub workflow syntax, reusable workflows, cache, secure use, events, workflow commands, OIDC, Action metadata, and current checkout/setup-node material. Claims/URLs link through each reference's `sources`/footnotes. Avoid more specification copies; reread target-environment authoritative versions when making version-dependent judgments.
 
-- フィルター、必須チェック、concurrencyを変えるときは[効率改善](efficiency.md)の公式仕様を確認する。`queue: max` の利用可否や制約を旧環境にも適用できるとは仮定しない。
-- 権限、fork、runner、OIDCを変えるときは[安全性](hardening.md)の公式仕様と実際の設定・claimsを確認する。subject形式やcredential保存場所を固定の前提にしない。
-- Action更新時は[ランタイム更新](runtime-upgrades.md)に従い、そのリリースのmetadata・release notes・完全SHAを照合する。確認日だけを最新版・互換性の証明にしない。
+- For filters, required checks, or concurrency, check official specifications in [Efficiency](efficiency.md). Do not assume older environments support `queue: max` or its constraints.
+- For permissions, forks, runners, or OIDC, check official specifications and actual settings/claims in [Safety](hardening.md). Do not assume fixed subjects/credential locations.
+- For upgrades follow [Runtime upgrades](runtime-upgrades.md), comparing release metadata/notes/full SHA. Check dates alone do not prove latest versions or compatibility.
 
-## Runnerとshellの公式仕様
+## Official runner and shell specifications
 
-2026-09-22にGitHub.comのpublic/private repository向けGitHub-hosted runner一覧、Single-CPU runnerの制約、`defaults.run.shell` のworkflow syntaxを確認した。private向け一覧では`ubuntu-latest`の標準runnerが2 CPU/8 GB、public向け一覧では4 CPU/16 GBと記載されていた。数値・機能・利用条件は変更されるため、runnerを選ぶ時点で対象repositoryの公開状態、plan、runner labelと最新の公式仕様を確認する。GHESのrunner inventoryは別途対象環境で確認する。
+On 2026-09-22 checked GitHub.com public/private hosted-runner lists, Single-CPU constraints, and `defaults.run.shell` syntax. Private lists described standard `ubuntu-latest` as 2 CPU/8 GB and public lists as 4 CPU/16 GB. Values/features/availability change; check visibility, plan, label, and current official specifications at selection time. Check GHES inventories separately.
 
-2026-09-22に[Runner選定][^github-runner-selection]、[self-hosted label][^github-self-hosted-labels]、[runner group][^github-runner-groups]資料を確認した。確認範囲は `runs-on` のlabel/group条件、self-hosted custom labelの設定、runner groupの対象であり、特定organizationやrepositoryの実際のrunner inventory/accessは確認していない。jobを選ぶ時点で対象設定を確認する。
+On 2026-09-22 checked [Runner selection][^github-runner-selection], [self-hosted labels][^github-self-hosted-labels], and [runner groups][^github-runner-groups]. Scope covered `runs-on` label/group conditions, custom-label configuration, and group targets, not actual Organization/repository inventories/access. Check target settings when selecting jobs.
 
-- `ubuntu-slim` はGitHub.comのpublic/private repository向け標準runner一覧にあり、2026-09-22時点では1 CPU/5 GB、job上限15分、非特権containerとして記載されていた。filesystem mount、Docker-in-Docker、一部の低レベルkernel機能は利用できない。これらはGitHub全体のrunner選択要件ではなく、実際の可否を判断する仕様である。[Public runner一覧][^github-hosted-runners-public]、[private runner一覧][^github-hosted-runners-private]、[Single-CPU runner][^github-single-cpu-runners]
-- `runs-on` はrunner label・groupで対象を選び、両方を指定した場合はどちらも一致するrunnerだけが候補となる。self-hosted runnerにはcustom labelを追加でき、runner groupはlarger runnerまたはself-hosted runnerで構成される。従って、label名だけでは候補がGitHub-hostedかself-hostedかを確認できない場合がある。対象設定でprovider、groupとrepository accessを確認する。[Runner選定][^github-runner-selection]、[self-hosted label][^github-self-hosted-labels]、[runner group][^github-runner-groups]
-- Linux/macOSでshellを省略すると `bash -e {0}` が使われ、Bashがないときは `sh -e {0}` がfallbackとなる。`shell: bash` を明示すると `bash --noprofile --norc -eo pipefail {0}` が使われる。[Workflow syntax][^github-workflow-default-shell] Bashの`pipefail`はpipeline内で最後に非0を返したcommandの状態をpipelineへ返す。[Bash Reference Manual][^bash-reference-pipelines] Bashの`-e`は`if`条件と`&&`・`||` listの非最終commandでは失敗だけで直ちにshellを終了しないが、最後の`&&`・`||`の後のcommandにはこの例外が適用されない。[Bash Reference Manual][^bash-reference-set-builtin] 既存workflowを明示Bashへ切り替える場合は、pipelineのstatusと周囲の分岐・handlerの両方を確認し、途中commandの非0を意図的に許容する場合は、その終了状態だけを明示して他の失敗を保つ。
-- job `container`内のshell既定値は`sh`であり、workflowやjobの`defaults.run.shell`、またはstepの`shell`で上書きできる。workflow-level `bash` defaultを使うなら、job containerにBashがあるかを確認する。[Job container syntax][^github-job-container-shell]
-- Actions runnerの実装は、shell省略時にBashを探してから`sh`へfallbackし、shellが明示されている場合はそのshellを選ぶ。2026-09-21に確認した固定commitの実装では、この選択が別の分岐になっている。[ScriptHandler.cs][^actions-runner-shell-handler]
-- Bash既定値が適用される各runner・containerの実行環境でBashの有無とcommandの互換性を確認する。Bashがないself-hosted runnerやcontainerでは、可能ならBash入りrunner・imageを用意する。package導入を行うstepには、workflow-levelのBash既定値がそのstepにも適用されるため、導入前から利用できるshell（例: `sh`）をstep-levelで明示する。導入できず処理がPOSIX互換なら、workflow全体のBash既定値を保ち、該当jobに限って`defaults.run.shell: sh`を明示して不在を理由に記録する。[Workflow syntax][^github-workflow-default-shell]
-- PowerShellなど別shellをcommandの契約とするjobやstepでは、workflow全体のBash既定値を保ち、job-level `defaults.run.shell`またはstep-level `shell`を契約に合う利用可能なshellへ上書きして、その具体的な要件を記録する。Bash固有の構文が必要でBashを提供できない場合は、shell方針とjob要件のどちらを優先するかユーザーに確認する。[Workflow syntax][^github-workflow-default-shell]
-- GHESやself-hosted runnerのlabelはGitHub-hosted一覧から推測しない。対象環境の登録済みlabelを確認し、`ubuntu-slim`が利用できない場合は、その事実をrunner選択の具体的な制約として扱う。
+- `ubuntu-slim` appears in GitHub.com public/private standard lists; on 2026-09-22 it was described as 1 CPU/5 GB, 15-minute job limit, unprivileged containers. Filesystem mounts, Docker-in-Docker, and some low-level kernel features are unavailable. These determine actual suitability, not universal runner-selection requirements. [Public lists][^github-hosted-runners-public], [private lists][^github-hosted-runners-private], [Single-CPU runners][^github-single-cpu-runners]
+- `runs-on` selects labels/groups; with both, only runners matching both qualify. Self-hosted runners may have custom labels, and groups comprise larger/self-hosted runners. Labels alone therefore may not establish hosted versus self-hosted; check provider/group/repository access. [Runner selection][^github-runner-selection], [self-hosted labels][^github-self-hosted-labels], [runner groups][^github-runner-groups]
+- Unspecified Linux/macOS shells use `bash -e {0}`, falling back to `sh -e {0}` without Bash. Explicit `shell: bash` uses `bash --noprofile --norc -eo pipefail {0}`. [Workflow syntax][^github-workflow-default-shell] Bash `pipefail` returns the last nonzero command's status in pipelines. [Bash manual][^bash-reference-pipelines] Bash `-e` does not immediately exit solely from failures in `if` conditions or nonfinal `&&`/`||` list commands, but that exception does not apply after the final `&&`/`||`. [Bash manual][^bash-reference-set-builtin] On explicit-Bash migration check pipeline statuses and surrounding branches/handlers, explicitly permitting only intended intermediate nonzero statuses while preserving other failures.
+- Job `container` defaults to `sh`, overridable through workflow/job `defaults.run.shell` or step `shell`. Check container Bash availability before workflow-level Bash defaults. [Job container syntax][^github-job-container-shell]
+- Runner implementation searches Bash then falls back to `sh` for unspecified shells, selecting declared shells when explicit. The fixed implementation checked on 2026-09-21 uses separate branches. [ScriptHandler.cs][^actions-runner-shell-handler]
+- Check Bash/command compatibility for every affected runner/container. Provide Bash-equipped runners/images if possible; package-install steps need explicit pre-install-available step shells such as `sh`, since Bash defaults also apply to them. If installation is impossible and processing POSIX-compatible, retain workflow Bash and set only the affected job `defaults.run.shell: sh`, recording absence. [Workflow syntax][^github-workflow-default-shell]
+- For jobs/steps contracted to PowerShell or other shells, retain workflow Bash and override job `defaults.run.shell` or step `shell` with available compatible shells, recording requirements. If Bash syntax is necessary but unavailable, ask which policy/job requirement takes precedence. [Workflow syntax][^github-workflow-default-shell]
+- Do not infer GHES/self-hosted labels from hosted lists; check registered target labels. Unavailable `ubuntu-slim` is a concrete selection constraint.
 
-[^copilot-cicd]: GitHub awesome-copilotのCI/CD Best Practices Instructions、上記固定版。
-[^copilot-efficiency]: GitHub Actions Efficiencyと同梱4資料、上記固定版。
-[^copilot-hardening]: GitHub Actions Hardeningと同梱参照資料、上記固定版。
-[^copilot-runtime]: GitHub Actions Runtime Upgrade Conventions、上記固定版。
-[^copilot-license]: GitHub awesome-copilotのMIT License、上記固定版。
-[^github-runner-selection]: [Choosing the runner for a job](https://docs.github.com/en/actions/how-tos/write-workflows/choose-where-workflows-run/choose-the-runner-for-a-job)。`runs-on` のlabel・group選択と複合条件の参照元。
-[^github-self-hosted-labels]: [Using labels with self-hosted runners](https://docs.github.com/en/actions/how-tos/manage-runners/self-hosted-runners/apply-labels)。self-hosted runnerへのcustom label付与の参照元。
-[^github-runner-groups]: [Runner groups](https://docs.github.com/en/actions/concepts/runners/runner-groups)。runner groupの用途と構成対象の参照元。
-[^github-hosted-runners-public]: [Standard GitHub-hosted runners for public repositories](https://docs.github.com/en/actions/reference/runners/github-hosted-runners#standard-github-hosted-runners-for-public-repositories)。public repository向けrunner labelと仕様の参照元。
-[^github-hosted-runners-private]: [Standard GitHub-hosted runners for private repositories](https://docs.github.com/en/actions/reference/runners/github-hosted-runners#standard-github-hosted-runners-for-private-repositories)。private repository向けrunner label、仕様と利用条件の参照元。
-[^github-single-cpu-runners]: [Single-CPU runners](https://docs.github.com/en/actions/reference/runners/github-hosted-runners#single-cpu-runners)。本文に記した15分上限と非特権container制約の参照元。
-[^github-workflow-default-shell]: [Workflow syntax: `defaults.run.shell`](https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax#defaultsrun)。本文に記したshell既定値と実行commandの参照元。
-[^bash-reference-pipelines]: [GNU Bash Reference Manual: Pipelines](https://www.gnu.org/software/bash/manual/html_node/Pipelines)。本文に記したpipefail有効時のpipeline statusを説明する。
-[^bash-reference-set-builtin]: [GNU Bash Reference Manual: The Set Builtin](https://www.gnu.org/software/bash/manual/html_node/The-Set-Builtin.html)。`-e` の条件文脈における例外を説明する。
-[^github-job-container-shell]: [Workflow syntax: `jobs.<job_id>.container`](https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax#jobsjob_idcontainer)。本文に記したcontainer内shell既定値の参照元。
-[^actions-runner-shell-handler]: [Actions runner `ScriptHandler.cs`](https://github.com/actions/runner/blob/80bb1fb827fa44d489263061e71ef4adba7ad8cd/src/Runner.Worker/Handlers/ScriptHandler.cs#L187-L203)（shell未指定時のOS別選択とLinux/macOSでのBashからshへの探索）、[明示shellの解決](https://github.com/actions/runner/blob/80bb1fb827fa44d489263061e71ef4adba7ad8cd/src/Runner.Worker/Handlers/ScriptHandler.cs#L205-L233)。この実装snapshotは2026-09-21に確認した。実際のrunner・containerは対象環境で再確認する。
+[^copilot-cicd]: GitHub awesome-copilot CI/CD Best Practices Instructions, fixed version above.
+[^copilot-efficiency]: GitHub Actions Efficiency and four bundled resources, fixed version above.
+[^copilot-hardening]: GitHub Actions Hardening and bundled references, fixed version above.
+[^copilot-runtime]: GitHub Actions Runtime Upgrade Conventions, fixed version above.
+[^copilot-license]: GitHub awesome-copilot MIT License, fixed version above.
+[^github-runner-selection]: [Choosing the runner for a job](https://docs.github.com/en/actions/how-tos/write-workflows/choose-where-workflows-run/choose-the-runner-for-a-job). Source for label/group selection and combined conditions.
+[^github-self-hosted-labels]: [Using labels with self-hosted runners](https://docs.github.com/en/actions/how-tos/manage-runners/self-hosted-runners/apply-labels). Source for custom self-hosted labels.
+[^github-runner-groups]: [Runner groups](https://docs.github.com/en/actions/concepts/runners/runner-groups). Source for group purpose and composition.
+[^github-hosted-runners-public]: [Standard GitHub-hosted runners for public repositories](https://docs.github.com/en/actions/reference/runners/github-hosted-runners#standard-github-hosted-runners-for-public-repositories). Source for public repository runner labels/specifications.
+[^github-hosted-runners-private]: [Standard GitHub-hosted runners for private repositories](https://docs.github.com/en/actions/reference/runners/github-hosted-runners#standard-github-hosted-runners-for-private-repositories). Source for private labels, specifications, and availability.
+[^github-single-cpu-runners]: [Single-CPU runners](https://docs.github.com/en/actions/reference/runners/github-hosted-runners#single-cpu-runners). Source for the stated 15-minute limit and unprivileged-container constraints.
+[^github-workflow-default-shell]: [Workflow syntax: `defaults.run.shell`](https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax#defaultsrun). Source for stated default shells and execution commands.
+[^bash-reference-pipelines]: [GNU Bash Reference Manual: Pipelines](https://www.gnu.org/software/bash/manual/html_node/Pipelines). Explains pipeline status with pipefail.
+[^bash-reference-set-builtin]: [GNU Bash Reference Manual: The Set Builtin](https://www.gnu.org/software/bash/manual/html_node/The-Set-Builtin.html). Explains conditional-context exceptions for `-e`.
+[^github-job-container-shell]: [Workflow syntax: `jobs.<job_id>.container`](https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax#jobsjob_idcontainer). Source for stated container shell defaults.
+[^actions-runner-shell-handler]: [Actions runner `ScriptHandler.cs`](https://github.com/actions/runner/blob/80bb1fb827fa44d489263061e71ef4adba7ad8cd/src/Runner.Worker/Handlers/ScriptHandler.cs#L187-L203), [Explicit shell resolution](https://github.com/actions/runner/blob/80bb1fb827fa44d489263061e71ef4adba7ad8cd/src/Runner.Worker/Handlers/ScriptHandler.cs#L205-L233). Unspecified-shell OS selection and Linux/macOS Bash-to-sh search, then explicit-shell resolution. Implementation snapshot checked on 2026-09-21; recheck actual target runners/containers.

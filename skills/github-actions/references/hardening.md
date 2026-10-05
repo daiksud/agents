@@ -1,7 +1,7 @@
 ---
 type: Instruction
-title: GitHub Actionsの安全性
-description: 入力、実行コード、権限、ランナー、成果物の信頼境界を追ってリスクと修正を判断します。
+title: GitHub Actions safety
+description: Trace trust boundaries of inputs, executed code, permissions, runners, and artifacts to judge risks and fixes.
 sources:
   - id: copilot-hardening
     resource: https://github.com/github/awesome-copilot/tree/4f4796f0bf30e105700f97ed8408c12b6aa95e06/skills/github-actions-hardening
@@ -23,20 +23,20 @@ sources:
     resource: https://docs.github.com/en/actions/reference/security/oidc
 ---
 
-## 入力から影響までを追う
+## Trace inputs through impact
 
-監査では指定範囲を読み取り、修正依頼では承認済みの範囲を変更する。危険な構文の一致だけで重要度を決めず、入力を誰が制御でき、どのコードがどの権限で実行され、何へ到達できるかを確認する。トリガー別の点検という原典の観点を使い、実際の設定と経路で判断する。[^copilot-hardening]
+For audits read the specified scope; for fix requests change approved scope. Do not assign severity solely by matching dangerous syntax; check who controls input, which code runs with which permissions, and what it can reach. Use the source's trigger-specific investigation perspective, judging actual settings/paths.[^copilot-hardening]
 
-### 権限・認証・runner
+### Permissions, authentication, and runners
 
-- 組織・リポジトリの既定値、workflow/jobの `permissions`、fork設定、再利用先を調べる。`GITHUB_TOKEN` の権限はトリガー名だけで確定しない。`permissions: {}` または必要なread権限を基準に、書き込みは必要なジョブへ限定する。明示時に未指定のscopeはnoneとなり、`id-token` はwrite/noneである。[^github-syntax]
-- Secretは実際に渡しているジョブ・Action・再利用先まで追う。マスクを漏洩防止の保証にせず、context全体・認証済み設定・変換した秘密値をログやartifactへ出さない。不要なcheckout認証の永続化は `persist-credentials: false` を検討し、保存先や挙動は対象Action版で確認する。[^github-secure-use]
-- クラウドが対応し信頼条件を管理できる場合はOIDCで長期鍵を減らす。必要ジョブだけ `id-token: write` とし、実際のclaims、audience・subject、repository、branch/environmentとクラウド側のrole権限を照合する。固定のsubject例を全リポジトリに当てはめない。[^github-oidc]
-- `runs-on` のlabel名だけではrunner providerを特定できない。対象labelに一致するGitHub-hosted・self-hosted runner、runner group、repository accessを確認し、同じcustom labelを持つpersistent self-hosted runnerが候補になる場合は実際のroutingを確かめる。[runner selection][^github-runner-selection]、[self-hosted custom labels][^github-self-hosted-labels]、[runner groups][^github-runner-groups]。fork PRの未信頼codeではself-hosted runnerの永続状態、ホスト資格情報、内部network、共有workspaceが別のリスクとなる。Secretが渡らないことだけで安全とせず、使い捨てrunner登録だけでも実行ホストの清浄性を保証せず、隔離と消去の実態を確認する。[secure use][^github-secure-use]
+- Investigate Organization/repository defaults, workflow/job `permissions`, fork settings, and reuse targets. Trigger names alone do not determine `GITHUB_TOKEN` permissions. Start from `permissions: {}` or necessary read permissions, limiting writes to needed jobs. With explicit permissions unspecified scopes become none; `id-token` is write/none.[^github-syntax]
+- Trace Secrets through actual receiving jobs, Actions, and reuse targets. Masking does not guarantee leak prevention; do not log/artifact entire contexts, authenticated settings, or transformed secrets. Consider `persist-credentials: false` for unnecessary checkout authentication persistence, checking storage/behavior for the target Action version.[^github-secure-use]
+- Where clouds support managed trust conditions, reduce long-lived keys through OIDC. Give only necessary jobs `id-token: write`, comparing actual claims, audience/subject, repository, branch/environment, and cloud role permissions. Do not apply fixed subject examples universally.[^github-oidc]
+- `runs-on` labels alone do not identify providers. Check matching GitHub-hosted/self-hosted runners, groups, and repository access, verifying actual routing where persistent self-hosted runners share custom labels. [Runner selection][^github-runner-selection], [self-hosted custom labels][^github-self-hosted-labels], [runner groups][^github-runner-groups]. For untrusted fork-PR code, persistent state, host credentials, internal networks, and shared workspaces add risks. Absence of Secrets alone is not safety; ephemeral registration alone does not guarantee clean hosts. Check actual isolation/erasure. [Secure use][^github-secure-use]
 
-### 外部入力と実行コード
+### External input and executed code
 
-PRタイトル・本文・ブランチ名・コメント・dispatch入力等を `run` や `github-script` のスクリプトへ式展開しない。中間環境変数を引用付きで参照し、JavaScriptなら `process.env` 等からデータとして扱う。Actionの入力へ渡す場合も受け手がコードとして評価しないかを追う。
+Do not interpolate PR titles/bodies, branch names, comments, dispatch inputs, or similar data into `run` or `github-script` code. Use quoted intermediate environment variables, or JavaScript `process.env` as data. For Action inputs, trace whether receivers evaluate them as code.
 
 ```yaml
 - name: Print PR title as data
@@ -45,28 +45,28 @@ PRタイトル・本文・ブランチ名・コメント・dispatch入力等を 
   run: printf '%s\n' "$PR_TITLE"
 ```
 
-これはデータの受け渡し例であり、入力の信頼性を上げるものではない。`eval`、`bash -c`、生成したスクリプトへの連結で再解釈しない。改行を含む外部値を `GITHUB_ENV`・`GITHUB_OUTPUT` にそのまま書かない。複数行形式ではdelimiterが値の独立行に現れないことを保証し、任意のデータならファイルに保存して読み手で検証する。[^github-commands]
+This demonstrates data handoff, not increased input trust. Do not reinterpret through `eval`, `bash -c`, or generated-script concatenation. Do not write newline-containing external values directly into `GITHUB_ENV`/`GITHUB_OUTPUT`. For multiline formats guarantee delimiters do not appear as standalone value lines; for arbitrary data save files and validate in readers.[^github-commands]
 
-`pull_request_target` や `workflow_run` 等で特権を持つ処理は、PR由来のcheckout・ローカルAction・ビルド設定・依存インストールのlifecycle scriptを実行しない。見えるシェルだけでなく間接実行も追う。レビュー済みのworkflowから呼ぶだけで、呼び出されるPRコードまで信頼済みにはならない。[^github-events]
+Privileged processing through `pull_request_target`, `workflow_run`, or similar events must not execute PR-derived checkouts, local Actions, build configuration, or dependency-install lifecycle scripts. Trace indirect execution as well as visible shells. Calling from reviewed workflows does not make called PR code trusted.[^github-events]
 
-### Action・キャッシュ・成果物
+### Actions, caches, and artifacts
 
-外部Actionと再利用ワークフローは公式の対象リポジトリにあるリリースと完全SHAを照合する。SHA固定は参照の可変性を減らすもので、内容の安全性を証明しない。入力、依存コード、ネットワークやSecretの利用も必要な範囲で確認する。依存・Secret・静的セキュリティ検査は既存の検出範囲を確認して選び、全ツールを一律に増やさない。
+Compare external Actions/reusable workflows with official target-repository releases and full SHAs. Pinning reduces reference mutability, not proof of safe contents. Check inputs, dependency code, network/Secret use where needed. Select dependency, Secret, and static-security checks from existing detection coverage without uniformly adding every tool.
 
-非特権のbuildから特権の公開処理へ渡すartifactは未信頼のまま扱う。元run・repository・head SHA・イベント・conclusionとの対応を確かめ、ダウンロード先、展開パス、内容と期待する形式を検証する。特権側でスクリプトとして実行しない。`workflow_run` の完了や成功だけを成果物の信頼性の保証にしない。
+Keep artifacts passed from unprivileged builds to privileged publication untrusted. Match original run, repository, head SHA, event, and conclusion; validate download destinations, extraction paths, contents, and expected formats. Do not execute them as scripts on privileged sides. Completed/successful `workflow_run` alone does not guarantee artifact trust.
 
-キャッシュは誰がどのrefで作成し、どの権限のジョブが復元するかを調べる。広いrestoreキーや共有ディレクトリで未信頼コードが特権処理へ持ち込まれないようにする。Secret・token・認証設定を保存しない。署名やattestationを使う場合も、検証対象のdigestと許容する作成者・workflowの対応を確認する。
+Investigate cache creators/refs and restoring jobs' permissions. Prevent untrusted code entering privileged processing through broad restore keys or shared directories. Do not save Secrets/tokens/authentication settings. Even with signatures/attestations, check digest correspondence with allowed creators/workflows.
 
-## 検証と報告
+## Validation and reporting
 
-攻撃文字列は隔離したテストでデータのまま扱われることを確認し、実環境で漏洩・権限行使を試さない。監査では位置、入力源、実行経路、実効権限、影響と最小修正を `code-review` の判断に沿って示す。読めない設定、未実行の修正、到達可能性を確認できない点を区別する。
+Check attack strings remain data in isolated tests; do not test leaks or exercise privileges in real environments. For audits show locations, input sources, execution paths, effective permissions, impact, and minimal fixes under `code-review` criteria. Distinguish unreadable settings, unexecuted fixes, and unconfirmed reachability.
 
-[^copilot-hardening]: Hardeningと同梱参照の調査観点を再構成。トリガーだけによる安全性・重要度の断定は採用しない。
-[^github-syntax]: Workflow syntax。実効権限の計算とscopeの正本。
-[^github-secure-use]: Secure use。入力処理、Secret、Action固定、runner隔離の根拠。
-[^github-oidc]: OIDC reference。実際のclaimsとクラウド側の信頼条件を照合する。
-[^github-runner-selection]: Choosing the runner for a job。`runs-on` のlabel・group選択と複合条件の根拠。
-[^github-self-hosted-labels]: Using labels with self-hosted runners。custom labelを設定できるrunner種別の根拠。
-[^github-runner-groups]: Runner groups。groupの用途と対象runnerの範囲。
-[^github-commands]: Workflow commands。複数行データと環境ファイルの取り扱いを確認する。
-[^github-events]: Events that trigger workflows。特権イベントと未信頼コード・artifactの境界を確認する。
+[^copilot-hardening]: Restructured Hardening and bundled investigation perspectives. Do not adopt safety/severity judgments based only on triggers.
+[^github-syntax]: Workflow syntax. Authoritative effective-permission calculation and scopes.
+[^github-secure-use]: Secure use. Evidence for inputs, Secrets, Action pinning, and runner isolation.
+[^github-oidc]: OIDC reference. Compare actual claims with cloud trust conditions.
+[^github-runner-selection]: Choosing the runner for a job. Evidence for `runs-on` label/group selection and combined conditions.
+[^github-self-hosted-labels]: Using labels with self-hosted runners. Evidence for runner types supporting custom labels.
+[^github-runner-groups]: Runner groups. Group purpose and target runner scope.
+[^github-commands]: Workflow commands. Check multiline data/environment-file handling.
+[^github-events]: Events that trigger workflows. Check privileged-event boundaries with untrusted code/artifacts.
