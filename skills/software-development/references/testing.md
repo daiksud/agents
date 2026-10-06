@@ -103,7 +103,7 @@ Do not make test-layer ratios, coverage, mutation scores, or response-time measu
 
 Keep validation sources and adoption decisions in the [primary materials](sources.md).[^practice-sources]
 
-[^practice-sources]: References and application decisions for Canon TDD, Continuous Testing, Architecture, and QA Engineering Best Practices.
+[^practice-sources]: References and application decisions for Canon TDD, Continuous Testing, Architecture, and QA Engineering Best Practices; [Design by Contract adoption and limits](sources.md#adoption-decisions-for-design-by-contract).
 
 ### Reproducing and reporting defects
 

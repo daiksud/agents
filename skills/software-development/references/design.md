@@ -97,7 +97,7 @@ First express business meaning and dependencies through names, types, function d
 
 Keep design sources and adoption decisions in the [primary materials](sources.md).[^practice-sources]
 
-[^practice-sources]: References and application decisions for Simple Design, YAGNI, DDD, OOP Design Patterns, Self-explanatory Code Commenting, Context Engineering, and Taming Copilot.
+[^practice-sources]: References and application decisions for Simple Design, YAGNI, DDD, OOP Design Patterns, Self-explanatory Code Commenting, Context Engineering, and Taming Copilot; [Design by Contract adoption and limits](sources.md#adoption-decisions-for-design-by-contract).
 
 ## Change scope and decomposition
 
