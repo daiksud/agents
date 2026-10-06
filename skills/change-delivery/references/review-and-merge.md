@@ -247,7 +247,7 @@ Briefly record incident impact, occurrence/detection/recovery times, confirmed c
 
 - After confirmed merge, check for no uncommitted changes, then `git switch main`.
 - Run `git pull --ff-only` on main; on failure investigate without forcibly overwriting local changes/history.
-- If another worktree uses main, instead fetch and compare `origin/main`, merge SHA, and main validation, then `git switch --detach origin/main` at the current location and proceed to deletion below. Do not alter other worktrees/their main or bypass checkout protection. In this case verify remote-main/current-location synchronization for completed cleanup, separately reporting other worktree local main unupdated.
+- If another worktree uses main, instead run `git fetch origin` and compare `origin/main`, merge SHA, and main validation, then `git switch --detach origin/main` at the current location and proceed to deletion below. Do not alter other worktrees/their main or bypass checkout protection. In this case verify remote-main/current-location synchronization for completed cleanup, separately reporting other worktree local main unupdated.
 - Check and delete merged remote/local branches. Before deletion check corresponding PR merge state, branch-tip/final-PR-commit agreement, and usage through `git worktree list`.
 - Do not delete branches with post-merge commits or used by other worktrees; report why retained. Exclude main and merge-target branches.
 - Delete remote branches with `git push origin --delete <branch>` and local ones with `git branch -d <branch>`; do not repeat already-completed deletion.

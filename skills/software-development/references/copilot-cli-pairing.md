@@ -29,11 +29,11 @@ If the original `agent_id` becomes unreachable, pause subsequent code changes re
 
 ### CLI checking example
 
-- Given: Code changes need repeated checks from the same Navigator after its initial response.[^issue-87] [^github-copilot-cli-changelog]
-- When: The Driver launches the Navigator through GitHub Copilot CLI `task`
-- Then: The Driver launches with `mode: "background"`
-- And: Subsequent `write_agent` is processed under the same `agent_id`, and that Navigator responds
-- And: `mode: "sync"` responses or `list_agents` showing `idle` alone do not establish continuing communication
+- 前提: Code changes need repeated checks from the same Navigator after its initial response.[^issue-87] [^github-copilot-cli-changelog]
+- もし: The Driver launches the Navigator through GitHub Copilot CLI `task`
+- ならば: The Driver launches with `mode: "background"`
+- かつ: Subsequent `write_agent` is processed under the same `agent_id`, and that Navigator responds
+- かつ: `mode: "sync"` responses or `list_agents` showing `idle` alone do not establish continuing communication
 
 [^issue-99]: [Issue #99](https://github.com/daiksud/agents/issues/99) on separating runtime-independent internal communication protocols from runtime-specific transport.
 [^github-copilot-cli-changelog]: [Copilot CLI changelog v1.0.88](https://github.com/github/copilot-cli/blob/v1.0.88/changelog.md#L1710) states `sync` tasks do not return reusable `agent_id` values; use `mode: "background"` for follow-up communication.
