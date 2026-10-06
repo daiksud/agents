@@ -1,7 +1,7 @@
 ---
 type: Instruction
-title: 開発とフィードバック
-description: XPの価値、インクリメンタルな設計、受け入れ条件とテスト先行の反復を定めます。
+title: Development and feedback
+description: Define XP values, incremental design, acceptance conditions, and test-first iteration.
 sources:
   - id: ron-jeffries-xp
     resource: https://ronjeffries.com/xprog/what-is-extreme-programming/
@@ -11,43 +11,43 @@ sources:
     resource: https://martinfowler.com/articles/designDead.html
 ---
 
-## 開発とフィードバック
+## Development and feedback
 
-Extreme Programming（XP）を日常の開発判断の軸とし、5つの価値を次の行動へ結びつける。[^ron-jeffries-xp]
+Use Extreme Programming (XP) to guide daily development decisions, connecting its five values to the following actions.[^ron-jeffries-xp]
 
-| 価値 | 判断と行動 |
+| Value | Decisions and actions |
 | --- | --- |
-| Communication | 目的・ルール・具体例・未回答事項を共有し、異なる理解を実装前に確かめる |
-| Simplicity | 現在確認されている要求と契約を満たす、理解しやすい最小の設計を選ぶ |
-| Feedback | Small Stepsでテスト・協働・統合・利用者の反応を早く確かめ、次の小さな変更へ反映する |
-| Courage | 欠陥や不確実性を隠さず、テストと既存の承認範囲を根拠に必要な設計改善を行う |
-| Respect | 利用者の判断権限、関係者の知識・時間と持続可能な働き方を尊重する |
+| Communication | Share purposes, rules, concrete examples, and unanswered questions, and check differing understandings before implementation |
+| Simplicity | Choose the smallest understandable design that meets currently confirmed requirements and contracts |
+| Feedback | Use Small Steps to check tests, collaboration, integration, and user reactions early, and reflect them in the next small change |
+| Courage | Do not conceal defects or uncertainty; make necessary design improvements based on tests and the existing approval scope |
+| Respect | Respect users' decision authority, stakeholders' knowledge and time, and sustainable work |
 
-Simple Design・YAGNIに従い、仮想的な将来変更のために機能や抽象化を追加しない。実際のフィードバックからIncremental DesignとRefactoringを進める。必要なテスト、契約、設計改善、レビュー、CI、承認・公開許可を省く理由にしない。[^fowler-yagni]
+Follow Simple Design and YAGNI; do not add features or abstractions for hypothetical future changes. Advance Incremental Design and Refactoring from actual feedback. Do not use them as reasons to omit required tests, contracts, design improvements, review, CI, approvals, or publication permission.[^fowler-yagni]
 
-人間一人でXPを始める場合も、既存の小さいTDD・漸進設計・自動検証を入口にする。具体的な導入方法は `software-development` の「一人でXPを始める」を参照する。人間の人数とAI Driver/Navigatorの役割は別であり、一人での実践を理由に既存のエージェント協働・通常レビュー・CI・統合条件を省略しない。
+When one human starts XP, begin with the existing small TDD cycles, incremental design, and automated validation. See “Starting XP alone” in `software-development` for concrete adoption methods. The number of humans and AI Driver/Navigator roles are separate; individual practice does not justify omitting existing agent collaboration, ordinary review, CI, or integration conditions.
 
-### インクリメンタルな設計
+### Incremental design
 
-XPのインクリメンタルな設計（Incremental Design）を採用する。設計を最初に完成させず、現在の要求を満たす最小の設計から始め、テストと実際のフィードバックに基づく小さなリファクタリングで継続的に育てる。設計を省略したり、必要な設計改善を後回しにしたりすることではない。[^fowler-evolutionary-design]
+Adopt XP's Incremental Design. Instead of completing the design up front, begin with the smallest design meeting current requirements and continuously evolve it through small refactorings based on tests and actual feedback. This does not mean omitting design or postponing necessary design improvements.[^fowler-evolutionary-design]
 
-以下を本環境での適用方針とする。ハッピーパスのシンプルなMVPは初回の進め方であり、以後の変更でも現在の要求に必要な設計だけを小さく加える。ユーザーが明示した対応範囲や合意済みの受け入れ条件を勝手に縮小しない。
+The following is this environment's application policy. A simple happy-path MVP is the initial approach; subsequent changes also add only the design needed for current requirements, in small steps. Do not arbitrarily reduce the user's explicit scope or agreed acceptance conditions.
 
-- 初回実装は、代表的な正常入力・通常操作で目的を達成するハッピーパスだけのシンプルなMVPに絞る。前提を短く明記し、まず最短の経路を動かす。
-- 低確率のエッジケースや仮想的な障害を最初から網羅しない。「念のため」「将来必要かもしれない」だけを根拠に、例外処理・リトライ・フォールバック・互換性対応・設定項目・汎用化を先行追加しない。
-- 計画・受け入れ条件・ToDo・テスト・レビューにも同じ範囲を適用する。未要求のエッジケースを必須項目やマージ条件へ追加せず、説明が必要な未対応の制約だけを短く示す。
-- 明示された要求、既存契約・回帰防止、具体的なセキュリティやデータ破壊の危険に必要な保護は省かない。正常系以外の対応を加える場合は、現在の要求・契約・確認済みの事実に結びつけた理由を示し、必要最小限にする。
-- 現在の変更が受け入れ条件を満たしたら、必要な検証・レビュー・統合まで完了させ、追加の堅牢化を自動で始めない。例外対応や拡張は、実際の利用・不具合・追加要求から必要性が確認されてから、別の小さな変更として扱う。
-- 複数の独立した統合単位で進める変更では、各単位をmainへ統合して必要な検証を確認した後、次へ着手する前に、実装・テスト・レビューから得た新しい事実が残り計画の前提・範囲・順序・分割・依存・所有境界・検証方法を変えるか短く再評価する。変化がなければ形式的に計画を書き直さず、変化があれば理由と更新後の計画を共有する。新しい証拠がない限り、完了済みの統合単位をやり直さない。
+- Limit initial implementation to a simple happy-path MVP that achieves the purpose with representative normal input and ordinary operations. Briefly state assumptions and first make the shortest path work.
+- Do not cover low-probability edge cases or hypothetical failures up front. Do not preemptively add exception handling, retries, fallbacks, compatibility handling, configuration, or generalization solely “just in case” or because “it may be needed later.”
+- Apply the same scope to plans, acceptance conditions, ToDos, tests, and review. Do not add unrequested edge cases as mandatory items or merge conditions; briefly show only unaddressed limitations that need explanation.
+- Do not omit explicit requirements, existing contracts, regression protection, or protection needed against concrete security or data-destruction risks. When adding handling outside normal paths, give reasons linked to current requirements, contracts, and confirmed facts, and keep it minimal.
+- Once the current change meets acceptance conditions, finish required validation, review, and integration without automatically starting additional hardening. Handle exceptions or extensions as separate small changes after actual use, defects, or additional requests establish their necessity.
+- For changes with multiple independent integration units, after integrating each unit into main and confirming required validation, briefly reassess whether new facts from implementation, tests, and review change the remaining plan's assumptions, scope, order, decomposition, dependencies, ownership boundaries, or validation method before starting the next unit. Do not rewrite the plan formally when nothing changes; otherwise share reasons and the updated plan. Do not redo completed integration units without new evidence.
 
-### 共有理解と検証
+### Shared understanding and validation
 
-関係者の異なる観点からルール・具体例・未回答の質問を整理し、対応する実装より先に受け入れ条件を定める。ドメインのルール変更ではfeature文書を先に保存する。
+Organize rules, concrete examples, and unanswered questions from stakeholders' differing perspectives, and define acceptance conditions before the corresponding implementation. Save the feature document first for domain-rule changes.
 
-コード変更はテストファーストとし、実装後にこう動くという期待を、対応する実装コードより先にテストで表現する。テストを書くときはアサートファーストとし、最後にパスすべきアサーションから書き始める。
+Make code changes test-first, expressing expected behavior after implementation in tests before the corresponding implementation code. Write tests assert-first, beginning with the assertion that must ultimately pass.
 
-TDDでは、テスト項目を含むToDoリストから一つずつ失敗・最小の成功・整理を反復する。技術処理、既存仕様、十分な既存テストを使うふるまい不変の整理の扱いは `software-development` に従う。文書・テストの存在だけを協働やテスト先行の証拠にしない。
+In TDD, iterate failure, minimal success, and cleanup one item at a time from a ToDo list that includes test items. Follow `software-development` for technical processing, existing specifications, and behavior-preserving cleanup with sufficient existing tests. The existence of documents or tests alone is not evidence of collaboration or test-first work.
 
-[^ron-jeffries-xp]: [Ron Jeffries: What is Extreme Programming?](https://ronjeffries.com/xprog/what-is-extreme-programming/)。5価値、現在の要求に合う設計、短い検証・設計改善を採用する。固定の会議・期間・組織編成や効果数値は共通要件にしない。2026-09-25に確認。
-[^fowler-yagni]: [Martin Fowler: Yagni](https://martinfowler.com/bliki/Yagni.html)。将来機能の先取りを避けつつ、現在の変更を支えるテスト・リファクタリング・CIは維持する。アサートファーストとエージェントの段階確認は本環境の運用方針。2026-09-25に確認。
-[^fowler-evolutionary-design]: [Martin Fowler: Is Design Dead?](https://martinfowler.com/articles/designDead.html)。XPで設計を継続的に育て、テスト・CI・リファクタリングで支える考え方を採用する。ハッピーパスのMVPから始める具体的な範囲は本環境の適用方針であり、XPの定義そのものではない。2026-09-28に確認。
+[^ron-jeffries-xp]: [Ron Jeffries: What is Extreme Programming?](https://ronjeffries.com/xprog/what-is-extreme-programming/). Adopt the five values, design meeting current requirements, and short validation and design-improvement cycles. Do not make fixed meetings, periods, organizational structures, or effect figures common requirements. Checked on 2026-09-25.
+[^fowler-yagni]: [Martin Fowler: Yagni](https://martinfowler.com/bliki/Yagni.html). Avoid anticipating future features while retaining tests, refactoring, and CI supporting current changes. Assert-first work and staged agent checks are this environment's operating policy. Checked on 2026-09-25.
+[^fowler-evolutionary-design]: [Martin Fowler: Is Design Dead?](https://martinfowler.com/articles/designDead.html). Adopt continuously evolving design in XP, supported by tests, CI, and refactoring. The specific scope of starting with a happy-path MVP is this environment's application policy, not the definition of XP itself. Checked on 2026-09-28.

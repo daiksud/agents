@@ -1,76 +1,76 @@
 ---
 type: Guide
-title: OKFの基本形式と参照
-description: 通常概念、索引、履歴の違いとBundle境界に基づくリンク解決を説明します。
+title: OKF basic format and references
+description: Explain differences among ordinary concepts, indexes, and logs, and link resolution by Bundle boundaries.
 sources:
   - id: okf-spec
     resource: https://github.com/GoogleCloudPlatform/open-knowledge-format/blob/ad30107c31c06aec8a7d5636e0d1058118604e6f/SPEC.md
     title: Open Knowledge Format v0.2
 ---
 
-## 通常概念とBundle
+## Ordinary concepts and Bundles
 
-Knowledge Bundleは配布単位となるディレクトリツリー、Conceptはその中の一つの知識文書である。Concept IDはBundle内のファイルパスから末尾の `.md` を除いたもの。例えばBundleが `docs/` なら `docs/behavior/order.feature.md` のIDは `behavior/order.feature` となる。リポジトリ・ドメインの境界・Bundleは同じものとは限らない。[^okf-spec]
+A Knowledge Bundle is a directory tree serving as a distribution unit; a Concept is one knowledge document within it. A Concept ID is its Bundle-relative file path without the final `.md`. For a `docs/` Bundle, `docs/behavior/order.feature.md` has ID `behavior/order.feature`. Repository, domain, and Bundle boundaries need not coincide.[^okf-spec]
 
-通常概念はUTF-8のMarkdown本文と先頭のYAML frontmatterで構成する。開始・終了はそれぞれ独立した行の `---`。必須キーは非空文字列の `type` だけで、型の登録簿はない。未知の型や追加キーを拒否しない。`title`・`description`・`resource`・`tags` は推奨であり、以下も適合する。[^okf-spec]
+Ordinary concepts consist of UTF-8 Markdown content with initial YAML frontmatter, opened/closed by `---` on separate lines. Only a nonempty string `type` is mandatory; no type registry exists. Do not reject unknown types or additional keys. `title`, `description`, `resource`, and `tags` are recommended; the following also conforms.[^okf-spec]
 
 ```markdown
 ---
 type: Local Idea
 ---
 
-検討中の概念。
+A concept under consideration.
 ```
 
-本環境の自作概念には `title`・`description` も記載する。`resource` は概念が表す資産の識別先であり、根拠資料を記録する `sources[].resource` とは区別する。抽象概念に資産URLを捏造しない。本文の固定章構成は要求しない。[^okf-spec]
+Include `title` and `description` for concepts authored in this environment. `resource` identifies the asset represented by the concept, separate from `sources[].resource` recording evidence. Do not fabricate asset URLs for abstract concepts. Fixed content chapters are not required.[^okf-spec]
 
-## 索引と履歴の例外
+## Index and log exceptions
 
-`index.md` と `log.md` は階層のどこでも予約名であり、通常概念に使わない。どちらも任意なので、不在だけを理由に新設しない。予約ファイルへ `type`・`title`・`description` を付けない。[^okf-spec]
+`index.md` and `log.md` are reserved names at any hierarchy level; do not use them for ordinary concepts. Both are optional; absence alone does not justify adding them. Do not give reserved files `type`, `title`, or `description`.[^okf-spec]
 
-`index.md` は見出しで分類したリンク項目のリストにする。説明はリンク先の `description` を使うことが推奨される。frontmatterは原則持たず、Bundleルートに限って版宣言を置ける。既存のroot版宣言は更新時に保持する。[^okf-spec]
+Make `index.md` lists of links grouped under headings. Descriptions are recommended to use linked targets' `description`. Normally no frontmatter is present; version declarations are allowed only at Bundle roots. Preserve existing root version declarations during updates.[^okf-spec]
 
 ```markdown
 ---
 okf_version: "0.2"
 ---
 
-# ガイド
+# Guides
 
-- [注文の扱い](behavior/order.feature.md) - 注文の受け入れ条件。
-- [設計判断](adr/) - 判断と理由。
+- [Order handling](behavior/order.feature.md) - Order acceptance conditions.
+- [Design decisions](adr/) - Decisions and reasons.
 ```
 
-`log.md` は日付ごとの平坦な更新項目を新しい順に並べる。日付見出しは実在する `YYYY-MM-DD`。先頭の太字ラベルは慣例であり必須ではない。ログの日付はイベントのグループ化であり、UTC offset付き日時を記録するメタデータとは別である。[^okf-spec]
+In `log.md`, put flat dated updates newest-first. Date headings are actual `YYYY-MM-DD` dates. Initial bold labels are conventional, not mandatory. Log dates group events, separate from metadata recording datetime with UTC offsets.[^okf-spec]
 
 ```markdown
-# 更新履歴
+# Change log
 
 ## 2026-09-11
 
-- 注文の受け入れ条件を更新した。
+- Updated order acceptance conditions.
 
 ## 2026-09-10
 
-- 最初のガイドを追加した。
+- Added the first guide.
 ```
 
-見本のコードブロック内にある見出しや脚注は、外側の文書の構造として解釈しない。
+Do not interpret headings/footnotes in sample code blocks as outer-document structure.
 
-## 参照の解決
+## Reference resolution
 
-Markdownリンクと `resource`・`sources[].resource`・`computation`・`executor.resource`・`attester.resource` は以下の基準で解釈する。`sources[].resource` には「プロジェクトX内の全クエリ」のような取得先を持たない範囲記述も認められるため、すべてをファイルパスとみなさない。[^okf-spec]
+Interpret Markdown links, `resource`, `sources[].resource`, `computation`, `executor.resource`, and `attester.resource` below. `sources[].resource` may also contain scope descriptions without retrieval targets, such as “all queries in project X”; do not treat all as file paths.[^okf-spec]
 
-| 表記 | 解決基準 | `docs/guide/page.md` からの例（Bundleは `docs/`） |
+| Notation | Resolution basis | Example from `docs/guide/page.md` (Bundle `docs/`) |
 | --- | --- | --- |
-| `/tables/orders.md` | Bundleルート | `docs/tables/orders.md` |
-| `../tables/orders.md` | 現在のファイルのディレクトリ | `docs/tables/orders.md` |
-| `https://example.com/policy` | 外部URL | ローカルファイルへ変換しない |
+| `/tables/orders.md` | Bundle root | `docs/tables/orders.md` |
+| `../tables/orders.md` | Current file's directory | `docs/tables/orders.md` |
+| `https://example.com/policy` | External URL | Do not convert to local files |
 
-仕様は先頭 `/` のBundle基準リンクを推奨する。本環境ではGitHub・APMの通常のMarkdown閲覧に合わせ、ファイル相対リンクを選ぶ。仕様例の `references/...` をサブディレクトリの文書へコピーする際は、実際の位置から `../references/...` 等へ解決し直す。[^okf-spec]
+The specification recommends Bundle-relative links with initial `/`. This environment chooses file-relative links for ordinary GitHub/APM Markdown viewing. When copying specification examples such as `references/...` into subdirectory documents, resolve them again from actual locations, such as `../references/...`.[^okf-spec]
 
-関連の種類はリンク周辺の本文に書く。主張の根拠には[出典の手順](provenance.md)を使う。`references/` は外部資料・手順・コードの置き場所の慣例で、必須ディレクトリではない。[^okf-spec]
+Describe relationship types in text surrounding links. For claim evidence, use [Provenance procedures](provenance.md). `references/` is a conventional location for external material, procedures, or code, not mandatory.[^okf-spec]
 
-リンク切れは未記述の知識を表す場合があり、OKF適合を失わせない。本環境の自作文書では公開品質としてローカル参照先を修正するか、未作成・取得不能の状態を明示して扱う。Bundle境界外のファイルやシンボリックリンクを辿って勝手に検査・修正しない。[^okf-spec]
+Broken links may represent unwritten knowledge and do not invalidate OKF conformance. For this environment's authored documents, publication quality requires repairing local references or explicitly handling uncreated/inaccessible status. Do not arbitrarily follow files or symlinks outside Bundle boundaries to inspect/fix them.[^okf-spec]
 
-[^okf-spec]: 固定版SPEC §§2–4、6、8–9、11–12。本環境の追加条件は本文で区別した。
+[^okf-spec]: Fixed SPEC §§2–4, 6, 8–9, 11–12. This environment's additional conditions are distinguished in the text.

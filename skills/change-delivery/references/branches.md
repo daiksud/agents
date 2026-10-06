@@ -1,7 +1,7 @@
 ---
 type: Instruction
-title: ブランチと統合単位
-description: 変更保護を確認してブランチを準備し、独立して検証・統合できる単位で進めます。
+title: Branches and integration units
+description: Check change protection, prepare branches, and work in independently verifiable integration units.
 sources:
   - id: continuousdelivery-foundations-continuous-integration
     resource: https://continuousdelivery.com/foundations/continuous-integration/
@@ -9,51 +9,51 @@ sources:
     resource: https://github.com/conventional-changelog/commitlint/blob/f4b108182e6d20eca52433135c7ba1675746318e/%40commitlint/config-conventional/src/index.ts#L24-L36
 ---
 
-## ブランチと統合単位
+## Branches and integration units
 
-### 承認済みの分割を進める
+### Execute approved decomposition
 
-親子Issueの作成・範囲・依存・実行承認の判断は依存スキル `issue-management` に従う。Sub-issueの作成だけを着手承認に読み替えない。
+Follow the dependency `issue-management` for parent/child Issue creation, scope, dependencies, and execution approval. Creating Sub-issues alone does not approve starting work.
 
-- 依頼の目的・成功条件に含まれ、実行承認のある分割タスクは、記録した実施対象・順序に従って現在のセッションで直列に進める。別の目的や他セッションの担当を追加しない。
-- 別セッションに割り当てたタスクは、そのセッションに委ねる。Sub-issueへの着手前にIssue・PR・作業ツリーから他セッションの着手状況を確認し、重複して取り組まない。判断できない場合はユーザーに確認する。
-- 分割後はSub-issueごとに実装・検証を行い、親Issueの計画や検証だけで代替しない。
+- In this session, execute approved decomposed tasks within the requested purpose and success conditions sequentially in the recorded scope and order. Do not add other purposes or other sessions' responsibilities.
+- Leave tasks assigned to another session to that session. Before starting a Sub-issue, check Issues, PRs, and working trees for other sessions' progress, avoiding duplicate work. Ask the user if this cannot be determined.
+- After decomposition, implement and validate each Sub-issue; parent Issue plans or validation do not substitute for this.
 
-### 小さな統合単位と活動日
+### Small integration units and active workdays
 
-変更を早く検証してmainへ統合し、長期ブランチによる前提のずれを小さくする。CIの原則[^continuousdelivery-foundations-continuous-integration]に基づき、次を計画に含める。
+Validate changes early and integrate into main, reducing drift from long-lived branches. Include the following in plans based on CI principles.[^continuousdelivery-foundations-continuous-integration]
 
-- 1つの変更を、独立して検証・レビュー・統合できる単位にする。ファイル数だけで分けず、利用者の目標と成功条件が確認できるまとまりにする。
-- 変更作業を記録した日を活動日とし、活動日の毎日のmain統合、原則1活動日以内のブランチを目安にする。休日などの非活動日を作業遅延と決めつけない。
-- Issueに作業開始日時、次の統合単位と検証方法を記録する。1活動日を超えた場合は、承認待ち・レビュー待ち・失敗調査など確認できた原因と次の統合単位を更新する。
-- 承認・レビュー・CIを省略して目安を達成しない。期限だけを理由に未検証の変更をマージしない。
-- 目的内の分割・順序・対象ファイルの調整は理由と計画を更新して継続する。確認が必要な変更は依存スキル `issue-management` の「計画と実行範囲」に従う。Sub-issueの存在だけを実行依頼にしない。
-- 着手時に統合先mainの必要な検証を確認する。mainが失敗中なら[復旧手順](review-and-merge.md#統合後mainの確認と復旧)を優先し、正常化するまで後続作業を開始しない。
+- Make each change independently verifiable, reviewable, and integrable. Do not split solely by file counts; form units whose user goals and success conditions can be checked.
+- Treat days with recorded change work as active workdays, aiming for daily main integration on active workdays and branches lasting no more than one active workday in principle. Do not assume weekends or other inactive days indicate delay.
+- Record work start time, the next integration unit, and validation method in the Issue. After more than one active workday, update confirmed reasons such as waiting for approval/review or failure investigation, and the next integration unit.
+- Do not skip approvals, review, or CI to meet the guideline, or merge unverified changes solely for a deadline.
+- Update reasons and plans and continue adjustments to decomposition, order, or files within the purpose. Follow “Planning and execution scope” in the dependency `issue-management` for changes needing confirmation. Sub-issue existence alone is not an execution request.
+- At the start, check required validation on target main. If main is failing, prioritize [Recovery procedures](review-and-merge.md#post-integration-main-verification-and-recovery) and do not start subsequent work until healthy.
 
-活動日・滞留・レビュー待ち・検証時間・main復旧時間はIssue・PRと既存Actionsの時刻・URLを根拠に記録する。欠測、代用した時刻、未完了、利用不能を明記し、個人評価や単発比較からの改善効果の断定には使わない。プロジェクトごとの定義と実測値はプロジェクトの文書・Issue・PRに置き、共通スキルに個別実績を埋め込まない。
+Record active workdays, stagnation, review waits, validation time, and main recovery time from timestamps/URLs in Issues, PRs, and existing Actions. State missing data, substitute timestamps, incomplete results, and unavailability; do not use them for individual evaluation or assertions of improvement effects from single comparisons. Keep project definitions and actual measurements in project documents, Issues, and PRs, without embedding individual results in common skills.
 
-### ブランチの確認と準備
+### Check and prepare branches
 
-- 着手時に現在のブランチと作業ツリーの差分を確認する。
-- 実行承認がある場合、`main` の場合は、ファイル変更より先に `git switch -c <branch>` で作業ブランチを作成・切り替える。
-- 実行承認がある場合も環境の制約でブランチを作成できない場合は、理由を伝え、準備できるまで編集を開始しない。
-- `main` 以外で自セッションが作成したと確認できないブランチは、変更前に作業ツリーの差分、最近のコミット、関連Issue・PR、`git worktree list` の結果を読み取り、今回のタスクとの関係と他セッションとの衝突の可能性を検証する。
-- ブランチ名や差分がないことだけで、既存ブランチを利用してよいと判断しない。
-- 既存ブランチを利用してよい根拠が得られない場合はユーザーに確認し、確認までは編集・ブランチ切り替え・stash・コミットなど状態を変える操作を行わない。
-- 現在の作業ディレクトリの作業ブランチで変更・コミット・検証を行う。
-- ブランチ名のプリフィックスは次の表に従う。
+- At the start, check the current branch and working-tree diffs.
+- With execution approval, if on `main`, create and switch to a working branch with `git switch -c <branch>` before file changes.
+- If environment restrictions prevent branch creation even with approval, explain why and do not edit until preparation is possible.
+- For non-`main` branches not confirmed created by this session, before changes read working-tree diffs, recent commits, related Issues/PRs, and `git worktree list`, checking relationships with this task and potential conflicts with other sessions.
+- Branch names or absence of diffs alone do not establish permission to reuse existing branches.
+- If evidence for using an existing branch is unavailable, ask the user; until confirmed, do not edit, switch branches, stash, commit, or otherwise change state.
+- Make changes, commits, and validation on the working branch in the current working directory.
+- Use branch prefixes from this table.
 
-| 変更内容 | プリフィックス |
+| Change | Prefix |
 | --- | --- |
-| 破壊的変更を含む機能追加 | `breaking/feat/` |
-| 破壊的変更を含むバグ修正 | `breaking/fix/` |
-| 破壊的変更を含まない機能追加 | `feat/` |
-| 破壊的変更を含まないバグ修正 | `fix/` |
-| ドキュメントのみの変更 | `docs/` |
-| その他 | `build/`・`chore/`・`ci/`・`perf/`・`refactor/`・`revert/`・`style/`・`test/` のうち変更内容に合うもの |
+| Feature additions with breaking changes | `breaking/feat/` |
+| Bug fixes with breaking changes | `breaking/fix/` |
+| Feature additions without breaking changes | `feat/` |
+| Bug fixes without breaking changes | `fix/` |
+| Documentation-only changes | `docs/` |
+| Others | Choose an appropriate `build/`, `chore/`, `ci/`, `perf/`, `refactor/`, `revert/`, `style/`, or `test/` |
 
-その他のプリフィックスは @commitlint/config-conventionalのtype定義[^github-src-index-ts] に従う。
-破壊的変更に許可する型は、[コミットメッセージの指示](conventional-commits.md)に従う。
+Other prefixes follow @commitlint/config-conventional type definitions.[^github-src-index-ts]
+Follow [Commit-message instructions](conventional-commits.md) for types allowed for breaking changes.
 
-[^continuousdelivery-foundations-continuous-integration]: [CIの原則](https://continuousdelivery.com/foundations/continuous-integration/)。本文に記した参照範囲と採用判断の根拠。
-[^github-src-index-ts]: [@commitlint/config-conventionalのtype定義](https://github.com/conventional-changelog/commitlint/blob/f4b108182e6d20eca52433135c7ba1675746318e/%40commitlint/config-conventional/src/index.ts#L24-L36)。本文に記した参照範囲と採用判断の根拠。
+[^continuousdelivery-foundations-continuous-integration]: [CI principles](https://continuousdelivery.com/foundations/continuous-integration/). Evidence for the reference scope and adoption decisions stated in the text.
+[^github-src-index-ts]: [@commitlint/config-conventional type definitions](https://github.com/conventional-changelog/commitlint/blob/f4b108182e6d20eca52433135c7ba1675746318e/%40commitlint/config-conventional/src/index.ts#L24-L36). Evidence for the reference scope and adoption decisions stated in the text.

@@ -1,20 +1,20 @@
 ---
 type: Instruction
-title: 目的・目標・手段・スタンダード
-description: アクターの目的と観測可能な目標から判断し、共通スタンダード候補を扱います。
+title: Purpose, goals, means, and standards
+description: Decide from actors' purposes and observable goals, and handle common standard candidates.
 ---
 
-## 目的・目標・手段・スタンダード
+## Purpose, goals, means, and standards
 
-システム・機能の構築はストーリーファーストとし、誰が、どの状況で、完成後に何をできるかを語るところから始める。設計判断の前にアクターと次の区別を明確にし、そのストーリーのどの目標とスタンダードに基づいて手段を選ぶかを示す。
+Build systems and features story-first, beginning by describing who can do what, in which situation, after completion. Before design decisions, clarify the actors and the distinctions below, and show which goals and standards in that story guide the choice of means.
 
-| 区分 | 意味 |
+| Category | Meaning |
 | --- | --- |
-| 目的 | アクターが実現したい状態・価値、解消したい困りごと |
-| 目標 | 達成を判定できる観測可能な仕様・制約・成功条件 |
-| 手段 | 目標を満たすシステム・機能・モデル・コード・技術 |
-| スタンダード | 複数のプロジェクトで目標を満たす手段を選ぶ際に繰り返し使う判断基準・優先順位 |
+| Purpose | The state or value an actor wants to achieve, or the problem they want to resolve |
+| Goal | Observable specifications, constraints, and success conditions by which achievement can be judged |
+| Means | Systems, features, models, code, and technologies that meet the goals |
+| Standard | Decision criteria and priorities used repeatedly to choose means that meet goals across multiple projects |
 
-結果を左右する業務上の不明点はユーザーに確認し、技術的な不明点は根拠から調査する。仮定を合意済みの目的・目標にしない。
+Ask the user about business uncertainties that affect the outcome, and investigate technical uncertainties from evidence. Do not turn assumptions into agreed purposes or goals.
 
-ユーザーがトレードオフを伴う実装方針を選んだら、その理由が曖昧な場合はユーザーに尋ね、複数プロジェクトに通用する基準か確認する。候補Issueの記録条件と未解明時の扱いは `issue-management` の共通スタンダード候補の記録手順に従う。
+When the user chooses an implementation policy involving tradeoffs, ask them why if the reason is unclear, and check whether it is a criterion applicable across projects. Follow `issue-management` procedures for recording common standard candidates for the conditions for candidate Issues and handling unresolved questions.

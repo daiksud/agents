@@ -1,7 +1,7 @@
 ---
 type: Guide
-title: レビューの具体的な確認基準と報告例
-description: 11領域を具体的な調査へ結びつけ、正式な修正指摘・任意提案・維持したい設計判断を根拠から区別するための資料。
+title: Concrete review criteria and reporting examples
+description: Connect 11 areas to concrete investigation and distinguish formal findings, optional suggestions, and design decisions to retain from evidence.
 sources:
   - id: github-instructions-code-review-generic-instructions-md
     resource: https://github.com/github/awesome-copilot/blob/main/instructions/code-review-generic.instructions.md
@@ -11,135 +11,135 @@ sources:
     resource: https://martinfowler.com/bliki/Yagni.html
 ---
 
-## 調べ方
+## Investigation
 
-1. 対象アクターの目的・契約と設計の全体像を捉え、責務・モデルの境界・依存方向から変更の波及を確認して、実装とテストへ進む。仕様と差分を照合し、変更した判断・境界条件・入出力と、その根拠がどこに保存されているかを確認する。PR説明の意図や原因の説明は主張として扱い、実装・仕様、移行や過去の挙動なら履歴で裏づける。
-2. 下表の観点を差分に照らし、関係する領域を掘り下げる。[具体的な確認基準](#具体的な確認基準)の該当項目を読み、プロジェクトの仕様・規約・使用バージョンに合わせて調べる。大きな差分は責務や経路ごとに分け、最後に境界をまたぐ影響を照合する。現在の要求に必要な構造かを契約と呼び出し元から確かめ、不要な複雑さによる理解・検証の負担を調べる。契約・意図の保存と同じルールを扱う実装の整合性から、次の変更で追従が必要になる箇所も探す。重大な欠陥を後回しにする優先順位ではない。
-3. 差分外の対になる実装（一覧と詳細、合計と明細など）、新設した定数と同じ値・意味の定義、実際の参照先、共通部品の呼び出し元を `rg` などで探して開く。参照件数だけで判断せず、本番の経路・設定・テストの差し替え先を追う。別のモデルに属する意図された差異は尊重する。
-4. 失敗が利用者・運用担当へ届く経路を追い、クライアント設定、例外の捕捉条件、ログ・通知・画面表示を照合する。外部APIの挙動はlockファイルなどで使用バージョンを確認し、対応する公式資料や実装で確かめる。アプリの前提を保証する型・スキーマ・設定も読む。
-5. 候補ごとに、現在の利用条件または想定される変更、根拠となる依存関係、影響を結びつける。呼び出し元の保証、意図の記録、既存の型・制約・テストで反証を探す。変更前からある問題は今回の変更で導入・悪化した問題と混同しない。
-6. 検証が必要なら読み取り専用または隔離環境で再現する。外部送信や実データの変更を伴うテストは実行しない。実行コマンドと結果、未実行とその理由を分ける。性能・コストは頻度や計測条件と実測を根拠にし、測れなければ推測と区別する。
+1. Understand actors' purposes, contracts, and overall design, check impact through responsibilities, model boundaries, and dependency directions, then proceed to implementation and tests. Compare specifications and diffs, checking changed judgments, boundaries, inputs/outputs, and where their reasons are recorded. Treat PR descriptions of intentions or causes as claims, substantiated by implementation/specifications and, for migrations or past behavior, history.
+2. Compare the perspectives below with the diff and deepen relevant areas. Read applicable [Concrete checking criteria](#concrete-checking-criteria), adapting investigation to project specifications, conventions, and versions. Split large diffs by responsibilities or paths, then compare cross-boundary effects. Check necessity for current requirements through contracts and callers, investigating understanding/validation burdens from unnecessary complexity. Find locations needing future updates through preserved contracts/intent and consistency among implementations of the same rule. This is not a priority order that postpones serious defects.
+3. Use `rg` or similar tools to find and open paired implementations outside the diff (lists/details, totals/items), definitions with the same value/meaning as new constants, actual references, and callers of shared components. Do not judge by reference counts alone; trace production paths, configuration, and test replacement targets. Respect intentional differences belonging to different models.
+4. Trace how failures reach users or operators, comparing client settings, exception-catching conditions, logs, notifications, and display. For external API behavior, check used versions through lock files or similar evidence, and confirm with corresponding official material or implementation. Also read types, schemas, and settings guaranteeing application assumptions.
+5. Connect each candidate's current usage conditions or expected changes, evidence-based dependencies, and impact. Seek counterevidence in caller guarantees, recorded intent, existing types, constraints, and tests. Distinguish pre-existing problems from those introduced or worsened by this change.
+6. If validation is needed, reproduce read-only or in isolation. Do not run tests involving external transmission or actual-data modification. Separate executed commands/results from unexecuted checks and reasons. Ground performance/cost in frequency, measurement conditions, and measurements; distinguish unmeasurable claims from confirmed facts.
 
-## 調査の観点
+## Investigation perspectives
 
-全領域から指摘を出す必要はない。行数・ネストの深さや設計原則は詳しく調べる目安とし、数値超過・原則名だけを修正理由にしない。差分との関係を判断するための問いとして使い、同じ原因の指摘を領域ごとに重複させない。
+Not every area needs findings. Line counts, nesting depth, and design principles guide deeper investigation, but exceeding numbers or principle names alone is not a reason to fix. Use them as questions about relationships with the diff; do not duplicate the same cause across areas.
 
-| 領域 | 問いと確認先 |
+| Area | Questions and checking targets |
 | --- | --- |
-| 整合性 | 同じモデルの同じルールが、対になる表示・処理や定数で食い違わないか。変更時に片方だけ直せる二重定義や、実際には参照されない互換用の別名がないか |
-| 契約と意図 | 次の担当者が仕様・数値・依存関係の根拠を辿れるか。移行前の契約、変更理由、追従が必要な条件が仕様・コード・テストに保存されているか |
-| 値の正しさ | 単価と合計、単位、境界値、日時・タイムゾーン、異常値の扱いは仕様と合うか。テストも同じ思い込みを複製していないか |
-| 失敗の検知 | 失敗を成功と表示しないか。例外・ログ・通知が捕捉や変換の途中で消えず、利用者や運用担当が気づいて対処できるか |
-| 利用者と運用 | 画面遷移、絞り込み、処理中の操作、運用手順を通して何が起きるか。誤操作や復旧の困難を招かないか |
-| 外部境界 | SDK・通信・OS・フレームワークの契約、権限境界、実バージョンと設定は呼び方の前提を満たすか |
-| データ保全 | 障害・並行実行・削除時に整合性が残るか。所属数などの前提をDB制約が保証するか。再試行や途中失敗から復旧できるか |
-| 設計の理解しやすさ | ドメインのルールと技術的な処理が分離され、責務・型・名前が契約を表すか。現在の要求に不要な抽象化・設定が理解や検証を難しくしていないか。次の変更に無関係な箇所の理解や修正を要求しないか |
-| 性能とコスト | データ量と呼び出し頻度に対し何秒・いくらかかるか。インデックスや外側のタイムアウトを含めて確認できるか |
-| 変更の波及 | 既定値、共有状態、引数の破壊的変更が既存の呼び出し元へどう届くか。追加・変更時の影響を境界内に収められるか |
-| 検証可能性 | 契約や変更漏れをテストで検出できるか。モックは実際の呼び出し先を差し替えるか。外部送信を防ぎ、マージ前に対象経路を試せるか |
+| Consistency | Do paired displays/processes or constants disagree on the same rule in the same model? Are there duplicate definitions allowing only one side to be updated, or compatibility aliases never actually referenced? |
+| Contracts and intent | Can the next maintainer trace reasons for specifications, numbers, and dependencies? Are pre-migration contracts, reasons for changes, and conditions needing updates preserved in specifications, code, and tests? |
+| Value correctness | Do unit prices/totals, units, boundaries, dates/time zones, and exceptional values match specifications? Do tests duplicate the same mistaken assumption? |
+| Failure detection | Are failures displayed as success? Can users/operators detect and act on failures without exceptions, logs, or notifications disappearing through catching/conversion? |
+| Users and operations | What happens through navigation, filtering, actions during processing, and operational procedures? Do they cause mistaken actions or difficult recovery? |
+| External boundaries | Do SDK, communication, OS, and framework contracts, permission boundaries, actual versions, and settings satisfy calling assumptions? |
+| Data preservation | Does consistency survive failures, concurrency, or deletion? Do DB constraints guarantee assumptions such as membership counts? Can retries or partial failures be recovered? |
+| Understandable design | Are domain rules separate from technical processing, with responsibilities, types, and names expressing contracts? Do abstractions/configuration unnecessary for current requirements impede understanding or validation? Does the next change require understanding or modifying unrelated locations? |
+| Performance and cost | How many seconds/how much cost for data volume and call frequency? Can indexes and outer timeouts also be checked? |
+| Change impact | How do defaults, shared state, or breaking argument changes reach existing callers? Can effects of additions/changes remain within boundaries? |
+| Testability | Can tests detect contract violations or missed changes? Do mocks replace actual call targets? Can target paths be tested before merging while preventing external transmission? |
 
-## 具体的な確認基準
+## Concrete checking criteria
 
-上記の11領域のうち差分に関係する項目を調べるときに使う。対象リポジトリの仕様・規約・設計判断を確認し、以下を一律の禁止事項や指摘件数の目標にしない。異常が疑われたら呼び出し元・設定・制約・テストまで追い、保証が既にあるか反証を探す。
+Use these for diff-relevant items in the 11 areas. Check target repository specifications, conventions, and design decisions; do not make these uniform prohibitions or finding-count goals. When abnormalities are suspected, trace callers, configuration, constraints, and tests for existing guarantees and counterevidence.
 
-### セキュリティと境界
+### Security and boundaries
 
-対応する領域: 外部境界、データ保全、失敗の検知、変更の波及。
+Corresponding areas: external boundaries, data preservation, failure detection, change impact.
 
-- 認証済みであることと対象リソースへの操作権限を分け、所有者・テナント・ロールの制約が全経路で守られるか確認する。上位のガードやDB制約も読み、重複したチェックを要求しない。
-- 外部入力がクエリ・コマンド・表示へ届く経路と、その境界での検証・適切なエスケープやパラメーター化を確認する。検証済みという名前だけで安全と判断しない。
-- コード・設定・ログ・例外・通知へ認証情報や不要な個人情報が流れないか追う。指摘や再現出力に機密値そのものを転載せず、種類・場所・経路で示す。
-- 暗号処理は実績あるライブラリの契約と設定を確かめる。依存関係の既知の脆弱性はlockファイル等の実バージョンと公式アドバイザリで確認し、影響条件を示す。最新版でないことだけを欠陥にしない。
+- Separate authentication from authority to operate on target resources; check owner, tenant, and role restrictions on every path. Read upstream guards and DB constraints as well; do not demand duplicate checks.
+- Trace external input to queries, commands, and displays, checking validation and appropriate escaping or parameterization at boundaries. Names saying “validated” alone do not establish safety.
+- Trace credentials or unnecessary personal information into code, configuration, logs, exceptions, and notifications. Do not copy confidential values into findings or reproduction output; identify types, locations, and paths.
+- Check established cryptographic libraries' contracts and settings. Verify known dependency vulnerabilities against actual lock-file versions and official advisories, showing applicability conditions. Being behind the latest version alone is not a defect.
 
-### 責務・依存と読みやすさ
+### Responsibilities, dependencies, and readability
 
-対応する領域: 整合性、契約と意図、設計の理解しやすさ、変更の波及。
+Corresponding areas: consistency, contracts and intent, understandable design, change impact.
 
-- 名前・型・責務がドメインのルールと契約を表し、UI・通信・永続化の都合がルールの変更や検証に混入していないか確認する。依存方向や大きなインターフェースが、無関係な実装の修正・起動を要求する箇所を具体化する。
-- 現在の契約と呼び出し元に照らし、早すぎる抽象化、不要なinterface、未使用extension point、仮想的な将来要件のためのconfiguration、未要求の一般化が理解・検証に与える具体的な負担を確認する。必要な境界や拡張は一律に問題視しない。
-- 関連する処理がまとまり、変更理由が異なる処理を切り離せるか確認する。既存パターンと異なる場合は理由を調べ、既存の問題を機械的に踏襲させない。
-- 重複は値や構文だけでなく意味・モデルの境界を照合する。同じルールの二重定義は追従漏れを調べ、別モデルの意図的な独立性は維持する。
-- 長い関数や深いネストは、条件の見落とし、責務の混在、変更箇所の分散を調べる入口とする。参照ガイドの20〜30行・3〜4段程度という目安を共通の合否閾値にはしない。明示されたプロジェクト規約があればその適用条件を確認する。
-- 固定値・複雑な式・互換処理の根拠と依存が辿れるか確認する。定数名、型、式、テスト、仕様で意図が伝わるなら冗長なコメントを要求しない。使われないコード・TODOは参照や現在の運用を調べて判断する。
+- Check that names, types, and responsibilities express domain rules/contracts, without UI, communication, or persistence concerns intruding on rule changes or validation. Identify concrete locations where dependency direction or large interfaces require modifying or starting unrelated implementations.
+- Compare current contracts and callers to concrete understanding/validation burdens from premature abstraction, unnecessary interfaces, unused extension points, configuration for hypothetical future requirements, or unrequested generalization. Do not uniformly criticize necessary boundaries or extensions.
+- Check related processing is grouped and processing with different reasons to change can be separated. Investigate reasons for departures from existing patterns; do not mechanically perpetuate existing problems.
+- Compare duplication by meaning and model boundaries, not just values or syntax. Investigate missed updates in duplicate definitions of the same rule while preserving intentional independence of different models.
+- Use long functions or deep nesting as entry points to investigate missed conditions, mixed responsibilities, or scattered changes. Do not make the reference guide's approximate 20–30 lines or 3–4 nesting levels common pass/fail thresholds. Check applicability of explicit project conventions.
+- Check traceable reasons and dependencies for fixed values, complex expressions, or compatibility handling. Do not require redundant comments when constants, types, expressions, tests, or specifications convey intent. Judge unused code/TODOs from references and current operations.
 
-### テストと失敗の検知
+### Tests and failure detection
 
-対応する領域: 値の正しさ、失敗の検知、データ保全、検証可能性。
+Corresponding areas: value correctness, failure detection, data preservation, testability.
 
-- 主要な契約・追加した挙動・境界値・異常系を壊したとき、どのテストが検出するかを確認する。ファイルやカバレッジの有無だけでなく、具体的な見逃しを示す。
-- 期待値が仕様を表し、実装と同じ計算を写しただけでないか確認する。金額のテストでtruthyだけを見るなど弱いアサーションを調べる一方、真偽値そのものが契約なら真偽の検証は適切とする。
-- テスト名とGiven/When/ThenまたはArrange/Act/Assertから、条件・操作・結果が読み取れるか確認する。表記を揃えることだけを目的に書き換えさせない。
-- 実行順序、時刻、共有状態、ネットワーク、環境変数への依存と後始末を調べる。モックは外部境界を隔離し、検証対象のドメインロジックを差し替えて正しさを証明したことにしていないか確認する。
-- 例外型、捕捉・変換、HTTPの戻り値、ログと画面表示を照合し、失敗を検出して対処できるか追う。入力検証・エラー処理は責務に合う境界に置き、失敗を成功扱いしない。
+- Check which tests detect broken main contracts, added behavior, boundaries, or exceptional paths. Show concrete misses rather than relying on file presence or coverage.
+- Check expectations express specifications rather than copying implementation calculations. Investigate weak assertions such as testing only truthiness for amounts; when booleans themselves are the contract, boolean checks are appropriate.
+- Check conditions, operations, and results are readable from names and Given/When/Then or Arrange/Act/Assert. Do not demand rewriting merely to unify notation.
+- Investigate dependencies on execution order, time, shared state, networks, environment variables, and cleanup. Check mocks isolate external boundaries rather than replacing target domain logic and claiming correctness.
+- Compare exception types, catching/conversion, HTTP return values, logs, and displays, tracing detectability and recovery. Put input validation/error handling at responsibility-appropriate boundaries; do not treat failure as success.
 
-### 性能・コストと資源管理
+### Performance, cost, and resource management
 
-対応する領域: 性能とコスト、利用者と運用、データ保全。
+Corresponding areas: performance and cost, users and operations, data preservation.
 
-- 呼び出し頻度とデータ量から、N+1、インデックス、計算量、メモリ使用を調べる。初回だけの処理と毎回通る経路を区別する。
-- 接続・ファイル・ストリームが正常時だけでなく例外・キャンセルでも解放されるか確認する。タイムアウトは外側の制限と再試行の合計も照合する。
-- キャッシュ・ページング・遅延読み込みを検討するときは、鮮度、無効化、取得漏れ、管理コストまで含める。具体的な効果の根拠がなければ最適化を要求しない。
-- 計測条件と実測値、入力から静的に導いた件数、未計測の予測を分ける。測定していない秒数・料金や改善率を作らない。
+- Investigate N+1, indexes, complexity, and memory from call frequency and data volume. Distinguish first-time processing from paths used every time.
+- Check connections, files, and streams are released on exceptions and cancellation as well as success. Compare timeouts with outer limits and total retries.
+- Include freshness, invalidation, missed retrieval, and management cost when considering caches, pagination, or lazy loading. Do not require optimization without evidence of concrete effects.
+- Separate measurement conditions and actual measurements, counts statically derived from inputs, and unmeasured predictions. Do not invent unmeasured seconds, prices, or improvement rates.
 
-### 公開契約・文書と運用
+### Public contracts, documents, and operations
 
-対応する領域: 契約と意図、利用者と運用、外部境界、変更の波及、検証可能性。
+Corresponding areas: contracts and intent, users and operations, external boundaries, change impact, testability.
 
-- 公開APIの目的・引数・返り値・失敗・副作用が、型や利用者向け仕様から理解できるか確認する。コードから分かる情報の重複より、見えない契約の保存を重視する。
-- APIや既定値の変更は既存の呼び出し元と互換方針を照合する。破壊的変更は移行方法と影響を説明できるか確認し、バージョンを上げたことだけで互換性の検証を済ませない。
-- 機能・設定・起動手順の変更時はREADMEや運用手順との一致を確認する。複雑な機能では利用例が必要な判断・失敗時の対応を示しているか調べる。
-- デプロイ・データ移行では途中失敗や旧新版混在、復旧手順を確認する。安全な前進修復が設計されている場合に、破壊的な逆マイグレーションを一律に要求しない。
+- Check public API purpose, arguments, returns, failures, and side effects are understandable through types or user specifications. Prioritize preserving invisible contracts over duplicating information apparent in code.
+- Compare API/default changes with existing callers and compatibility policy. Check migration methods and impact for breaking changes; version bumps alone do not validate compatibility.
+- Compare feature, configuration, or startup-procedure changes with README and operational procedures. For complex functionality, investigate whether examples show necessary decisions or failure responses.
+- For deployment/data migration, check partial failures, mixed old/new versions, and recovery procedures. Do not uniformly demand destructive reverse migrations when safe forward repair is designed.
 
-## 指摘と結果
+## Findings and results
 
-- 正式な修正指摘、任意の改善提案、維持したい設計判断の順に報告し、有用な内容がある区分だけを記載する。[区分の判断と報告例](#区分の判断と報告例)を参照する。件数や称賛を義務化せず、同じ内容を複数区分に重複させない。
-- 正式な修正指摘には、現在の要求に対する不要な複雑さ、根拠のある変更・検証の支障と欠陥・回帰を含める。影響が局所的・将来の変更時であることや、文書・可読性の問題であることだけで任意提案へ格下げしない。
-- 任意の改善提案は、現状が確認した契約と安全な変更を満たし、代替案にも具体的な利点がある場合に示す。利点と変更コスト・トレードオフを説明し、採用を必須扱いしない。スタイル上の好み、根拠のない仮説、不要な抽象化を提案の区分で復活させない。
-- 維持したい設計判断には、該当箇所、守られている契約・不変条件、次の変更でも維持したい理由を示す。作者への定型的な称賛や全品質の保証にせず、良い点で正式な問題を相殺しない。
-- 指摘には「発生条件または想定される変更 → 根拠となる経路・依存関係 → 利用者・保守担当者への具体的影響」を結び、重要度、最小限のファイル・行位置、修正の方向を示す。差分の最小位置を選び、必要なら関連する仕様・呼び出し元・テストを併記する。作者の評価ではなくコードと判断を対象に建設的に説明し、理解に役立つ場合は既存実装・公式資料や短い修正例を添える。
-- 重要度はP0（広範囲に壊れる・直ちに対処）、P1（重大な損失や主要機能の停止）、P2（限定条件の機能不良、または変更漏れ・契約の不明確さなどで修正や検証に具体的な支障がある）、P3（影響の小さい欠陥、または局所的な理解・変更の負担）を目安に、影響範囲と発生条件で決める。評価軸の優先と対応の緊急度を分け、将来の懸念だけでP0・P1に引き上げない。
-- 結果には対象SHA、修正判断に必要な仕様・差分・呼び出し元・テストの根拠、検証結果と未確認事項を示す。スキルを読んだ証明のための定型報告は要求しない。
-- 「正式な修正指摘なし」は確認した範囲内で修正すべき設計・変更の問題も欠陥・回帰も見つからなかった結果とする。「証拠不足」は判断に必要な資料や実行結果が足りない状態として、未確認範囲と次に必要な情報を示す。指摘なしを全品質の保証、未実行テストを成功と表現しない。
-- 実行環境が出力形式やレビュー対象の重要度を指定している場合はそれに従い、報告の対象範囲と制約は許された欄で明記する。指摘専用の形式では任意提案・良い判断を指摘欄に混ぜず、許可されない追加の節・フィールドも作らない。GitHub上の完了判定や承認は本スキルで代行しない。
+- Report formal findings, optional improvements, then design decisions to retain, including only useful categories. See [Category decisions and reporting examples](#category-decisions-and-reporting-examples). Do not require counts or praise or duplicate content across categories.
+- Formal findings include unnecessary complexity for current requirements, evidence-based obstacles to modification/validation, and defects/regressions. Do not downgrade to optional solely because impact is local, arises during future changes, or concerns documents/readability.
+- Optional improvements apply when the current state meets confirmed contracts and safe-change needs and alternatives have concrete benefits. Explain benefits, costs, and tradeoffs without requiring adoption. Do not revive stylistic preferences, unsupported hypotheses, or unnecessary abstractions as suggestions.
+- For design decisions to retain, show locations, protected contracts/invariants, and reasons to retain them for future changes. Do not use formulaic author praise or guarantee all quality, or offset formal problems with good points.
+- Connect “triggering conditions or expected change → evidence-based paths/dependencies → concrete user/maintainer impact,” with severity, minimal file/line locations, and fix direction. Choose the smallest diff location, also showing specifications, callers, or tests if needed. Constructively discuss code and decisions rather than author evaluation; add existing implementation, official material, or short fix examples when useful.
+- Choose severity from scope and conditions, using P0 (widespread breakage, immediate action), P1 (serious loss or major functionality stopped), P2 (limited-condition malfunction, or concrete modification/validation obstacles from missed updates or unclear contracts), and P3 (minor defects or local understanding/change burden) as guidance. Separate evaluation priorities from urgency; future concerns alone do not justify P0/P1.
+- Show target SHA, specifications, diffs, callers, and test evidence needed for fix decisions, validation results, and uncertainties. Do not require formulaic reports proving the skill was read.
+- “No formal findings” means no design/change problems or defects/regressions requiring fixes were found within checked scope. “Insufficient evidence” means necessary material or results are missing; show unverified scope and next information needed. No findings does not guarantee all quality; unexecuted tests are not successful.
+- Follow execution-environment output formats and severity scope, stating scope/restrictions in permitted fields. In findings-only formats, do not mix optional suggestions or good decisions into findings, or add unpermitted sections/fields. This skill does not decide GitHub completion or approval.
 
-## 区分の判断と報告例
+## Category decisions and reporting examples
 
-正式な修正指摘は、現在の欠陥または具体的な変更・検証の支障を根拠から説明できる場合に使う。任意提案は現状も契約を満たし安全に変更できるうえで、別案の利点と負担を比較できる場合に使う。区別がつかなければ追加調査し、証拠不足を任意提案で埋めない。
+Use formal findings when evidence explains current defects or concrete obstacles to modification/validation. Use optional suggestions when the current state meets contracts and can be changed safely and alternatives' benefits and burdens can be compared. Investigate further if the distinction is unclear; do not fill evidence gaps with optional suggestions.
 
-以下の場所・数値は説明用の例であり、実際のレビューでは確認した対象に置き換える。表現は出力形式と内容に合わせ、空の欄・不要なコード例を作らない。
+Locations and numbers below are explanatory examples; replace them with checked targets in actual reviews. Match expression to format/content without empty fields or unnecessary code examples.
 
-### 正式な修正指摘の例
+### Formal finding example
 
-#### [P2] 契約と意図: 列幅変更に追従する依存を表す
+#### [P2] Contracts and intent: Express dependencies that follow column-width changes
 
-`timeline.css:12` の `3.5rem` は、現在の列幅6remとgap 1remの半分であり、今の表示は正しいです。ただし、テーマ側の幅・gapを変えてもこの値には反映されず、調整すべき箇所が分かりません。テーマ変数から計算するか、式の根拠と追従条件を記録してください。関連する定義は `theme.css:4-5` です。
+`3.5rem` at `timeline.css:12` is half the current column width of 6rem plus a 1rem gap, so the current display is correct. However, theme width/gap changes do not update it, and the locations needing adjustment are unclear. Calculate from theme variables or record the formula's reasons and update conditions. Related definitions are at `theme.css:4-5`.
 
-重大度は例のP2をコピーせず、確認した影響範囲と条件で決める。修正案は問題に見合う範囲に留める。
+Choose severity from confirmed scope/conditions rather than copying the example's P2. Keep fixes proportional to the problem.
 
-### 任意の改善提案の例
+### Optional improvement example
 
-#### 任意提案: 操作例をコピーして試せる形でも提供する
+#### Optional suggestion: Also provide a copyable operation example
 
-公開仕様には必要なヘッダー・引数・失敗時の扱いが記載されており、現状で契約は理解できます。利用者の試行を短縮する補助として、`docs/api.md` にcurl例を追加する案があります。例の追従管理が増えるため、既存のAPIクライアント用コレクションで十分なら追加は不要です。
+The public specification contains required headers, arguments, and failure handling, making the current contract understandable. A curl example in `docs/api.md` could help shorten user experimentation. It adds example-maintenance work, so it is unnecessary if an existing API-client collection is sufficient.
 
-文書不足で正しく利用できない場合は正式な指摘として扱う。この例のように現状も十分な場合だけ、追加の利点と管理負担を比較する。
+If documentation gaps prevent correct usage, treat them as formal findings. Compare additional benefits and maintenance burdens only when the current state is sufficient, as in this example.
 
-### 維持したい設計判断の例
+### Design decision to retain example
 
-#### 維持したい設計判断: 再試行時の二重登録をDBで防ぐ
+#### Design decision to retain: Prevent duplicate registration during retries through the DB
 
-`orders.sql:18` の一意制約と `create_order.py:24` の競合時取得が同じリクエストキーを使うため、並行した再試行でも注文を二重登録しない契約が守られます。別の登録経路を追加するときも、このキーと制約を通す設計を維持してください。
+The unique constraint at `orders.sql:18` and conflict retrieval at `create_order.py:24` use the same request key, protecting the contract that concurrent retries do not duplicate orders. Preserve the design of routing added registration paths through this key and constraint.
 
-単に「テストが充実」「設計が良い」とせず、確認した仕組みと守っている契約を示す。他の経路に問題があれば、それは正式な指摘として先に報告する。
+Show confirmed mechanisms and protected contracts rather than merely “thorough tests” or “good design.” Report problems in other paths as formal findings first.
 
-## 参照元と適用方針
+## Sources and application policy
 
-GitHub awesome-copilotのGeneric Code Review Instructions[^github-instructions-code-review-generic-instructions-md]の品質観点、全体から詳細へ進む調査、具体的で建設的な報告を参考にした。
+Referenced the quality perspectives, overall-to-detail investigation, and concrete constructive reporting in GitHub awesome-copilot's Generic Code Review Instructions.[^github-instructions-code-review-generic-instructions-md]
 
-Martin FowlerのBeck Design Rules[^fowler-beck-design-rules]とYagni[^fowler-yagni]を参考に、現在の要求に不要な複雑さを調べる5つの観点を設けた。これらの観点は本スキルでの適用例であり、原典が各構造を一律に禁止したものではない。
+Using Martin Fowler's Beck Design Rules[^fowler-beck-design-rules] and Yagni[^fowler-yagni], established five perspectives for investigating complexity unnecessary for current requirements. These are this skill's application examples; the originals do not uniformly prohibit each structure.
 
-このスキルでは現在の要求を満たす最もシンプルな設計と実際の変更への安全性を評価軸とし、重大度はP0〜P3で影響から決める。参照元の領域別の重要度、行数の目安、Copilot用のfrontmatterはそのまま適用しない。レビュー結果は確認範囲の判断として報告し、GitHub上の承認・マージを代行しない。
+This skill evaluates the simplest design meeting current requirements and safety for actual changes, assigning P0–P3 severity by impact. Do not directly apply the sources' area-specific severities, line-count guidance, or Copilot frontmatter. Report review results as judgments within checked scope; do not decide GitHub approval or merge.
 
-[^github-instructions-code-review-generic-instructions-md]: [GitHub awesome-copilotのGeneric Code Review Instructions](https://github.com/github/awesome-copilot/blob/main/instructions/code-review-generic.instructions.md)。本文に記した参照範囲と採用判断の根拠。
-[^fowler-beck-design-rules]: [Beck Design Rules](https://martinfowler.com/bliki/BeckDesignRules.html)。現在の要求を満たす設計、意図の明瞭さと不要な要素の判断に適用する。
-[^fowler-yagni]: [Yagni](https://martinfowler.com/bliki/Yagni.html)。仮想的な将来機能の先取りと、現在必要な健全性を区別する。
+[^github-instructions-code-review-generic-instructions-md]: [GitHub awesome-copilot Generic Code Review Instructions](https://github.com/github/awesome-copilot/blob/main/instructions/code-review-generic.instructions.md). Evidence for the reference scope and adoption decisions stated in the text.
+[^fowler-beck-design-rules]: [Beck Design Rules](https://martinfowler.com/bliki/BeckDesignRules.html). Apply to design meeting current requirements, clear intent, and judging unnecessary elements.
+[^fowler-yagni]: [Yagni](https://martinfowler.com/bliki/Yagni.html). Distinguish anticipation of hypothetical future features from currently necessary health.

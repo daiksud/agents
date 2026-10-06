@@ -1,80 +1,80 @@
 ---
 type: Reference
-title: 責務・契約とコメントの設計
-description: モデルの境界から構造を選び、コードに意図と公開契約を残す判断基準。
+title: Designing responsibilities, contracts, and comments
+description: Criteria for choosing structure from model boundaries and retaining intent and public contracts in code.
 sources:
   - id: practice-sources
     resource: sources.md
 ---
 
-## 責務・契約とコメントの設計
+## Designing responsibilities, contracts, and comments
 
-### XPの5価値を実装の判断へ使う
+### Using the five XP values in implementation decisions
 
-- **Communication**: 目的・期待値・未回答事項を関係者と共有し、テストや実差分で理解の違いを確かめる。
-- **Simplicity**: 現在の契約を満たす理解しやすい構造を選び、未要求の機能や抽象化を増やさない。
-- **Feedback**: 小さなテスト・協働・統合と利用者の反応から、次の実装・設計改善を選ぶ。
-- **Courage**: 欠陥や不確実性を隠さず、必要なRefactorをテストと合意済みの範囲に基づいて進める。承認や検証を飛ばす意味にはしない。
-- **Respect**: 利用者の判断権限と関係者の知識・時間を尊重し、未合意の業務判断を代行しない。過負荷で速さを作らない。
+- **Communication**: Share purposes, expectations, and unanswered questions with stakeholders, and check differences in understanding through tests and actual diffs.
+- **Simplicity**: Choose an understandable structure that meets current contracts, without adding unrequested features or abstractions.
+- **Feedback**: Choose the next implementation and design improvements from small tests, collaboration, integration, and user responses.
+- **Courage**: Do not hide defects or uncertainty; carry out necessary Refactor based on tests and the agreed scope. This does not mean skipping approval or validation.
+- **Respect**: Respect users' decision authority and stakeholders' knowledge and time. Do not make unagreed business decisions on their behalf or gain speed through overload.
 
-XPの価値をこの実装手順へ適用したもので、配布先に共通Instructionsがない場合もこの対応付けを使う。原典と本環境での適用範囲は[出典資料](sources.md)に保持する。[^practice-sources]
+This applies XP values to the implementation procedure. Use this mapping even when the distribution destination lacks shared Instructions. Keep the original sources and the scope of application in this environment in the [source materials](sources.md).[^practice-sources]
 
-### Simple DesignとYAGNI
+### Simple Design and YAGNI
 
-現在の契約とテストを満たすことを前提に、意図が伝わる構造、同じルールの重複、不要な要素を確かめる。将来使うかもしれないinterface、未使用のextension point、仮想要件向けconfiguration、未要求の一般化を追加しない。実際の呼び出し元・契約・変化の不足を説明できる場合に最小の構造を加える。[^practice-sources]
+Provided that current contracts and tests are met, examine whether structure conveys intent, duplicates the same rule, or contains unnecessary elements. Do not add interfaces that might be used someday, unused extension points, configuration for hypothetical requirements, or unrequested generalization. Add minimal structure when you can explain an actual gap in callers, contracts, or changes.[^practice-sources]
 
-YAGNIは必要な検証・リファクタリングを省く理由ではない。Greenで確認した設計改善を同じサイクルのRefactorで扱い、小さな変更を支えるコードの健全性を保つ。意図と重複の判断はモデルの意味に基づき、抽象型や行数を品質目標にしない。[^practice-sources]
+YAGNI is not a reason to omit necessary validation or refactoring. Handle design improvements identified at Green in Refactor within the same cycle, preserving code health that supports small changes. Judge intent and duplication from model meaning; do not make abstract types or line counts quality targets.[^practice-sources]
 
-### 責務・契約から設計を選ぶ
+### Choosing design from responsibilities and contracts
 
-アクターの目的、合意済みのルール・不変条件、モデルの境界を確認してから、現在の要求を満たす最小の構造を選ぶ。OOPは状態とふるまいをオブジェクトにまとめる設計手段であり、DDDの必須形式ではない。関数とデータで契約を明確に表現できる場合は、その構造を保つ。
+Check actors' purposes, agreed rules and invariants, and model boundaries before choosing the smallest structure that meets current requirements. OOP groups state and behavior into objects as a design tool; it is not a required form of DDD. Retain functions and data when they express contracts clearly.
 
-SOLIDは責務・拡張・置換可能性・インターフェース・依存方向を点検する原則として使い、クラス数や抽象型の有無を合否基準にしない。
+Use SOLID to inspect responsibilities, extension, substitutability, interfaces, and dependency direction. Do not use class counts or the presence of abstract types as pass/fail criteria.
 
-| 確認すること | 判断と対応 |
+| What to check | Decision and response |
 | --- | --- |
-| 責務と変更理由 | 同じ業務ルールをまとめ、変更理由が異なる処理を分ける。値や構文が似ていても別モデルのルールを共通化しない |
-| 変化する部分 | 合意された複数の方式や実際の変更箇所がある場合に、その部分を分離する。未要求の拡張を予想して抽象化しない |
-| 置換可能性 | 実装を交換しても呼び出し元に約束した入力条件・結果・失敗・副作用を守る。継承先が入力条件を厳しくしたり保証を弱めたりするなら契約か構造を見直す |
-| 利用者ごとの契約 | 呼び出し元が使わない操作に依存し、無関係な変更や実装を強制される場合はインターフェースを分ける |
-| 依存方向 | AGENTS.mdのDDD方針に沿い、実際に交換・隔離する境界では依存を引数等で渡す。言語と既存設計に合う最小の契約を使う |
+| Responsibilities and reasons for change | Group the same business rule and separate processing with different reasons for change. Do not share rules from different models merely because values or syntax look similar |
+| Parts that vary | Separate a part when there are multiple agreed approaches or actual change points. Do not abstract in anticipation of unrequested extensions |
+| Substitutability | Preserve promised input conditions, results, failures, and side effects when implementations are exchanged. Reconsider the contract or structure if a subtype tightens input conditions or weakens guarantees |
+| Contracts for each caller | Split an interface when callers depend on unused operations and are forced to make unrelated changes or implementations |
+| Dependency direction | Follow the DDD policy in AGENTS.md. Pass dependencies as arguments or similar at boundaries actually exchanged or isolated. Use the smallest contract that fits the language and existing design |
 
-GoFパターンは繰り返し現れる設計問題の解決形を共有する語彙として使う。例えば、合意された計算方式の交換にはStrategy、外部契約の翻訳にはAdapter、段階的で制約のある生成にはBuilderを検討する。問題・守る契約・増える構造の負担を説明できる場合に採用し、全パターンの適用や名前への接尾辞を要求しない。
+Use GoF patterns as shared vocabulary for recurring design problems. For example, consider Strategy for exchanging agreed calculation methods, Adapter for translating external contracts, and Builder for staged construction with constraints. Adopt a pattern when you can explain the problem, contract to preserve, and burden of added structure. Do not require every pattern or name suffixes.
 
-再利用や動作の組合せでは合成・委譲を先に検討する。継承は置換可能な契約を共有するときに使い、既存の単純な継承を形式だけで置き換えない。状態は外部から不変条件を壊せない形で保持し、変更が不要な値は不変にする。パターンの構造やモックの呼出回数だけでなく、契約上のふるまいを検証する。
+Consider composition and delegation first for reuse and combining behavior. Use inheritance when sharing substitutable contracts; do not mechanically replace existing simple inheritance. Keep state so external access cannot break invariants, and make values immutable when they need no changes. Verify contractual behavior, not just pattern structure or mock call counts.
 
-### 名前・配置・型で境界を伝える
+### Communicating boundaries through names, placement, and types
 
-既存の命名・配置と言語の慣習を確認し、今回追加・変更する範囲で、利用者が意味と契約を追えるようにする。Context EngineeringとTaming Copilotの適用判断は[出典資料](sources.md#指示例の参照元と適用判断)に記録する。[^practice-sources]
+Check existing naming, placement, and language conventions. Within the scope added or changed, make meaning and contracts traceable for users. Record decisions on applying Context Engineering and Taming Copilot in the [source materials](sources.md#sources-of-instruction-examples-and-application-decisions).[^practice-sources]
 
-- 名前・パスには役割や業務上の意味を表す語を使う。値の意味や単位が読み取れない場合は、そのモデルの境界で名前付き定数を使い、同じ数値というだけで異なるルールを共有しない。
-- 新規配置では関連コード・型・テストを同じ機能として見つけやすくする。既存の近接配置に合わせ、テストを別ディレクトリへ置く規約なら対応する名前・構造を揃える。近接配置のためだけに既存ファイルを大量移動しない。
-- 公開API・モジュール境界では入出力の型と契約を明示する。静的な型で表せない制約は既存のスキーマ・API文書・docstringで補う。明白な局所変数の型推論を保ち、言語・プロジェクトに合わない注釈を強制しない。
-- 公開窓口と内部実装を区別し、既存のexport・可視性・パッケージ機構で意図した契約だけを公開する。一律のindexファイルや全シンボルの再exportを要求せず、内部実装を公開APIへ広げない。
-- 標準機能と既存依存で要求を満たせるか先に確認する。依存を追加する場合は、解決する不足と保守・互換性への影響を説明する。既存依存を標準機能へ置き換えるだけの無関係な整理は行わない。
+- Use words expressing roles or business meaning in names and paths. If a value's meaning or units are unclear, use a named constant at that model boundary. Do not share different rules merely because they use the same number.
+- For new placement, make related code, types, and tests easy to find as one feature. Follow existing colocation; if tests belong in a separate directory, align corresponding names and structure. Do not move large numbers of existing files solely for colocation.
+- State input/output types and contracts at public API and module boundaries. Supplement constraints not expressible in static types through existing schemas, API documentation, or docstrings. Retain obvious local type inference; do not force annotations unsuitable for the language or project.
+- Distinguish public entry points from internal implementation. Expose only intended contracts through existing export, visibility, and package mechanisms. Do not require uniform index files or re-export every symbol, or expand internal implementation into public APIs.
+- First check whether standard features and existing dependencies meet requirements. When adding a dependency, explain the gap it resolves and maintenance and compatibility effects. Do not make unrelated cleanup solely to replace existing dependencies with standard features.
 
-### コードとコメントで意図を残す
+### Retaining intent in code and comments
 
-まず名前・型・関数分割・式で、業務上の意味と依存を表す。コメントを書く前に、コードから既に分かることの繰り返しになっていないか確認する。
+First express business meaning and dependencies through names, types, function decomposition, and expressions. Before writing comments, check that they do not repeat what code already shows.
 
-- コードだけでは分からない設計理由、外部制約、互換処理や回避策の根拠を残す。回避策には分かる範囲で参照先と撤去条件を添え、未確認の障害や将来予定を作らない。
-- 複雑な処理の流れが名前・型・分割だけでは読み取れない場合は、目的と流れを短く補う。変更依頼への応答や編集の実況をコメントへ混ぜず、全モジュールへの定型説明を要求しない。
-- 公開契約の目的・引数・戻り値・失敗・副作用は、型や既存API文書を含めて利用者が理解できる形で保持する。「理由だけを書く」を理由に所有権、単位、入力の破壊的更新など見えない契約を削除しない。
-- パターンを採用した名前だけを説明せず、採用理由がコードから分からない場合にその根拠を残す。既存ADRに理由があれば参照し、同じ説明を複製しない。
-- 変更時は関連コメントも照合する。不要なコメントアウトコードや履歴の列挙は版管理へ委ねるが、運用に使われるTODO等は参照と撤去条件を確認して扱う。
-- docstringの言語・形式はプロジェクト規約に従う。全関数へのコメントや特定言語の文書形式を共通要件にしない。
+- Retain design reasons, external constraints, and grounds for compatibility handling or workarounds that code alone cannot convey. Add known references and removal conditions to workarounds; do not invent unverified incidents or future plans.
+- When names, types, and decomposition do not explain complex processing, briefly supplement its purpose and flow. Do not mix responses to change requests or editing narration into comments, or require boilerplate explanations in every module.
+- Retain public contract purposes, arguments, return values, failures, and side effects in a form users can understand, including types and existing API documentation. Do not remove invisible contracts such as ownership, units, or destructive input updates on the grounds of “write only reasons.”
+- Do not merely explain the name of an adopted pattern. Retain its rationale when code does not reveal it. Refer to existing ADRs rather than duplicating their explanations.
+- Cross-check related comments when making changes. Leave unnecessary commented-out code and history lists to version control, but check references and removal conditions when handling operational TODOs and similar notes.
+- Follow project conventions for docstring language and format. Do not make comments on all functions or a particular language's documentation format shared requirements.
 
-設計の出典と採用判断は[一次資料](sources.md)に保持する。[^practice-sources]
+Keep design sources and adoption decisions in the [primary materials](sources.md).[^practice-sources]
 
-[^practice-sources]: Simple Design、YAGNI、DDD、OOP Design Patterns、Self-explanatory Code Commenting、Context Engineering、Taming Copilotの参照と適用判断。
+[^practice-sources]: References and application decisions for Simple Design, YAGNI, DDD, OOP Design Patterns, Self-explanatory Code Commenting, Context Engineering, and Taming Copilot.
 
-## 変更の範囲と分割
+## Change scope and decomposition
 
-- AGENTS.mdの設計判断の前提と、合意済みの設計方針を確認する。
-- 設計方針の変更が必要なら、理由と影響を整理して方針を見直すタスクへ切り出す。既にその変更を承認されたタスクでは同じ承認を再要求しない。
-- 関連する呼び出し元、テスト、設定、文書も調べ、変更の波及範囲を確認する。
-- ファイルごとの追加・削除行数と合計を見積もり、根拠を計画に記載する。
-- 独立して検証・レビュー・統合できる小さな変更単位へ分割する。同じルールの正常系・境界・異常系を示す複数シナリオは一つのタスクに含めてよい。
-- 合計500行以上を分割再検討の目安とする。行数やシナリオ数だけで切り離さず、独立した価値・検証・依存関係を根拠に分割または維持の理由を書く。
-- Sub-issueには、対象のふるまいまたは技術的な変更目的、変更ファイル、見積もり、依存と検証方法を書く。目的内の実施対象・順序は判断して記録し、確認が必要な変更は `issue-management` に従う。
-- 実装中に範囲や変更量が増えたら、作業を広げる前に見積もり・分割と承認済み範囲を見直す。
+- Check the premises for design decisions in AGENTS.md and the agreed design policy.
+- If design policy must change, summarize reasons and effects and separate a task to reconsider it. Do not request the same approval again in a task already authorized to make that change.
+- Inspect related callers, tests, configuration, and documentation to determine the affected scope.
+- Estimate additions and deletions per file and in total, and record the basis in the plan.
+- Split into small units independently verifiable, reviewable, and integrable. Multiple scenarios showing normal, boundary, and error cases of the same rule may belong to one task.
+- Use a total of 500 lines or more as a cue to reconsider decomposition. Do not split solely by line or scenario counts; explain splitting or retaining the unit through independent value, validation, and dependencies.
+- For a Sub-issue, state the target behavior or technical change purpose, files, estimate, dependencies, and validation method. Decide and record implementation targets and order within the purpose; follow `issue-management` for changes needing confirmation.
+- If scope or change volume grows during implementation, reconsider estimates, decomposition, and the approved scope before expanding work.

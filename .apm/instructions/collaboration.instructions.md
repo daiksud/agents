@@ -1,7 +1,7 @@
 ---
 type: Instruction
-title: 独立した2エージェントによるコード変更
-description: DriverとNavigatorによる継続協働、共有ToDo、段階確認と自動再ペアを定めます。
+title: Code changes by two independent agents
+description: Define ongoing Driver/Navigator collaboration, shared ToDos, staged checks, and automatic re-pairing.
 sources:
   - id: issue-98
     resource: https://github.com/daiksud/agents/issues/98
@@ -17,58 +17,58 @@ sources:
     resource: https://github.com/daiksud/agents/issues/161
 ---
 
-## 独立した2エージェントによるコード変更
+## Code changes by two independent agents
 
-相談・説明・計画のみ、および文書だけの変更には適用しない。コードの追加・変更・修正では、独立した実行コンテキストを持つサブエージェントを起動し、同じNavigatorと指示・結果・追加フィードバックを継続して交換できるかを確認する。最初のコード編集より前に、独立したNavigatorの起動と同じNavigatorからの初回・後続の実応答を確認し、共有ToDoから次の一項目を共同で選ぶ。ここでいうコード編集には、Redを作るテストコードの追加・変更と、ふるまい不変のリファクタリングも含む。[^issue-138]
+This does not apply to consultation, explanation, or planning alone, or documentation-only changes. For code additions, changes, or fixes, launch a subagent with an independent execution context, and confirm that instructions, results, and additional feedback can be exchanged continuously with the same Navigator. Before the first code edit, confirm that the independent Navigator has launched and that actual initial and follow-up responses have arrived from that same Navigator, then jointly select the next single item from the shared ToDo list. Code edits here include adding or changing test code for Red and behavior-preserving refactoring.[^issue-138]
 
-サブエージェント機能を利用できない、権限がない、初回起動が明示的に失敗した、または継続利用できるか確認できない場合は、コード編集を開始しない。ペア作業や独立した確認を実施済みと扱わず、確認できた制約とコード変更が未着手であること、再開条件をユーザーに報告する。承認済み範囲の読み取り、原因調査、計画・文案・共有ToDo候補の整理は継続できるが、その結果をペアで合意済みとは扱わない。一般的な実行承認や「最後まで進める」という依頼を、この停止条件の解除や単独実装の承認に読み替えない。[^issue-138]
+If subagent functionality is unavailable, permissions are missing, the initial launch explicitly fails, or continued availability cannot be confirmed, do not begin code edits. Do not claim pair work or independent checks were performed; report the confirmed restrictions, that code changes have not begun, and the conditions for resumption. Read-only work, cause investigation, plans, drafts, and shared ToDo candidates within the approved scope may continue, but do not treat their results as agreed by the pair. Do not reinterpret general execution approval or a request to “finish everything” as lifting this stop condition or approving solo implementation.[^issue-138]
 
-初回起動が明示的に失敗しNavigatorが存在しないことを確認できた場合は、原因解消または実行条件の変化を確認してから初回起動を再試行できる。同じ目的の実行承認を取り直さないが、追加権限・費用・グローバル設定変更は既存の変更保護に従う。起動処理の成否が不明、タイムアウト後の状態が不明、または識別子だけを取得した場合は状態を確認し、失敗と推測して別Navigatorを重複起動せず、確認できるまでコードを編集しない。Navigatorから初回応答を得た後に継続不能と分かった場合は、コード編集前でも後述のNavigator喪失として扱う。継続不能を確認した後の交代はユーザーの追加確認を待たず、自動再ペア手順へ進む。[^issue-138] [^issue-161]
+If the initial launch explicitly failed and the Navigator's absence is confirmed, the initial launch may be retried after confirming that the cause is resolved or execution conditions have changed. Do not request approval again for the same purpose, but follow existing change protection for additional permissions, costs, or global configuration changes. If launch success is unknown, state after a timeout is unknown, or only an identifier was obtained, check the state; do not assume failure and launch a duplicate Navigator, or edit code until it is confirmed. If continued availability fails after an initial response, treat it as Navigator loss as described below, even before code editing. After confirming continued use is impossible, proceed to automatic re-pairing without waiting for additional user confirmation.[^issue-138] [^issue-161]
 
-その条件を満たす環境では次の2者でコード変更を進める。スキルの明示呼び出しは前提にしない。
+In an environment meeting these conditions, the following two agents perform code changes. Explicit invocation of the skill is not a prerequisite.
 
-| 役割 | 責任と権限 |
+| Role | Responsibilities and authority |
 | --- | --- |
-| Driver（メインエージェント） | テスト・実装・必要な文書・検証・統合を担当し、作業対象ファイルを編集する唯一のエージェントとなる。 |
-| Navigator（サブエージェント1体） | Driverと独立した実行コンテキストから、要件・コード・差分・テスト結果を読み取り専用で確認し、具体的な懸念や次の確認事項を返す。 |
+| Driver (main agent) | Own tests, implementation, necessary documents, validation, and integration; be the only agent editing the working files. |
+| Navigator (one subagent) | Read requirements, code, diffs, and test results from an execution context independent of the Driver, and return concrete concerns or next checks. |
 
-DriverとNavigatorの内部通信では、誤解と不要な再送を減らすため、Controlled English、原文保持、必要な項目だけの軽量な半構造化形式、タスク内で安定するID、初回共有後の差分中心の更新を使う。人間向け成果物の言語規則へ拡張せず、履歴喪失・文脈不足では再共有と既存の停止・再ペア条件を優先する。[^issue-99]
+In internal Driver/Navigator communication, use Controlled English, preserve original text, use lightweight semistructured formats containing only needed items, stable IDs within the task, and updates centered on differences after initial sharing, to reduce misunderstanding and unnecessary retransmission. Do not extend this to language rules for human-facing artifacts; when history is lost or context is insufficient, prioritize re-sharing and existing stop/re-pairing conditions.[^issue-99]
 
-Driverはコード変更で最初のNavigator依頼を送る前に `~/.agents/skills/software-development/references/agent-communication.md` を読む。読めなければ初回依頼・コード編集へ進まない。Navigatorの自動継承を仮定せず、Driverは関連する協働契約と同資料を初回依頼で共有する。Navigatorが直接参照できなければ内容を共有し、Navigatorが確認するまでコード編集へ進まない。相談・計画・文書だけの作業にこの資料を要求しない。[^issue-140]
+Before the first Navigator request for code changes, the Driver reads `~/.agents/skills/software-development/references/agent-communication.md`. If it cannot be read, do not proceed to the initial request or code editing. Do not assume automatic Navigator inheritance; share relevant collaboration contracts and that material in the initial request. If the Navigator cannot access it directly, share its contents, and do not edit code until the Navigator confirms them. Do not require this material for consultation, planning, or documentation-only work.[^issue-140]
 
-同じNavigatorを各ペアの全サイクルで継続する。応答不能・再開不能・必要な履歴の喪失で継続できなければ、確認が必要な後続のコード変更を一時停止し、継続不能の根拠と確認済み・未確認の範囲を保持する。新しいエージェントを同じNavigatorの継続とは扱わない。[^issue-100]
+Keep the same Navigator through every cycle of each pair. If responses, resumption, or necessary history are unavailable and continuation is impossible, pause subsequent code changes requiring confirmation and preserve the evidence of lost continuity and confirmed/unconfirmed scope. Do not treat a new agent as continuation of the same Navigator.[^issue-100]
 
-元のNavigatorを復旧できず継続不能と確認したら、ユーザーの追加確認や今回の喪失への再ペア承認を待たず、新しいNavigatorを起動して交代できる。旧担当は退役させ、遅延応答を新ペアの確認証拠にせず、復旧しても切り戻さない。新Navigatorには取得・保持できる限りの作業コンテキストと証拠を共有し、再開には継続応答の確認、最初の未確認段階からの再検証、完了済み項目と最終差分の照合を必要とする。不足証拠を成功と推測せず、対象変更時は影響する検証をやり直す。指摘と同じ論点の2往復上限を引き継ぐ。新ペアも失われたら同じ自動復旧手順を繰り返し、ユーザー確認待ちにはしない。[^issue-100] [^issue-161]
+Once the original Navigator cannot be recovered and continuation is confirmed impossible, a new Navigator may be launched as a replacement without waiting for additional user confirmation or approval to re-pair for this loss. Retire the former Navigator, do not treat delayed responses as evidence for the new pair, and do not switch back even if it recovers. Share as much retrievable and retained work context and evidence as possible with the new Navigator. Resumption requires confirmation of continued responses, revalidation from the first unconfirmed stage, and comparison of completed items with the final diff. Do not infer success from missing evidence; rerun affected validation when targets change. Retain the limit of two exchanges for the same finding or issue. If the new pair is also lost, repeat the same automatic recovery process without waiting for user confirmation.[^issue-100] [^issue-161]
 
-DriverはNavigator喪失を確認したら、復旧・再ペア手順へ進む前に `~/.agents/skills/software-development/references/navigator-recovery.md` を読む。再開前に関連契約と同資料を新Navigatorへ共有し、直接読めなければ内容を渡す。必要な内容を確認できるまで対象工程を進めないが、Navigator交代そのものについてユーザーの追加確認は要求しない。通常の初回起動、相談・計画・文書だけではこの資料を要求しない。[^issue-140] [^issue-161]
+After confirming Navigator loss, the Driver reads `~/.agents/skills/software-development/references/navigator-recovery.md` before proceeding to recovery or re-pairing. Before resuming, share the relevant contracts and that material with the new Navigator; provide contents if direct reading is impossible. Do not advance the affected stage until necessary content is confirmed, but do not require additional user confirmation for the Navigator replacement itself. This material is not required for ordinary initial launch, consultation, planning, or documentation-only work.[^issue-140] [^issue-161]
 
-通信資料に従って初回の前提を共有したうえで、両者は[インクリメンタルな設計](development.instructions.md#インクリメンタルな設計)に従い、まず代表的な正常系と保護する既存の振る舞いを、双方が確認できる共有ToDoリストに記録する。境界条件・異常系・設計改善は、明示された要求・既存契約・確認済みの不具合や具体的な危険への最低限の保護に必要なものだけを含める。専用ツールや固定ファイル名は要求しない。未着手・進行中・完了と要確認の未合意要件を区別し、学習して見つけたケース・テスト不足・改善は、DriverとNavigatorのどちらが気づいても現在の変更の範囲と照合し、今回必要なものだけを直ちに追加する。将来の改善案を今回の必須項目にしない。Navigatorの提案はDriverが採否と理由を共有して必要なものをリストへ反映し、Navigatorが反映を確認する。ToDoへの追加やペア内の合意を、ユーザーの要件変更や範囲拡大の承認とみなさない。
+After sharing initial assumptions according to the communication material, follow [Incremental design](development.instructions.md#incremental-design) together, first recording representative normal paths and existing behavior to protect in a shared ToDo list both agents can inspect. Include boundary conditions, exceptional paths, and design improvements only where needed for explicit requirements, existing contracts, confirmed defects, or minimal protection against concrete risks. No dedicated tool or fixed filename is required. Distinguish unstarted, in-progress, and completed items from unagreed requirements needing confirmation. When either Driver or Navigator discovers cases, test gaps, or improvements through learning, compare them with current scope and immediately add only those needed for this change. Do not make future improvements mandatory for the current change. The Driver shares acceptance or rejection of Navigator proposals and reasons, reflects necessary items in the list, and the Navigator confirms that reflection. Adding ToDos or pair agreement does not approve changes to user requirements or expansion of scope.
 
-着手時と各ToDoの完了後に、両者はリストを確認して理由とともに次の一項目を選ぶ。一度に進行中にする項目は原則一つとし、選んだToDoは原則として一つの小さな振る舞いを一回のRed / Green / Refactorで完了できる粒度にする。開始前または実装中の学習で、複数の独立した振る舞い・別々のRed・独立して完了可能な変更を含むと分かった場合は、後続の独立した編集を続ける前に小さな振る舞いへ分割する。[^issue-98]選択・分割を途中で変える場合も理由を共有し、共有ToDoを更新して再相談する。別の振る舞いはリストへ残して現在の実装へ無条件に詰め込まない。ただし、現在の段階を成立させる修正や既存の振るまいの回帰は、別ToDoへ記録するだけで先送りしない。Navigatorは説明だけに頼らず元の要件と対象を確認し、候補のテスト、境界条件、設計上の懸念を返す。Driverだけで次の項目を決めて実装を先行させない。
+At the start and after each ToDo is completed, both agents check the list and select the next single item with reasons. As a rule, keep only one item in progress, sized so one small behavior can be completed in one Red / Green / Refactor cycle. If learning before or during implementation shows it contains multiple independent behaviors, separate Reds, or independently completable changes, split it into small behaviors before continuing subsequent independent edits.[^issue-98] Share reasons for changes to selection or decomposition, update the shared ToDo list, and consult again. Keep other behaviors on the list rather than unconditionally packing them into the current implementation. However, do not postpone fixes needed to establish the current stage or regressions in existing behavior merely by recording another ToDo. The Navigator checks original requirements and targets rather than relying only on explanations, and returns candidate tests, boundary conditions, and design concerns. The Driver must not decide the next item alone and start implementation ahead of agreement.
 
-選んだToDoは、Driverが `software-development` に従い次の段階を順に進め、各段階の要対応指摘を同じNavigatorが再確認して解消した後にだけ次へ進む。レビュー待ちに次の段階や別ToDoの実装を先行させない。
+For the selected ToDo, the Driver follows `software-development` through the stages below in order, advancing only after the same Navigator rechecks and resolves findings requiring action for each stage. Do not implement the next stage or another ToDo while waiting for review.
 
-Red / Green / Refactorの各段階でも、Navigatorが次の判断を変えられる意味のある成果を一つ得た時点を確認境界とする。新しい差分と関連する検証結果、想定外の失敗・回帰、次の編集方針・期待値・設計・ToDo分割に影響する情報、Navigatorの要対応指摘への修正と新しい証拠を得たら、その結果を前提とする次の独立した編集を先行させない。Driverは現在の実差分と検証結果を同じNavigatorへ共有し、Navigatorが実物を確認して必要な修正・再確認を終えてから次へ進む。特に複数の独立した修正を段階末までまとめ、事後に一括確認させない。[^issue-98]
+Within each Red / Green / Refactor stage, use the point at which one meaningful result enables the Navigator to change the next decision as a checking boundary. When new diffs and related validation results, unexpected failures or regressions, information affecting subsequent edits, expectations, design, or ToDo decomposition, or fixes and new evidence for findings requiring action become available, do not start subsequent independent edits that depend on that result. Share the actual current diff and validation results with the same Navigator, who checks the actual work and completes necessary fixes/rechecks before proceeding. In particular, do not batch multiple independent fixes until stage end and request only retrospective review.[^issue-98]
 
-対話境界はツール呼び出し単位にしない。関連コード・テスト・設定の読み取り、grepや検索、合意済みの一手に必要な複数ファイルの確認、一つの変更結果を確かめる局所テストや関連コマンド、状態変化のない確認など、一つの判断材料を構成する連続した証拠収集はまとめてよい。固定の秒数・操作数・コマンド数では区切らず、Navigatorが次の判断に利用できる意味のある成果が得られた時点を対話の単位とする。[^issue-98]
+Do not define dialogue boundaries by tool calls. Continuous evidence gathering contributing to one decision may be batched: reading related code, tests, or configuration; grep/search; examining multiple files for an agreed step; local tests or related commands checking one change; and checks without state changes. Use a meaningful result the Navigator can apply to the next decision as the unit of dialogue, rather than fixed seconds, operation counts, or command counts.[^issue-98]
 
-| 段階 | Driverの作業 | Navigatorの確認 |
+| Stage | Driver work | Navigator checks |
 | --- | --- | --- |
-| Red | アサーションから最小限のテストを書き、対象の振るまいが未充足であるために失敗することを確認する。 | 要件、実際のテスト差分、失敗結果を照合し、期待値と失敗理由が正しく、環境不備やテスト自体の誤りではないことを確認する。意図したRedを完成変更の欠陥と扱わない。 |
-| Green | Redの確認後に、そのテストと関連テストを通す最小限の実装を書く。 | 実差分と成功結果から要件との一致、回帰、未要求の一般化を確認する。一時的な重複は許容するが、設計改善事項を同じサイクルのRefactorへ引き継ぐ。 |
-| Refactor | Greenの確認後に、振る舞いを変えず重複の除去を中心とした必要な改善を行い、関連テストのGreenを維持する。 | 引き継いだ改善事項を解消または対応不要と判断した根拠、不要な抽象化を加えていないこと、振る舞いとテストの検証力を確認する。改善不要なら変更を作らない判断を確認する。 |
+| Red | Write a minimal test starting from assertions, and confirm it fails because the target behavior is unmet. | Compare requirements, actual test diff, and failure results; confirm expectations and failure reasons are correct rather than environment deficiencies or test errors. Do not treat intentional Red as a defect in the completed change. |
+| Green | After Red is confirmed, write the smallest implementation passing that test and related tests. | Check requirements and regressions from actual diffs and success results, and check for unrequested generalization. Allow temporary duplication, but carry design improvements into Refactor in the same cycle. |
+| Refactor | After Green is confirmed, make necessary improvements, centered on removing duplication, without changing behavior, and keep related tests Green. | Check the evidence that carried-over improvements were resolved or judged unnecessary, that unnecessary abstractions were not added, and that behavior and test effectiveness are preserved. If no improvement is needed, confirm the decision not to create a change. |
 
-ふるまい不変の整理だけのToDoでは、既存テストの十分性とGreenを確認してから整理・レビューへ進み、形式のためのRedや不要な追加テストを作らない。必要な検証と段階別レビューを終えたToDoだけを完了にする。受け入れ条件やテストの期待値を、テストを通すためだけに弱めない。
+For ToDos consisting only of behavior-preserving cleanup, confirm sufficient existing tests and Green before cleanup/review, without creating formal Reds or unnecessary added tests. Mark only ToDos with required validation and staged review complete. Do not weaken acceptance conditions or test expectations merely to pass tests.
 
-Driverは各確認で、実際の差分、実行したテスト結果、レビュー結果を同じコード状態に結びつける。HEADのSHAが同じだけでは未コミット差分まで同じと扱わない。確認依頼後に対象を変更した場合は、影響する検証とレビューをやり直し、過去の確認結果を変更後の根拠にしない。Driverの修正または根拠付き回答だけで指摘を解消扱いにせず、Navigatorが再確認する。当該段階の要対応指摘、任意提案、同じサイクルのRefactorへ引き継ぐ事項を区別する。最終差分も同じNavigatorに確認させる。
+At each check, the Driver connects actual diffs, executed test results, and review results to the same code state. The same HEAD SHA alone does not prove uncommitted diffs are unchanged. If the target changes after requesting a check, rerun affected validation and review; do not use past results as evidence for the changed state. Do not mark findings resolved solely by Driver fixes or evidence-based answers; the Navigator rechecks them. Distinguish findings requiring action at that stage, optional suggestions, and items carried into Refactor in the same cycle. Have the same Navigator check the final diff as well.
 
-ペア作業に同時に参加するエージェントはDriverと有効なNavigatorの2体に限る。サブエージェントは通常Navigatorの1体だけとし、自動再ペアで元のNavigatorを交代させる場合も並行させない。DriverもNavigatorも別の実装・調整・ペア内レビュー用サブエージェントを追加起動しない。Navigatorは他のエージェントへ再委譲しない。共通指示がNavigatorにも適用される場合でも、子に別のペアを作らせない。単一エージェントによる役割演技は代わりにならない。
+Only two agents participate in pair work at once: the Driver and the active Navigator. Normally there is only one Navigator subagent, and original and replacement Navigators do not work concurrently during automatic re-pairing. Neither Driver nor Navigator launches additional implementation, coordination, or pair-review subagents. The Navigator does not delegate to other agents. Even if common instructions apply to the Navigator, do not have the child create another pair. Single-agent role-playing is not a substitute.
 
-同じ論点についてDriverの修正または根拠付き回答とNavigatorの再確認を1往復と数え、2往復しても解消しない場合は作業を止め、未解決点・根拠・選択肢をユーザーに報告する。言い換えや指摘の分割で回数をリセットせず、未解決のまま完了や承認済みとしない。ペア内の確認は、既存のPRレビュー、必須CI、承認、マージ条件を置き換えず、作業範囲や実行権限を広げない。
+Count a Driver fix or evidence-based answer followed by Navigator rechecking as one exchange on the same issue. If it remains unresolved after two exchanges, stop work and report unresolved points, evidence, and options to the user. Do not reset the count by rewording or splitting findings, or claim completion or approval while unresolved. Pair checks do not replace existing PR review, required CI, approval, or merge conditions, or expand scope or execution authority.
 
-[^issue-138]: [Issue #138](https://github.com/daiksud/agents/issues/138) に記録された、初回Navigator利用不能時のコード変更停止、読み取り継続、初回再試行と再ペアの境界。
-[^issue-161]: [Issue #161](https://github.com/daiksud/agents/issues/161) に記録された、Navigator喪失後に追加確認を待たず自動再ペアし、可能な限りのコンテキストを引き継ぐ方針。
-[^issue-99]: [Issue #99](https://github.com/daiksud/agents/issues/99) に記録された、低エントロピーなControlled Englishによる内部通信と外部成果物との境界。
-[^issue-140]: [Issue #140](https://github.com/daiksud/agents/issues/140) に記録された、必須契約を入口に残す詳細分離と、配布済み資料の確認・共有の境界。
-[^issue-100]: [Issue #100](https://github.com/daiksud/agents/issues/100) に記録された、Navigator喪失後の証拠保持、旧担当退役、未確認段階からの再確認条件。
-[^issue-98]: [Issue #98](https://github.com/daiksud/agents/issues/98) に記録された、1 ToDoの粒度、段階内部の短い対話境界、過剰な逐次報告を避ける条件。
+[^issue-138]: [Issue #138](https://github.com/daiksud/agents/issues/138) records stopping code changes when the initial Navigator is unavailable, continued read-only work, and boundaries for initial retries and re-pairing.
+[^issue-161]: [Issue #161](https://github.com/daiksud/agents/issues/161) records automatic re-pairing after Navigator loss without waiting for additional confirmation, preserving as much context as possible.
+[^issue-99]: [Issue #99](https://github.com/daiksud/agents/issues/99) records internal communication in low-entropy Controlled English and its boundary with external artifacts.
+[^issue-140]: [Issue #140](https://github.com/daiksud/agents/issues/140) records separating detail while retaining mandatory contracts at entry points, and boundaries for checking and sharing distributed material.
+[^issue-100]: [Issue #100](https://github.com/daiksud/agents/issues/100) records preserving evidence after Navigator loss, retiring the former Navigator, and rechecking from the unconfirmed stage.
+[^issue-98]: [Issue #98](https://github.com/daiksud/agents/issues/98) records the granularity of one ToDo, short dialogue boundaries within stages, and conditions for avoiding excessive sequential reporting.

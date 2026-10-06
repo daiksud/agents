@@ -1,27 +1,27 @@
 ---
 type: Instruction
-title: 価値の流れと統合
-description: 小さな変更を安全に届け、mainと配布可能な状態を維持する原則を定めます。
+title: Value flow and integration
+description: Define principles for delivering small changes safely and maintaining main and a distributable state.
 ---
 
-## 価値の流れと統合
+## Value flow and integration
 
-### 価値の流れと学習
+### Value flow and learning
 
-DevOps・Leanでは、企画から運用まで利用者の成果へ責任を共有し、品質・セキュリティ・信頼性を設計と日常作業に組み込む。待ち・仕掛かり・手戻りを含む流れ全体から最も影響する制約を選び、期待する変化と見直し条件を持つ小さな実験で改善する。人を責める最適化や過負荷を避け、現場の知識と持続可能な働き方を尊重する。
+In DevOps and Lean, share responsibility for user outcomes from planning through operations, and embed quality, security, and reliability in design and daily work. Choose the most influential constraint from the entire flow, including waiting, work in progress, and rework, and improve through small experiments with an expected change and conditions for reassessment. Avoid optimization that blames people or overloads them, and respect local knowledge and sustainable work.
 
-CDでは検証済みの変更を必要なときに安全に届けられる状態を維持する。同じ成果物を環境間で昇格させ、構成の版管理・再現可能な配布・復旧を確認する。配備と利用者への公開を区別し、公開判断は業務条件と既存の承認に従う。すべての変更の自動本番公開は要求しない。
+In CD, maintain a state in which validated changes can be delivered safely when needed. Promote the same artifact across environments, and verify versioned configuration, reproducible distribution, and recovery. Distinguish deployment from release to users, and follow business conditions and existing approvals for release decisions. Automatic production release of every change is not required.
 
-チームの責任範囲と協働・サービス提供・支援の関係は、価値の流れを妨げる依存と担当者の認知負荷・経験から、規模と制約に合わせて見直す。4つのチーム型を必須の組織図にしない。
+Reassess team responsibilities and relationships for collaboration, service provision, and support according to scale and constraints, considering dependencies that impede value flow and the cognitive load and experience of those responsible. Do not make the four team types a mandatory organization chart.
 
-これらは日々の判断の軸であり、通常の変更で開発実践の全面診断を行わない。定義・関係や出典を確認するときは `~/.agents/skills/engineering-assessment/references/principles.md` を読む。
+These are guides for daily decisions; do not perform a comprehensive diagnosis of development practices for ordinary changes. Read `~/.agents/skills/engineering-assessment/references/principles.md` when checking definitions, relationships, or sources.
 
-### 統合と完了
+### Integration and completion
 
-独立して検証・統合できる小さい変更で、活動日の毎日のmain統合を目安にする。期限のために承認・レビュー・CIを省略しない。コミットは英語のConventional Commitsとし、破壊的変更の型は `feat`・`fix` のみとする。
+Use small changes that can be validated and integrated independently, aiming for daily integration into main on active workdays. Do not skip approvals, review, or CI for a deadline. Use English Conventional Commits, and allow breaking-change types only for `feat` and `fix`.
 
-Git管理ファイルの変更作業はIssueに紐づけ、検証・最新HEADレビュー・要対応指摘ゼロ・必須CI成功・競合ゼロを満たしてスカッシュマージする。レビュー先は `change-delivery` の「レビュー候補の高速判定」で選び、Copilotを選んだ場合はApproveを必要とする。Codexは最新HEADの正常完了と過去を含む要対応指摘ゼロを確認し、保護設定を緩めない。
+Associate changes to Git-managed files with an Issue, and squash-merge after validation, review of the latest HEAD, zero findings requiring action, successful required CI, and zero conflicts. Choose the reviewer through “Quick reviewer candidate assessment” in `change-delivery`; Copilot requires Approve when selected. For Codex, confirm normal completion for the latest HEAD and zero findings requiring action, including past findings, without relaxing protection settings.
 
-PR側の成功だけで完了にせず、統合後mainの必要検証・同期・ブランチ整理まで担当する。変更作業中にmain失敗を見つけたら復旧を優先し、正常化まで後続作業を止める。復旧の実行範囲は `issue-management` で確認する。必要チェックと復旧変更のdeliveryは `change-delivery` に従う。
+Do not finish with PR-side success alone; take responsibility through required post-integration main validation, synchronization, and branch cleanup. If main is found failing during change work, prioritize recovery and stop subsequent work until it is healthy. Check the scope of recovery execution through `issue-management`. Follow `change-delivery` for required checks and delivery of recovery changes.
 
-GitHub側のリポジトリ設定だけを変更する場合は `github-repo` で計画・承認・変更前後の証拠を確認し、差分適用と再診断で完了を判断する。空のcommit・PRは作らない。設定適用の前提としてGit管理ファイルを変更する場合は、その変更に通常のレビュー・CI・main統合後確認を適用する。
+For changes only to GitHub-side repository settings, use `github-repo` to check the plan, approval, and evidence before and after the change, and judge completion by applying the differences and diagnosing again. Do not create empty commits or PRs. If Git-managed files must change as a prerequisite for applying settings, apply ordinary review, CI, and post-integration main verification to those changes.

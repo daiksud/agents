@@ -1,7 +1,7 @@
 ---
 type: Instruction
-title: リポジトリ設定の操作と判定
-description: 読み取り診断から承認済み差分の適用・再検証までを、権限と失敗の境界を保って進めます。
+title: Repository setting operations and judgments
+description: Proceed from read-only diagnosis through approved differences and revalidation while preserving permission and failure boundaries.
 sources:
   - id: repository-api
     resource: https://docs.github.com/en/rest/repos/repos
@@ -11,53 +11,53 @@ sources:
     resource: https://docs.github.com/en/rest/actions/permissions
 ---
 
-## 読み取り診断
+## Read-only diagnosis
 
-1. ユーザーが指定したGitHub.comの `owner/repo` と取得したrepository ID・完全名・URLを照合する。省略や曖昧さを別リポジトリへの操作で補わない。以後のendpointの `{owner}`・`{repo}`・`{ruleset_id}` は確認した値で置き換える。
-2. 依頼された成果物と承認範囲を確認する。診断ではGETとUIの閲覧だけを使い、Issue投稿、テストpush、workflow起動、設定変更をしない。
-3. 対象側の指示・公開範囲・所有者・default branch・権限・上位ポリシーを調べる。Repository metadataだけで管理操作の権限を証明しない。
-4. [設定基準](settings.md)と[セキュリティ](security.md)から依頼項目の期待値と観測方法を選ぶ。限定診断では無関係な項目を勝手に追加せず、包括診断では5項目とその無料機能を落とさない。
-5. APIの全ページと必要な詳細、対象UIを確認し、取得日時・根拠URL・確認対象を記録する。ファイル上の宣言とGitHub側の実効設定、設定有効と実行成功を分ける。
+1. Match user-specified GitHub.com `owner/repo` with retrieved repository ID, full name, and URL. Do not resolve omissions/ambiguity by operating on another repository. Replace subsequent endpoint `{owner}`, `{repo}`, and `{ruleset_id}` with confirmed values.
+2. Check requested deliverables/approval scope. Diagnosis uses only GET/UI reading, without Issue posts, test pushes, workflow starts, or setting changes.
+3. Investigate target instructions, visibility, ownership, default branch, permissions, and upper-level policies. Metadata alone does not prove administrative authority.
+4. Select expected values/observations from [Setting standards](settings.md) and [Security](security.md). Do not add unrelated items to limited diagnosis; comprehensive diagnosis retains all five items and free features.
+5. Check all API pages, needed detail, and UI, recording retrieval time, evidence URLs, and targets. Separate file declarations from effective GitHub settings, and enabled settings from successful execution.
 
-GitHub連携、`gh api`、公式UIのうち、利用環境で必要な操作を明示的にサポートする手段を選ぶ。GET専用連携を更新APIとして扱わず、利用できない管理APIやCLIを実行したと報告しない。公式仕様の認証・API版・必須パラメーターを確認し、必要最小限の既存権限を使う。認証情報を本文・ログへ出さず、追加権限や認証の迂回を行わない。[^repository-api][^rules-api][^actions-permissions-api]
+Choose GitHub integrations, `gh api`, or official UI explicitly supporting necessary operations in the environment. GET-only integrations are not update APIs; do not claim unavailable admin APIs/CLIs executed. Check official authentication, API versions, and required parameters; use minimal existing permissions. Do not expose credentials in bodies/logs or bypass authentication/additional permissions.[^repository-api][^rules-api][^actions-permissions-api]
 
-## 判定と報告
+## Judgment and reporting
 
-各項目に期待値・現在値・根拠・判定・変更案・必要権限/費用/副作用・再確認方法を記す。大きな独自スコアや専用形式は要求しないが、次の区別を失わない。
+For each item record expected/current values, evidence, judgment, proposals, permissions/cost/side effects, and rechecking. No large custom score or dedicated format is required, but preserve these distinctions.
 
-| 判定 | 意味 |
+| Judgment | Meaning |
 | --- | --- |
-| 適合 | 対象の実効設定を確認し期待値を満たす |
-| 要変更 | 期待値との差分を根拠付きで確認した |
-| 適用外 | 対象言語なし等、適用しない理由が確認できる |
-| 利用不可 | 無料範囲外・非対応プラン等、利用できない理由が確認できる |
-| 未確認 | 権限不足・取得失敗・費用不明等で判断できない |
-| 承認済み例外 | 対象・理由・承認者と承認の根拠を記録した基準との差異 |
+| Conforming | Confirmed effective settings meet expectations |
+| Needs change | Confirmed evidence-based differences |
+| Inapplicable | Confirmed reasons such as no target language |
+| Unavailable | Confirmed reasons such as outside free scope or unsupported plans |
+| Unverified | Permissions, retrieval failures, unknown costs, or similar gaps prevent judgment |
+| Approved exception | Difference from standards with target, reason, approver, and approval evidence recorded |
 
-403/404・フィールド欠落・nullを一律に「無効」と解釈しない。設定確認APIが無効時に404を返す仕様でも、まず対象の存在と必要権限を別の根拠で確認し、権限不足等を除外できない間は未確認とする。返却されないbypass一覧を空配列に置き換えない。[^repository-api][^rules-api]
+Do not uniformly interpret 403/404, absent fields, or null as disabled. Even where disabled settings return 404, first independently establish target existence/permissions; remain unverified until permission deficiencies and similar alternatives are excluded. Do not replace unreturned bypass lists with empty arrays.[^repository-api][^rules-api]
 
-例外・適用外・未確認を適合件数へ加算しない。依頼された診断の提示を終えたことと、全基準を実現したことを区別する。Issue・文書への保存と実行承認は別に扱い、[SKILLの成果物別経路](../SKILL.md)で終了する。
+Do not count exceptions, inapplicable, or unverified items as conforming. Separate completed diagnosis presentation from realization of all standards. Saving Issues/documents and execution approval are separate; stop by [Skill deliverable paths](../SKILL.md).
 
-## 承認済み設定の適用
+## Apply approved settings
 
-1. `issue-management` の通常計画で、目的・差分・必要権限・費用・副作用・検証・承認を保存して確認する。既に確認済みの計画と実行承認は引き継ぎ、同じ承認を再質問しない。対象側の明示的な方針との衝突、追加権限・費用、範囲変更は解決まで該当操作を保留する。
-2. 読み取り可能な設定を変更前の証拠として必要最小限保存する。書き込み直前に再取得し、想定との差分や他の変更があれば再評価する。APIが原子的な比較・一括適用を保証すると仮定しない。
-3. 先に前提変更を完了する。外部Actionの固定・リリース公開手順・既存CIとの整合など、ファイル変更が必要なら対応Skillと `change-delivery` でPR・レビュー・CI・main統合後確認まで行う。実行経路に未確認の影響があれば、その強制設定は保留する。
-4. 設定変更のみはこの手順で適用する。空のbranch・commit・PRを作らず、設定差分と操作結果を計画記録へ残す。すべてを設定変更と称して、必要なファイル変更のPR経路を飛ばさない。
-5. [項目別手順](settings.md)または[機能別手順](security.md)の最小差分を適用する。PATCHに無関係な既定値を混ぜず、PUTでは書き込み可能な必須フィールドと維持すべき既存内容を確認する。GETのレスポンス全体をそのままPUTしない。
-6. 設定ごとに再取得し、必要な動作・解析・workflow結果を対象SHAや実行URLと照合する。非同期設定は完了状態まで確認し、受付成功だけで有効化済みとしない。設定の有効化を確認するために、依頼されていない公開・配備・破壊的な試行を行わない。
-7. 再診断し、変更前後、確認済みの効果、残る必須項目、例外と根拠を提示する。未完了項目があれば全適用完了と報告しない。
+1. Save/verify purpose, differences, permissions, costs, effects, validation, and approval through ordinary `issue-management` planning. Inherit confirmed plans/approval without asking again. Hold affected operations until target-policy conflicts, added permissions/costs, or scope changes are resolved.
+2. Minimally preserve readable settings as before-state evidence. Retrieve immediately before writes; reassess unexpected differences/other changes. Do not assume atomic comparisons/bulk updates.
+3. Complete prerequisites first. For Action pinning, release procedures, existing CI consistency, or other file changes, use responsible Skills and `change-delivery` through PR/review/CI/main verification. Hold enforcement where execution-path effects remain unverified.
+4. Apply settings-only changes here without empty branches/commits/PRs; record differences/results in plans. Do not call everything settings changes to bypass necessary file-change PRs.
+5. Apply minimal differences from [Item procedures](settings.md) or [Feature procedures](security.md). Do not mix unrelated defaults into PATCH; for PUT check writable required fields and existing content to preserve. Do not PUT entire GET responses.
+6. Retrieve each setting and compare necessary behavior/analysis/workflow results to target SHAs/run URLs. Verify asynchronous completion, not acceptance alone. Do not perform unrequested release, deployment, or destructive trials merely to confirm enablement.
+7. Diagnose again, showing before/after, confirmed effects, remaining mandatory items, exceptions/evidence. Do not claim all applied if items remain incomplete.
 
-機能が無料でもActions等の実行費用は別に確認する。Organization/Enterpriseの強制設定は対象リポジトリから迂回せず、継承で適合する場合は変更不要、衝突・情報不足の場合は理由と必要な管理者操作を示す。新しいbypassや既存保護の弱化を、適用を成功させる手段にしない。
+Free features still require separate Actions/execution-cost checks. Do not bypass Organization/Enterprise enforcement from repositories; inherited conformance needs no change, while conflicts/gaps require reasons/admin actions. Do not achieve application through new bypasses or weaker protection.
 
-## 冪等性・競合・途中失敗
+## Idempotency, conflicts, and partial failure
 
-再実行時は現在値から差分を作り直し、適合済み項目へ不要な書き込みをしない。Ruleset名だけで同一性を判断せず、既存ID・source・対象・実効ルールを照合する。新規作成がタイムアウトした場合も、保存済みか再取得してから再送し、同じRulesetを重複作成しない。
+On reruns recreate differences from current settings without unnecessary writes to conforming items. Ruleset names alone do not establish identity; compare IDs, sources, targets, and effective rules. After creation timeouts retrieve saved state before resending, avoiding duplicate Rulesets.
 
-途中失敗では成功済み・未着手・適用失敗・適用後未確認を分ける。失敗に依存しない承認済み項目は進められるが、原因不明の再試行や全面的な成功報告はしない。復旧でも他者の更新や強い保護を上書きせず、スナップショットの機械的な全復元を避ける。immutable releaseの公開後制約など、設定を戻しても取り消せない影響を報告する。
+Separate succeeded, unstarted, failed application, and applied-but-unverified items. Independent approved work may proceed, without unexplained retries or blanket success claims. Recovery preserves others' updates/stronger protections; avoid mechanically restoring whole snapshots. Report irreversible effects even after reverting settings, such as published immutable-release constraints.
 
-管理操作ができない場合は、対象リポジトリ、必要な権限、該当設定の公式UI経路と期待値、操作後の確認方法を示す。手動操作依頼を完了したことと設定が変更されたことを区別し、後日再取得できるまでは未完了とする。
+Without administrative operations, show target repository, permissions, official UI paths, expected values, and post-operation checks. Completed manual-operation requests do not prove changed settings; remain incomplete until retrieval is possible.
 
-[^repository-api]: repository・セキュリティ設定の権限、取得と更新、応答の意味。
-[^rules-api]: Rulesetの継承・bypass情報・実効ルール・更新操作。
-[^actions-permissions-api]: 管理権限とActions permissionsの取得・更新契約。
+[^repository-api]: Repository/security permissions, reads/updates, response meanings.
+[^rules-api]: Ruleset inheritance, bypass information, effective rules, updates.
+[^actions-permissions-api]: Administrative permissions and Actions permissions read/update contracts.

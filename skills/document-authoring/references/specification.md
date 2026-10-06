@@ -1,7 +1,7 @@
 ---
 type: Guide
-title: 既存文書を使って仕様を明確にする
-description: 要求・制約・外部契約・受け入れ条件を既存文書の正本へ記録し、未確定事項と検証の対応を明確にする手順を示します。
+title: Clarifying specifications with existing documents
+description: Show procedures for recording requirements, constraints, external contracts, and acceptance conditions in existing authoritative documents, clarifying uncertainties and validation mappings.
 sources:
   - id: github-create-specification-skill-md
     resource: https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/skills/create-specification/SKILL.md
@@ -9,62 +9,62 @@ sources:
     resource: https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/instructions/spec-driven-workflow-v1.instructions.md
 ---
 
-## 既存文書を使って仕様を明確にする
+## Clarifying specifications with existing documents
 
-仕様は、人とエージェントが同じ期待を理解し、達成を検証するために書く。全体仕様書の新設から始めず、対象アクター・目的・成功条件、読者とモデルの境界、既存の合意済み仕様を確認する。
+Write specifications so people and agents understand the same expectations and verify achievement. Begin by checking actors, purpose, success conditions, readers, model boundaries, and existing agreed specifications, rather than creating an overall specification document.
 
-システムを利用するアクターと、仕様を読んで判断する読者を区別する。API利用者・実装者・検証者等の誰に必要な情報かを明示し、読者が未確認なら質問として残す。
+Distinguish actors using systems from readers making decisions from specifications. State whether information serves API users, implementers, validators, or others; retain questions if readership is unconfirmed.
 
-### 正本と配置を決める
+### Choose authoritative sources and placement
 
-1. 対象リポジトリの用語集、feature、ADR、API文書、スキーマと関連テストを探し、今回の要求・契約の正本を特定する。矛盾していて優先関係が分からない場合は、判断権限を持つ人への質問として残す。
-2. 既存のふるまいはfeature、設計上の選択と理由はADR、APIやデータの契約は既存のAPI文書・スキーマへ記録する。同じ仕様を別文書へコピーせず、正本へのリンクと理解に必要な要約を置く。
-3. 正本がない場合だけ、文書の目的に合う既存分類へ追加する。共有するふるまいは `docs/behavior/`、設計判断は `docs/adr/` とし、その他はdocument-authoringの分類・配置規則を使う。全変更に `/spec/` や独立した全体仕様書を要求しない。
-4. 通常のMarkdown概念にはOKF必須のtypeと、自作時の追加条件のtitle・descriptionを付ける。索引・履歴は予約形式を使う。OpenAPI・JSON Schema等の契約文書は既存の形式を保ち、OKFのヘッダーを付けない。用語は対象の `docs/glossary.md` と揃え、変更した語の意味と適用するモデルの境界を更新する。
+1. Find target glossaries, features, ADRs, API documents, schemas, and related tests; identify authoritative sources for current requirements/contracts. Retain conflicts with unknown precedence as questions to authorized people.
+2. Record existing behavior in features, design choices/reasons in ADRs, and API/data contracts in existing API documents/schemas. Do not copy specifications into separate documents; provide authoritative links and necessary summaries.
+3. Add documents to appropriate existing categories only where authoritative sources are missing. Shared behavior uses `docs/behavior/`, design decisions `docs/adr/`, and others follow document-authoring placement rules. Do not require `/spec/` or separate overall specifications for every change.
+4. Give ordinary Markdown concepts OKF-required type and this environment's additional title/description. Use reserved formats for indexes/logs. Preserve OpenAPI, JSON Schema, and other contract formats without OKF headers. Align terminology with target `docs/glossary.md`, updating changed meanings and applicable model boundaries.
 
-人が読む仕様と、OpenAPI等の機械可読な契約の両方がある場合は、各情報の正本と対応を示す。単独で理解できるだけの目的・前提・参照先を残すが、外部文脈をなくすために用語集やスキーマ全体を複製しない。リンク先の存在と版を確認し、取得不能な情報を確認済みとしない。
+When human-readable specifications and machine-readable contracts such as OpenAPI coexist, show authoritative sources and mappings for each item. Retain purpose, assumptions, and references sufficient for standalone understanding, without duplicating entire glossaries/schemas to eliminate external context. Check linked existence/versions; inaccessible information remains unverified.
 
-### 必要な内容を具体化する
+### Make necessary content concrete
 
-以下から対象の判断・実装・検証に必要な内容を記述する。固定の章番号や全節の記入を要求せず、空の節を作らない。
+Describe needed items below for target decisions, implementation, and validation. Do not require fixed chapter numbers or every section, or create empty sections.
 
-| 内容 | 明確にすること |
+| Content | Clarify |
 | --- | --- |
-| 目的と読者 | 誰がどの状態を実現したいか、対象範囲、既存の前提と今回変更する期待 |
-| 要求・制約・推奨 | 満たすふるまい、選択を制限する条件、任意の改善を区別する。推奨を合意済みの必須条件に変えない |
-| 外部契約 | 入出力、意味・単位、失敗、副作用、既定値、互換性のうち利用者の判断に必要なもの。既存の正本を参照する |
-| 受け入れ条件 | 何を観測すれば各要求を満たしたと判断できるか。必要な境界・異常系を含む具体例と対応づける |
-| 依存と理由 | 外部に必要な能力・契約、制約の根拠、選択の理由を示す。技術選択は合意済みの制約である場合に明記する |
-| 検証との対応 | 対応するテストや確認手順、観測する結果を辿れるようにする。複数箇所から追跡する必要がある場合は既存の識別子・安定した見出しを使う |
-| 未確定事項 | 確定した期待と仮定・提案・質問を分け、誰のどの判断が必要かを示す。未合意の閾値や失敗時の業務処理を創作しない |
+| Purpose and readers | Who wants which state, scope, existing assumptions, and expectations changed now |
+| Requirements, constraints, recommendations | Distinguish required behavior, selection restrictions, and optional improvements. Do not turn recommendations into agreed requirements |
+| External contracts | Decision-relevant inputs/outputs, meanings/units, failures, side effects, defaults, and compatibility; refer to existing authoritative sources |
+| Acceptance conditions | Observable results establishing each requirement, mapped to examples including necessary boundaries/exceptional paths |
+| Dependencies and reasons | Needed external capabilities/contracts, constraint evidence, and choice reasons. State technical choices when agreed constraints |
+| Validation mappings | Trace corresponding tests/procedures and observed results. Use existing identifiers/stable headings when tracking from multiple locations is needed |
+| Unsettled matters | Separate expectations from assumptions/proposals/questions, identifying whose decisions are needed. Do not invent unagreed thresholds or business failure handling |
 
-受け入れ条件の具体例には業務上意味のある金額・日時・入力を残す。UIのクリック列や内部クラスの構築手順を業務ルールへ混ぜず、API利用者や運用者に約束する応答・保存結果・通知は契約として扱う。
+Keep business-meaningful amounts, dates, and inputs in acceptance examples. Do not mix UI click sequences or internal-class construction into business rules; promised API-user/operator responses, saved results, and notifications are contracts.
 
-featureは依存スキルbehavior-specificationの[共有仕様・形式資料](../../behavior-specification/references/behavior.md)の日本語Markdown with Gherkin形式に従う。文書作成だけでTDDの実行を要求しない。コード変更を依頼された場合は、合意済み仕様と未回答事項をsoftware-developmentのテスト先行の実装へ引き継ぐ。
+Features follow Japanese Markdown with Gherkin in [Shared specification and format material](../../behavior-specification/references/behavior.md) in the dependency behavior-specification. Document creation alone does not require TDD execution. When code changes are requested, hand agreed specifications and unanswered questions to software-development's test-first implementation.
 
-例えば既存の送料featureと見積APIのOpenAPIがある場合、送料無料条件はfeature、要求・応答の形式はOpenAPIを正本として更新し、対応するテストへ結ぶ。「割引前後のどちらを小計とするか」が未合意なら質問として残し、別の全体仕様書に独自の定義を作らない。
+For example, with existing shipping features and quotation API OpenAPI, update features as authoritative for free-shipping conditions and OpenAPI for request/response formats, connecting corresponding tests. If whether subtotal is before or after discounts is unagreed, retain a question without creating an independent definition in a new overall specification.
 
-### 重要な設計判断の前提と見直し
+### Assumptions and reassessment of important design decisions
 
-構成・外部契約・運用などの選択が目的や成功条件に大きく影響する場合は、既存ADRの選択理由に加えて、依存する前提と再検討する条件を記録する。前提には確認済みの根拠や仕様への参照を付け、未確認の仮説は区別する。再検討条件はその前提が崩れたと分かる観測や変更に結びつけ、根拠のない数値・期限を作らない。必要な条件が未合意なら質問として残す。
+When structural, external-contract, or operational choices significantly affect purpose/success conditions, record dependent assumptions and reconsideration conditions alongside reasons in existing ADRs. Attach confirmed evidence/specification references to assumptions, distinguishing unverified hypotheses. Connect reconsideration conditions to observations/changes showing assumptions failed; do not invent unsupported numbers/deadlines. Retain questions for unagreed necessary conditions.
 
-例えば、外部APIが一定期間の冪等性を保証することを理由に再送方式を選んだ場合は、その保証の根拠を参照し、保証期間の短縮や対象操作の変更を再検討条件にする。条件に該当したら元の判断と新しい証拠を照合し、維持・変更の理由を既存ADRの履歴・後継関係の慣習に沿って残す。前提の変化だけで別方式への変更を確定せず、実装の範囲や方針変更は `issue-management` の計画・承認手順に従い、承認済みの変更だけを `change-delivery` へ引き渡す。
+For example, if retransmission is chosen because an external API guarantees idempotency for a period, reference guarantee evidence and make shortened guarantee periods or changed target operations reconsideration conditions. When met, compare original judgments and new evidence, preserving reasons to retain/change decisions under existing ADR history/succession conventions. Assumption changes alone do not settle replacement approaches; follow `issue-management` planning/approval for implementation scope or policy changes, handing only approved changes to `change-delivery`.
 
-IssueにはADRの正本へのリンクと作業判断に必要な要約を置き、同じ判断記録を複製しない。正本がない場合の配置は「正本と配置を決める」に従う。設計上の選択を変えない誤記修正などにADRの新設・更新や空の定型欄を要求しない。
+Put authoritative ADR links and decision-relevant summaries in Issues rather than duplicate decision records. Without authoritative documents, follow “Choose authoritative sources and placement.” Do not require new/updated ADRs or empty formal fields for spelling fixes preserving design choices.
 
-### 確認する
+### Checks
 
-- 要求・制約・推奨と未確定事項を区別でき、必要な前提・用語・契約・具体例が読者に伝わることを確認する。
-- 各要求に受け入れ条件が対応し、文書とテストの期待が整合するか確認する。未実行のテストは成功と報告しない。
-- 正本の重複・矛盾、リンク・参照版、既存OKF形式の維持を確認する。ADRだけの更新でも、検証計画にはこれらと最終差分の確認、document-authoringのMarkdown品質手順によるrumdlの整形・チェックを含める。検証を実行した結果と未実行の計画を区別する。
+- Check requirements, constraints, recommendations, and unsettled matters are distinguishable, and necessary assumptions, terms, contracts, and examples reach readers.
+- Check acceptance conditions map to every requirement and document/test expectations agree. Unexecuted tests are not successful.
+- Check duplicate/conflicting authoritative sources, links/reference versions, and preservation of existing OKF formats. Even ADR-only updates include these, final diff inspection, and rumdl formatting/checking under document-authoring Markdown-quality procedures in validation plans. Distinguish executed results from unexecuted plans.
 
-### 参照元と適用判断
+### Sources and application decisions
 
-GitHub awesome-copilotのCreate Specification[^github-create-specification-skill-md]を2026-09-11に確認し、明示的な要求・契約・受け入れ条件の整理を要約・再構成した。
+Checked GitHub awesome-copilot Create Specification[^github-create-specification-skill-md] on 2026-09-11, summarizing/restructuring explicit requirements, contracts, and acceptance conditions.
 
-既存のOKF・feature・ADRを優先するため、参照元の `/spec/` 配置、固定ファイル名、全11節、独自frontmatterは採用しない。特定テストフレームワークや網羅率目標を例から共通要件へ変えない。これは本環境への適用判断であり、仕様書形式の普遍的な規格ではない。
+Prioritize existing OKF, features, and ADRs without adopting the source's `/spec/` placement, fixed filenames, all 11 sections, or custom frontmatter. Do not turn example test frameworks or coverage goals into common requirements. This is this environment's application decision, not a universal specification-format standard.
 
-GitHub awesome-copilotのSpec Driven Workflow v1[^github-instructions-spec-driven-workflow-v1-instructions-md]を2026-09-11に確認し、判断の理由と再検討条件を残す考え方を取り入れた。本環境では重要な設計判断に限定し、依存する前提と観測を対応づけて既存ADRへ記録する。全判断への固定テンプレート、固定3文書、全操作ログ、6段階の一律適用は採用しない。
+Checked GitHub awesome-copilot Spec Driven Workflow v1[^github-instructions-spec-driven-workflow-v1-instructions-md] on 2026-09-11, adopting preserved decision reasons and reconsideration conditions. Limit to important design decisions here, mapping assumptions to observations in existing ADRs. Do not adopt fixed templates for all decisions, fixed three documents, complete operation logs, or uniform six stages.
 
-[^github-create-specification-skill-md]: [GitHub awesome-copilotのCreate Specification](https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/skills/create-specification/SKILL.md)。本文に記した参照範囲と採用判断の根拠。
-[^github-instructions-spec-driven-workflow-v1-instructions-md]: [GitHub awesome-copilotのSpec Driven Workflow v1](https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/instructions/spec-driven-workflow-v1.instructions.md)。本文に記した参照範囲と採用判断の根拠。
+[^github-create-specification-skill-md]: [GitHub awesome-copilot Create Specification](https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/skills/create-specification/SKILL.md). Evidence for reference scope and adoption decisions stated in the text.
+[^github-instructions-spec-driven-workflow-v1-instructions-md]: [GitHub awesome-copilot Spec Driven Workflow v1](https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/instructions/spec-driven-workflow-v1.instructions.md). Evidence for reference scope and adoption decisions stated in the text.

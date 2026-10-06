@@ -1,7 +1,7 @@
 ---
 type: Instruction
-title: 無料セキュリティ機能の診断と有効化
-description: 対象リポジトリで無料かつ適用可能な機能を棚卸しし、前提条件と費用を確認して実現します。
+title: Diagnosing and enabling free security features
+description: Inventory free applicable features for the target repository, checking prerequisites and costs before realization.
 sources:
   - id: security-features
     resource: https://docs.github.com/en/code-security/getting-started/github-security-features
@@ -13,42 +13,42 @@ sources:
     resource: https://docs.github.com/en/rest/code-scanning/code-scanning
 ---
 
-## 無料範囲を機能ごとに決める
+## Determine free scope per feature
 
-期待値は「対象リポジトリで無料かつ適用可能なセキュリティ機能がすべて有効」である。標準の無料機能とGitHub Code Security・GitHub Secret Protectionの無料対象を調べ、`advanced_security` の一括有効化で代用しない。publicで無料の機能をprivateにも無料と仮定せず、所有者・契約・対象言語・依存エコシステム・上位ポリシーを確認する。[^security-features][^advanced-security]
+Expect all security features free and applicable to the target repository enabled. Investigate standard free features and free GitHub Code Security/Secret Protection applicability, not bulk `advanced_security` enablement. Public-free does not imply private-free; check ownership, subscriptions, languages, dependency ecosystems, and upper-level policies.[^security-features][^advanced-security]
 
-公式一覧と対象UIを実行時に照合し、下表を出発点に追加機能も棚卸しする。各機能の提供形態を「設定で有効化可能・既定で有効・workflow等の準備が必要・適用外・無料範囲外・未確認」に分け、[共通の判定](operations.md)へ反映する。既定で有効でも対象の状態が取得不能なら適合と断定しない。有効化スイッチがない機能に架空のAPIやworkflowを作らない。[^security-features]
+Compare official lists/UI at execution time, inventorying additions beyond the starting table. Classify each as configurable, enabled by default, needing workflows/prerequisites, inapplicable, outside free scope, or unverified, reflecting [Common judgments](operations.md). Default-enabled status inaccessible for the target is not confirmed conformance. Do not invent APIs/workflows for features without enablement switches.[^security-features]
 
-| 棚卸し対象 | 取得・適用・再確認 |
+| Inventory target | Retrieval, application, rechecking |
 | --- | --- |
-| Dependency graph | 対象のsecurity設定とdependency graphで状態・対応manifestを確認し、設定可能なら有効化後に再確認する。依存が0件であることと無効を区別する |
-| Dependabot alerts | `GET /repos/{owner}/{repo}/vulnerability-alerts` または対象UIで確認し、適用は同endpointへの `PUT`。権限・対象の存在を確認してHTTP結果を解釈し、再取得する |
-| Dependabot security updates | `GET /repos/{owner}/{repo}/automated-security-fixes` の `enabled`・`paused` と対応依存を確認し、適用は同endpointへの `PUT`。有効だがpausedなら実行可能と断定せず原因と残件を示す |
-| Secret scanning / repository-level push protection | repositoryの `security_and_analysis.secret_scanning`・`secret_scanning_push_protection` または対象UIを確認。無料条件と依存するsecret scanningを確認し、必要なフィールドだけを `PATCH /repos/{owner}/{repo}` で有効化して再取得する |
-| Code scanning / CodeQL | `GET /repos/{owner}/{repo}/code-scanning/default-setup`、既存workflow、解析状態からdefault/advanced setupと対象言語を確認。default setupが適切な場合だけ同endpointへの `PATCH` で `state=configured` とするかUIで設定し、構成と実際の解析結果を確認する |
-| Copilot Autofix / AIによるコード検出 | 対象の提供条件・設定・既存スキャンとの依存を確認し、無料かつ設定可能なら有効化後に再確認する。ライセンスやスキャン結果だけから有効化済みと推測しない |
-| Dependency review | 提供条件とPRの依存差分表示を確認する。有効化スイッチがなければ提供状態を記録する。dependency-review-actionによるマージ阻止は別のworkflow変更・方針として扱う |
-| Secret scanningの追加機能 | non-provider patterns、validity checks、AIによるsecret検出、custom patterns、delegated bypass等について対象UIと公式提供条件を確認する。無料性・設定可否・必要な運用判断を記録し、利用できる項目を落とさない |
-| その他の無料機能 | private vulnerability reporting、dependency submission、artifact attestations等も公式一覧と対象の提供機能に照らす。リポジトリ設定、既定機能、ファイル変更、アカウント/Organizationの機能を区別する |
+| Dependency graph | Check security settings/graph, status, supported manifests; if configurable enable/recheck. Zero dependencies differs from disabled |
+| Dependabot alerts | Check `GET /repos/{owner}/{repo}/vulnerability-alerts` or UI; apply `PUT` to the same endpoint. Interpret HTTP after existence/permissions checks, then retrieve |
+| Dependabot security updates | Check `GET /repos/{owner}/{repo}/automated-security-fixes` `enabled`, `paused`, and dependencies; apply same-endpoint `PUT`. Enabled-but-paused is not confirmed executable; show causes/remaining work |
+| Secret scanning / repository-level push protection | Check `security_and_analysis.secret_scanning`, `secret_scanning_push_protection`, or UI. Check free conditions/secret-scanning prerequisites; enable only necessary fields through `PATCH /repos/{owner}/{repo}`, then retrieve |
+| Code scanning / CodeQL | Check `GET /repos/{owner}/{repo}/code-scanning/default-setup`, workflows, analysis for setup/languages. Only when default setup fits, same-endpoint `PATCH` with `state=configured` or UI; check configuration and actual analysis |
+| Copilot Autofix / AI code detection | Check availability, settings, dependencies on existing scans; enable/recheck if free/configurable. Licenses or scan results alone do not establish enablement |
+| Dependency review | Check availability and PR dependency diffs; without switches record provision. Merge blocking by dependency-review-action is separate workflow/policy work |
+| Additional secret-scanning features | Check UI/official availability for non-provider patterns, validity checks, AI secret detection, custom patterns, delegated bypass, and similar items. Record free/configurable status and operational decisions; omit no available items |
+| Other free features | Compare private vulnerability reporting, dependency submission, artifact attestations, and similar items with official/target availability. Separate repository settings, defaults, file changes, account/Organization features |
 
-標準機能・製品境界は公式一覧、HTTP操作と応答・権限は各API仕様を根拠にする。表だけで無料性や実効性が証明されたとは扱わない。[^security-features][^advanced-security][^repository-api][^code-scanning-api]
+Use official feature/product lists and API HTTP/response/permission specifications as evidence; the table alone proves neither free scope nor effectiveness.[^security-features][^advanced-security][^repository-api][^code-scanning-api]
 
-## 有効化の前提と順序
+## Enablement prerequisites and order
 
-- 機能ライセンスの無料性と、Actions・runner・ストレージ等の実行費用を分ける。課金や試用を開始せず、追加費用が未確認なら該当変更を保留する。既存の有料機能を「無料範囲外」という理由で無効化しない。
-- Dependency graphやsecret scanning等の前提を先に満たし、機能ごとに取得・差分適用・再取得する。設定APIは原子的な一括適用と仮定しない。security updatesから作られるPRは勝手にマージしない。
-- CodeQLの既存advanced setupをdefault setupで置き換えない。対応言語・build方式・利用できる実行環境を確認し、必要なworkflow変更は `github-actions` と `change-delivery` へ渡す。対応言語がない場合はダミーコードを追加せず理由付き適用外とする。設定済みと解析成功、アラート0件を区別する。[^code-scanning-api]
-- アカウント単位のpush protectionだけではリポジトリ単位の設定を証明できない。アカウント・Organization全体の変更は行わず、必要なら範囲外の依存として記録する。[^security-features]
-- 追加機能で例外承認者、custom pattern、外部への情報送信等の未合意な判断が必要なら具体案を示し、回答に依存しない無料機能の適用は続ける。判断が必要な機能を無言で一覧から除外しない。
-- SECURITY.mdの連絡先や受付体制を捏造しない。SBOM表示・Advisory Database等の利用機能に空の設定を作らない。Dependabot version updatesの頻度、アラートの自動dismiss、全スキャンのマージ必須化は初期基準に自動追加しない。
+- Separate free licenses from Actions/runner/storage execution costs. Do not start billing/trials; hold unknown additional costs. Do not disable existing paid features merely because outside free scope.
+- Meet graph/scanning prerequisites first; retrieve/apply/retrieve per feature without assuming atomic bulk APIs. Do not arbitrarily merge security-update PRs.
+- Do not replace existing advanced CodeQL setup with default setup. Check languages, builds, environments; hand workflows to `github-actions`/`change-delivery`. Without supported languages, record reasoned inapplicability without dummy code. Distinguish configured, successful analysis, and zero alerts.[^code-scanning-api]
+- Account-level push protection alone does not establish repository settings. Do not change account/Organization-wide settings; record out-of-scope dependencies if needed.[^security-features]
+- Present proposals for unagreed exception approvers, patterns, external information transmission, or similar decisions, while continuing independent free features. Do not silently exclude decision-dependent features.
+- Do not fabricate SECURITY.md contacts/intake arrangements or empty settings for SBOM/Advisory Database usage features. Do not automatically add version-update cadence, automatic alert dismissal, or mandatory scans to initial standards.
 
-## 完了の確認
+## Completion checks
 
-取得できた設定、必要な解析・workflowの結果、既定提供の根拠を機能ごとに示す。追加スキャン・テスト用secretのpush・疑似脆弱性の追加を、読み取り診断の一部として実行しない。失敗や取得不能な設定を、既存アラートの有無から推定しない。
+Show retrieved settings, necessary analysis/workflow results, and default-provision evidence per feature. Read-only diagnosis does not run additional scans, push test secrets, or add simulated vulnerabilities. Do not infer failed/inaccessible settings from existing alerts.
 
-設定確認に `security_and_analysis` を使うには適切な権限が必要で、欠落やnullは無効の証拠にならない。アラート本文・secret値・非公開依存情報は公開Issueやログへ転載せず、対象・機能名・状態・権限付きの参照先だけを必要な範囲で記録する。[^repository-api]
+`security_and_analysis` requires appropriate permissions; absence/null is not disabled evidence. Do not copy alert bodies, secret values, or private dependencies into public Issues/logs; record only necessary targets, feature names, states, and permission-protected references.[^repository-api]
 
-[^security-features]: 標準無料機能と製品機能の一覧。実行時に追加・変更を確認する。
-[^advanced-security]: Code Security・Secret Protectionの製品境界と可用性。
-[^repository-api]: security_and_analysis、Dependabot設定等の取得・適用条件。
-[^code-scanning-api]: default setupの取得・更新とコードスキャンの実行結果。
+[^security-features]: Standard free/product feature lists; check changes/additions at execution time.
+[^advanced-security]: Code Security/Secret Protection boundaries and availability.
+[^repository-api]: Retrieval/application conditions for security_and_analysis and Dependabot settings.
+[^code-scanning-api]: Default setup retrieval/update and scan results.

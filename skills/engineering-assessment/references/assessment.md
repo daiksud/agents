@@ -1,70 +1,70 @@
 ---
 type: Guide
-title: 証拠から導入計画を作る
-description: 診断で確認する証拠、未確認事項の扱い、改善の優先順位と依頼成果物へのまとめ方を示します。
+title: Build an adoption plan from evidence
+description: Evidence to inspect, treatment of unknowns, improvement priorities, and how to present the requested deliverable.
 ---
 
-## 証拠から導入計画を作る
+## Build an adoption plan from evidence
 
-### 対象と観測範囲
+### Target and observation scope
 
-最初に利用者の困りごとと期待する成果、対象サービス、配布・運用を含む流れ、制約を整理する。診断対象リポジトリだけで完結しない場合は、他リポジトリ・組織・外部サービスとの境界を示す。権限がない証拠は取得不能とし、アクセス権や組織を変更して診断範囲を勝手に広げない。
+First organize the user's difficulties and expected outcomes, target services, flow including delivery and operations, and constraints. If the target repository alone is insufficient, identify boundaries with other repositories, organizations, and external services. Treat evidence beyond your permissions as unavailable; do not change access rights or organizations to expand assessment scope on your own.
 
-既存の用語集・仕様・設計判断・診断Issueを先に探し、観測期間と対象SHAを決める。対象期間が短い場合は一般的な運用を代表すると断定しない。
+Find existing glossaries, specifications, design decisions, and assessment Issues first; decide the observation period and target SHA. Do not claim a short observation period represents general operation.
 
-### 観点と調べるもの
+### Perspectives and evidence
 
-| 観点 | 差分や設定の外で確かめる証拠 | 証拠がないときの扱い |
+| Perspective | Evidence beyond diffs and configuration | Treatment when evidence is missing |
 | --- | --- | --- |
-| DevOps・Lean | 依頼から公開・運用までの実例、待ち・手戻り・割り込み、障害からの学習、関係者の経験 | 方針文書だけで責任共有や文化を判定しない |
-| CI | 実際の統合履歴、ブランチ寿命、mainで動いた検証、失敗から修復までの実例 | YAMLやブランチ上の成功だけでCI達成にしない |
-| CD | 同じ成果物の配備記録、構成の版、オンデマンド実行、探索・復旧の記録 | デプロイジョブの存在だけでいつでも配布できると断定しない |
-| BDD・ATDD | ルール・例・質問、受け入れ条件、誰といつ期待を確認し実装と対応させたか | 会議議事録がないだけで未実践とはしない。関係者に確認する |
-| TDD | 直近の変更例におけるテスト先行・失敗・成功・整理の証拠や作業者の説明 | 完成したテストやスカッシュ済み履歴だけで先行実践の有無を断定しない |
-| XP | 現在の要求に合う設計、関係者との理解の共有、小さいフィードバックからの設計改善と継続できる働き方の実例 | TDD・BDDの成果物だけでXP全体を判定せず、固定の会議・役割がないだけで未実践と断定しない。実際の進め方を関係者に確認する |
-| DORA Capability | problemに関係する実際のchange / test / deploy / feedback / learningの記録と担当者の経験 | tool・設定・Catalog掲載だけでCapability達成または不足と判定しない。Core / Catalog / metricsの区別は `dora.md` を使う |
-| DDD | 用語と実装の意味、境界間の契約・翻訳、業務の判断と技術処理、設計理由 | 用語集の有無をモデルの品質と同一視しない |
-| Architecture・Organization boundary | 実変更での同時変更、test / deploy dependency、runtime topology、release単位、ownership、cross-team coordinationと待ち | service数、repository分割、Bounded Context文書、CODEOWNERSだけでloose coupling・independent deliveryを判定しない |
-| チームトポロジー | 実際の責任・引き渡し・待ち、service利用と阻害依存、interactionの目的・期間、関係者のcognitive load | CODEOWNERSやteam数からteam type・能力・文化を確定しない |
+| DevOps and Lean | Actual cases from request through publication and operations; waiting, rework, interruptions, incident learning, and stakeholder experience | Do not judge shared responsibility or culture from policy documents alone |
+| CI | Actual integration history, branch lifetimes, checks executed on main, and failure-to-repair examples | Do not declare CI achieved from YAML or branch success alone |
+| CD | Deployment records for the same artifact, configuration versions, on-demand execution, exploration, and recovery records | Deployment jobs alone do not prove delivery is possible at any time |
+| BDD and ATDD | Rules, examples, questions, acceptance conditions, and with whom and when expectations were checked and mapped to implementation | Missing meeting minutes alone do not mean absence of practice; ask stakeholders |
+| TDD | Evidence or practitioner explanations of tests first, failure, success, and cleanup in recent changes | Completed tests or squashed history alone do not establish whether tests came first |
+| XP | Examples of design fitting current requirements, shared understanding, design improvement from small feedback, and sustainable work | Do not assess all XP from TDD/BDD artifacts, or infer absence from missing fixed meetings/roles. Ask stakeholders about actual work |
+| DORA Capability | Actual change / test / deploy / feedback / learning records relevant to the problem and practitioner experience | Tools, configuration, or Catalog inclusion alone do not establish achievement or gaps. Use `dora.md` to distinguish Core / Catalog / metrics |
+| DDD | Meaning of terminology and implementation, boundary contracts and translation, business decisions and technical processing, design reasons | Glossary presence is not model quality |
+| Architecture and Organization boundaries | Co-changes, test/deploy dependencies, runtime topology, release units, ownership, cross-team coordination, and waiting in actual changes | Service counts, repository splits, Bounded Context documents, or CODEOWNERS alone do not establish loose coupling or independent delivery |
+| Team Topologies | Actual responsibilities, handoffs, waiting, service use and blocking dependencies, interaction purposes/periods, and stakeholder cognitive load | CODEOWNERS or team counts do not establish team types, capabilities, or culture |
 
-Architecture / Organizationの困りごとでは、[境界とcouplingの診断](architecture-and-organization.md)を使い、semantic・change・runtime・deployment・repository・team ownershipを分けて観測する。Microservicesやteam再編を提案する前に、独立change / test / deployの必要性と、distributed-system / coordination costの現状証拠を確認する。
+For Architecture / Organization difficulties, use [boundary and coupling assessment](architecture-and-organization.md) to observe semantic, change, runtime, deployment, repository, and team ownership boundaries separately. Before proposing Microservices or team restructuring, check the need for independent change/test/deploy and current evidence of distributed-system and coordination costs.
 
-DORAを使う診断では、[DORAのCapability lens](dora.md)でCore / Catalog / metrics / researchを分け、現在の制約に関係するCapabilityだけを選ぶ。metricsは対象service・期間・定義を揃え、個人rankingやmetricの直接操作を改善目標にしない。
+For DORA assessments, use the [DORA Capability lens](dora.md) to distinguish Core / Catalog / metrics / research and select only capabilities relevant to current constraints. Align metrics by service, period, and definition; do not make individual rankings or direct metric manipulation improvement targets.
 
-各判断は「観測した実践」「根拠のある不足」「未確認」「適用外（理由付き）」のいずれかとして記録する。仮説には検証する証拠・相手・質問を添える。依頼範囲内の重要な観点を調べていない場合は未確認と明示する。限定診断で範囲外の概念を機械的に未確認一覧へ加えない。
+Record each judgment as “observed practice,” “evidence-backed gap,” “unverified,” or “not applicable (with reasons).” Attach evidence, people, and questions needed to test hypotheses. Explicitly mark important perspectives within the requested scope that were not examined as unverified. Do not mechanically add out-of-scope concepts to the unknowns list in a focused assessment.
 
-運用上の検知・復旧が困りごとに関係する場合は、利用者影響が起きた一件について、何の信号で誰が検知し、どの観測情報・通知・運用手順を使って判断・復旧したかを追う。ログ・メトリクス・トレースや手順書の存在だけで十分と判定せず、実際に使えた記録と作業者の経験を確認する。作成者しか手順を使っていない場合、他の担当者が復旧できるかは未確認とする。
+When operational detection and recovery concern the problem, trace one case of user impact: which signal enabled whom to detect it, and which observations, notifications, and procedures supported decisions and recovery. Logs, metrics, traces, or runbooks alone do not establish sufficiency; inspect records of actual use and practitioner experience. If only the author used a procedure, recovery by other operators remains unverified.
 
-観測サービスの権限がない場合は取得不能として残し、未確認を「監視なし」に置き換えない。繰り返しの手作業や構成差異が制約なら、頻度・影響・失敗実績・維持費を確認してから自動化を候補にする。一度だけの作業や手動承認を理由に全自動化を要求しない。
+If you lack access to observability services, leave evidence unavailable; do not replace “unverified” with “no monitoring.” When repeated manual work or configuration differences constrain flow, inspect frequency, impact, failures, and maintenance cost before considering automation. Do not require full automation merely because of one-off work or manual approval.
 
-### 最初の実験を選ぶ
+### Choose the first experiment
 
-価値への影響、待ち・失敗の実例、依存、変更の危険、検証費用を根拠に優先順位を付ける。ツール一覧から導入順を決めない。改善候補が多数ある場合も、最初は結果を観測できる小さなまとまりを示す。
+Prioritize from value impact, actual waits/failures, dependencies, change risks, and validation costs. Do not derive adoption order from a tool list. Even with many candidates, first present a small group whose results can be observed.
 
-| 状況の例 | 小さく試す候補 | 検証する変化 |
+| Example situation | Small experiment candidate | Change to verify |
 | --- | --- | --- |
-| レガシーで検証の足場がない | 重要な既存ふるまい1件の合意と回帰テスト、最小の自動検証経路 | 対象の欠陥を検出でき、共有mainで実行できる |
-| 長期ブランチで統合が停滞 | 独立して検証できる変更単位と短いフィードバック経路 | 実際の統合間隔・待ちとmainの健全性がどう変わるか |
-| 公開時に毎回手作業が必要 | 一つの配布経路の再現性と復旧を検証する | 同じ成果物を既定の承認で再配布・復旧できるか |
-| 障害を利用者通報で知り、復旧が熟練者に依存する | 一つの利用者影響について検知信号・通知先・判断と復旧の手順を関係者と確認し、演習を計画する | 対象の影響を検知でき、想定担当者が必要な情報と手順で判断できるか |
-| チーム間の待ちが支配的 | 一つの境界で責任と相互作用の目的・期間を関係者と確認する | 問い合わせ・引き渡しの待ちと負荷がどう変わるか |
+| Legacy system without a validation foothold | Agree on one important existing behavior, add a regression test and minimal automated validation path | Detect the target defect and execute on shared main |
+| Long-lived branches obstruct integration | Independently verifiable change units and short feedback paths | Changes in actual integration intervals, waiting, and main health |
+| Manual work required at every publication | Verify reproducibility and recovery of one delivery path | Redeliver and recover the same artifact with established approval |
+| Users report incidents and recovery depends on experts | Confirm detection signals, notification recipients, decision and recovery procedures for one user impact with stakeholders; plan an exercise | Detect the target impact and enable intended operators to decide using necessary information and procedures |
+| Cross-team waiting dominates | Confirm responsibilities and interaction purposes/periods at one boundary with stakeholders | Changes in inquiry/handoff waiting and load |
 
-例は診断前の処方箋ではない。確認済みの規則・契約を守り、判断が未確定なら「関係者と条件を確認する」を最初の実験の前提に置く。レガシーの全面書き換え、マイクロサービス化、リポジトリ分割、特定製品の導入を一般解にしない。
+These examples are not prescriptions before assessment. Preserve confirmed rules and contracts. If decisions are unresolved, make confirming conditions with stakeholders a prerequisite to the first experiment. Do not make full legacy rewrites, Microservices, repository splitting, or particular products universal solutions.
 
-運用の観測と手順共有の観点はDevOps Core Principlesを参考に具体化した。CALMSを含む参照版と適用判断は[出典資料](sources.md)に集約し、DORA Core / Catalog / metricsの版差は[DORA lens](dora.md)を使う。
+Operational observation and procedure-sharing perspectives were made concrete with reference to DevOps Core Principles. Consolidate referenced versions and adoption decisions, including CALMS, in [source materials](sources.md). Use the [DORA lens](dora.md) for Core / Catalog / metrics version differences.
 
-各実験には目標状態、現状の証拠、実施する役割、順序・依存、受け入れ条件、観測方法、見直す時点を対応づける。変更に運用リスクがある場合は、戻し方と中止条件も提案する。数値目標や日程を創作せず、暫定提案と合意済みの条件を区別する。
+Map each experiment to its target state, current evidence, participating roles, order/dependencies, acceptance conditions, observation method, and reassessment point. Propose rollback and stop conditions when changes pose operational risks. Do not invent numerical targets or schedules; distinguish provisional proposals from agreed conditions.
 
-### 計画の成果物
+### Plan deliverables
 
-診断結果は依頼された終端成果物に合わせてまとめる。回答だけなら、次の情報を必要な構造で直接提示し、Issueを暗黙に作成しない。Issue記録だけが依頼された場合は同じ内容をIssueへ保存する。
+Present findings according to the requested terminal deliverable. If only an answer is requested, directly present the following in a suitable structure; do not implicitly create an Issue. If only Issue recording is requested, save the same content to an Issue.
 
-- 対象の利用者・目的・成功条件、対象サービスと調査範囲・制約。
-- 証拠の所在と日時・SHA・期間、観測した実践、不足、未確認事項、適用外の理由。
-- 優先順位と根拠、最初の小さな実験、後続候補の依存と順序。
-- 期待する変化、担当する役割、受け入れ条件・検証、測定の現状と欠測、見直し時点。
-- 「診断・計画のみ、導入未実施」の状態と、未解決の質問。
+- Target users, purpose, success conditions, services, investigation scope, and constraints.
+- Evidence locations and datetimes, SHAs, periods, observed practices, gaps, unknowns, and reasons for non-applicability.
+- Priorities and grounds, the first small experiment, and dependencies/order of later candidates.
+- Expected changes, responsible roles, acceptance conditions/validation, current measurements and missing data, and reassessment points.
+- The state “assessment and planning only; adoption not implemented” and unresolved questions.
 
-診断レポート・計画文書などの文書成果物が終端成果物なら、上記内容を `document-authoring` へ引き渡す。リポジトリ内文書を保存する場合は `issue-management` の通常計画を補助成果物として保存・確認し、`change-delivery` で要求された文書を統合後mainまで届ける。文書を届けた時点で終了し、改善施策の実装は別途依頼されていない限り開始しない。
+If a document such as an assessment report or plan is the terminal deliverable, hand the above to `document-authoring`. When saving repository documents, save and verify the normal `issue-management` plan as a supporting deliverable, then use `change-delivery` to deliver the requested document through post-integration main. Finish when the document is delivered; do not implement improvement measures unless separately requested.
 
-Issue記録だけが終端成果物なら、保存・重複確認・履歴保持・再取得・表示・提示は依存スキル `issue-management` の[診断・計画専用経路](../../issue-management/references/issue-recording.md#診断計画専用のissue記録)に従う。Issue記録と実装の両方が依頼されている場合は診断専用経路で停止せず、同スキルの通常計画経路でIssueを実装の補助成果物として保存・確認し、実装範囲・受け入れ条件・検証と承認を確認して[承認済み変更のdelivery](../../change-delivery/SKILL.md)に渡す。Issueを記録しただけでSub-issueを実行対象として確定したり、実装承認を得たことにしたりしない。
+If Issue recording alone is the terminal deliverable, follow dependency skill `issue-management`'s [diagnosis-and-planning-only path](../../issue-management/references/issue-recording.md#issue-recording-for-diagnosis-and-planning-only) for saving, duplicate checks, history preservation, retrieval, display, and presentation. If both Issue recording and implementation are requested, do not stop on the diagnosis-only path. Use its normal planning path to save and verify the Issue as implementation support, confirm scope, acceptance conditions, validation, and approval, then hand off to [delivery of approved changes](../../change-delivery/SKILL.md). Recording an Issue alone does not select Sub-issues for execution or obtain implementation approval.

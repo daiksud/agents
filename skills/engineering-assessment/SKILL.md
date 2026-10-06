@@ -1,46 +1,46 @@
 ---
 name: engineering-assessment
-description: XP、Lean、DevOps、CI/CD、DORA、DDD、architecture、Team Topologies等の開発実践を現状診断し、改善提案・導入計画を作るときに使う。通常の修正、個別コードレビュー、概念説明、導入実装には使わない。
+description: Use to diagnose development practices such as XP, Lean, DevOps, CI/CD, DORA, DDD, architecture, and Team Topologies, and produce improvement proposals or adoption plans. Do not use for ordinary fixes, individual code reviews, conceptual explanations, or adoption implementation.
 ---
 
-# 開発実践を診断し、導入を計画する
+# Diagnose development practices and plan adoption
 
-利用者へ価値を安全に届ける流れを調べ、最初に試す改善を具体化する。診断という話題だけで終了点を決めず、依頼された終端成果物に応じて回答・Issue記録・実装への引き渡しを選ぶ。Issueへの診断・導入計画の記録だけが終端成果物なら、依存スキル `issue-management` の[診断・計画専用経路](../issue-management/references/issue-recording.md#診断計画専用のissue記録)を使う。Issue記録と実装の両方が依頼されている場合は診断専用経路で停止せず、`issue-management` の通常経路で計画を保存・確認して実装へ引き渡す。以下のリポジトリ・`docs/` は診断対象を指す。
+Investigate the flow for delivering value safely to users and make the first improvement to try concrete. Do not determine the endpoint solely from the topic of diagnosis; choose an answer, Issue record, or implementation handoff according to the requested terminal deliverable. If the terminal deliverable is only recording a diagnosis/adoption plan in an Issue, use the dependency `issue-management` [Diagnosis/planning-only path](../issue-management/references/issue-recording.md#issue-recording-for-diagnosis-and-planning-only). If both Issue recording and implementation are requested, do not stop at the diagnosis-only path; save and verify the plan through ordinary `issue-management` procedures and hand off to implementation. Repositories and `docs/` below refer to the diagnosis target.
 
-## 範囲と参照資料
+## Scope and reference material
 
-対象の指示、利用者の成果、サービス・価値の流れ、制約、既存の診断Issueを確認する。診断範囲・優先順位を左右する目的が不明なら人に確認し、回答に依存しない資料調査を進める。
+Check target instructions, user outcomes, services and value flow, constraints, and existing diagnosis Issues. If purposes affecting diagnosis scope or priorities are unclear, ask people and continue material investigation that does not depend on answers.
 
-[証拠から導入計画を作る](references/assessment.md)は診断・計画で読む共通手順とする。そのうえで、依頼されたproblemに必要なlensだけを選ぶ。
+[Building an adoption plan from evidence](references/assessment.md) is the common procedure for diagnosis/planning. Then select only lenses needed for the requested problem.
 
-| 条件 | 追加で読むreference | 読まないもの |
+| Condition | Additional reference | Do not read |
 | --- | --- | --- |
-| XPそのもの、XP第2版、Values / Principles / Practices、またはXPを主対象として診断する | [XP taxonomy](references/xp.md) | 無関係なDORA / Architecture全文 |
-| Architecture / DORA / Lean等の診断で個別のXP Value / Principle / Practiceだけを補助lensとして使う | [XP個別項目の軽量lookup](references/xp-auxiliary.md) | `xp.md` 全taxonomy |
-| Domain / Bounded Context、service・repository・teamの対応、cross-team dependency、Microservices、Conway | [ArchitectureとOrganization](references/architecture-and-organization.md) | 無関係なDORA Catalog全件 |
-| DORA Core / Capability Catalog / delivery metrics、DORA Capability | [DORA capability lens](references/dora.md) | 無関係なXP全taxonomy / Architecture全文 |
-| BDD / ATDD / TDD / DDD / Lean / DevOps / CI / CDで、定義・相互関係・compact guardrailの確認が必要な診断 | [原則の関係](references/principles.md) | 条件に該当しないfocused reference |
-| 出典・版差・採用判断を確認する | [一次資料と適用判断](references/sources.md) | 全資料の無条件な再読 |
+| XP itself, XP second edition, Values / Principles / Practices, or diagnosis primarily of XP | [XP taxonomy](references/xp.md) | Unrelated full DORA / Architecture material |
+| Individual XP Values / Principles / Practices as auxiliary lenses in Architecture / DORA / Lean diagnosis | [Lightweight lookup of individual XP items](references/xp-auxiliary.md) | The full `xp.md` taxonomy |
+| Domain / Bounded Context, service/repository/team mappings, cross-team dependencies, Microservices, Conway | [Architecture and Organization](references/architecture-and-organization.md) | All unrelated DORA Catalog entries |
+| DORA Core / Capability Catalog / delivery metrics, DORA Capability | [DORA capability lens](references/dora.md) | Unrelated full XP taxonomy / Architecture material |
+| Diagnosis needing definitions, relationships, or compact guardrails for BDD / ATDD / TDD / DDD / Lean / DevOps / CI / CD | [Relationships among principles](references/principles.md) | Focused references whose conditions do not apply |
+| Checking sources, version differences, or adoption decisions | [Primary sources and application decisions](references/sources.md) | Unconditional rereading of all material |
 
-複数lensが実際のproblemへ関係する場合だけ組み合わせる。Architecture / DORA / Lean等の診断でXPの個別項目を補助判断に使うだけなら、`xp.md` 全taxonomyを読まず軽量lookupから必要な項目だけ使う。XP自体が診断対象へ広がった場合だけ `xp.md` へ切り替える。たとえばMicroservices採否ではArchitecture / Organizationを中心にDDDとXP SimplicityまたはEconomics等を補助できる。release承認待ちだけならLean / CDと関連DORA Capabilityへ絞る。
+Combine lenses only when they actually relate to the problem. When individual XP items merely assist Architecture / DORA / Lean diagnosis, use only needed items from the lightweight lookup rather than reading the full `xp.md` taxonomy. Switch to `xp.md` only when XP itself becomes a diagnosis target. For example, Microservices adoption decisions can center on Architecture / Organization, assisted by DDD and XP Simplicity or Economics. For release-approval waiting alone, focus on Lean / CD and relevant DORA Capabilities.
 
-定義・版差・compact guardrailが関係者と確認済みで、現在の実践の証拠収集だけが必要な限定診断では、`assessment.md` だけで進めて `principles.md` / `sources.md` を必須にしない。たとえばCIの定義が確認済みなら、main統合・feedback・失敗修復等の実証拠へ直接進める。
+In limited diagnoses where stakeholders have confirmed definitions, version differences, and compact guardrails and only evidence of current practice is needed, proceed with `assessment.md` alone without requiring `principles.md` or `sources.md`. For example, if the CI definition is confirmed, proceed directly to actual evidence of main integration, feedback, failure repair, and similar practices.
 
-限定診断は依頼された概念・困りごとに絞り、関連するlensだけを選ぶ。包括診断ではXPを含む各観点を対象の流れへ照らすが、全referenceを順番に読み込まず、実際に関係するlensを選ぶ。話題語が出ただけで無関係な観点を未確認一覧へ追加せず、依頼範囲を変える場合は確認する。
+Focus limited diagnoses on requested concepts or problems, selecting related lenses only. Comprehensive diagnosis compares perspectives including XP with the target flow, but selects actually relevant lenses rather than reading every reference in sequence. Do not add unrelated perspectives to uncertainty lists merely because topic words appear; confirm changes to the request scope.
 
-## 判断と完了の境界
+## Judgment and completion boundaries
 
-設定や成果物の存在と実際の実践を区別し、観測した実践・根拠のある不足・未確認・理由付き適用外を分ける。責任分担・文化・認知負荷は担当者の経験と照合する。欠測をゼロや改善効果にせず、個人評価・固定Elite判定に使わない。
+Distinguish the presence of configuration or artifacts from actual practice, and separate observed practices, evidence-based gaps, uncertainties, and reasoned inapplicability. Compare responsibilities, culture, and cognitive load with responsible people's experiences. Do not turn missing data into zero or improvement effects, or use it for individual evaluation or fixed Elite judgments.
 
-最も影響する制約から小さい実験を選び、証拠・順序と依存・役割・受け入れ条件・検証・見直しを整理する。担当者の合意・実施日を推測で確定せず、単独開発・レガシー・複数チーム等の条件に合わせる。4チーム新設や一律のリポジトリ分割を導入条件にしない。
+Choose small experiments from the most influential constraint, organizing evidence, order and dependencies, roles, acceptance conditions, validation, and reassessment. Do not assume stakeholder agreement or implementation dates; adapt to solo development, legacy systems, multiple teams, and similar conditions. Do not make creating four teams or uniform repository splitting adoption prerequisites.
 
-依頼された成果物で終了条件を決める。
+Set completion conditions from the requested deliverable.
 
-| 依頼された成果物 | 終了条件 |
+| Requested deliverable | Completion condition |
 | --- | --- |
-| 診断、改善ポイント、比較、提案の回答 | 証拠・判断・未確認事項・提案を回答として提示して終了する。Issue作成、文書保存、実装を暗黙に開始しない |
-| 診断・導入計画のIssue記録だけ | `issue-management` の診断・計画専用経路で保存・再取得・表示確認し、URLと本文を提示して終了する。診断完了と導入未実施を区別してIssueを開いたまま残す |
-| 診断レポート・計画文書の保存 | 診断内容を `document-authoring` へ引き渡す。リポジトリ内文書なら通常のIssue計画を補助成果物として扱い、`change-delivery` で要求された文書を届けて終了する。改善施策の実装へ暗黙に進まない |
-| 導入・改善の実装 | `issue-management` の通常経路で実装範囲・受け入れ条件・検証・承認を確認し、承認済み範囲だけを `change-delivery` と担当Skillへ引き渡す |
+| Answer with diagnosis, improvements, comparison, or proposals | Present evidence, judgments, uncertainties, and proposals as an answer, then stop. Do not implicitly start Issues, document saving, or implementation |
+| Issue record of diagnosis/adoption plans only | Save, retrieve, and check display through the diagnosis/planning-only `issue-management` path, present URL and body, then stop. Distinguish completed diagnosis from unimplemented adoption and leave the Issue open |
+| Save a diagnosis report or plan document | Hand diagnosis to `document-authoring`. For repository documents, treat ordinary Issue plans as supporting artifacts and deliver the requested document through `change-delivery`, then stop. Do not implicitly implement improvement measures |
+| Implement adoption/improvements | Confirm implementation scope, acceptance conditions, validation, and approval through ordinary `issue-management` procedures, and hand only approved scope to `change-delivery` and the responsible Skill |
 
-回答だけを依頼された診断でmain失敗などを見つけても、証拠・影響・復旧優先度を回答へ含めるだけで復旧を開始しない。Issue記録だけを終端成果物として依頼された場合は同じ内容を計画へ記録して停止する。診断レポート等の文書成果物が終端成果物なら、必要な補助Issue計画を経て文書を届けた時点で停止する。Issue記録と実装を同時に依頼された場合は通常の実装計画として扱い、計画保存を補助成果物として完了した後も承認済み実装へ進む。投稿禁止・保存不能・未確認ではIssue記録を成功扱いせず、回答可能な診断結果と未完了の保存範囲を分けて示す。後日の実装で `change-delivery` を利用できなければ実装を開始せず、未完了範囲と導入条件を示す。
+Even if answer-only diagnosis discovers failing main, include evidence, impact, and recovery priority in the answer without starting recovery. For Issue-record-only terminal deliverables, record the same in the plan and stop. For document terminal deliverables such as diagnosis reports, stop after delivering the document through necessary supporting Issue planning. For simultaneous Issue-record and implementation requests, treat them as ordinary implementation planning; continue approved implementation after completing plan saving as a supporting artifact. Where posting is prohibited, saving fails, or verification is incomplete, do not claim successful Issue recording; separately show answerable diagnosis results and incomplete saving scope. If `change-delivery` is unavailable for later implementation, do not begin implementation; show incomplete scope and installation conditions.

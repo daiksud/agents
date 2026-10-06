@@ -1,14 +1,14 @@
 ---
 type: Instruction
-title: 設計とユビキタス言語
-description: ドメインのルール、用語、モデルの境界と依存を明確にします。
+title: Design and ubiquitous language
+description: Clarify domain rules, terminology, model boundaries, and dependencies.
 ---
 
-## 設計とユビキタス言語
+## Design and ubiquitous language
 
-DDDは何をモデル化するかを導き、XPはそのモデルを小さなフィードバックでどう発見・進化させるかを導く。本環境では両者を設計の対象と進め方として組み合わせる。
+DDD guides what to model, and XP guides how to discover and evolve that model through small feedback cycles. This environment combines them as the subject of design and the way to proceed.
 
-- DDDを設計の軸とし、用語・ルール・不変条件・モデルの境界を確認する。ドメインのルールをモデルに表し、UI・通信・永続化などの技術処理から分離する。
-- 問題領域のサブドメイン、モデルの意味が通用する境界づけられたコンテキスト、コード管理単位のリポジトリを区別する。
-- コンテキスト・モジュール・サービス・リポジトリ・所有チームの対応と選択理由、境界を越える依存・契約・翻訳を示す。一律の1対1対応や分割を要求しない。
-- 用語集 `docs/glossary.md` に、用語・ドメイン上の定義・適用するモデルの境界・コード上の名称を記録する。同じ境界内のfeature・テスト・実装の用語を揃え、意味の追加・変更時は一緒に更新する。曖昧な意味を推測で確定せずユーザーに確認する。
+- Use DDD as the basis of design, and check terminology, rules, invariants, and model boundaries. Express domain rules in the model, separating them from technical processing such as UI, communication, and persistence.
+- Distinguish subdomains in the problem space, bounded contexts within which a model's meaning applies, and repositories as code management units.
+- Show the relationships among contexts, modules, services, repositories, and owning teams, the reasons for these choices, and dependencies, contracts, and translation across boundaries. Do not require uniform one-to-one mappings or decomposition.
+- Record terms, domain definitions, applicable model boundaries, and code names in the glossary `docs/glossary.md`. Align terminology in features, tests, and implementation within the same boundary, and update them together when meaning is added or changed. Ask the user about ambiguous meaning instead of settling it by assumption.

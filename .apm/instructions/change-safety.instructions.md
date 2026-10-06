@@ -1,22 +1,22 @@
 ---
 type: Instruction
-title: 実行範囲と変更保護
-description: 承認、権限、停止条件と他セッションの変更を保護します。
+title: Execution scope and change protection
+description: Protect approvals, permissions, stop conditions, and changes from other sessions.
 sources:
   - id: issue-122
     resource: https://github.com/daiksud/agents/issues/122
 ---
 
-## 実行範囲と変更保護
+## Execution scope and change protection
 
-利用モデルや推論設定を変更しても、適用中の開発・協働・品質・完了条件は維持する。権限・承認・停止条件は依頼範囲と操作のリスク、プロジェクト方針から判断し、モデルの能力を理由に緩めない。[^issue-122]
+Maintain the applicable development, collaboration, quality, and completion conditions even when the model or reasoning settings change. Determine permissions, approvals, and stop conditions from the request scope, operation risks, and project policy; do not relax them because of model capability.[^issue-122]
 
-- 明確な変更依頼・既に得た実行承認を保持し、調査・Issue計画の保存・再取得・提示後に進める。同じ目的・成功条件内の手順・ファイル・分割・順序は計画を更新して継続する。
-- 目的・成果・受け入れ条件の変更、外部影響の増加、未合意の業務判断、追加権限は具体案と理由を示して確認する。回答に依存しない作業は進める。
-- 相談・調査・計画だけは依頼された成果物で終了し、Issueの存在や無回答を実装承認にしない。明示された停止条件・Plan Mode・環境制約を優先する。
-- 検証に必要な既知の依存は一時・専用環境へ準備できる。グローバル設定変更・追加権限・費用発生は確認し、実行承認を環境の権限付与にしない。
-- 変更前にブランチ・差分・他セッションの担当を確認し、無関係な変更を上書き・取消ししない。他セッションのタスクに着手せず、継続・再開時も承認を別の目的へ広げない。
+- Retain clear change requests and execution approval already obtained, and proceed after investigation and saving, retrieving, and presenting the Issue plan. Update the plan and continue with changes to procedures, files, decomposition, or order within the same purpose and success conditions.
+- Present a concrete proposal and reasons, and confirm changes to purpose, outcomes, or acceptance conditions, increased external impact, unagreed business decisions, or additional permissions. Continue work that does not depend on the answer.
+- For consultation, investigation, or planning alone, stop at the requested deliverable; do not treat the existence of an Issue or silence as implementation approval. Prioritize explicit stop conditions, Plan Mode, and environment restrictions.
+- Known dependencies needed for validation may be prepared in temporary or dedicated environments. Confirm global configuration changes, additional permissions, or costs; execution approval does not grant environment permissions.
+- Before changes, check the branch, differences, and other sessions' responsibilities, and do not overwrite or undo unrelated changes. Do not start tasks owned by other sessions, or extend approval to another purpose during continuation or resumption.
 
-Issue計画の記録・確認、未公開情報の公開許可と実行範囲の判断は `issue-management` に従う。編集前のブランチ保護・worktree確認は `change-delivery` に従う。
+Follow `issue-management` for recording and verifying Issue plans, permission to publish unpublished information, and decisions about execution scope. Follow `change-delivery` for branch protection and worktree checks before editing.
 
-[^issue-122]: [Issue #122](https://github.com/daiksud/agents/issues/122) に記録された、モデル非依存の開発契約、責務の分離と既存契約の保持方針。
+[^issue-122]: The policy recorded in [Issue #122](https://github.com/daiksud/agents/issues/122) for model-independent development contracts, separation of responsibilities, and preservation of existing contracts.

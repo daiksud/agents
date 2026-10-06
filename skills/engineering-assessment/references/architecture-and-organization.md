@@ -1,7 +1,7 @@
 ---
 type: Reference
-title: ArchitectureとOrganizationの境界を診断する
-description: DDD・Team Topologies・Conway・Continuous Deliveryの観点から、意味・変更・実行・配布・所有の境界とMicroservices等の選択を証拠で診断します。
+title: Assess Architecture and Organization boundaries
+description: Assess meaning, change, runtime, deployment, and ownership boundaries and choices such as Microservices from DDD, Team Topologies, Conway, and Continuous Delivery evidence.
 sources:
   - id: ddd-reference
     resource: https://www.domainlanguage.com/wp-content/uploads/2016/05/DDD_Reference_2015-03.pdf
@@ -13,29 +13,29 @@ sources:
     resource: https://dora.dev/capabilities/loosely-coupled-teams/
 ---
 
-## ArchitectureとOrganizationの境界を診断する
+## Assess Architecture and Organization boundaries
 
-Domain model、service分割、Microservices、team ownership、cross-team dependencyなど、意味の境界とdelivery上の境界が関係する診断で読む。すべての診断に適用せず、対象の困りごとがboundary・coupling・team interactionに関係するときだけ使う。
+Read for assessments involving semantic and delivery boundaries, such as domain models, service decomposition, Microservices, team ownership, or cross-team dependencies. Do not apply to every assessment; use only when the problem concerns boundaries, coupling, or team interaction.
 
-目的は特定のarchitecture styleや組織図を導入することではない。利用者の成果へ影響している依存を、種類の違う境界へ分解し、現在必要な最小の改善を選ぶ。
+The purpose is not to introduce a particular architecture style or organization chart. Separate dependencies affecting user outcomes into different boundary types and select the smallest improvement currently needed.
 
-### 境界の種類を先に分ける
+### Separate boundary types first
 
-同じ線に見えても、境界ごとに答える問いが違う。
+Even when boundaries look like the same line, they answer different questions.
 
-| 境界 | 診断する問い | 主な証拠 |
+| Boundary | Assessment question | Main evidence |
 | --- | --- | --- |
-| Domain boundary | どの業務問題・知識を扱うか | 利用者の目的、業務能力、用語、業務判断 |
-| Bounded Context / semantic boundary | どこまで同じモデルと言葉の意味が通用するか | Ubiquitous Language、モデル、Context Map、翻訳・契約 |
-| Change boundary | 何を独立して理解・変更・検証できるか | 実変更の差分、テスト依存、同時変更、review待ち |
-| Runtime boundary | 何が別process / componentとして実行されるか | runtime topology、process間通信、failure propagation |
-| Deployment boundary | 何を独立してdeploy・release・rollbackできるか | pipeline、artifact、build dependency、release履歴、同時deployの必要性 |
-| Repository boundary | source・history・automationをどの単位で管理するか | repository、build、ownership設定、tooling |
-| Team ownership boundary | 誰が継続的な判断・運用・改善責任を持つか | 実際の責任、on-call、変更承認、問い合わせ、team experience |
+| Domain boundary | Which business problems and knowledge are addressed? | User purposes, business capabilities, terminology, business decisions |
+| Bounded Context / semantic boundary | How far does the same model and word meaning apply? | Ubiquitous Language, models, Context Maps, translation/contracts |
+| Change boundary | What can be understood, changed, and verified independently? | Actual diffs, test dependencies, co-changes, review waiting |
+| Runtime boundary | What executes as separate processes/components? | Runtime topology, inter-process communication, failure propagation |
+| Deployment boundary | What can be deployed, released, and rolled back independently? | Pipelines, artifacts, build dependencies, release history, simultaneous deployment needs |
+| Repository boundary | In which units are source, history, and automation managed? | Repositories, builds, ownership settings, tooling |
+| Team ownership boundary | Who has continuing decision, operations, and improvement responsibility? | Actual responsibility, on-call, change approvals, inquiries, team experience |
 
-一つのBounded Contextが一つのservice・repository・teamになる場合はあるが、それ自体を設計規則にしない。Eric EvansのDDDではBounded Contextはモデルの適用範囲を明示し、Context Mapで他のモデルとの接点・翻訳・影響関係を扱う。[^ddd-reference]
+One Bounded Context may become one service, repository, or team, but do not make this a design rule. In Eric Evans' DDD, Bounded Context makes model scope explicit; Context Maps handle contact points, translation, and influence between models.[^ddd-reference]
 
-次のような対応は仮説として検証できるが、完全一致を成功条件にしない。
+Correspondence such as the following can be tested as a hypothesis, but exact alignment is not a success condition.
 
 ```text
 semantic boundary
@@ -44,111 +44,111 @@ semantic boundary
 ≈ team ownership boundary
 ```
 
-Domain boundaryは業務問題・知識の範囲であり、このalignment chainそのものではない。Repository boundaryやRuntime boundaryも、現在のtooling・operational constraintによって別の形を取れる。
+Domain boundaries concern business problems and knowledge, not this alignment chain itself. Repository and Runtime boundaries may also take different shapes because of current tooling and operational constraints.
 
-### Architectureは独立性の結果で診断する
+### Assess Architecture through independence outcomes
 
-Architecture styleやservice数ではなく、実際のchange / test / deployment independenceを確認する。
+Check actual change, test, and deployment independence rather than architecture styles or service counts.
 
-Continuous Deliveryのarchitecture guidanceはtestabilityとdeployabilityを重要な属性として扱い、loosely-coupledでwell-encapsulatedなcomponentを、統合環境や大規模orchestrationへ過度に依存せず検証・配布できる状態として説明する。既存systemを一度に作り直さず、必要に応じてevolutionaryに改善する。[^continuous-delivery-architecture]
+Continuous Delivery architecture guidance treats testability and deployability as important attributes. It describes loosely coupled, well-encapsulated components that can be verified and delivered without excessive reliance on integration environments or large-scale orchestration. Improve existing systems evolutionarily as needed rather than rebuilding all at once.[^continuous-delivery-architecture]
 
-DORAのLoosely Coupled Teamsも、使用技術ではなく次のような観測可能な結果を重視する。[^dora-loosely-coupled-teams]
+DORA's Loosely Coupled Teams likewise emphasizes observable results rather than technologies.[^dora-loosely-coupled-teams]
 
-- 他teamの変更を要求せず大きなdesign changeを進められる。
-- 日常の作業で細かなcross-team coordinationへ依存しない。
-- dependency serviceと独立してdeploy / releaseできる。
-- shared integrated test environmentを必須にせず大部分を検証できる。
+- Major design changes can proceed without requiring changes from other teams.
+- Daily work does not depend on fine-grained cross-team coordination.
+- Deployments and releases are independent of dependency services.
+- Most validation does not require shared integrated test environments.
 
-Mainframeでもこれらを達成でき、Microservicesでも達成できない場合がある。したがって「service数が多い」「repositoryが分かれている」をloose couplingの証拠にしない。
+Mainframes can achieve these outcomes, and Microservices can fail to achieve them. Therefore, many services or separate repositories alone are not evidence of loose coupling.
 
-### DDDは意味の境界をarchitectureの数へ変換しない
+### DDD does not convert semantic boundaries into architecture counts
 
-DDDのSubdomainはproblem space、Bounded Contextは一つのmodelと言語が適用される範囲として扱う。[^ddd-reference]
+Treat DDD Subdomains as problem space and Bounded Contexts as the scope of one model and language.[^ddd-reference]
 
-診断では少なくとも次を確認する。
+At minimum, check:
 
-- 同じ用語が境界を越えて異なる意味を持つか。
-- modelを一緒に変更する必要がある理由はdomain上のinvariantか、technical couplingか。
-- 境界間で何を共有し、何をtranslate / isolateするか。
-- 一方の判断やrelease cadenceが他方へ不必要に波及しているか。
+- Whether the same terms mean different things across boundaries.
+- Whether models must change together because of domain invariants or technical coupling.
+- What to share, translate, or isolate across boundaries.
+- Whether decisions or release cadence on one side unnecessarily affect the other.
 
-Technical couplingを解消するためだけに新しいSubdomainやBounded Contextを創作しない。逆に、意味が独立しているという理由だけで別runtime・別deploy・別repositoryを必須にしない。
+Do not invent new Subdomains or Bounded Contexts solely to resolve technical coupling. Conversely, independent meaning alone does not require separate runtimes, deployments, or repositories.
 
-### Team Topologiesはfast flowとcognitive loadから使う
+### Use Team Topologies from fast flow and cognitive load
 
-Team Topologiesはfast flow of valueのためのteam-of-teams design approachであり、4つのteam typeと3つのinteraction modeをpattern languageとして使う。[^team-topologies-key-concepts]
+Team Topologies is a team-of-teams design approach for fast flow of value, using four team types and three interaction modes as a pattern language.[^team-topologies-key-concepts]
 
-4つのteam typeを「4チームを設置する組織図」として導入しない。現在の責任とcognitive loadを調べ、必要な役割を比例させる。
+Do not introduce the four types as an organization chart requiring four teams. Investigate current responsibilities and cognitive load, and size necessary roles proportionately.
 
-| Team type | 診断上の主な役割 |
+| Team type | Main role in assessment |
 | --- | --- |
-| Stream-aligned | 一つの価値の流れに沿ってend-to-endで成果を届ける |
-| Enabling | 他teamが能力を獲得し、自立できるよう一時的に支援する |
-| Complicated Subsystem | 高度な専門知識が必要なsubsystemのcognitive loadを引き受ける |
-| Platform | Stream-aligned teamが低いcognitive loadで利用できる内部product / serviceを提供する |
+| Stream-aligned | Deliver outcomes end to end along one value stream |
+| Enabling | Temporarily help other teams gain capabilities and independence |
+| Complicated Subsystem | Take on cognitive load of subsystems requiring advanced expertise |
+| Platform | Provide internal products/services stream-aligned teams can use with low cognitive load |
 
-Interactionは目的で選ぶ。
+Choose interactions by purpose.
 
-| Interaction | 使う状況 |
+| Interaction | Situation |
 | --- | --- |
-| Collaboration | discoveryや新しい境界を学ぶため、期間を区切って高bandwidthで協働する |
-| X-as-a-Service | ownershipと期待が安定したserviceを、低いcoordination costで利用する |
-| Facilitation | 能力獲得や障害除去を支援し、依存の常態化を避ける |
+| Collaboration | Time-bounded, high-bandwidth collaboration for discovery or learning new boundaries |
+| X-as-a-Service | Use services with stable ownership and expectations at low coordination cost |
+| Facilitation | Support capability acquisition or obstacle removal while avoiding permanent dependence |
 
-team nameやCODEOWNERSだけでinteraction・cognitive load・autonomyを確定しない。実際の問い合わせ、handoff、待ち、変更・運用責任と関係者の経験を確認する。
+Do not establish interaction, cognitive load, or autonomy from team names or CODEOWNERS alone. Check actual inquiries, handoffs, waiting, change/operations responsibilities, and stakeholder experience.
 
-### Conway / Inverse Conwayは相互作用の仮説として扱う
+### Treat Conway / Inverse Conway as interaction hypotheses
 
-Conway's Lawはorganizationのcommunication structureとsystem designが独立ではないことを示す。Team TopologiesとDORAは、この関係を使ってteam communication patternとarchitectureの独立性を考える。[^team-topologies-key-concepts][^dora-loosely-coupled-teams]
+Conway's Law shows that organizational communication structure and system design are not independent. Team Topologies and DORA use this relationship to consider team communication patterns and architecture independence.[^team-topologies-key-concepts][^dora-loosely-coupled-teams]
 
-Inverse Conway Maneuverを「desired architecture図に人員配置を一致させればよい」という処方箋にしない。
+Do not prescribe Inverse Conway Maneuver as merely aligning staffing with a desired architecture diagram.
 
-1. 現在のcommunication・変更・deploy dependencyを観測する。
-2. desired outcomeを、独立change / test / deployや待ち時間の削減など観測可能な状態で表す。
-3. responsibility boundaryまたはinteractionを小さく変更する。
-4. flow、coordination、cognitive load、品質への影響を確認する。
-5. 学習した結果からarchitectureまたはorganizationの次の変更を決める。
+1. Observe current communication, change, and deployment dependencies.
+2. Express desired outcomes as observable states such as independent change/test/deploy or reduced waiting.
+3. Make a small change to responsibility boundaries or interactions.
+4. Check effects on flow, coordination, cognitive load, and quality.
+5. Choose the next architectural or organizational change from what was learned.
 
-team再編を実施せず、診断では仮説・必要な関係者・確認方法とsmall experimentまでを整理する。回答・Issue記録・文書・実装への反映は[共通の計画成果物](assessment.md#計画の成果物)に従い、このfocused lensだけでIssue保存や終了点を決めない。
+Do not implement team restructuring during assessment. Organize hypotheses, necessary stakeholders, verification methods, and small experiments. Follow [shared plan deliverables](assessment.md#plan-deliverables) for answers, Issue records, documents, and implementation; this focused lens alone does not determine Issue saving or the stopping point.
 
-### MicroservicesはArchitecture choiceとして評価する
+### Evaluate Microservices as an Architecture choice
 
-MicroservicesはBounded Contextの数から導かれる既定解ではない。独立change・deploy・scale・ownershipなど、現在必要なoutcomeへ対する選択肢として評価する。
+Microservices are not a default derived from Bounded Context counts. Evaluate them as an option for currently needed outcomes such as independent change, deployment, scaling, and ownership.
 
-#### 利点を必要とする証拠
+#### Evidence that benefits are needed
 
-- 独立release cadenceが実際に必要。
-- 一部だけを独立scaleする必要がある。
-- failure isolationが利用者価値・信頼性へ具体的に効く。
-- 複数teamの独立ownershipが必要で、現在のdeployment / change boundaryが阻害している。
-- module境界だけでは解けないtechnical / organizational couplingが観測されている。
+- Independent release cadence is actually needed.
+- Part of the system needs independent scaling.
+- Failure isolation concretely benefits user value or reliability.
+- Multiple teams need independent ownership, which current deployment/change boundaries obstruct.
+- Technical or organizational coupling is observed that module boundaries alone cannot resolve.
 
-#### 同時に受け入れるcost
+#### Costs accepted at the same time
 
-- network latencyとpartial failure。
-- distributed data、transaction、consistencyの複雑さ。
-- observability、deployment、service discovery、dependency managementの運用負荷。
-- API / event compatibilityとversioning。
-- 多数のdeployable unitを支えるtooling・platform・on-call capability。
+- Network latency and partial failure.
+- Distributed data, transaction, and consistency complexity.
+- Operational burden of observability, deployment, service discovery, and dependency management.
+- API/event compatibility and versioning.
+- Tooling, platforms, and on-call capabilities supporting many deployable units.
 
-DORAもMicroservicesを採用しただけではloose couplingを保証せず、monolithでも現在の規模とflowに合う場合があると説明する。[^dora-loosely-coupled-teams]
+DORA also explains that adopting Microservices alone does not guarantee loose coupling, and monoliths can fit current scale and flow.[^dora-loosely-coupled-teams]
 
-現在の要求をmodule / single deploymentで満たせるなら、Simplicity / YAGNIに照らしてdistributed-system costを先取りしない。必要になった境界からevolutionaryに分離できる余地を、現在不要なextension pointの実装と混同しない。
+If modules or a single deployment meet current requirements, follow Simplicity / YAGNI without anticipating distributed-system costs. Do not confuse room for evolutionary separation at boundaries when needed with implementing currently unnecessary extension points.
 
-### 診断結果を証拠に戻す
+### Ground assessment results in evidence
 
-architecture / organizationの判断は次のいずれかとして記録する。
+Record architecture/organization judgments as one of:
 
-- **観測した実践・能力**: 実変更、deploy、interaction等の証拠がある。
-- **根拠のある不足**: 目的へ影響するcoupling・待ち・failureが観測できる。
-- **未確認**: 必要なruntime / ownership / team experience等の証拠がない。
-- **適用外**: 現在の規模・目的ではそのboundaryやchoiceを分ける理由がない。
+- **Observed practices/capabilities**: Evidence from actual changes, deployments, interactions, or similar activity.
+- **Evidence-backed gaps**: Observable coupling, waiting, or failure affecting the purpose.
+- **Unverified**: Missing necessary runtime, ownership, team experience, or other evidence.
+- **Not applicable**: No reason at current scale and purpose to separate that boundary or choice.
 
-「Microservicesではない」「4 team typesがない」「1 repositoryである」だけを不足にしない。
+Do not infer gaps solely from absence of Microservices, absence of four team types, or a single repository.
 
-最初の改善は、問題となる一つのdependencyを対象にする。たとえばcontractの明確化、test seam、deployment dependencyの除去、interaction modeの期間限定変更など、結果を観測できるsmall experimentを優先する。全面的なservice分割や組織再編は、証拠と段階的な学習なしに最初の手段へしない。
+Target one problematic dependency in the first improvement. Prefer observable small experiments, such as clarifying contracts, creating test seams, removing deployment dependencies, or temporarily changing interaction modes. Do not choose wholesale service decomposition or organizational restructuring first without evidence and incremental learning.
 
-[^ddd-reference]: [DDD Reference — Eric Evans](https://www.domainlanguage.com/wp-content/uploads/2016/05/DDD_Reference_2015-03.pdf)。Bounded Context、Context Map等のDDD pattern reference。固定2015-03版を2026-09-27再確認。
-[^continuous-delivery-architecture]: [Architecture — Continuous Delivery](https://continuousdelivery.com/implementing/architecture/)。testability、deployability、loosely-coupled component、evolutionary architectureの判断。2026-09-27確認。
-[^dora-loosely-coupled-teams]: [Loosely coupled teams — DORA](https://dora.dev/capabilities/loosely-coupled-teams/)。独立change / test / deploy、communication dependency、Inverse ConwayとMicroservicesのtrade-off。2026-09-27確認。
-[^team-topologies-key-concepts]: [Key Concepts — Team Topologies](https://teamtopologies.com/key-concepts)。fast flow、4 team types、3 interaction modes、cognitive load、Conway's Law。2026-09-27確認。
+[^ddd-reference]: [DDD Reference — Eric Evans](https://www.domainlanguage.com/wp-content/uploads/2016/05/DDD_Reference_2015-03.pdf). DDD pattern reference including Bounded Context and Context Map. Fixed 2015-03 edition rechecked 2026-09-27.
+[^continuous-delivery-architecture]: [Architecture — Continuous Delivery](https://continuousdelivery.com/implementing/architecture/). Testability, deployability, loosely coupled components, and evolutionary architecture decisions. Checked 2026-09-27.
+[^dora-loosely-coupled-teams]: [Loosely coupled teams — DORA](https://dora.dev/capabilities/loosely-coupled-teams/). Independent change/test/deploy, communication dependencies, Inverse Conway, and Microservices trade-offs. Checked 2026-09-27.
+[^team-topologies-key-concepts]: [Key Concepts — Team Topologies](https://teamtopologies.com/key-concepts). Fast flow, four team types, three interaction modes, cognitive load, and Conway's Law. Checked 2026-09-27.

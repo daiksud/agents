@@ -1,32 +1,32 @@
 ---
 name: change-delivery
-description: 承認済みのリポジトリ変更をbranch準備からPR・レビュー・CI・merge・統合後main確認まで届けるときに使う。Issue計画はissue-management、コード実装や文書作成は担当Skillへ引き渡す。計画だけ・読み取り専用レビューだけには使わない。
+description: Use to deliver approved repository changes from branch preparation through PR, review, CI, merge, and post-integration main verification. Hand Issue planning to issue-management and code implementation or document creation to the responsible Skill. Do not use for planning alone or read-only review alone.
 ---
 
-# 承認済みの変更をmainへ届ける
+# Deliver approved changes to main
 
-`issue-management` が保存・再取得して確認したIssue計画と実行承認を引き継ぐ。Issue計画の存在だけを実行承認とみなさず、承認済みの同じ目的・成功条件について再作成・再保存・再承認を要求しない。Issueの計画・公開許可とGitHub向けMarkdownの品質は依存スキル `issue-management` に従う。依存スキルを利用できなければdeliveryを開始せず、未確認範囲を示す。`docs/` は作業対象リポジトリを指す。
+Inherit the Issue plan that `issue-management` saved, retrieved, and verified, and execution approval. Do not treat the existence of an Issue plan alone as execution approval, or require recreating, resaving, or reapproving the same approved purpose and success conditions. Follow the dependency `issue-management` for Issue planning, publication permission, and GitHub Markdown quality. If that dependency is unavailable, do not start delivery; state unverified scope. `docs/` refers to the working repository.
 
-## 工程ごとに読む資料
+## Material to read at each stage
 
-完了した工程を繰り返さず、今の工程に必要な資料を読む。同梱資料のリンクは参照元ファイルを基準に解決する。
+Do not repeat completed stages; read material needed for the current stage. Resolve bundled links relative to the referring file.
 
-| 工程・条件 | 読む資料 |
+| Stage or condition | Material |
 | --- | --- |
-| 編集前の作業保護・ブランチ準備、承認済み分割の実行 | [ブランチと統合単位](references/branches.md) |
-| コミットメッセージの文案・stage・commit | [コミットメッセージ](references/conventional-commits.md) |
-| PR・レビュー・CI・マージ・main確認と整理、失敗時の復旧 | [レビューとマージ](references/review-and-merge.md) |
-| Issue計画や公開許可の判断、Issueの更新、投稿前後のMarkdown品質 | 依存スキル `issue-management` の対応する資料 |
+| Work protection and branch preparation before editing, execution of approved decomposition | [Branches and integration units](references/branches.md) |
+| Drafting commit messages, staging, committing | [Commit messages](references/conventional-commits.md) |
+| PR, review, CI, merge, main verification and cleanup, recovery after failure | [Review and merge](references/review-and-merge.md) |
+| Issue plans, decisions on publication permission, Issue updates, Markdown quality before and after posting | Corresponding material in the dependency `issue-management` |
 
-## 継続と完了
+## Continuation and completion
 
-- 計画だけの依頼は `issue-management` の保存・確認・提示で止め、承認前にブランチ・編集・PRへ進まない。明示された停止条件や追加権限・外部影響・目的・受け入れ条件の変更は同スキルの実行範囲に従う。
-- 実行承認と保存確認がある場合は、branch・差分・worktree・他セッションの担当、公開mainの必要チェックを確認してからブランチを準備する。衝突・確認不能・main失敗を無視せず保護・復旧する。
-- 承認済み範囲で実装・検証・コミット・push・Draft PR・必須CI・競合解消・安定した最新HEADの通常レビュー・スカッシュマージを進める。レビュー指摘等でHEADが変わった場合も、新HEADの必須CIと競合を確認してから再レビューする。ペア内の確認を通常PRレビューに読み替えない。コード変更は `software-development`、文書作成は `document-authoring`、差分の読み取り専用レビューだけは `code-review` の手順を併用する。
-- スキルの判断を変更するときは、再現入力と期待判断を評価へ追加する。同じ入力・基準の独立した模擬実行で変更前後を比較し、形式検査やキーワード一致だけで判断品質を証明しない。
-- 計画した検証を実行し、最終差分を依頼・関連機能・文書・パス・コマンドと照合する。検証可能な小さい単位でコミットし、TDDの1サイクルまたは文書の検証・コミット完了時にプッシュする。
-- 長い作業は判明事項・残る課題・次の作業を共有する。失敗は原因と根拠のある代替手段を調べ、同じ操作を理由なく繰り返さない。ユーザー判断・追加権限が必要なら理由と対象を示す。
-- PR側の成功で完了とせず、公開mainの実SHAで必要な検証と配布を確認し、同期・ブランチ整理まで担当する。失敗・未確認を成功扱いせず、復旧を優先してから後続作業を再開する。
-- 最終報告にIssue・PR、成果、検証・レビュー、マージ・main確認・同期・ブランチ整理の結果と残る課題を示す。未実施・取得不能を成功とせず、未完了範囲と再開条件を区別する。
+- For planning-only requests, stop after `issue-management` saves, verifies, and presents the plan; do not proceed to branches, edits, or PRs before approval. Follow that skill's execution scope for explicit stop conditions, additional permissions, external impact, and changes to purpose or acceptance conditions.
+- With execution approval and confirmed saving, check branches, diffs, worktrees, other sessions' responsibilities, and required public-main checks before preparing a branch. Do not ignore conflicts, inability to verify, or failing main; protect and recover work.
+- Within the approved scope, proceed through implementation, validation, commits, push, Draft PR, required CI, conflict resolution, ordinary review of a stable latest HEAD, and squash merge. If findings or other changes update HEAD, check required CI and conflicts on the new HEAD before re-review. Do not reinterpret pair checks as ordinary PR review. Also use `software-development` for code changes, `document-authoring` for document creation, and `code-review` only for read-only diff review.
+- When changing skill judgments, add reproducible inputs and expected judgments to evaluations. Compare before and after through independent simulated execution using the same inputs and criteria; do not prove judgment quality solely through format checks or keyword matches.
+- Execute planned validation, and compare the final diff with the request, related functionality, documents, paths, and commands. Commit in small verifiable units, and push after one TDD cycle or completed document validation and commit.
+- During long work, share findings, remaining issues, and next work. Investigate failure causes and evidence-based alternatives; do not repeat the same operation without reason. State reasons and targets when user decisions or additional permissions are needed.
+- Do not finish at PR-side success; confirm required validation and distribution at the actual public-main SHA, and own synchronization and branch cleanup. Do not treat failures or unverified results as success; prioritize recovery before resuming subsequent work.
+- Report the Issue and PR, outcomes, validation and review, merge, main verification, synchronization, branch cleanup, and remaining issues. Do not treat unexecuted or unobtainable results as success; distinguish incomplete scope from conditions for resumption.
 
-スキル利用後の最終報告には出力契約を守って共通指示の短いKPTを添え、採用済みTryが今回に関連する場合は結果を確認する。改善の記録・次回確認は依存スキル `issue-management` の[改善の記録と次回確認](../issue-management/references/issue-recording.md#改善の記録と次回確認)に従う。現在のdeliveryの完了を後続改善の実装待ちにせず、改善案だけを根拠に別の変更を開始しない。
+Add a short KPT from the common instructions to the final report after using the skill, honoring the output contract; check results for relevant adopted Try items. Follow [Recording improvements and checking next time](../issue-management/references/issue-recording.md#recording-improvements-and-checking-next-time) in the dependency `issue-management` for improvement records and later checks. Do not leave current delivery incomplete waiting for subsequent improvements, or begin separate changes based solely on improvement proposals.

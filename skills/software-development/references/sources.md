@@ -1,7 +1,7 @@
 ---
 type: Reference
-title: 設計とテストの出典
-description: 実装・設計・テストの出典、既存の確認履歴と採用判断を保持します。
+title: Sources for design and testing
+description: Retain implementation, design, and testing sources, existing verification history, and adoption decisions.
 sources:
   - id: beck-andres-getting-started-xp
     resource: https://www.informit.com/articles/article.aspx?p=390816
@@ -33,60 +33,60 @@ sources:
     resource: https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/instructions/taming-copilot.instructions.md
 ---
 
-## 設計とテストの出典
+## Sources for design and testing
 
-### 一次資料
+### Primary materials
 
-参照日は2026-09-11です。日付なしは公開・更新日を確定できない資料です。以下は定義・提言の出典で、このスキル自体の効果測定ではありません。
+The reference date is 2026-09-11. Undated means the publication or update date could not be established. These are sources of definitions and recommendations, not measurements of this skill's effectiveness.
 
-| 著者・資料 | 日付・参照箇所 | 本スキルでの用途 |
+| Author and material | Date and referenced location | Use in this skill |
 | --- | --- | --- |
-| Kent Beck, Canon TDD[^newsletter-p-canon-tdd] | 2023-12-11 | テストリスト、一つずつの反復、期待値を弱めないこと |
-| Jez Humble, Continuous Testing[^continuousdelivery-foundations-test-automation]、Architecture[^continuousdelivery-implementing-architecture] | 日付なし | 速いフィードバック、探索、テスト可能性、段階的な設計改善 |
-| Eric Evans, DDD Reference[^www-05-ddd-reference-2015-03-pdf] | 2015年3月、冊子39–41頁等 | Bounded Context、Ubiquitous Language、Context Map |
+| Kent Beck, Canon TDD[^newsletter-p-canon-tdd] | 2023-12-11 | Test lists, one-at-a-time iterations, and retaining expectations |
+| Jez Humble, Continuous Testing[^continuousdelivery-foundations-test-automation], Architecture[^continuousdelivery-implementing-architecture] | Undated | Fast feedback, exploration, testability, and incremental design improvement |
+| Eric Evans, DDD Reference[^www-05-ddd-reference-2015-03-pdf] | March 2015, booklet pages 39–41 and others | Bounded Context, Ubiquitous Language, and Context Map |
 
-### XPの価値の採用判断
+### Adoption decisions for XP values
 
-2026-09-25にRon JeffriesのWhat is Extreme Programming?[^ron-jeffries-xp]を確認した。Communication・Simplicity・Feedback・Courage・Respectを、実際の期待値の共有、現在の要求に合う構造、短い検証、必要な設計改善、判断権限と持続可能な働き方へ適用する。会議の固定形式、チーム編成、原典の効果数値を共通要件にしない。エージェントの権限・承認・公開・レビュー条件は本環境の契約として維持する。
+Ron Jeffries' What is Extreme Programming?[^ron-jeffries-xp] was checked on 2026-09-25. Apply Communication, Simplicity, Feedback, Courage, and Respect to sharing actual expectations, structure suited to current requirements, short validation, necessary design improvements, decision authority, and sustainable work. Do not make fixed meeting formats, team arrangements, or effectiveness figures from the originals shared requirements. Preserve agent authority, approval, publication, and review conditions as contracts of this environment.
 
-### Simple DesignとYAGNIの採用判断
+### Adoption decisions for Simple Design and YAGNI
 
-2026-09-25にMartin FowlerのBeck Design Rules[^fowler-beck-design-rules]とYagni[^fowler-yagni]を確認した。現在のテスト・契約、意図の明瞭さ、同じルールの重複、必要な要素から設計を判断する。仮想の将来機能を先取りせず、実際のフィードバックで小さく改善する。明瞭さと重複の間に機械的な優先順位や点数を付けず、必要なテスト・Refactor・CIを省略しない。アサートファーストと同じNavigatorの段階確認は本環境の方針で、XP原典の要件として帰属させない。
+Martin Fowler's Beck Design Rules[^fowler-beck-design-rules] and Yagni[^fowler-yagni] were checked on 2026-09-25. Judge design from current tests and contracts, clarity of intent, duplication of the same rules, and necessary elements. Do not anticipate hypothetical future features; improve incrementally through actual feedback. Do not assign mechanical priority or scores between clarity and duplication, or omit necessary tests, Refactor, or CI. Assert-first and stage confirmation by the same Navigator are local policies, not requirements attributed to original XP sources.
 
-### 一人でのXP導入の採用判断
+### Adoption decisions for introducing XP alone
 
-2026-10-04にKent Beck / Cynthia Andresの導入記事[^beck-andres-getting-started-xp]とPrimary Practicesの要約[^beck-andres-primary-practices]を確認した。導入記事は一つずつ実践を試す方法や個人からの改善を認める。要約はTest-first Programming、Incremental Design、Stories、Weekly Planning、Slack、Ten-minute Build、Continuous Integration、Energized Workを挙げる。原典のCIは共有コードへの統合を数時間以内に行う実践であり、自動ビルド・テストは短いフィードバックを支える。活動日ごとのmain統合目安は本環境の既存運用で、原典の頻度と同一視しない。
+Kent Beck / Cynthia Andres' introductory article[^beck-andres-getting-started-xp] and Primary Practices summary[^beck-andres-primary-practices] were checked on 2026-10-04. The introduction allows trying practices one at a time and improving as an individual. The summary lists Test-first Programming, Incremental Design, Stories, Weekly Planning, Slack, Ten-minute Build, Continuous Integration, and Energized Work. Original CI integrates into shared code within hours; automated builds and tests support short feedback. The target of integrating into main on each active day is existing local operation, not the same frequency as the original.
 
-TDD・漸進設計・自動検証から始める順序、週初めの成果選択と週末の短い振り返り、既存Issue・ToDoの再利用、品質を保つ範囲調整、休息時の引き継ぎは本環境の一人向け提案である。原典の逐語的な規定や、XP全実践を導入済みという意味ではない。人間一人でもAIの協働・レビュー条件を維持し、固定の会議・週次自動化・疲労の推測を追加しない。
+Starting with TDD, incremental design, and automated validation; selecting outcomes at the start of the week and briefly reflecting at its end; reusing existing Issues and ToDos; adjusting scope while preserving quality; and handing off during rest are local solo proposals. They are not verbatim original provisions or claims that all XP practices are implemented. Preserve AI collaboration and review conditions even with one human. Do not add fixed meetings, weekly automation, or assumptions about fatigue.
 
-### 指示例の参照元と適用判断
+### Sources of instruction examples and application decisions
 
-2026-09-11に確認したGitHub awesome-copilotの以下の指示例を要約・再構成した。リンクは確認コミットに固定する。これらはコミュニティの指示例であり、OOP・テストの普遍的な必須規則として扱わない。
+The following GitHub awesome-copilot instruction examples checked on 2026-09-11 were summarized and restructured. Links are pinned to the checked commit. These are community examples, not universal mandatory OOP or testing rules.
 
-| 資料 | 取り込む内容と調整 |
+| Material | Incorporated content and adjustments |
 | --- | --- |
-| OOP Design Patterns[^github-instructions-oop-design-patterns-instructions-md] | 責務・契約・合成・依存方向を使う。抽象型先行、全関数のログ、固定docstring形式は要求しない |
-| Self-explanatory Code Commenting[^github-instructions-self-explanatory-code-commenting-instructions-md] | 命名・構造を優先し、理由と見えない契約を残す。公開契約の説明を理由以外というだけで削除しない |
-| QA Engineering Best Practices[^github-instructions-qa-engineering-best-practices-instructions-md] | 状態分離、UIの状態待ち、代表負荷での検証を使う。固定比率・網羅率・再試行回数・特定ツールは義務化しない |
+| OOP Design Patterns[^github-instructions-oop-design-patterns-instructions-md] | Use responsibilities, contracts, composition, and dependency direction. Do not require abstract types first, logging in every function, or fixed docstring formats |
+| Self-explanatory Code Commenting[^github-instructions-self-explanatory-code-commenting-instructions-md] | Prioritize naming and structure; retain reasons and invisible contracts. Do not remove public contract explanations merely because they are not reasons |
+| QA Engineering Best Practices[^github-instructions-qa-engineering-best-practices-instructions-md] | Use state isolation, UI condition waits, and representative-load validation. Do not mandate fixed ratios, coverage, retry counts, or particular tools |
 
-2026-09-13に確認した以下の指示例も、同じ固定コミットから要約・再構成した。
+The following examples checked on 2026-09-13 were also summarized and restructured from the same fixed commit.
 
-| 資料 | 取り込む内容と調整 |
+| Material | Incorporated content and adjustments |
 | --- | --- |
-| Context Engineering[^context-engineering] | 意味のある名前・パス・定数、関連情報を見つけやすい配置、境界の型・公開契約、複雑な流れの説明を使う。既存配置と言語慣習を優先し、局所的な型推論の禁止、一律のindexファイル・内部公開・IDE操作は要求しない |
-| Taming Copilot[^taming-copilot] | 標準機能・既存依存を先に検討し、必要な変更を既存構造へ統合する。必要な契約・異常系・TDDを省かず、最短コードやユーザーが列挙したファイルだけを変更範囲の基準にしない |
+| Context Engineering[^context-engineering] | Use meaningful names, paths, constants, discoverable placement, boundary types and public contracts, and explanations of complex flow. Prioritize existing placement and language conventions; do not require banning local type inference, uniform index files, internal exposure, or IDE operations |
+| Taming Copilot[^taming-copilot] | Consider standard features and existing dependencies first and integrate necessary changes into existing structure. Do not omit required contracts, error cases, or TDD, or use shortest code or only user-listed files as the scope criterion |
 
-[^newsletter-p-canon-tdd]: [Canon TDD](https://newsletter.kentbeck.com/p/canon-tdd)。本文に記した参照範囲と採用判断の根拠。
-[^continuousdelivery-foundations-test-automation]: [Continuous Testing](https://continuousdelivery.com/foundations/test-automation/)。本文に記した参照範囲と採用判断の根拠。
-[^continuousdelivery-implementing-architecture]: [Architecture](https://continuousdelivery.com/implementing/architecture/)。本文に記した参照範囲と採用判断の根拠。
-[^www-05-ddd-reference-2015-03-pdf]: [DDD Reference](https://www.domainlanguage.com/wp-content/uploads/2016/05/DDD_Reference_2015-03.pdf)。本文に記した参照範囲と採用判断の根拠。
-[^ron-jeffries-xp]: [What is Extreme Programming?](https://ronjeffries.com/xprog/what-is-extreme-programming/)。5価値と実践を状況に合わせて適用する考え方。
-[^fowler-beck-design-rules]: [Beck Design Rules](https://martinfowler.com/bliki/BeckDesignRules.html)。Kent Beck本人のレビューを受けたFowlerの定式化。
-[^fowler-yagni]: [Yagni](https://martinfowler.com/bliki/Yagni.html)。未要求の機能と現在の変更を支える健全性を区別する。
-[^beck-andres-getting-started-xp]: [Getting Started with eXtreme Programming: Toe Dipping, Racing Dives, and Cannonballs](https://www.informit.com/articles/article.aspx?p=390816)。2005-06-10公開。段階的に実践を試し、個人からも改善を始める考え方。
-[^beck-andres-primary-practices]: [Appendix: Primary Practices](https://www.informit.com/articles/article.aspx?p=390816&seqNum=3)。同記事の実践の要約。具体的な一人向け手順とは区別する。
-[^github-instructions-oop-design-patterns-instructions-md]: [OOP Design Patterns](https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/instructions/oop-design-patterns.instructions.md)。本文に記した参照範囲と採用判断の根拠。
-[^github-instructions-self-explanatory-code-commenting-instructions-md]: [Self-explanatory Code Commenting](https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/instructions/self-explanatory-code-commenting.instructions.md)。本文に記した参照範囲と採用判断の根拠。
-[^github-instructions-qa-engineering-best-practices-instructions-md]: [QA Engineering Best Practices](https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/instructions/qa-engineering-best-practices.instructions.md)。本文に記した参照範囲と採用判断の根拠。
-[^context-engineering]: [Context Engineering](https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/instructions/context-engineering.instructions.md)。命名・配置・型・公開境界とコメントの設計へ適用する。
-[^taming-copilot]: [Taming Copilot](https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/instructions/taming-copilot.instructions.md)。標準機能・既存依存と最小の構造を選ぶ判断へ適用する。
+[^newsletter-p-canon-tdd]: [Canon TDD](https://newsletter.kentbeck.com/p/canon-tdd). Basis for the referenced scope and adoption decisions stated in the text.
+[^continuousdelivery-foundations-test-automation]: [Continuous Testing](https://continuousdelivery.com/foundations/test-automation/). Basis for the referenced scope and adoption decisions stated in the text.
+[^continuousdelivery-implementing-architecture]: [Architecture](https://continuousdelivery.com/implementing/architecture/). Basis for the referenced scope and adoption decisions stated in the text.
+[^www-05-ddd-reference-2015-03-pdf]: [DDD Reference](https://www.domainlanguage.com/wp-content/uploads/2016/05/DDD_Reference_2015-03.pdf). Basis for the referenced scope and adoption decisions stated in the text.
+[^ron-jeffries-xp]: [What is Extreme Programming?](https://ronjeffries.com/xprog/what-is-extreme-programming/). Applying the five values and practices to the situation.
+[^fowler-beck-design-rules]: [Beck Design Rules](https://martinfowler.com/bliki/BeckDesignRules.html). Fowler’s formulation reviewed by Kent Beck himself.
+[^fowler-yagni]: [Yagni](https://martinfowler.com/bliki/Yagni.html). Distinguishes unrequested features from health supporting current changes.
+[^beck-andres-getting-started-xp]: [Getting Started with eXtreme Programming: Toe Dipping, Racing Dives, and Cannonballs](https://www.informit.com/articles/article.aspx?p=390816). Published 2005-06-10. Trying practices incrementally and starting improvements as an individual.
+[^beck-andres-primary-practices]: [Appendix: Primary Practices](https://www.informit.com/articles/article.aspx?p=390816&seqNum=3). Summary of practices in the same article, distinct from specific solo procedures.
+[^github-instructions-oop-design-patterns-instructions-md]: [OOP Design Patterns](https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/instructions/oop-design-patterns.instructions.md). Basis for the referenced scope and adoption decisions stated in the text.
+[^github-instructions-self-explanatory-code-commenting-instructions-md]: [Self-explanatory Code Commenting](https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/instructions/self-explanatory-code-commenting.instructions.md). Basis for the referenced scope and adoption decisions stated in the text.
+[^github-instructions-qa-engineering-best-practices-instructions-md]: [QA Engineering Best Practices](https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/instructions/qa-engineering-best-practices.instructions.md). Basis for the referenced scope and adoption decisions stated in the text.
+[^context-engineering]: [Context Engineering](https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/instructions/context-engineering.instructions.md). Applied to naming, placement, types, public boundaries, and comment design.
+[^taming-copilot]: [Taming Copilot](https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/instructions/taming-copilot.instructions.md). Applied to choosing standard features, existing dependencies, and minimal structure.

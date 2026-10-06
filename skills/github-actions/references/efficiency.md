@@ -1,7 +1,7 @@
 ---
 type: Instruction
-title: GitHub Actionsの効率改善
-description: 実行履歴から待ち時間と使用量の原因を選び、必要な検証と信頼境界を保って改善します。
+title: GitHub Actions efficiency improvements
+description: Choose causes of waiting and usage from execution history and improve while preserving required validation and trust boundaries.
 sources:
   - id: copilot-efficiency
     resource: https://github.com/github/awesome-copilot/tree/4f4796f0bf30e105700f97ed8408c12b6aa95e06/skills/github-actions-efficiency
@@ -11,11 +11,11 @@ sources:
     resource: https://docs.github.com/en/actions/reference/workflows-and-actions/dependency-caching
 ---
 
-## 原因を測って少数の改善を選ぶ
+## Measure causes and choose a few improvements
 
-ワークフロー、必須チェック、対応環境の文書、run/job/stepの履歴を確認する。新規なら[設計](workflow-design.md)で基準となる検証を定める。既存ならキャッシュ、重複トリガー、不要な実行、長い依存経路を調べ、根拠があり目的に効く少数の変更を選ぶ。設定がないだけでは無駄と断定しない。[^copilot-efficiency]
+Check workflows, required checks, supported-environment documents, and run/job/step history. For new workflows define baseline validation through [Design](workflow-design.md). For existing workflows investigate caches, duplicate triggers, unnecessary runs, and long dependency paths, choosing a few evidence-based changes effective for the purpose. Missing configuration alone does not prove waste.[^copilot-efficiency]
 
-作業対象リポジトリで使う読み取り例:
+Read-only examples for the working repository:
 
 ```bash
 gh run list --limit 20 --json databaseId,workflowName,event,headSha,status,conclusion,createdAt,updatedAt,url
@@ -23,34 +23,34 @@ gh run view RUN_ID --json jobs,event,headSha,conclusion,url
 gh run view RUN_ID --log-failed
 ```
 
-`RUN_ID` は対象の実在するIDに置き換える。取得できない場合は提供ファイルに基づく静的分析として扱う。
+Replace `RUN_ID` with an actual target ID. If retrieval is unavailable, treat this as static analysis of supplied files.
 
-### 効果を分ける
+### Separate effects
 
-| 観測する値 | 判断すること |
+| Observation | Judgment |
 | --- | --- |
-| PRで必要な結果が揃うまでの経過時間 | 待ち行列、直列の依存、長いジョブが利用者を待たせていないか |
-| 各ジョブの実行時間の合計 | ランナー総使用時間が減るか。OS・課金条件を確認せず料金へ換算しない |
-| 回避したrun・job・matrixの実行数 | 必要な検証を保ったまま処理を省けたか |
+| Elapsed time until required PR results are available | Do queues, serial dependencies, or long jobs delay users? |
+| Sum of job execution times | Does total runner usage decrease? Do not convert to prices without checking OS/billing conditions |
+| Avoided run/job/matrix execution counts | Was processing omitted while preserving required validation? |
 
-変更前後でイベント・変更内容・runner・マトリクス・キャッシュ状態・サンプル期間を揃え、交絡要因を残す。期待効果と実測を分け、データがない値をゼロや改善済みにしない。
+Align events, changes, runners, matrices, cache states, and sampling periods before/after, retaining confounders. Separate expected effects from measurements; missing data is neither zero nor confirmed improvement.
 
-### 変更ごとの確認
+### Checks for each change
 
-- **キャッシュ**: ダウンロード・保存・展開の費用とヒット率を調べる。lockfile、OS、アーキテクチャ、ツール版など互換性に関わる値をキーへ含め、部分一致の復元後も依存を検証する。setup Actionの組み込みキャッシュと二重化しない。Secretや認証済み設定を保存せず、作成元・読み手の信頼境界は[安全性](hardening.md)で確認する。PRからbase/default branchのキャッシュを読める場合がある。[^github-cache]
-- **重複実行**: 同じ変更のpush/PR実行を比較する。ブランチ保護、release、schema、migration、共有ライブラリの必要な検証を失わない。
-- **path判定**: workflow全体をスキップすると必須チェックがPendingになる場合がある。ジョブ判定・集約へ移しても、必要な検証の失敗が最終結果へ届くようにする。依存、lockfile、設定、workflow自身の変更を含め、変更ファイル取得の比較元・上限・取得失敗時の動作を点検する。workflow変更で全検査が走ることを、それだけで無駄とはしない。[^github-syntax]
-- **同時実行**: 古いPR検証を中止できるか確認し、groupにworkflowとPR/ref等の識別を含める。本番配備の途中キャンセルを一律に有効化しない。`cancel-in-progress: false` でも既定のpending枠は置換されるため、全配備を保持する要件は別途キュー仕様を確認する。利用先が対応するなら `queue: max` を検討するが、上限と `cancel-in-progress: true` との非互換性を確認する。
-- **マトリクス**: 各組み合わせが保証する契約を調べる。対応要件が未文書化という理由だけで削らず、利用者・依存・既存履歴から確認する。削減する場合は残る保証と失う保証を明示する。
-- **並列化とジョブ統合**: クリティカルパス、起動・セットアップ費用、成果物の受け渡しを比較する。並列化で経過時間が短くても総使用時間が増えることがある。許容する待ち時間と費用の判断を固定倍率で代用しない。
-- **書き戻しジョブ**: 自動整形等の公開条件と権限を確認する。ラベル・手動操作等へ変える場合はイベント再評価も検証し、既存の合意を無断で変えない。
+- **Caching**: Investigate download/save/extraction costs and hit rates. Include compatibility values such as lockfiles, OS, architecture, and tool versions in keys; validate dependencies after partial-match restoration. Avoid duplicating setup Actions' built-in caches. Do not save Secrets/authenticated settings; check creator/reader trust boundaries in [Safety](hardening.md). PRs may read base/default-branch caches.[^github-cache]
+- **Duplicate runs**: Compare push/PR runs for the same change without losing necessary branch-protection, release, schema, migration, or shared-library validation.
+- **Path decisions**: Skipping whole workflows may leave required checks Pending. Even with job-level decisions/aggregation, propagate required-validation failures to final results. Include dependencies, lockfiles, configuration, and workflows themselves, checking changed-file comparison bases, limits, and retrieval-failure behavior. Running all checks after workflow changes alone does not prove waste.[^github-syntax]
+- **Concurrency**: Check cancellation of old PR validation, including workflow and PR/ref identifiers in groups. Do not uniformly enable mid-production-deployment cancellation. Even `cancel-in-progress: false` replaces the default pending slot; separately check queue semantics when all deployments must be retained. Consider `queue: max` where supported, checking limits and incompatibility with `cancel-in-progress: true`.
+- **Matrices**: Investigate contracts guaranteed by each combination. Undocumented support requirements alone do not justify removal; check users, dependencies, and history. State retained/lost guarantees when reducing.
+- **Parallelism/job consolidation**: Compare critical paths, startup/setup costs, and artifact handoffs. Parallelism may shorten elapsed time while increasing total usage. Do not substitute fixed multipliers for acceptable waiting/cost decisions.
+- **Write-back jobs**: Check publication conditions/permissions for autoformatting and similar work. For changes to labels/manual operations, also validate event reassessment without arbitrarily changing agreements.
 
-### 挙動と効果の検証
+### Validate behavior and effects
 
-承認済みの変更では、安全な既存の作業ブランチ上で関連変更・無関係な変更・workflow変更、連続更新時のキャンセルを確かめる。新規ブランチの最初のpushだけでpath判定を検証済みとしない。監査依頼だけならテストpushやdispatchをせず、検証案を示す。
+For approved changes, use safe existing working branches to check related/unrelated changes, workflow changes, and cancellation during consecutive updates. First pushes on new branches alone do not validate path decisions. Audit-only requests propose validation without test pushes/dispatches.
 
-キャッシュのcold/warm両方と必要なチェック・成果物を確認する。予想外のスキップや実行は、YAMLが妥当に見えても不具合として追う。改善内容、保持した保証、検証したrun、実測と未確認を報告する。
+Check cold/warm caches and required checks/artifacts. Investigate unexpected skips/runs as defects even when YAML appears valid. Report improvements, preserved guarantees, validated runs, measurements, and uncertainties.
 
-[^copilot-efficiency]: SKILL.mdとactions・reporting・patterns・review-rubricの測定・選択・検証観点を再構成。
-[^github-cache]: Dependency caching reference。復元の互換性とブランチ間のアクセス範囲を確認する。
-[^github-syntax]: Workflow syntax。フィルター、concurrencyとqueueの対象環境での仕様を確認する。
+[^copilot-efficiency]: Restructured measurement, selection, and validation perspectives from SKILL.md and actions/reporting/patterns/review-rubric.
+[^github-cache]: Dependency caching reference. Check restoration compatibility and cross-branch access.
+[^github-syntax]: Workflow syntax. Check filters, concurrency, and queue specifications in the target environment.

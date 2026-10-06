@@ -1,7 +1,7 @@
 ---
 type: Instruction
-title: 成果物と変更の品質
-description: 成果物の独立性、検証の根拠と未確認範囲の報告を定めます。
+title: Artifact and change quality
+description: Define artifact independence, validation evidence, and reporting of unverified scope.
 sources:
   - id: exclude-prompt-data
     resource: https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/instructions/exclude-prompt-data.instructions.md
@@ -9,16 +9,16 @@ sources:
     resource: https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/instructions/taming-copilot.instructions.md
 ---
 
-## 成果物と変更の品質
+## Artifact and change quality
 
-- 成果物は依頼時の会話を知らない読者にも使える内容にする。「依頼どおり追加した」などの応答文、編集の実況、未置換の記入欄を完成本文・コード・コメントへ混ぜず、保存前に差分を確認する。[^exclude-prompt-data]
-- 読者に必要な設計理由・制約・出典を保持する。明示された原文転記、指示・テンプレート自体の本文、Issueの計画・承認記録は目的に必要な内容として扱い、この規則を理由に削除しない。変更履歴は変更事実と必要な理由を残し、依頼への応答部分を除く。[^exclude-prompt-data]
-- 新しく作る説明用サンプルの人名・メール・組織名などは架空の識別子を使い、依頼の背景やローカル設定から流用しない。成果物に使うよう指定された実データや、正確さに必要な契約値・出典の識別子は保持する。[^exclude-prompt-data]
-- 成功条件を満たす最小の変更を既存構造へ統合する。必要な呼び出し元・テスト・文書を含め、無関係な整理・機能追加を避ける。異常系は[インクリメンタルな設計](development.instructions.md#インクリメンタルな設計)に従い、現在の要求・契約と具体的な危険への最低限の保護に必要な範囲だけを含める。最小を行数だけで判断せず、必要な検証や契約を省略しない。[^taming-copilot]
+- Make artifacts usable by readers unfamiliar with the conversation at the time of the request. Do not mix responses such as “added as requested,” narration of editing, or unfilled placeholders into finished content, code, or comments; check the diff before saving.[^exclude-prompt-data]
+- Preserve design reasons, constraints, and sources needed by readers. Explicitly requested transcription of original text, the content of instructions or templates themselves, and Issue planning and approval records are necessary for their purpose; do not delete them because of this rule. Change histories retain the changes and necessary reasons, excluding responses to the request.[^exclude-prompt-data]
+- Use fictional identifiers for names, email addresses, organizations, and similar items in newly created explanatory examples; do not reuse them from request background or local settings. Preserve actual data specified for the artifact, and contract values or source identifiers required for accuracy.[^exclude-prompt-data]
+- Integrate the smallest change meeting the success conditions into the existing structure. Include necessary callers, tests, and documents, and avoid unrelated cleanup or features. Follow [Incremental design](development.instructions.md#incremental-design) for exceptional paths, including only what current requirements, contracts, and minimal protection against concrete risks require. Do not judge minimality by line count alone or omit required validation or contracts.[^taming-copilot]
 
-探索・受け入れ検証の欠陥は最も小さい再現検証へ反映し、影響・確認できた原因・検出できなかった理由・復旧・残る改善を記録する。実測値はIssue・PRに根拠とともに残し、欠測をゼロや成功にせず、個人評価や単発の効果断定に使わない。
+Reflect defects found in exploratory or acceptance validation in the smallest reproducible check, and record impact, confirmed causes, why detection failed, recovery, and remaining improvements. Record measurements in Issues and PRs with evidence; do not treat missing data as zero or success, or use it for individual evaluation or assertions of effects from a single instance.
 
-検証不能・権限不足・外部制約は成功とせず、完了範囲・未完了範囲・再開条件を報告する。
+Do not treat inability to validate, insufficient permissions, or external constraints as success; report completed scope, incomplete scope, and conditions for resumption.
 
-[^exclude-prompt-data]: [Exclude Prompt Data](https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/instructions/exclude-prompt-data.instructions.md)。成果物と依頼への応答を区別する考え方を適用し、必要な理由・出典と成果物として指定された内容を保持する。
-[^taming-copilot]: [Taming Copilot](https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/instructions/taming-copilot.instructions.md)。既存構造を尊重する最小変更を適用し、現在の要求に必要な関連変更・異常系・検証を含める。インクリメンタルな設計の適用範囲は本環境の開発指示で定める。参照元の指示優先順位や回答形式の一律制限は採用しない。
+[^exclude-prompt-data]: [Exclude Prompt Data](https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/instructions/exclude-prompt-data.instructions.md). Apply the distinction between artifacts and responses to requests, preserving necessary reasons, sources, and content specified as an artifact.
+[^taming-copilot]: [Taming Copilot](https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/instructions/taming-copilot.instructions.md). Apply minimal changes that respect the existing structure, including related changes, exceptional paths, and validation needed for current requirements. This environment's development instructions define the scope of incremental design. Do not adopt the source's instruction precedence or uniform restrictions on response format.

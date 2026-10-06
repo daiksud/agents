@@ -1,53 +1,53 @@
 ---
 name: document-authoring
-description: Markdown、仕様文書、feature、ADR、OpenAPI、JSON Schemaなどの文書成果物の作成・更新で使う。文書形式・出典・Markdown品質を扱う。文書成果物を作らない受け入れ条件・具体例の発見整理はbehavior-specification、既存文書の要約や概念説明だけには使わない。
+description: Use to create or update document artifacts such as Markdown, specifications, features, ADRs, OpenAPI, and JSON Schema. Covers formats, sources, and Markdown quality. Use behavior-specification to discover acceptance conditions and examples without producing documents. Do not use solely to summarize existing documents or explain concepts.
 ---
 
-# OKFで文書を作成する
+# Author documents with OKF
 
-文書作成・更新時のIssue計画・公開許可・Markdown品質は依存スキル `issue-management`、承認済みのリポジトリ変更・PR更新から公開mainの確認までは `change-delivery` に従う。以下の `docs/` は作業対象リポジトリ、`references/` はこのスキルの同梱資源を指す。
+Follow the dependency `issue-management` for Issue plans, publication permission, and Markdown quality when creating or updating documents, and `change-delivery` for approved repository changes and PR updates through public-main verification. `docs/` below refers to the working repository; `references/` refers to this skill's bundled resources.
 
-## 適用と参照資料
+## Application and reference material
 
-- 通常のMarkdown・feature文書はOKF v0.2で作成する。GitHubのIssue・PR本文・コメント、Agent Skillsの `SKILL.md`、OpenAPI・JSON Schema等の契約文書は固有形式を維持し、OKF frontmatterを付けない。
-- 要求・外部契約・受け入れ条件、設計判断・ADRを作成・更新するときは[既存文書を使って仕様を明確にする](references/specification.md)を読み、既存feature・ADR・API仕様の正本を先に確認する。
-- OKF文書を作成・更新するときは[基本形式と参照](references/basic-format.md)を読む。索引・履歴と通常概念の例外、Bundleの境界、リンク解決を確認する。
-- 外部資料に依拠する文書、出典付き文書の更新、信頼・鮮度・状態の判断では[出典・信頼・ライフサイクル](references/provenance.md)を読む。軽微な修正でも既存の出典・未知メタデータ・確認履歴を保持する。
-- 計算の定義・確認方法を扱う場合は[Attested Computation](references/computation.md)を読む。数値を含むだけの文書に計算契約を新設しない。
-- 仕様の適合条件や採用理由を調べる場合は[仕様の節別監査](references/specification-audit.md)を読む。固定SHAの正本、参考実装、サンプル、将来提案を区別する。
+- Author ordinary Markdown and feature documents in OKF v0.2. Preserve specific formats for GitHub Issue and PR bodies and comments, Agent Skills `SKILL.md`, and contract documents such as OpenAPI and JSON Schema; do not add OKF frontmatter.
+- When creating or updating requirements, external contracts, acceptance conditions, design decisions, or ADRs, read [Clarifying specifications with existing documents](references/specification.md), first checking authoritative existing features, ADRs, and API specifications.
+- When creating or updating OKF documents, read [Basic format and references](references/basic-format.md). Check exceptions for indexes/history and ordinary concepts, Bundle boundaries, and link resolution.
+- For documents relying on external material, updates to sourced documents, or judgments about trust, freshness, or status, read [Provenance, trust, and lifecycle](references/provenance.md). Preserve existing sources, unknown metadata, and checking history even for minor corrections.
+- When handling computation definitions or checking methods, read [Attested Computation](references/computation.md). Do not introduce computation contracts merely because a document contains numbers.
+- When investigating specification conformance or adoption reasons, read [Section-by-section specification audit](references/specification-audit.md). Distinguish authoritative sources at fixed SHAs, reference implementations, samples, and future proposals.
 
-## 依頼に応じた引き渡し
+## Handoff according to the request
 
-計画・承認は[計画と実行範囲](../issue-management/references/planning.md)、公開・保存確認は[Issueの記録](../issue-management/references/issue-recording.md)を該当操作前に読む。PR本文・リポジトリ文書の変更前に保存確認と実行承認を別々に照合し、確認済み計画の再作成・承認の取り直しを要求しない。
+Read [Planning and execution scope](../issue-management/references/planning.md) for planning and approval, and [Issue records](../issue-management/references/issue-recording.md) for publication and save verification, before relevant operations. Before changing PR bodies or repository documents, separately check confirmed saving and execution approval; do not require recreating verified plans or obtaining the same approval again.
 
-未公開情報は必要部分だけ投稿先・本文案への許可を確認する。公開済みの事実や保存・確認済みの計画の同じ公開許可は再要求しない。
+For unpublished information, confirm permission for only necessary parts and the posting destination and draft. Do not request the same publication permission again for published facts or saved and verified plans.
 
-- Issue計画だけなら `issue-management` の保存・確認・提示で終了する。Issue本文・コメントだけの更新も同スキルを使い、`change-delivery` は不要。
-- PR本文だけの更新は `issue-management` と `change-delivery` を使うが、リポジトリ編集・マージへ広げない。
-- 承認済みのリポジトリ文書変更は [change-delivery](../change-delivery/SKILL.md) で公開main確認まで進める。文書だけにはコードのTDDを要求しない。
+- For Issue planning alone, stop after `issue-management` saves, verifies, and presents it. Use that skill also for Issue-body or comment-only updates; `change-delivery` is unnecessary.
+- For PR-body-only updates, use `issue-management` and `change-delivery` without expanding to repository editing or merging.
+- For approved repository document changes, use [change-delivery](../change-delivery/SKILL.md) through public-main verification. Do not require code TDD for documents alone.
 
-`issue-management` がなければIssue投稿・文書・PRの変更を始めず、文案・未保存計画・不足する依存を示す。`change-delivery` がなければリポジトリ文書・PRの変更を止めるが、Issue本文・コメントだけの更新は妨げない。依存欠落でも実行承認と保存済み計画を保持し、他のSkillで代用せず、未完了範囲・再開条件を報告する。
+Without `issue-management`, do not begin Issue posting or document/PR changes; show drafts, unsaved plans, and missing dependencies. Without `change-delivery`, stop repository document and PR changes, but do not block Issue-body or comment-only updates. Preserve execution approval and saved plans even when dependencies are missing; do not substitute other Skills, and report incomplete scope and conditions for resumption.
 
-## 作成・更新の流れ
+## Creation and update process
 
-1. 対象アクター、文書の目的・成功条件、正本、モデルの境界と既存の用語を確認する。`docs/` を既定のKnowledge Bundleとし、別の配布単位を扱う場合はそのルートを明示する。
-2. 対象が通常概念・予約ファイル・固有形式のどれかを判定する。既存の本文とfrontmatterを読んでから差分を作り、未知のキーや出典を再生成で落とさない。
-3. 通常概念は1ファイル1概念とし、`type` を記載する。本環境で自作する概念には推奨項目の `title`・`description` も付ける。この追加条件をOKF適合の必須条件と呼ばない。
-4. 外部資料に依拠する内容には `sources` を記録し、個別の主張を安定したsource IDの脚注へ結ぶ。関連文書への移動用リンクを出典の代わりにしない。
-5. 意味のある変更か誤字・整形だけかを判断し、実際に確認した生成・確認事実だけを更新する。日時・人間の確認・期限を推測で補わず、古い確認を更新後の内容の確認として主張しない。
-6. [文書品質の確認](references/validation.md)を実施し、Markdownの検査結果、内容の確認、未検証・期限切れの注意、実行不能な検査を分けて報告する。
+1. Check actors, document purpose and success conditions, authoritative sources, model boundaries, and existing terminology. Use `docs/` as the default Knowledge Bundle, and explicitly state the root when handling another distribution unit.
+2. Determine whether the target is an ordinary concept, reserved file, or specific format. Read existing content and frontmatter before making diffs; do not drop unknown keys or sources through regeneration.
+3. Use one concept per file for ordinary concepts, and include `type`. Also include the recommended `title` and `description` for concepts authored in this environment. Do not call this extra condition a mandatory OKF conformance requirement.
+4. Record `sources` for externally grounded content, linking individual claims to footnotes with stable source IDs. Do not substitute navigation links to related documents for sources.
+5. Determine whether changes are meaningful or only spelling/formatting, and update only actual confirmed generation/checking facts. Do not invent dates, human checks, or expiration dates, or claim old checks verify updated content.
+6. Perform [Document quality checks](references/validation.md), separately reporting Markdown results, content checking, warnings for unverified or expired items, and checks that cannot run.
 
-## 配置と本文
+## Placement and content
 
-- 文書は目的に合う既存分類へ追加する。設計判断は `docs/adr/`、ふるまいは `docs/behavior/`、その他は `docs/<分類>/<page-name>.md` とする。全体案内は `docs/<page-name>.md` に置ける。
-- 新しい分類は既存分類に収まらない場合に作る。索引・履歴を全ディレクトリへ一律に新設しない。
-- `*.feature.md` はOKF frontmatterと、依存スキル `behavior-specification` の[共有仕様・形式資料](../behavior-specification/references/behavior.md)のMarkdown with Gherkinで記述する。
-- GitHub・APMで閲覧できるよう、同梱資料はファイル相対リンクで結ぶ。外部の出典は完全URLで記録し、導入先に原本リポジトリがあることを前提にしない。
-- 画像などMarkdownに含められない外部アセットは使用しない。これは本環境の文書作成方針であり、OKFの適合条件ではない。
-- 見出し・リスト・表・コードブロックを使い、判断に必要な構造を示す。空の節や装飾のための表は作らない。
+- Add documents to existing categories appropriate to their purpose: design decisions in `docs/adr/`, behavior in `docs/behavior/`, and others in `docs/<category>/<page-name>.md`. General guidance may be placed in `docs/<page-name>.md`.
+- Create new categories only when existing ones do not fit. Do not uniformly add indexes or history files to every directory.
+- Write `*.feature.md` with OKF frontmatter and Markdown with Gherkin from [Shared specification and format material](../behavior-specification/references/behavior.md) in the dependency `behavior-specification`.
+- Link bundled material through file-relative links for viewing on GitHub and through APM. Record external sources as complete URLs, without assuming the original repository exists at the installation destination.
+- Do not use external assets such as images that cannot be included in Markdown. This is this environment's authoring policy, not an OKF conformance condition.
+- Use headings, lists, tables, and code blocks to show structure needed for decisions. Do not create empty sections or decorative tables.
 
-## 文書品質の確認
+## Document quality checks
 
-公開前に[Markdownと内容の確認](references/validation.md)を読み、rumdlで整形・チェックする。OpenAPI・JSON Schema等の固有形式は各形式で検査する。
+Before publication, read [Markdown and content checks](references/validation.md), and format/check with rumdl. Validate specific formats such as OpenAPI and JSON Schema according to each format.
 
-形式検査の成功を、出典の真偽・人間による内容確認・計算の実行証明にしない。分類・用語・リンク・コマンド・最終差分と内容も照合し、未検証・期限切れ・実行不能を区別して報告する。
+Do not turn successful format checks into evidence of source truth, human content review, or executed computations. Also compare categories, terminology, links, commands, final diffs, and content, and distinguish unverified, expired, and unexecutable items.

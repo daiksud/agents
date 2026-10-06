@@ -1,19 +1,19 @@
 # Repository Instructions
 
-## 検証方針
+## Validation policy
 
-`daiksud/agents` 自身の変更では、次の検証を受け入れ条件・完了条件として要求しない。
+For changes to `daiksud/agents` itself, do not require the following validation as acceptance or completion conditions.
 
-### APM検証
+### APM validation
 
-- APM CLIを使った `install`・`compile`、Codex/Copilot向けの実配置・参照解決などの実行検証は行わない。
-- APM検証が未実施であることだけを理由に、IssueやPRを未完了のまま残さない。
-- `apm.yml`、Skillの配置、参照先などの静的な確認は、通常のファイルレビューとして必要な範囲で行ってよい。これをAPMの実行検証済みとは扱わない。
+- Do not perform execution validation using APM CLI `install` or `compile`, actual deployment for Codex/Copilot, or reference resolution.
+- Do not leave an Issue or PR incomplete solely because APM validation has not been performed.
+- Static checks of `apm.yml`, skill placement, reference targets, and similar items may be performed as ordinary file review where needed. Do not treat these as completed APM execution validation.
 
-### 独立検証
+### Independent validation
 
-- 別エージェント、別実行コンテキスト、独立した模擬実行による追加検証は行わない。
-- 独立検証が未実施であることだけを理由に、IssueやPRを未完了のまま残さない。
-- 通常のPRレビュー、必須CI、Markdown・リンク・参照の静的検証は独立検証とは別であり、既存の手順に従う。
+- Do not perform additional validation through another agent, another execution context, or independent simulated execution.
+- Do not leave an Issue or PR incomplete solely because independent validation has not been performed.
+- Ordinary PR review, required CI, and static Markdown, link, and reference validation are separate from independent validation and follow existing procedures.
 
-APM検証または独立検証は、個別タスクでユーザーが明示的に依頼した場合だけ実施対象にする。実施していない検証を完了済みとして報告しない。
+APM validation or independent validation is in scope only when the user explicitly requests it for an individual task. Do not report validation that was not performed as completed.
