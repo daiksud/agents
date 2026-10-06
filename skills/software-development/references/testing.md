@@ -21,6 +21,39 @@ sources:
 
 A DDD Bounded Context is the scope in which model meaning applies, a Subdomain is a division of the problem domain, and a Git repository is a code management unit. Judge their correspondence from terminology, contracts, ownership, and change dependencies; do not define DDD as a universal one-to-one correspondence. Improve testability and deployability incrementally rather than rewriting everything.
 
+### Mapping contracts to observable tests
+
+Use the [applicable contracts and their owners](design.md#expressing-agreed-behavior-as-contracts) to derive representative black-box examples for the next small change.[^practice-sources]
+
+- Preconditions guide valid setup and relevant input boundaries. Test caller-facing rejection only when its observable behavior is agreed or required by the current scope.
+- Postconditions guide assertions of promised results, resulting state, and necessary effects. Select observations that can detect a violation without depending on incidental internals.
+- Invariants guide checks that construction and valid state transitions preserve valid model state, where applicable. Do not invent invariants or exhaustive cases to fill a checklist.
+
+Keep examples in the existing ToDo list. Select one item, write its assertion first, assemble and confirm Red, implement the minimum for Green, then Refactor before selecting the next item. Do not write every test up front, duplicate implementation calculations in expected values, or use coverage quotas as contract evidence. Preserve the [resilient assertion rules](#resilient-assertions-based-on-contracts).
+
+#### Example: an agreed inventory reservation rule
+
+Suppose the current agreement is that reserving quantity `q` from stock `s` returns the remaining stock. These illustrative rules are not universal inventory requirements.
+
+| Contract | Agreement |
+| --- | --- |
+| Preconditions | The caller supplies integer stock `s >= 0` and integer quantity `1 <= q <= s` |
+| Postcondition | The calculation returns exactly `s - q`, leaving its inputs unchanged |
+| Invariant | Every valid inventory state has nonnegative stock; valid reservations preserve it |
+
+For the normal case, first write `self.assertEqual(3, remaining)`, then add `remaining = reserve(stock, quantity)` and setup `stock, quantity = 5, 2`. The completed test in an existing unittest test class is:
+
+```python
+def test_reservation_returns_remaining_stock(self):
+    stock, quantity = 5, 2
+    remaining = reserve(stock, quantity)
+    self.assertEqual(3, remaining)
+```
+
+Complete that case through Red → Green → Refactor. Next take the agreed upper boundary `reserve(5, 5) = 0` through its own assert-first cycle; it checks the boundary and preservation of nonnegative stock. Use literal expected results drawn from the agreement.
+
+Here `reserve` is a pure calculation; persistence belongs at an explicit boundary. If saving stock is part of the current agreement, verify the promised saved state there with the smallest effective integration test. For mutable inputs, verify that a calculation promising no mutation leaves them unchanged. Add invalid-quantity tests only if the caller-facing rejection behavior is in scope; do not invent exceptions merely to complete the example.
+
 ### Reproducible tests suited to their purpose
 
 First decide which contract violation to detect, and choose expectations from the specification. Use minimal data covering normal, boundary, and failure cases; do not copy implementation formulas to construct expectations. Use boolean assertions when booleans themselves are the contract. Do not impose a uniform limit on physical assertion counts.
@@ -70,7 +103,7 @@ Do not make test-layer ratios, coverage, mutation scores, or response-time measu
 
 Keep validation sources and adoption decisions in the [primary materials](sources.md).[^practice-sources]
 
-[^practice-sources]: References and application decisions for Canon TDD, Continuous Testing, Architecture, and QA Engineering Best Practices.
+[^practice-sources]: References and application decisions for Canon TDD, Continuous Testing, Architecture, and QA Engineering Best Practices; [Design by Contract adoption and limits](sources.md#adoption-decisions-for-design-by-contract).
 
 ### Reproducing and reporting defects
 

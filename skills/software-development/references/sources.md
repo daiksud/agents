@@ -3,6 +3,8 @@ type: Reference
 title: Sources for design and testing
 description: Retain implementation, design, and testing sources, existing verification history, and adoption decisions.
 sources:
+  - id: minodriven-designing-for-code-reading
+    resource: https://speakerdeck.com/minodriven/designing-for-code-reading
   - id: beck-andres-getting-started-xp
     resource: https://www.informit.com/articles/article.aspx?p=390816
   - id: beck-andres-primary-practices
@@ -59,6 +61,14 @@ Kent Beck / Cynthia Andres' introductory article[^beck-andres-getting-started-xp
 
 Starting with TDD, incremental design, and automated validation; selecting outcomes at the start of the week and briefly reflecting at its end; reusing existing Issues and ToDos; adjusting scope while preserving quality; and handing off during rest are local solo proposals. They are not verbatim original provisions or claims that all XP practices are implemented. Preserve AI collaboration and review conditions even with one human. Do not add fixed meetings, weekly automation, or assumptions about fatigue.
 
+### Adoption decisions for Design by Contract
+
+MinoDriven's Designing for code reading[^minodriven-designing-for-code-reading], published 2026-09-30, was checked on 2026-10-06: slides 13–20 cover contract categories and black-box tests, 23–27 cover side effects and isolation, and 29–36 cover abstraction. Adopt these ideas to implement existing agreed domain behavior faithfully within this repository's incremental workflow.
+
+Detailed guidance belongs in [design](design.md#expressing-agreed-behavior-as-contracts) and [testing](testing.md#mapping-contracts-to-observable-tests). Caller/callee ownership, current-scope enforcement, and the inventory example are local application choices, not universal business rules or verbatim deck requirements.
+
+Reuse specification outcomes without mandatory discovery ceremonies. Identify only applicable conditions and implement one assert-first item at a time. Preserve happy-path MVP, resilient assertions, and ordinary review/CI; do not adopt repeated internal guards, speculative hardening, mandatory classes, a new framework, fixed templates, coverage quotas, or whole-repository retrofits. Contracts and tests are scoped evidence, not formal proof or the deck's near-total correctness claim.
+
 ### Sources of instruction examples and application decisions
 
 The following GitHub awesome-copilot instruction examples checked on 2026-09-11 were summarized and restructured. Links are pinned to the checked commit. These are community examples, not universal mandatory OOP or testing rules.
@@ -85,6 +95,7 @@ The following examples checked on 2026-09-13 were also summarized and restructur
 [^fowler-yagni]: [Yagni](https://martinfowler.com/bliki/Yagni.html). Distinguishes unrequested features from health supporting current changes.
 [^beck-andres-getting-started-xp]: [Getting Started with eXtreme Programming: Toe Dipping, Racing Dives, and Cannonballs](https://www.informit.com/articles/article.aspx?p=390816). Published 2005-06-10. Trying practices incrementally and starting improvements as an individual.
 [^beck-andres-primary-practices]: [Appendix: Primary Practices](https://www.informit.com/articles/article.aspx?p=390816&seqNum=3). Summary of practices in the same article, distinct from specific solo procedures.
+[^minodriven-designing-for-code-reading]: [Designing for code reading](https://speakerdeck.com/minodriven/designing-for-code-reading), MinoDriven, 2026-09-30. Contract/test, side-effect-isolation, and abstraction ideas, with local adoption limits above.
 [^github-instructions-oop-design-patterns-instructions-md]: [OOP Design Patterns](https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/instructions/oop-design-patterns.instructions.md). Basis for the referenced scope and adoption decisions stated in the text.
 [^github-instructions-self-explanatory-code-commenting-instructions-md]: [Self-explanatory Code Commenting](https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/instructions/self-explanatory-code-commenting.instructions.md). Basis for the referenced scope and adoption decisions stated in the text.
 [^github-instructions-qa-engineering-best-practices-instructions-md]: [QA Engineering Best Practices](https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/instructions/qa-engineering-best-practices.instructions.md). Basis for the referenced scope and adoption decisions stated in the text.

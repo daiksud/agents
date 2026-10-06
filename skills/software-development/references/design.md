@@ -25,6 +25,37 @@ Provided that current contracts and tests are met, examine whether structure con
 
 YAGNI is not a reason to omit necessary validation or refactoring. Handle design improvements identified at Green in Refactor within the same cycle, preserving code health that supports small changes. Judge intent and duplication from model meaning; do not make abstract types or line counts quality targets.[^practice-sources]
 
+### Expressing agreed behavior as contracts
+
+For the next small behavior change, start from agreed stories, domain rules, and acceptance conditions. Reuse existing specification and discovery outcomes; use `behavior-specification` for unsettled rules, without making EventStorming or another ceremony a new gate. Make only the applicable contracts explicit before the corresponding test and implementation.[^practice-sources]
+
+| Category | Meaning and owner |
+| --- | --- |
+| Precondition | A caller obligation that holds before the operation, including relevant input and starting-state constraints |
+| Postcondition | A callee guarantee when preconditions hold, including promised results and observable effects |
+| Invariant | A condition of valid model state established by construction and preserved by valid operations |
+
+Use existing domain names, types, schemas, API documentation, and tests to express these agreements. Supplement constraints that those forms cannot convey. Do not require three boilerplate sections for every operation or invent state invariants for stateless calculations.
+
+#### Ownership and enforcement
+
+- Identify which caller or boundary establishes each precondition and which operation guarantees each postcondition. Distinguish assuming valid input from promising caller-facing rejection behavior.
+- Enforce current requirements at the boundary that owns validation, using existing types, constructors, schemas, or runtime checks as appropriate. Do not repeat defensive guards throughout trusted internal calls whose obligations are already established.
+- Keep model state valid through construction and valid operations; avoid exposing mutation that can violate its invariants. Choose immutable values when they simplify the current behavior.
+- Define invalid-input observations only when agreed or required in the current scope. A precondition alone does not choose an exception, error response, retry, or fallback policy.
+
+Follow happy-path MVP and incremental design: add conditions for current requirements, existing contracts, confirmed defects, or concrete safety risks. Do not retrofit the whole repository or introduce speculative hardening, a new framework, or formal proof requirements.
+
+#### Visible effects and meaningful abstractions
+
+Prefer pure calculations where they simplify reasoning. Isolate necessary I/O and mutation at explicit boundaries, and state their promised effects rather than hiding them behind a calculation name.[^practice-sources]
+
+- For a calculation, make its inputs and returned value clear, including whether inputs remain unchanged.
+- For an operation that persists or mutates state, retain the promised resulting state and any agreed failure behavior in its contract; select tests at the boundary capable of observing them.
+- Choose the smallest meaningful function or type that exposes the agreement. Do not mandate classes, interfaces, patterns, or an architectural rewrite.
+
+Map these contracts to [observable tests](testing.md#mapping-contracts-to-observable-tests), implementing one item at a time. Contracts and passing tests provide evidence within their checked scope, not a formal or “100% correct” guarantee; existing review, security, CI, and integration conditions still apply.
+
 ### Choosing design from responsibilities and contracts
 
 Check actors' purposes, agreed rules and invariants, and model boundaries before choosing the smallest structure that meets current requirements. OOP groups state and behavior into objects as a design tool; it is not a required form of DDD. Retain functions and data when they express contracts clearly.
@@ -66,7 +97,7 @@ First express business meaning and dependencies through names, types, function d
 
 Keep design sources and adoption decisions in the [primary materials](sources.md).[^practice-sources]
 
-[^practice-sources]: References and application decisions for Simple Design, YAGNI, DDD, OOP Design Patterns, Self-explanatory Code Commenting, Context Engineering, and Taming Copilot.
+[^practice-sources]: References and application decisions for Simple Design, YAGNI, DDD, OOP Design Patterns, Self-explanatory Code Commenting, Context Engineering, and Taming Copilot; [Design by Contract adoption and limits](sources.md#adoption-decisions-for-design-by-contract).
 
 ## Change scope and decomposition
 
