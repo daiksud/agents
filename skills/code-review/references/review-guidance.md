@@ -67,6 +67,7 @@ Corresponding areas: consistency, contracts and intent, understandable design, c
 Corresponding areas: value correctness, failure detection, data preservation, testability.
 
 - Check which tests detect broken main contracts, added behavior, boundaries, or exceptional paths. Show concrete misses rather than relying on file presence or coverage.
+- Apply [Testing boundaries and cleanup](../../software-development/references/testing.md#black-box-tests-at-the-intended-boundary): reject implementation-coupled assertions and application test self-validation, preserving specified behavior and required operational/security coverage. Do not require self-tests as proof of rigor or judge coverage by test counts alone.
 - Check expectations express specifications rather than copying implementation calculations. Investigate weak assertions such as testing only truthiness for amounts; when booleans themselves are the contract, boolean checks are appropriate.
 - Check conditions, operations, and results are readable from names and Given/When/Then or Arrange/Act/Assert. Do not demand rewriting merely to unify notation.
 - Investigate dependencies on execution order, time, shared state, networks, environment variables, and cleanup. Check mocks isolate external boundaries rather than replacing target domain logic and claiming correctness.

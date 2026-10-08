@@ -46,6 +46,8 @@ Organize rules, concrete examples, and unanswered questions from stakeholders' d
 
 For the next small change, connect agreed behavior to [applicable contracts and their owners](../../skills/software-development/references/design.md#expressing-agreed-behavior-as-contracts), then [observable tests](../../skills/software-development/references/testing.md#mapping-contracts-to-observable-tests) and minimal implementation. Reuse existing agreements, keeping happy-path MVP and incremental design.
 
+Require black-box tests at unit, integration, and acceptance levels; exclude tests of tests. Follow [Testing boundaries and cleanup](../../skills/software-development/references/testing.md#black-box-tests-at-the-intended-boundary) while retaining specified behavior and required security/integration validation.
+
 Make code changes test-first, expressing expected behavior after implementation in tests before the corresponding implementation code. Write tests assert-first, beginning with the assertion that must ultimately pass.
 
 In TDD, iterate failure, minimal success, and cleanup one item at a time from a ToDo list that includes test items. Follow `software-development` for technical processing, existing specifications, and behavior-preserving cleanup with sufficient existing tests. The existence of documents or tests alone is not evidence of collaboration or test-first work.

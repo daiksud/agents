@@ -37,7 +37,7 @@ Define post-deployment health checks, observed failures, and recovery artifacts/
 
 ### Paths to validate
 
-Select necessary events, forks, unrelated changes, dependency-job failures/skips, and cancellation as well as normal paths. Beyond static checks/existing tests, verify required checks, outputs/artifacts, and post-deployment state through authorized GitHub runs. State inaccessible protection settings or unexecuted deployment as unverified.
+Select necessary events, forks, unrelated changes, dependency-job failures/skips, and cancellation as well as normal paths. Beyond static checks/existing tests, verify required checks, outputs/artifacts, and post-deployment state through authorized GitHub runs. State inaccessible protection settings or unexecuted deployment as unverified. For test design and cleanup, apply [Testing boundaries and cleanup](../../software-development/references/testing.md#no-tests-of-tests); retain deployment-identity, failure-propagation, and security outcomes without asserting internal helper/command sequences or self-testing application runners.
 
 [^copilot-cicd]: Summarized design, tests, artifacts, and deployment perspectives of CI/CD Best Practices without fixed structures or universal release methods.
 [^github-syntax]: Workflow syntax. Authoritative event filters, job dependencies, and condition behavior.
