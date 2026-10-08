@@ -23,6 +23,7 @@ sources:
 
 ### Subjects, bodies, and footers
 
+- Write the entire commit message, including body and footers, in English under [Repository artifact language](../../../.apm/instructions/language.instructions.md). This also applies to squash commits; a repository-language PR body must not be copied unchanged into an English commit message.
 - Title format is `<type>[(scope)][!]: <description>` (`[]` is optional), with a space after the colon.[^conventional-commits]
 - Use `feat` for features, `fix` for bugs, and appropriate other types such as `docs`, `refactor`, `test`, or `chore`. Scope is a noun for an existing area/module, omitted if unnecessary (for example `fix(parser): handle empty input`).[^conventional-commits]
 - Write specific concise English imperative subjects without final periods. Aim for 72 characters overall, without mechanical truncation or new enforced checks.[^commit-message-storyteller]

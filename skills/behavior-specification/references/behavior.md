@@ -1,7 +1,7 @@
 ---
 type: Reference
 title: Shared understanding and feature documents
-description: Define shared understanding in BDD/ATDD, declarative examples, and Japanese Markdown with Gherkin.
+description: Define shared understanding in BDD/ATDD, declarative examples, and repository-language Markdown with Gherkin.
 sources:
   - id: practice-sources
     resource: sources.md
@@ -31,8 +31,8 @@ Use this material for specification work and document creation without code, wit
 ### Feature document format
 
 - Apply `document-authoring` and follow Markdown with Gherkin.[^gherkin-markdown]
-- Use Japanese keywords.[^gherkin-ja] Headings are `機能`, `背景`, `ルール`, and `シナリオ`; bulleted steps are `前提`, `もし`, `ならば`, `かつ`, and `しかし`.
-- When parsing, specify Japanese (`ja`) in the parser. Check heading and step structure after rumdl formatting.
+- Follow [Repository artifact language](../../../.apm/instructions/language.instructions.md). For Japanese repositories, use Japanese keywords:[^gherkin-ja] headings `機能`, `背景`, `ルール`, and `シナリオ`; bulleted steps `前提`, `もし`, `ならば`, `かつ`, and `しかし`. For English repositories, use headings `Feature`, `Background`, `Rule`, and `Scenario`; bulleted steps `Given`, `When`, `Then`, `And`, and `But`.
+- When parsing, select the matching dialect (`ja` for Japanese, `en` for English). Check heading and step structure after rumdl formatting.
 - While editing is unavailable in Plan mode, show drafts within the plan; save before implementation code once editing is possible.
 
 ### Relationships and application decisions
@@ -45,7 +45,7 @@ Human-readable requirements must map to automated tests, but direct execution of
 
 ### Concrete, declarative example
 
-The following example assumes agreement on the story “buyers can understand applicable shipping costs when ordering” and the rule “shipping is free when the tax-inclusive product total is at least 5,000 yen.” Do not reuse this amount or total definition as settled facts in another business.
+The following Japanese-repository example assumes agreement on the story “buyers can understand applicable shipping costs when ordering” and the rule “shipping is free when the tax-inclusive product total is at least 5,000 yen.” Do not reuse this amount or total definition as settled facts in another business.
 
 ```markdown
 ## 機能: 注文の送料を決定する
@@ -63,7 +63,7 @@ The following example assumes agreement on the story “buyers can understand ap
 
 Examples at 4,999 yen or exceptional paths for the same rule can also check rule interpretation. Keep amounts concrete without exposing cart-screen click sequences or internal function names. Retain unsettled shipping charges or treatment of discounted amounts as questions rather than guessing expectations.
 
-When saving the content above, add frontmatter following `document-authoring`. File paths and Japanese format are this environment's operating conventions, not universal definitions of BDD.
+When saving the content above, add frontmatter following `document-authoring`. File paths and repository-language Markdown with Gherkin are this environment's operating conventions, not universal definitions of BDD.
 
 Preserve sources and adoption decisions for shared understanding and examples in [Primary sources](sources.md).[^practice-sources]
 

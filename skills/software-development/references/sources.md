@@ -83,7 +83,7 @@ The following examples checked on 2026-09-13 were also summarized and restructur
 
 | Material | Incorporated content and adjustments |
 | --- | --- |
-| Context Engineering[^context-engineering] | Use meaningful names, paths, constants, discoverable placement, boundary types and public contracts, and explanations of complex flow. Prioritize existing placement and language conventions; do not require banning local type inference, uniform index files, internal exposure, or IDE operations |
+| Context Engineering[^context-engineering] | Use meaningful names, paths, constants, discoverable placement, boundary types and public contracts, and explanations of complex flow. Prioritize existing placement and the [shared artifact language policy](../../../.apm/instructions/language.instructions.md); do not require banning local type inference, uniform index files, internal exposure, or IDE operations |
 | Taming Copilot[^taming-copilot] | Consider standard features and existing dependencies first and integrate necessary changes into existing structure. Do not omit required contracts, error cases, or TDD, or use shortest code or only user-listed files as the scope criterion |
 
 [^newsletter-p-canon-tdd]: [Canon TDD](https://newsletter.kentbeck.com/p/canon-tdd). Basis for the referenced scope and adoption decisions stated in the text.

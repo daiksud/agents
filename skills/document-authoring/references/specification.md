@@ -40,7 +40,7 @@ Describe needed items below for target decisions, implementation, and validation
 
 Keep business-meaningful amounts, dates, and inputs in acceptance examples. Do not mix UI click sequences or internal-class construction into business rules; promised API-user/operator responses, saved results, and notifications are contracts.
 
-Features follow Japanese Markdown with Gherkin in [Shared specification and format material](../../behavior-specification/references/behavior.md) in the dependency behavior-specification. Document creation alone does not require TDD execution. When code changes are requested, hand agreed specifications and unanswered questions to software-development's test-first implementation.
+Features follow Markdown with Gherkin in the target repository's English or Japanese language in [Shared specification and format material](../../behavior-specification/references/behavior.md) in the dependency behavior-specification. Document creation alone does not require TDD execution. When code changes are requested, hand agreed specifications and unanswered questions to software-development's test-first implementation.
 
 For example, with existing shipping features and quotation API OpenAPI, update features as authoritative for free-shipping conditions and OpenAPI for request/response formats, connecting corresponding tests. If whether subtotal is before or after discounts is unagreed, retain a question without creating an independent definition in a new overall specification.
 
