@@ -48,6 +48,8 @@ When adding or changing domain rules, even agreed ones, follow [Shared understan
 
 For each small change, connect agreed behavior to [applicable preconditions, postconditions, and invariants](references/design.md#expressing-agreed-behavior-as-contracts), then to [observable tests](references/testing.md#mapping-contracts-to-observable-tests) and minimal implementation. Reuse existing agreements and identify only relevant conditions; preserve the incremental scope below.
 
+Require black-box tests of specified behavior at each test level and exclude tests of tests; follow [Testing boundaries and cleanup](references/testing.md#black-box-tests-at-the-intended-boundary).
+
 Follow [Incremental design](../../.apm/instructions/development.instructions.md#incremental-design), first listing representative normal paths in a ToDo list including test items. Include variants, boundaries, and failure conditions only as needed for explicit requirements, existing contracts, confirmed defects, or minimal protection against concrete risks, without covering imaginary cases. Begin bug fixes with reproduction tests, without using incremental design to omit existing behavior protection or necessary design improvements.
 Do not implement all tests at once; repeat the following one item at a time from the list. In pair work, follow common instructions: Driver and Navigator evolve the same shared ToDo list and discuss the next single item and its selection reasons. This skill defines TDD targets and validation; common instructions govern roles, edit authority, between-stage review, and stop conditions.
 For changes only to internal technical processing, do not create feature documents; write necessary specifications in tests.
