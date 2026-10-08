@@ -76,7 +76,7 @@ Consider composition and delegation first for reuse and combining behavior. Use 
 
 ### Communicating boundaries through names, placement, and types
 
-Check existing naming, placement, and language conventions. Within the scope added or changed, make meaning and contracts traceable for users. Record decisions on applying Context Engineering and Taming Copilot in the [source materials](sources.md#sources-of-instruction-examples-and-application-decisions).[^practice-sources]
+Check existing naming and placement conventions, and follow [Repository artifact language](../../../.apm/instructions/language.instructions.md) for comments and documentation. Within the scope added or changed, make meaning and contracts traceable for users. Record decisions on applying Context Engineering and Taming Copilot in the [source materials](sources.md#sources-of-instruction-examples-and-application-decisions).[^practice-sources]
 
 - Use words expressing roles or business meaning in names and paths. If a value's meaning or units are unclear, use a named constant at that model boundary. Do not share different rules merely because they use the same number.
 - For new placement, make related code, types, and tests easy to find as one feature. Follow existing colocation; if tests belong in a separate directory, align corresponding names and structure. Do not move large numbers of existing files solely for colocation.
@@ -93,7 +93,7 @@ First express business meaning and dependencies through names, types, function d
 - Retain public contract purposes, arguments, return values, failures, and side effects in a form users can understand, including types and existing API documentation. Do not remove invisible contracts such as ownership, units, or destructive input updates on the grounds of “write only reasons.”
 - Do not merely explain the name of an adopted pattern. Retain its rationale when code does not reveal it. Refer to existing ADRs rather than duplicating their explanations.
 - Cross-check related comments when making changes. Leave unnecessary commented-out code and history lists to version control, but check references and removal conditions when handling operational TODOs and similar notes.
-- Follow project conventions for docstring language and format. Do not make comments on all functions or a particular language's documentation format shared requirements.
+- Write code comments, including docstrings, in English under [Repository artifact language](../../../.apm/instructions/language.instructions.md); follow project conventions for their format. Do not make comments on all functions or a particular language's documentation format shared requirements.
 
 Keep design sources and adoption decisions in the [primary materials](sources.md).[^practice-sources]
 

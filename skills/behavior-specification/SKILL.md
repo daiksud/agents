@@ -14,7 +14,7 @@ Organize results promised to users or external systems before deciding how to im
 3. Define acceptance conditions before the corresponding implementation, and show which normal, boundary, or failure results should be observed. Do not mix internal implementation procedures into business specifications; preserve externally promised responses, saved results, and notifications as contracts.
 4. For domain-rule additions or changes, save `docs/behavior/<feature-name>.feature.md` before implementation, even for agreed rules. Do not unnecessarily rewrite correct existing specifications. For external technical contracts, prioritize existing authoritative API specifications or similar sources; when a shared specification is needed, features may be used with explicit readers and observable results.
 
-When saving documents, also use the dependency `document-authoring`; features follow the Japanese Markdown with Gherkin in [Shared specification format](references/behavior.md#feature-document-format). Read [Primary sources](references/sources.md) when checking definitions, sources, or adoption reasons. Do not uniformly require meetings, participant counts, or automation tools.
+When saving documents, also use the dependency `document-authoring`; features follow Markdown with Gherkin in the target repository's English or Japanese language in [Shared specification format](references/behavior.md#feature-document-format). Read [Primary sources](references/sources.md) when checking definitions, sources, or adoption reasons. Do not uniformly require meetings, participant counts, or automation tools.
 
 ## Handoff and completion
 

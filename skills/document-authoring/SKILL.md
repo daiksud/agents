@@ -9,6 +9,7 @@ Follow the dependency `issue-management` for Issue plans, publication permission
 
 ## Application and reference material
 
+- Follow [Repository artifact language](../../.apm/instructions/language.instructions.md) for repository documentation, including Markdown and feature documents. Determine the target repository's English or Japanese conventions before authoring.
 - Author ordinary Markdown and feature documents in OKF v0.2. Preserve specific formats for GitHub Issue and PR bodies and comments, Agent Skills `SKILL.md`, and contract documents such as OpenAPI and JSON Schema; do not add OKF frontmatter.
 - When creating or updating requirements, external contracts, acceptance conditions, design decisions, or ADRs, read [Clarifying specifications with existing documents](references/specification.md), first checking authoritative existing features, ADRs, and API specifications.
 - When creating or updating OKF documents, read [Basic format and references](references/basic-format.md). Check exceptions for indexes/history and ordinary concepts, Bundle boundaries, and link resolution.

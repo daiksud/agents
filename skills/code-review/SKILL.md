@@ -34,6 +34,8 @@ Read [Investigation procedures and perspectives](references/review-guidance.md) 
 
 ## Findings and results
 
+Write PR review comments, summaries, and replies in the target repository's English or Japanese language under [Repository artifact language](../../.apm/instructions/language.instructions.md); the language of this review guidance does not override that convention.
+
 Separate formal findings requiring fixes, optional suggestions, and design decisions worth retaining, and report only useful categories. Do not downgrade evidence-based design or safe-change problems in current requirements to optional merely because they “work now,” are “local,” or are “documentation issues.” Only alternatives where the current state already satisfies contracts and safe change are optional.
 
 Before reporting, check severity, evidence, and output conditions in [Findings and results](references/review-guidance.md#findings-and-results). Show target SHA, triggering conditions or expected changes, paths and dependencies, concrete impact, the smallest location and fix direction, validation, and unverified scope. No findings is a result within the checked scope; insufficient evidence or unexecuted checks are not success. Honor the environment's output format, without deciding approval or merging on its behalf.

@@ -21,7 +21,7 @@ Issues record desired states and completion conditions; Pull Requests record act
 
 ### Titles
 
-Write Issue/PR titles in this Conventional Commits format.
+Follow [Repository artifact language](../../../.apm/instructions/language.instructions.md): Issue/PR titles always use English and this Conventional Commits format; bodies and comments follow the target repository's English or Japanese conventions.
 
 ```text
 <type>[(scope)][!]: <description>

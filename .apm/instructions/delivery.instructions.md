@@ -18,7 +18,7 @@ These are guides for daily decisions; do not perform a comprehensive diagnosis o
 
 ### Integration and completion
 
-Use small changes that can be validated and integrated independently, aiming for daily integration into main on active workdays. Do not skip approvals, review, or CI for a deadline. Use English Conventional Commits, and allow breaking-change types only for `feat` and `fix`.
+Use small changes that can be validated and integrated independently, aiming for daily integration into main on active workdays. Do not skip approvals, review, or CI for a deadline. Follow [Repository artifact language](language.instructions.md) for commit messages and GitHub artifacts. Use English Conventional Commits, and allow breaking-change types only for `feat` and `fix`.
 
 Associate changes to Git-managed files with an Issue, and squash-merge after validation, review of the latest HEAD, zero findings requiring action, successful required CI, and zero conflicts. Choose the reviewer through “Quick reviewer candidate assessment” in `change-delivery`; Copilot requires Approve when selected. For Codex, confirm normal completion for the latest HEAD and zero findings requiring action, including past findings, without relaxing protection settings.
 

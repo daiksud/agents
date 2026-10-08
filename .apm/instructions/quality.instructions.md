@@ -11,6 +11,8 @@ sources:
 
 ## Artifact and change quality
 
+Follow [Repository artifact language](language.instructions.md) for artifact language and resolving target-repository conventions. English guidance prose does not determine the language of target-repository documentation or discussions.
+
 - Make artifacts usable by readers unfamiliar with the conversation at the time of the request. Do not mix responses such as “added as requested,” narration of editing, or unfilled placeholders into finished content, code, or comments; check the diff before saving.[^exclude-prompt-data]
 - Preserve design reasons, constraints, and sources needed by readers. Explicitly requested transcription of original text, the content of instructions or templates themselves, and Issue planning and approval records are necessary for their purpose; do not delete them because of this rule. Change histories retain the changes and necessary reasons, excluding responses to the request.[^exclude-prompt-data]
 - Use fictional identifiers for names, email addresses, organizations, and similar items in newly created explanatory examples; do not reuse them from request background or local settings. Preserve actual data specified for the artifact, and contract values or source identifiers required for accuracy.[^exclude-prompt-data]
