@@ -2,6 +2,11 @@
 type: Guide
 title: daiksud/agents
 description: Prerequisites for shared Instructions and Skills, and installation through APM.
+sources:
+  - id: codex-approval-assumption
+    resource: https://github.com/daiksud/agents/issues/197
+  - id: github-token-events
+    resource: https://docs.github.com/en/actions/concepts/security/github_token
 ---
 
 This repository shares [development policy Instructions](.apm/instructions/) and [task-specific Skills](skills/) through APM.
@@ -29,6 +34,30 @@ The checking procedures defined by Instructions and Skills are separate from pro
 
 [github-repo](skills/github-repo/SKILL.md) diagnoses immutable releases, squash-only merges, the main Ruleset, full-SHA requirements for external Actions, and free security features for the specified repository, and applies only the explicitly requested scope. “Diagnose the settings” ends with a report, “record the plan in an Issue” ends with a record, and “apply the settings” includes applying the differences and diagnosing again. It coordinates workflow content changes with [github-actions](skills/github-actions/SKILL.md), and does not create empty commits or PRs solely for GitHub-side settings changes.
 
-This repository requires `ci`. [PR validation](.github/workflows/ci-pr.yml) follows `draft → commit-stage → ready → acceptance-stage → check`: eligible same-repository PRs return to Draft for Markdown lint, become Ready after that succeeds on the current HEAD and base branch, and then undergo local file-link validation including frontmatter paths. Creation, new commits, reopening, and PR edits trigger validation, including base-branch changes. Fork and Dependabot PRs receive validation without state changes. [Main-push validation](.github/workflows/ci.yml) retains Markdown lint.
+This repository requires `ci`. [PR validation](.github/workflows/ci-pr.yml) follows `draft → commit-stage → ready → acceptance-stage → check`: eligible same-repository PRs return to Draft for approval-policy tests and Markdown lint, become Ready after that succeeds on the current HEAD and base branch, and then undergo local file-link validation including frontmatter paths. Creation, new commits, reopening, and PR edits trigger validation, including base-branch changes. Fork and Dependabot PRs receive validation without state changes. [Main-push validation](.github/workflows/ci.yml) runs the same approval-policy tests and Markdown lint.
 
 CI does not wait for reviews or merge PRs. This repository does not wait for CodeQL scans or results before merging PRs. Check the [Ruleset](https://github.com/daiksud/agents/rules/22615823) for the latest enforced conditions, and [Review and merge](skills/change-delivery/references/review-and-merge.md) for procedures from ordinary review through post-integration verification.
+
+## Codex approval automation
+
+[The approval workflow](.github/workflows/approve-codex-review.yml) approves only open, non-Draft PRs when freshly fetched code and security reviews both completed normally for the full current HEAD, their results are clean and consistent, and the trusted Codex account currently has a PR thumbs-up without an eyes reaction. Abbreviated commits are resolved through the repository API. Under the approved operational assumption, this observable combination is the latest completed review; a unique provider execution identifier is not required.[^codex-approval-assumption]
+
+Approval and invalidation stay in this workflow. It binds approvals to the reviewed commit and tags them so dismissal preserves other reviewers and other automations. Event handling retrieves current comments, reviews, reactions and lifecycle history, including edited summaries. Observed incomplete or failed review states leave per-review timestamp records so later old results cannot erase an already observed newer cycle. When a start timestamp is unavailable, the summary update time is a conservative fallback: the affected review must complete after that time. Unknown or inconsistent formats and failed retrieval never produce approval. If approval inventory or dismissal cannot be fetched, successful revocation cannot be confirmed; the workflow fails.
+
+Event reconciliation and controlled handoffs share a serialized [concurrency queue](https://docs.github.com/en/actions/how-tos/write-workflows/choose-when-workflows-run/control-workflow-concurrency) with `queue: max`, retaining up to 100 pending calls so another event does not replace a waiting Draft/Ready handoff. GitHub cancels excess calls when this bounded queue is full; cancellation is not successful validation or confirmed revocation.
+
+CI calls the same workflow to revoke and verify removal of its approvals, then record a commit-bound barrier before controlled Draft/Ready changes. Failure-only Draft recovery is part of the check stage; the final ordinary job keeps the required check name `ci`. Reconciliation and controlled operations share a per-PR concurrency group. CI contains no review-wait loop. GitHub suppresses most workflow events caused by `GITHUB_TOKEN`, so CI calls the revocation handoff directly rather than relying on a later Ready event.[^github-token-events]
+
+For a controlled same-HEAD restart, set `PR_NUMBER` to the target PR and run:
+
+```bash
+gh workflow run approve-codex-review.yml --repo daiksud/agents \
+  -f pr_number="$PR_NUMBER" -f operation=restart
+```
+
+Wait for that run to succeed and verify that Codex actually starts and completes both reviews; a posted request or bot approval alone does not prove completion. Use `operation=reconcile` to explicitly fetch and re-evaluate current evidence. Local regression tests execute the workflow's production Python with mocked API boundaries using `python3 -m unittest discover -s tests -v`; they do not prove live event delivery or token permissions.
+
+The accepted residual race remains: delayed provider publication or review starts outside this controlled path may temporarily leave an older completed result and thumbs-up visible. A request edited away before observation may also remove observable start evidence. Fetching current state, retaining observed starts and pre-revoking controlled transitions reduce exposure; they cannot prove unique-execution freshness or make provider updates and GitHub merging atomic. Polling checks current conditions; elapsed time is never completion evidence.[^codex-approval-assumption]
+
+[^codex-approval-assumption]: Issue #197 records the accepted completed-state-plus-thumbs-up assumption and provider-publication/uncontrolled-start limitations.
+[^github-token-events]: GitHub documents the workflow event suppression rules for repository `GITHUB_TOKEN` operations.
