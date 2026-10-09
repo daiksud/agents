@@ -16,7 +16,7 @@ cat >"$tmp/gh" <<'EOF'
 set -euo pipefail
 printf '%s %s\n' "${GH_METHOD:-GET}" "$*" >>"$GH_LOG"
 if [[ ${1:-} == api ]]; then
-  for arg in "$@"; do if [[ $arg == .sha ]]; then printf '%s' "$HEAD"; exit 0; fi; done
+  for arg in "$@"; do if [[ $arg == .sha || $arg == .head.sha ]]; then printf '%s' "$HEAD"; exit 0; fi; done
   endpoint=''; for arg in "$@"; do [[ $arg == repos/* ]] && endpoint=$arg; done
   endpoint=${endpoint%%\?*}
   case "$endpoint" in
@@ -42,7 +42,7 @@ jq '.draft = true' "$fixtures/pr.json" >"$fixtures/pr.tmp"; mv "$fixtures/pr.tmp
 : >"$tmp/gh.log"; bash "$tmp/evidence.sh"; (source "$tmp/production.sh") || true
 grep -q 'PUT.*dismissals' "$tmp/gh.log"; ! grep -q 'reviews/8/dismissals' "$tmp/gh.log"
 jq '.draft = false' "$fixtures/pr.json" >"$fixtures/pr.tmp"; mv "$fixtures/pr.tmp" "$fixtures/pr.json"
-perl -0pi -e 's/\*\*Code Review\*\* \| ✅ \*\*Completed/\*\*Code Review** | 🔄 **Running/' "$fixtures/comments.json"
+jq '.[0][0].body |= gsub("\\*\\*Code Review\\*\\* \\| ✅ \\*\\*Completed"; "**Code Review** | 🔄 **Running")' "$fixtures/comments.json" >"$fixtures/comments.tmp"; mv "$fixtures/comments.tmp" "$fixtures/comments.json"
 export GITHUB_EVENT_NAME=issue_comment GITHUB_EVENT_ACTION=edited GITHUB_OUTPUT="$tmp/output"
 : >"$tmp/gh.log"; bash "$tmp/evidence.sh"; source "$tmp/running.sh"
 test "$(grep -c 'PUT.*dismissals' "$tmp/gh.log")" -eq 1
