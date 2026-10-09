@@ -69,7 +69,7 @@ jobs:
           jq -e --arg head "$head" --arg repo "$GITHUB_REPOSITORY" --argjson number "$PR_NUMBER" 'length == 1 and .[0].status == "completed" and .[0].headSha == $head and .[0].repository == $repo and .[0].pullRequestNumber == $number' <<<"[$metadata]" >/dev/null || { dismiss_own; exit 0; }
           for kind in 'Code Review' 'Security Review'; do
             row=$(printf '%s\n' "$summary" | awk -F'|' -v kind="$kind" '$0 ~ "**" kind "**" {print; found++} END {if (found != 1) exit 1}') || { dismiss_own; exit 0; }
-            printf '%s\n' "$row" | grep -q '✅ **Completed**' || { dismiss_own; exit 0; }
+            printf '%s\n' "$row" | grep -Fq '✅ **Completed**' || { dismiss_own; exit 0; }
             commit=$(printf '%s\n' "$row" | sed -n 's/.*| `\([0-9a-f]\{7,40\}\)` |.*/\1/p')
             test -n "$commit" && test "$(gh api "repos/$GITHUB_REPOSITORY/commits/$commit" --jq .sha)" = "$head" || { dismiss_own; exit 0; }
           done
