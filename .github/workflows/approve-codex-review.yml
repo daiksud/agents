@@ -89,7 +89,7 @@ jobs:
                   return True
               except Exception:
                   dismiss(repo,n,state['reviews']); raise
-          if os.environ.get('GITHUB_ACTIONS'):
+          if __name__ == '__main__':
               repo=os.environ['GITHUB_REPOSITORY']; n=int(os.environ['PR_NUMBER']); state=fetch(repo,n)
               try:
                   resolve=lambda sha: api(f'repos/{repo}/commits/{sha}')['sha']
@@ -107,12 +107,14 @@ jobs:
     steps:
       - name: Check mutation eligibility
         if: inputs.mutation_eligible == true
-        env: {EXPECTED_HEAD: ${{ inputs.expected_head }}, EXPECTED_BASE: ${{ inputs.expected_base }}}
+        env:
+          EXPECTED_HEAD: '${{ inputs.expected_head }}'
+          EXPECTED_BASE: '${{ inputs.expected_base }}'
         run: |
           pr=$(gh pr view "$PR_NUMBER" --repo "$GITHUB_REPOSITORY" --json headRefOid,baseRefName,headRepository,isCrossRepository,author)
           test "$(jq -r .headRefOid <<<"$pr")" = "$EXPECTED_HEAD"
           test "$(jq -r .baseRefName <<<"$pr")" = "$EXPECTED_BASE"
-          test "$(jq -r .headRepository.full_name <<<"$pr")" = "$GITHUB_REPOSITORY"
+          test "$(jq -r .headRepository.nameWithOwner <<<"$pr")" = "$GITHUB_REPOSITORY"
           test "$(jq -r .isCrossRepository <<<"$pr")" = false
           test "$(jq -r .author.login <<<"$pr")" != dependabot[bot]
       - name: Set draft state
