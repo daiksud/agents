@@ -16,53 +16,21 @@ concurrency:
 
 jobs:
   draft:
-    if: &eligible >-
-      github.event.pull_request.head.repo.full_name == github.repository &&
-      !github.event.pull_request.head.repo.fork &&
-      github.event.pull_request.user.login != 'dependabot[bot]' &&
-      github.actor != 'dependabot[bot]'
-    permissions: &mutation-permissions
-      actions: read
-      contents: write
-      pull-requests: write
+    permissions: {contents: write, pull-requests: write}
     runs-on: ubuntu-slim
     timeout-minutes: 3
-    concurrency: &mutation-concurrency
-      group: codex-approval-${{ github.repository }}-${{ github.event.pull_request.number }}
-      cancel-in-progress: false
-    env: &mutation-env
+    env: &pr-env
       GH_TOKEN: ${{ github.token }}
       PR_NUMBER: ${{ github.event.pull_request.number }}
-      EXPECTED_HEAD: ${{ github.event.pull_request.head.sha }}
-      EXPECTED_BASE: ${{ github.event.pull_request.base.ref }}
-    steps: &draft-steps
-      - &check-mutation
-        name: Check mutation eligibility
-        run: |
-          pr=$(gh pr view "$PR_NUMBER" --repo "$GITHUB_REPOSITORY" --json headRefOid,baseRefName,headRepository,isCrossRepository,author)
-          test "$(jq -r .headRefOid <<<"$pr")" = "$EXPECTED_HEAD"
-          test "$(jq -r .baseRefName <<<"$pr")" = "$EXPECTED_BASE"
-          test "$(jq -r .headRepository.nameWithOwner <<<"$pr")" = "$GITHUB_REPOSITORY"
-          test "$(jq -r .isCrossRepository <<<"$pr")" = false
-          test "$(jq -r .author.login <<<"$pr")" != dependabot[bot]
+    steps:
       - name: Set draft state
         run: gh pr ready "$PR_NUMBER" --repo "$GITHUB_REPOSITORY" --undo
 
   commit-stage:
     needs: draft
-    # Only fork/Dependabot state mutations are intentionally skipped.
-    if: >-
-      !cancelled() &&
-      (needs.draft.result == 'success' ||
-       (needs.draft.result == 'skipped' &&
-        (github.event.pull_request.head.repo.full_name != github.repository ||
-         github.event.pull_request.head.repo.fork ||
-         github.event.pull_request.user.login == 'dependabot[bot]' ||
-         github.actor == 'dependabot[bot]')))
     runs-on: ubuntu-slim
     timeout-minutes: 10
-    permissions:
-      contents: read
+    permissions: {contents: read}
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -74,8 +42,6 @@ jobs:
           version: "2026.9.15"
           install: true
           cache: false
-      - name: Check rumdl version
-        run: mise exec -- rumdl --version
       - name: Test Codex approval policy
         run: bash tests/test_workflow_behavior.sh
       - name: Lint Markdown
@@ -83,31 +49,19 @@ jobs:
 
   ready:
     needs: commit-stage
-    if: *eligible
-    permissions: *mutation-permissions
+    permissions: {contents: write, pull-requests: write}
     runs-on: ubuntu-slim
     timeout-minutes: 3
-    concurrency: *mutation-concurrency
-    env: *mutation-env
+    env: *pr-env
     steps:
-      - *check-mutation
       - name: Set ready state
         run: gh pr ready "$PR_NUMBER" --repo "$GITHUB_REPOSITORY"
 
   acceptance-stage:
-    needs: [commit-stage, ready]
-    if: >-
-      !cancelled() && needs['commit-stage'].result == 'success' &&
-      (needs.ready.result == 'success' ||
-       (needs.ready.result == 'skipped' &&
-        (github.event.pull_request.head.repo.full_name != github.repository ||
-         github.event.pull_request.head.repo.fork ||
-         github.event.pull_request.user.login == 'dependabot[bot]' ||
-         github.actor == 'dependabot[bot]')))
+    needs: ready
     runs-on: ubuntu-slim
     timeout-minutes: 10
-    permissions:
-      contents: read
+    permissions: {contents: read}
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -122,43 +76,14 @@ jobs:
       - name: Check local file and frontmatter links
         run: mise exec -- rumdl check --enable MD057 --config 'MD057.check-frontmatter = true' --deny-config-warnings .
 
-  # Failure-only recovery within the check stage.
-  return-to-draft:
-    needs: [draft, commit-stage, ready, acceptance-stage]
-    if: >-
-      always() &&
-      github.event.pull_request.head.repo.full_name == github.repository &&
-      !github.event.pull_request.head.repo.fork &&
-      github.event.pull_request.user.login != 'dependabot[bot]' &&
-      github.actor != 'dependabot[bot]' &&
-      (cancelled() || needs.draft.result != 'success' ||
-       needs['commit-stage'].result != 'success' || needs.ready.result != 'success' ||
-       needs['acceptance-stage'].result != 'success')
-    permissions: *mutation-permissions
-    runs-on: ubuntu-slim
-    timeout-minutes: 3
-    concurrency: *mutation-concurrency
-    env: *mutation-env
-    steps: *draft-steps
-
   check:
     name: ci
-    needs: [draft, commit-stage, ready, acceptance-stage, return-to-draft]
+    needs: acceptance-stage
     if: always()
     runs-on: ubuntu-slim
     timeout-minutes: 3
     permissions: {}
-    env:
-      VALIDATION_PASSED: ${{ needs['commit-stage'].result == 'success' && needs['acceptance-stage'].result == 'success' && ((needs.draft.result == 'success' && needs.ready.result == 'success') || ((github.event.pull_request.head.repo.full_name != github.repository || github.event.pull_request.head.repo.fork || github.event.pull_request.user.login == 'dependabot[bot]' || github.actor == 'dependabot[bot]') && needs.draft.result == 'skipped' && needs.ready.result == 'skipped')) }}
-      RECOVERY_RESULT: ${{ needs['return-to-draft'].result }}
     steps:
-      - name: Reject cancellation
-        if: cancelled()
+      - name: Reject failed or cancelled validation
+        if: cancelled() || needs['acceptance-stage'].result != 'success'
         run: exit 1
-      - name: Aggregate mandatory stages
-        if: always()
-        run: |
-          if [[ "$VALIDATION_PASSED" != true || ( "$RECOVERY_RESULT" != success && "$RECOVERY_RESULT" != skipped ) ]]; then
-            echo "A mandatory stage failed, was cancelled, or unexpectedly skipped."
-            exit 1
-          fi
