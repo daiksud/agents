@@ -84,8 +84,6 @@ jobs:
     timeout-minutes: 3
     permissions: {}
     steps:
-      - name: Check required stages
-        if: always()
-        env:
-          PASSED: ${{ !cancelled() && needs['acceptance-stage'].result == 'success' }}
-        run: test "$PASSED" = true
+      - name: Reject failed or cancelled validation
+        if: cancelled() || needs['acceptance-stage'].result != 'success'
+        run: exit 1
