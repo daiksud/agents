@@ -1,400 +1,121 @@
 name: approve codex review
 
 on:
-  issue_comment:
-    types: [created, edited, deleted]
+  issue_comment: {types: [created, edited, deleted]}
   pull_request_target:
     types: [opened, synchronize, reopened, edited, closed, ready_for_review, converted_to_draft, review_requested, review_request_removed]
-  pull_request_review:
-    types: [submitted, edited, dismissed]
+  pull_request_review: {types: [submitted, edited, dismissed]}
   workflow_dispatch:
     inputs:
-      pr_number:
-        description: Pull request number
-        required: true
-        type: string
-      operation:
-        description: Reconcile current evidence or pre-revoke and restart Codex
-        type: choice
-        options: [reconcile, restart]
-        default: reconcile
+      pr_number: {description: Pull request number, required: true, type: string}
+      operation: {description: Reconcile current evidence, type: choice, options: [reconcile], default: reconcile}
   workflow_call:
     inputs:
-      pr_number:
-        required: true
-        type: string
-      operation:
-        required: true
-        type: string
-      expected_head:
-        required: true
-        type: string
-      expected_base:
-        required: true
-        type: string
-      head_branch:
-        required: true
-        type: string
-      mutation_eligible:
-        type: boolean
-        default: true
+      pr_number: {required: true, type: string}
+      operation: {required: true, type: string}
+      expected_head: {required: true, type: string}
+      expected_base: {required: true, type: string}
+      head_branch: {required: true, type: string}
+      mutation_eligible: {type: boolean, default: true}
 
 permissions: {}
-
-defaults:
-  run:
-    shell: bash
-
-# Event runs and controlled callers share this lock. Never cancel a revocation handoff.
 concurrency:
   group: codex-approval-${{ github.repository }}-${{ inputs.pr_number || github.event.issue.number || github.event.pull_request.number }}
   cancel-in-progress: false
-  queue: max
-
 env:
   GH_TOKEN: ${{ github.token }}
   PR_NUMBER: ${{ inputs.pr_number || github.event.issue.number || github.event.pull_request.number }}
-  OPERATION: ${{ inputs.operation || 'reconcile' }}
-  EXPECTED_HEAD: ${{ inputs.expected_head }}
-  EXPECTED_BASE: ${{ inputs.expected_base }}
-  HEAD_BRANCH: ${{ inputs.head_branch }}
-  MUTATION_ELIGIBLE: ${{ inputs.mutation_eligible }}
 
 jobs:
   reconcile:
-    if: >-
-      (inputs.operation == '' || inputs.operation == 'reconcile' || inputs.operation == 'restart') &&
-      (inputs.pr_number != '' || github.event.issue.pull_request || github.event.pull_request)
+    if: (inputs.operation == '' || inputs.operation == 'reconcile') && (inputs.pr_number != '' || github.event.issue.pull_request || github.event.pull_request)
     runs-on: ubuntu-slim
-    timeout-minutes: 3
-    permissions:
-      contents: read
-      pull-requests: write
-    steps: &policy-steps
-      - name: Reconcile or pre-revoke current Codex approval
+    permissions: {contents: read, pull-requests: write}
+    steps:
+      - name: Fetch current pull request evidence
+        id: evidence
+        continue-on-error: true
         run: |
-          python3 <<'PY'
-          import datetime
-          import json
-          import re
+          gh api "repos/$GITHUB_REPOSITORY/pulls/$PR_NUMBER/reviews?per_page=100" --paginate --slurp > reviews.json
+          jq 'add' reviews.json > reviews-all.json
+          gh api "repos/$GITHUB_REPOSITORY/pulls/$PR_NUMBER" > pr.json
+          gh api "repos/$GITHUB_REPOSITORY/issues/$PR_NUMBER/comments?per_page=100" --paginate --slurp > comments.json
+          gh api "repos/$GITHUB_REPOSITORY/issues/$PR_NUMBER/reactions?per_page=100" --paginate --slurp > reactions.json
+          jq 'add' comments.json > comments-all.json
+          jq 'add' reactions.json > reactions-all.json
+          jq -e '.state == "open" and .draft == false' pr.json >/dev/null || exit 0
+          jq -e '[.[] | select(.user.login == "chatgpt-codex-connector[bot]" and (.body | startswith("<!-- codex-pull-request-review-summary -->")))] | length == 1' comments-all.json >/dev/null || exit 0
+          jq -r '[.[] | select(.user.login == "chatgpt-codex-connector[bot]" and (.body | startswith("<!-- codex-pull-request-review-summary -->")))][0].body' comments-all.json > summary.txt
 
-          CODEX = 'chatgpt-codex-connector[bot]'
-          BOT = 'github-actions[bot]'
-          APPROVAL = '<!-- codex-automation-approval:v1 -->'
-          BARRIER = '<!-- codex-automation-barrier:v1 -->'
-          OBSERVED = '<!-- codex-observed-start:v1 -->'
+      - name: Withdraw known approval after evidence failure
+        if: steps.evidence.outcome == 'failure' && hashFiles('reviews-all.json') != ''
+        run: |
+          jq -r '.[] | select(.user.login == "github-actions[bot]" and .state == "APPROVED" and (.body | startswith("<!-- codex-automation-approval:v1 -->"))) | .id' reviews-all.json |
+            while read -r id; do gh api -X PUT "repos/$GITHUB_REPOSITORY/pulls/$PR_NUMBER/reviews/$id/dismissals" -f message='Current evidence retrieval failed.'; done
 
-          def authored(item, login):
-              user = item.get('user') or {}
-              return user.get('login') == login and user.get('type') == 'Bot'
+      - name: Report unrecoverable evidence failure
+        if: steps.evidence.outcome == 'failure' && hashFiles('reviews-all.json') == ''
+        run: exit 1
 
-          def timestamp(value):
-              parsed = datetime.datetime.fromisoformat(value.replace('Z', '+00:00'))
-              if parsed.tzinfo is None:
-                  raise ValueError('Timestamp has no timezone')
-              return parsed
+      - name: Withdraw approval while Codex review is running
+        id: running
+        if: steps.evidence.outcome == 'success' && github.event_name == 'issue_comment' && (github.event.action == 'created' || github.event.action == 'edited') && startsWith(github.event.comment.body, '<!-- codex-pull-request-review-summary -->')
+        run: |
+          summary=$(jq -r --arg id 'chatgpt-codex-connector[bot]' '[.[] | select(.user.login == $id and (.body | startswith("<!-- codex-pull-request-review-summary -->")))][0].body' comments-all.json)
+          if printf '%s\n' "$summary" | awk -F'|' 'index($0, "**Code Review**") || index($0, "**Security Review**") {print $3}' | grep -Fq '🔄'; then
+            echo 'running=true' >> "$GITHUB_OUTPUT"
+            jq -r '.[] | select(.user.login == "github-actions[bot]" and .state == "APPROVED" and (.body | startswith("<!-- codex-automation-approval:v1 -->"))) | .id' reviews-all.json |
+              while read -r id; do gh api -X PUT "repos/$GITHUB_REPOSITORY/pulls/$PR_NUMBER/reviews/$id/dismissals" -f message='Codex review is running.'; done
+          fi
 
-          SECURITY_CLEAN = 'Security review completed. No security issues were found in this pull request.'
-
-          def reviewed_comment(comment, resolve):
-              commits = re.findall(r'\*\*Reviewed commit:\*\* `([0-9a-f]{7,40})`', comment['body'])
-              if len(commits) != 1:
-                  raise ValueError('Unknown reviewed commit in Codex result')
-              return resolve(commits[0])
-
-          def completed_status(cell):
-              return re.fullmatch(r' ✅ \*\*Completed\*\* <relative-time datetime="([^"]+)">[^<]+</relative-time> ', cell)
-
-          def observed_fences(reviews):
-              fences = {}
-              for review in reviews:
-                  if authored(review, BOT) and review.get('body', '').startswith(OBSERVED):
-                      for kind, value in json.loads(review['body'][len(OBSERVED):]).items():
-                          start = timestamp(value)
-                          fences[kind] = max(start, fences.get(kind, start))
-              return fences
-
-          def record_observed_start(api, state):
-              if state['pr']['state'] != 'open':
-                  return
-              recorded = observed_fences(state['reviews'])
-              starts = {}
-              for comment in state['comments']:
-                  if not authored(comment, CODEX) or not comment['body'].startswith('<!-- codex-pull-request-review-summary -->'):
-                      continue
-                  metadata = re.findall(r'<!-- codex-security-review:v1 (.*?) -->', comment['body'])
-                  try:
-                      security_completed = len(metadata) == 1 and json.loads(metadata[0]).get('status') == 'completed'
-                  except ValueError:
-                      security_completed = False
-                  for kind in ('Code Review', 'Security Review'):
-                      rows = [r for r in comment['body'].splitlines() if '**' + kind + '**' in r]
-                      cells = rows[0].split('|') if len(rows) == 1 else []
-                      normal = len(cells) == 6 and completed_status(cells[2])
-                      if normal and (kind != 'Security Review' or security_completed):
-                          continue
-                      times = re.findall(r'datetime="([^"]+)"', cells[2]) if len(cells) == 6 else []
-                      # Mixed/missing status and inconsistent metadata have no reliable start field.
-                      simple_status = len(cells) == 6 and re.search(r'\*\*[A-Za-z ]+\*\*', cells[2])
-                      value = times[0] if (len(times) == 1 and simple_status
-                                          and (kind != 'Security Review' or security_completed)) else comment['updated_at']
-                      start = timestamp(value)
-                      if kind not in recorded or start > recorded[kind]:
-                          starts[kind] = max(start, starts.get(kind, start))
-              if starts:
-                  revoke(api, state['repo'], state['number'], state['reviews'])
-                  api(f'repos/{state["repo"]}/pulls/{state["number"]}/reviews', 'POST',
-                      event='COMMENT', commit_id=state['pr']['head']['sha'],
-                      body=OBSERVED + json.dumps({k: v.isoformat() for k, v in starts.items()}))
-
-          def eligible(state, resolve):
-              pr = state['pr']
-              if pr['state'] != 'open' or pr['draft']:
-                  return None
-              head = pr['head']['sha']
-              summaries = [c for c in state['comments'] if authored(c, CODEX)
-                           and c['body'].startswith('<!-- codex-pull-request-review-summary -->')]
-              if len(summaries) != 1:
-                  return None
-              body = summaries[0]['body']
-              author = summaries[0]['user']
-              if not author.get('id') or not author.get('node_id'):
-                  return None
-              metadata = re.findall(r'<!-- codex-security-review:v1 (.*?) -->', body)
-              if len(metadata) != 1:
-                  return None
-              security = json.loads(metadata[0])
-              if (security.get('status') != 'completed' or security.get('headSha') != head
-                  or security.get('repository') != state['repo']
-                  or security.get('pullRequestNumber') != state['number']):
-                  return None
-              barriers = [timestamp(r['submitted_at']) for r in state['reviews']
-                          if authored(r, BOT) and r.get('body', '').startswith(BARRIER)]
-              for event in state['timeline']:
-                  if event['event'] in ('ready_for_review', 'convert_to_draft', 'base_ref_changed') or (
-                      event['event'] == 'review_requested'
-                      and (event.get('requested_reviewer') or {}).get('login') == CODEX):
-                      barriers.append(timestamp(event['created_at']))
-              for comment in state['comments']:
-                  if (comment.get('author_association') in ('OWNER', 'MEMBER', 'COLLABORATOR')
-                      and re.match(r'^@codex (?:security )?review(?:\s|$)', comment['body'])):
-                      barriers.append(timestamp(comment.get('updated_at') or comment['created_at']))
-              barrier = max(barriers) if barriers else None
-              fences = observed_fences(state['reviews'])
-              completions = {}
-              for kind in ('Code Review', 'Security Review'):
-                  rows = [line for line in body.splitlines() if '**' + kind + '**' in line]
-                  if len(rows) != 1:
-                      return None
-                  cells = rows[0].split('|')
-                  if len(cells) != 6:
-                      return None
-                  status = completed_status(cells[2])
-                  commit = re.fullmatch(r' `([0-9a-f]{7,40})` ', cells[3])
-                  if not status or not commit or resolve(commit[1]) != head:
-                      return None
-                  completed = timestamp(status[1])
-                  completions[kind] = completed
-                  if (barrier and completed <= barrier) or (kind in fences and completed <= fences[kind]):
-                      return None
-              # Reactions expose this Bot as type User; compare the fetched immutable identity.
-              reactions = [r['content'] for r in state['reactions']
-                           if all((r.get('user') or {}).get(key) == author[key]
-                                  for key in ('login', 'id', 'node_id'))]
-              if '+1' not in reactions or 'eyes' in reactions:
-                  return None
-              security_results = []
-              for comment in state['comments']:
-                  if authored(comment, CODEX) and comment['body'].startswith('### 🛡️ Codex Security Review'):
-                      if reviewed_comment(comment, resolve) == head:
-                          security_results.append((timestamp(comment.get('updated_at') or comment['created_at']),
-                                                   SECURITY_CLEAN in comment['body']))
-              if security_results:
-                  latest = max(t for t, clean in security_results)
-                  if latest > completions['Security Review'] or any(not clean for t, clean in security_results if t == latest):
-                      return None
-              findings = [r for r in state['reviews'] if authored(r, CODEX)
-                          and r.get('commit_id') == head]
-              if findings:
-                  latest_finding = max(timestamp(r.get('updated_at') or r['submitted_at'])
-                                       for r in findings)
-                  if completions['Code Review'] <= latest_finding:
-                      return None
-                  for kind, prefix in (('Code Review', "Codex Review: Didn't find any major issues."),
-                                       ('Security Review', '### 🛡️ Codex Security Review')):
-                      clean = []
-                      for comment in state['comments']:
-                          if not authored(comment, CODEX) or not comment['body'].startswith(prefix):
-                              continue
-                          if prefix.startswith('###') and SECURITY_CLEAN not in comment['body']:
-                              continue
-                          if reviewed_comment(comment, resolve) == head:
-                              clean.append(timestamp(comment.get('updated_at') or comment['created_at']))
-                      if not clean or max(clean) <= latest_finding or max(clean) > completions[kind]:
-                          return None
-              return head
-
-          def approvals(reviews):
-              return [r for r in reviews if authored(r, BOT) and r.get('state') == 'APPROVED'
-                      and r.get('body', '').startswith(APPROVAL)]
-
-          def revoke(api, repo, number, reviews):
-              owned = {r['id'] for r in approvals(reviews)}
-              if not owned:
-                  return
-              current = api(f'repos/{repo}/pulls/{number}/reviews')
-              for review in approvals(current):
-                  if review['id'] not in owned:
-                      continue
-                  api(f'repos/{repo}/pulls/{number}/reviews/{review["id"]}/dismissals',
-                      'PUT', message='Codex approval conditions changed.')
-
-          def fetch(api, repo, number):
-              return {
-                  'repo': repo, 'number': number,
-                  'pr': api(f'repos/{repo}/pulls/{number}'),
-                  'comments': api(f'repos/{repo}/issues/{number}/comments'),
-                  'reviews': api(f'repos/{repo}/pulls/{number}/reviews'),
-                  'timeline': api(f'repos/{repo}/issues/{number}/timeline'),
-                  'reactions': api(f'repos/{repo}/issues/{number}/reactions'),
-              }
-
-          def reconcile(api, repo, number):
-              reviews = api(f'repos/{repo}/pulls/{number}/reviews')
-              try:
-                  state = fetch(api, repo, number)
-                  record_observed_start(api, state)
-                  resolve = lambda sha: api(f'repos/{repo}/commits/{sha}')['sha']
-                  head = eligible(state, resolve)
-                  if not head:
-                      revoke(api, repo, number, state['reviews'])
-                      return False
-                  for review in approvals(state['reviews']):
-                      if review['commit_id'] != head:
-                          revoke(api, repo, number, [review])
-                  # Re-fetch the complete evidence. An old event is never approval evidence.
-                  current = fetch(api, repo, number)
-                  record_observed_start(api, current)
-                  if eligible(current, resolve) != head:
-                      revoke(api, repo, number, current['reviews'])
-                      return False
-                  if not any(r['commit_id'] == head for r in approvals(current['reviews'])):
-                      api(f'repos/{repo}/pulls/{number}/reviews', 'POST',
-                          event='APPROVE', commit_id=head, body=APPROVAL)
-                  return True
-              except Exception:
-                  # If retrieval fails, invalidate the approvals already known to this run.
-                  revoke(api, repo, number, reviews)
-                  raise
-
-          def controlled(api, repo, number, operation, head, transition, base=None):
-              def current():
-                  pr = api(f'repos/{repo}/pulls/{number}')
-                  if (pr['state'] != 'open' or pr['head']['sha'] != head
-                      or (base is not None and pr['base']['ref'] != base)):
-                      raise ValueError('PR closed or HEAD/base changed')
-                  return pr
-              current()
-              revoke(api, repo, number, api(f'repos/{repo}/pulls/{number}/reviews'))
-              if approvals(api(f'repos/{repo}/pulls/{number}/reviews')):
-                  raise ValueError('Automation approval dismissal was not confirmed')
-              api(f'repos/{repo}/pulls/{number}/reviews', 'POST', event='COMMENT',
-                  commit_id=head, body=BARRIER + '\nControlled ' + operation + '.')
-              current()
-              transition()
-
-          def gh_api(path, method='GET', **fields):
-              import subprocess
-              import urllib.parse
-              command = ['gh', 'api', path, '--method', method]
-              payload = None
-              if method == 'GET':
-                  if fields:
-                      command[2] += ('&' if '?' in path else '?') + urllib.parse.urlencode(fields)
-                  paginated = path.endswith(('/comments', '/reviews', '/reactions', '/timeline'))
-                  if paginated:
-                      command[2] += '?per_page=100'
-                      command += ['--paginate', '--slurp']
-              else:
-                  paginated = False
-                  command += ['--input', '-']
-                  payload = json.dumps(fields)
-              result = subprocess.run(command, input=payload, text=True, capture_output=True, check=True)
-              data = json.loads(result.stdout)
-              if paginated:
-                  if not all(isinstance(page, list) for page in data):
-                      raise ValueError('Unexpected paginated API response')
-                  return [item for page in data for item in page]
-              return data
-
-          def guard_ci(api, repo, number, head, branch, run_id, attempt):
-              runs = api(f'repos/{repo}/actions/workflows/ci-pr.yml/runs',
-                         event='pull_request', branch=branch, head_sha=head, per_page=100)['workflow_runs']
-              matching = [r['id'] for r in runs if r['head_repository']['full_name'] == repo
-                          and any(p['number'] == number for p in r['pull_requests'])]
-              current_attempt = api(f'repos/{repo}/actions/runs/{run_id}')['run_attempt']
-              if not matching or max(matching) != run_id or current_attempt != attempt:
-                  raise ValueError('CI run or attempt was superseded')
-
-          def main():
-              import os
-              import subprocess
-              import time
-              repo = os.environ['GITHUB_REPOSITORY']
-              number = int(os.environ['PR_NUMBER'])
-              operation = os.environ['OPERATION']
-              if operation == 'reconcile':
-                  # Poll current conditions for reaction propagation; time alone never proves completion.
-                  for attempt in range(6):
-                      if reconcile(gh_api, repo, number):
-                          print('Current completed clean Codex reviews approved.')
-                          return
-                      if attempt < 5:
-                          time.sleep(5)
-                  print('Current Codex evidence is not eligible for approval.')
-                  return
-              if operation == 'restart':
-                  head = gh_api(f'repos/{repo}/pulls/{number}')['head']['sha']
-                  controlled(gh_api, repo, number, operation, head,
-                             lambda: gh_api(f'repos/{repo}/issues/{number}/comments', 'POST',
-                                            body='@codex review\n\nControlled restart after automation approval revocation.'))
-                  return
-              if operation not in ('draft', 'ready'):
-                  raise ValueError('Unknown controlled operation')
-              if os.environ['MUTATION_ELIGIBLE'] == 'true':
-                  head = os.environ['EXPECTED_HEAD']
-                  base = os.environ['EXPECTED_BASE']
-                  branch = os.environ['HEAD_BRANCH']
-                  guard_ci(gh_api, repo, number, head, branch,
-                           int(os.environ['GITHUB_RUN_ID']), int(os.environ['GITHUB_RUN_ATTEMPT']))
-                  pr = gh_api(f'repos/{repo}/pulls/{number}')
-                  if (pr['head']['repo']['full_name'] != repo or pr['head']['repo']['fork']
-                      or pr['user']['login'] == 'dependabot[bot]'
-                      or os.environ['GITHUB_ACTOR'] == 'dependabot[bot]'):
-                      raise ValueError('PR is not eligible for state mutation')
-                  target = 'ready' if operation == 'ready' else 'draft'
-                  def transition():
-                      # Recheck original run identity after API calls before changing Draft/Ready.
-                      guard_ci(gh_api, repo, number, head, branch,
-                               int(os.environ['GITHUB_RUN_ID']), int(os.environ['GITHUB_RUN_ATTEMPT']))
-                      command = ['gh', 'pr', 'ready', str(number), '--repo', repo]
-                      if target == 'draft':
-                          command.append('--undo')
-                      subprocess.run(command, check=True)
-                  controlled(gh_api, repo, number, target, head, transition, base)
-
-          if __name__ == '__main__':
-              main()
-          PY
+      - name: Approve current clean Codex evidence
+        if: steps.evidence.outcome == 'success' && steps.running.outputs.running != 'true'
+        run: |
+          dismiss_own() {
+            jq -r '.[] | select(.user.login == "github-actions[bot]" and .state == "APPROVED" and (.body | startswith("<!-- codex-automation-approval:v1 -->"))) | .id' reviews-all.json |
+              while read -r id; do gh api -X PUT "repos/$GITHUB_REPOSITORY/pulls/$PR_NUMBER/reviews/$id/dismissals" -f message='Current Codex evidence is not eligible.'; done
+          }
+          head=$(jq -r .head.sha pr.json)
+          summary=$(cat summary.txt 2>/dev/null || true)
+          jq -e '.state == "open" and .draft == false' pr.json >/dev/null || { dismiss_own; exit 0; }
+          metadata=$(printf '%s\n' "$summary" | sed -n 's/.*<!-- codex-security-review:v1 \(.*\) -->.*/\1/p')
+          jq -e --arg head "$head" --arg repo "$GITHUB_REPOSITORY" --argjson number "$PR_NUMBER" 'length == 1 and .[0].status == "completed" and .[0].headSha == $head and .[0].repository == $repo and .[0].pullRequestNumber == $number' <<<"[$metadata]" >/dev/null || { dismiss_own; exit 0; }
+          for kind in 'Code Review' 'Security Review'; do
+            row=$(printf '%s\n' "$summary" | awk -F'|' -v kind="$kind" 'index($0, "**" kind "**") {print; found++} END {if (found != 1) exit 1}') || { dismiss_own; exit 0; }
+            status=$(printf '%s\n' "$row" | awk -F'|' '{gsub(/^ +| +$/, "", $3); print $3}')
+            printf '%s\n' "$status" | grep -Eq '^✅ \*\*Completed\*\* <relative-time datetime="[^"]+">[^<]+</relative-time>$' || { dismiss_own; exit 0; }
+            commit=$(printf '%s\n' "$row" | sed -n 's/.*| `\([0-9a-f]\{7,40\}\)` |.*/\1/p')
+            test -n "$commit" && test "$(gh api "repos/$GITHUB_REPOSITORY/commits/$commit" --jq .sha)" = "$head" || { dismiss_own; exit 0; }
+          done
+          login=$(jq -r '[.[] | select(.user.login == "chatgpt-codex-connector[bot]" and (.body | startswith("<!-- codex-pull-request-review-summary -->")))][0].user.login' comments-all.json)
+          jq -e --arg login "$login" '[.[] | select(.user.login == $login and .content == "+1")] | length > 0' reactions-all.json >/dev/null || { dismiss_own; exit 0; }
+          jq -e --arg login "$login" '[.[] | select(.user.login == $login and .content == "eyes")] | length == 0' reactions-all.json >/dev/null || { dismiss_own; exit 0; }
+          jq -e --arg head "$head" '[.[] | select(.user.login == "github-actions[bot]" and .state == "APPROVED" and .commit_id == $head and (.body | startswith("<!-- codex-automation-approval:v1 -->")))] | length == 0' reviews-all.json >/dev/null || exit 0
+          current_head=$(gh api "repos/$GITHUB_REPOSITORY/pulls/$PR_NUMBER" --jq .head.sha)
+          test "$current_head" = "$head" || { dismiss_own; exit 0; }
+          gh api "repos/$GITHUB_REPOSITORY/pulls/$PR_NUMBER/reviews" -X POST -f event=APPROVE -f commit_id="$head" -f body='<!-- codex-automation-approval:v1 -->'
 
   controlled-ci:
     name: ${{ inputs.operation }}
     if: always() && contains(fromJSON('["draft", "ready"]'), inputs.operation)
     runs-on: ubuntu-slim
-    timeout-minutes: 3
-    # Same permissions as the former CI mutation jobs; no checkout or payload execution.
-    permissions:
-      actions: read
-      contents: write
-      pull-requests: write
-    steps: *policy-steps
+    permissions: {actions: read, contents: write, pull-requests: write}
+    steps:
+      - name: Check mutation eligibility
+        if: inputs.mutation_eligible == true
+        env:
+          EXPECTED_HEAD: '${{ inputs.expected_head }}'
+          EXPECTED_BASE: '${{ inputs.expected_base }}'
+        run: |
+          pr=$(gh pr view "$PR_NUMBER" --repo "$GITHUB_REPOSITORY" --json headRefOid,baseRefName,headRepository,isCrossRepository,author)
+          test "$(jq -r .headRefOid <<<"$pr")" = "$EXPECTED_HEAD"
+          test "$(jq -r .baseRefName <<<"$pr")" = "$EXPECTED_BASE"
+          test "$(jq -r .headRepository.nameWithOwner <<<"$pr")" = "$GITHUB_REPOSITORY"
+          test "$(jq -r .isCrossRepository <<<"$pr")" = false
+          test "$(jq -r .author.login <<<"$pr")" != dependabot[bot]
+      - name: Set draft state
+        if: inputs.mutation_eligible == true && inputs.operation == 'draft'
+        run: gh pr ready "$PR_NUMBER" --repo "$GITHUB_REPOSITORY" --undo
+      - name: Set ready state
+        if: inputs.mutation_eligible == true && inputs.operation == 'ready'
+        run: gh pr ready "$PR_NUMBER" --repo "$GITHUB_REPOSITORY"

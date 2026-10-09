@@ -63,7 +63,7 @@ jobs:
       - name: Check rumdl version
         run: mise exec -- rumdl --version
       - name: Test Codex approval policy
-        run: python3 -m unittest discover -s tests -v
+        run: bash tests/test_workflow_behavior.sh
       - name: Lint Markdown
         run: mise exec -- rumdl check .
 
