@@ -3,7 +3,7 @@ set -euo pipefail
 root=$(cd "$(dirname "$0")/.." && pwd)
 tmp=$(mktemp -d)
 trap 'rm -rf "$tmp"' EXIT
-awk '/- name: Approve completed Codex reviews/{capture=1} capture && /^        run: \|/{run=1; next} run && /^  controlled-ci:/{exit} run{sub(/^          /, ""); print}' "$root/.github/workflows/approve-codex-review.yml" >"$tmp/approve.sh"
+awk '/- name: Approve completed Codex reviews/{capture=1} capture && /^        run: \|/{run=1; next} run{sub(/^          /, ""); print}' "$root/.github/workflows/approve-codex-review.yml" >"$tmp/approve.sh"
 test -s "$tmp/approve.sh"
 export PATH="$tmp:$PATH" GH_LOG="$tmp/calls" COUNT_FILE="$tmp/count"
 export GITHUB_REPOSITORY=example/repo PR_NUMBER=1 COMMENT_ID=7
