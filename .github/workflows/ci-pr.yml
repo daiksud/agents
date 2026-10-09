@@ -1,0 +1,164 @@
+name: ci-pr
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, edited]
+
+permissions: {}
+
+defaults:
+  run:
+    shell: bash
+
+concurrency:
+  group: ci-pr-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+env:
+  GH_REPO: ${{ github.repository }}
+  PR_NUMBER: ${{ github.event.pull_request.number }}
+  EXPECTED_HEAD: ${{ github.event.pull_request.head.sha }}
+  EXPECTED_BASE: ${{ github.event.pull_request.base.ref }}
+  HEAD_BRANCH: ${{ github.event.pull_request.head.ref }}
+  MUTATION_ELIGIBLE: ${{ github.event.pull_request.head.repo.full_name == github.repository && !github.event.pull_request.head.repo.fork && github.event.pull_request.user.login != 'dependabot[bot]' && github.actor != 'dependabot[bot]' }}
+
+jobs:
+  draft:
+    if: &eligible >-
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      !github.event.pull_request.head.repo.fork &&
+      github.event.pull_request.user.login != 'dependabot[bot]' &&
+      github.actor != 'dependabot[bot]'
+    runs-on: ubuntu-slim
+    timeout-minutes: 3
+    # GitHub's Draft/Ready GraphQL mutations also require contents: write.
+    # These jobs never check out or execute PR files.
+    permissions: &mutation-permissions
+      actions: read
+      contents: write
+      pull-requests: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+      TARGET_STATE: draft
+    steps:
+      - name: Move current PR to Draft
+        run: &mutate-current-pr |
+          # Reject superseded runs, including an old run rerun on the same SHA.
+          latest_run="$(gh api --method GET "repos/$GH_REPO/actions/workflows/ci-pr.yml/runs" \
+            -f event=pull_request -f branch="$HEAD_BRANCH" -f head_sha="$EXPECTED_HEAD" \
+            -F per_page=100 --jq ".workflow_runs | map(select(.head_repository.full_name == \"$GH_REPO\" and any(.pull_requests[]; .number == $PR_NUMBER))) | max_by(.id) | .id")"
+          attempt="$(gh api "repos/$GH_REPO/actions/runs/$GITHUB_RUN_ID" --jq '.run_attempt')"
+          if [[ "$latest_run" != "$GITHUB_RUN_ID" || "$attempt" != "$GITHUB_RUN_ATTEMPT" ]]; then
+            echo "This run has been superseded; refusing to change PR state."
+            exit 1
+          fi
+
+          current="$(gh pr view "$PR_NUMBER" --repo "$GH_REPO" --json state,headRefOid,baseRefName --jq '.state + " " + .headRefOid + " " + .baseRefName')"
+          if [[ "$current" != "OPEN $EXPECTED_HEAD $EXPECTED_BASE" ]]; then
+            echo "PR is closed or HEAD/base changed; refusing to change PR state."
+            exit 1
+          fi
+
+          if [[ "$TARGET_STATE" == draft ]]; then
+            gh pr ready "$PR_NUMBER" --repo "$GH_REPO" --undo
+          else
+            gh pr ready "$PR_NUMBER" --repo "$GH_REPO"
+          fi
+
+  commit-stage:
+    needs: draft
+    # Only fork/Dependabot state mutations are intentionally skipped.
+    if: >-
+      !cancelled() &&
+      (needs.draft.result == 'success' ||
+       (needs.draft.result == 'skipped' &&
+        (github.event.pull_request.head.repo.full_name != github.repository ||
+         github.event.pull_request.head.repo.fork ||
+         github.event.pull_request.user.login == 'dependabot[bot]' ||
+         github.actor == 'dependabot[bot]')))
+    runs-on: ubuntu-slim
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Set up mise
+        uses: jdx/mise-action@c2a87611a18de5b3828c5652fe268e992400cb5c # v4.3.0
+        with:
+          version: "2026.9.15"
+          install: true
+          cache: false
+      - name: Check rumdl version
+        run: mise exec -- rumdl --version
+      - name: Lint Markdown
+        run: mise exec -- rumdl check .
+
+  ready:
+    needs: commit-stage
+    if: *eligible
+    runs-on: ubuntu-slim
+    timeout-minutes: 3
+    permissions: *mutation-permissions
+    env:
+      GH_TOKEN: ${{ github.token }}
+      TARGET_STATE: ready
+    steps:
+      - name: Mark validated current PR Ready
+        run: *mutate-current-pr
+
+  acceptance-stage:
+    needs: [commit-stage, ready]
+    if: >-
+      !cancelled() && needs['commit-stage'].result == 'success' &&
+      (needs.ready.result == 'success' ||
+       (needs.ready.result == 'skipped' &&
+        (github.event.pull_request.head.repo.full_name != github.repository ||
+         github.event.pull_request.head.repo.fork ||
+         github.event.pull_request.user.login == 'dependabot[bot]' ||
+         github.actor == 'dependabot[bot]')))
+    runs-on: ubuntu-slim
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Set up mise
+        uses: jdx/mise-action@c2a87611a18de5b3828c5652fe268e992400cb5c # v4.3.0
+        with:
+          version: "2026.9.15"
+          install: true
+          cache: false
+      - name: Check local file and frontmatter links
+        run: mise exec -- rumdl check --enable MD057 --config 'MD057.check-frontmatter = true' --deny-config-warnings .
+
+  check:
+    name: ci
+    needs: [draft, commit-stage, ready, acceptance-stage]
+    if: always()
+    runs-on: ubuntu-slim
+    timeout-minutes: 3
+    permissions: *mutation-permissions
+    env:
+      GH_TOKEN: ${{ github.token }}
+      TARGET_STATE: draft
+      VALIDATION_PASSED: ${{ needs['commit-stage'].result == 'success' && needs['acceptance-stage'].result == 'success' && ((needs.draft.result == 'success' && needs.ready.result == 'success') || ((github.event.pull_request.head.repo.full_name != github.repository || github.event.pull_request.head.repo.fork || github.event.pull_request.user.login == 'dependabot[bot]' || github.actor == 'dependabot[bot]') && needs.draft.result == 'skipped' && needs.ready.result == 'skipped')) }}
+    steps:
+      - name: Return failed current PR to Draft
+        if: always() && env.MUTATION_ELIGIBLE == 'true' && (env.VALIDATION_PASSED != 'true' || cancelled())
+        run: *mutate-current-pr
+      - name: Reject cancellation
+        if: cancelled()
+        run: exit 1
+      - name: Aggregate mandatory stages
+        if: always()
+        run: |
+          if [[ "$VALIDATION_PASSED" != true ]]; then
+            echo "A mandatory stage failed, was cancelled, or unexpectedly skipped."
+            exit 1
+          fi
