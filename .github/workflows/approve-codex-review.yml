@@ -85,7 +85,8 @@ jobs:
           OBSERVED = '<!-- codex-observed-start:v1 -->'
 
           def authored(item, login):
-              return item.get('user', {}).get('login') == login and item['user'].get('type') == 'Bot'
+              user = item.get('user') or {}
+              return user.get('login') == login and user.get('type') == 'Bot'
 
           def timestamp(value):
               parsed = datetime.datetime.fromisoformat(value.replace('Z', '+00:00'))
@@ -198,7 +199,7 @@ jobs:
                       return None
               # Reactions expose this Bot as type User; compare the fetched immutable identity.
               reactions = [r['content'] for r in state['reactions']
-                           if all(r.get('user', {}).get(key) == author[key]
+                           if all((r.get('user') or {}).get(key) == author[key]
                                   for key in ('login', 'id', 'node_id'))]
               if '+1' not in reactions or 'eyes' in reactions:
                   return None

@@ -65,6 +65,13 @@ class ApprovalTests(unittest.TestCase):
         self.state['reactions'][0]['user']['type'] = 'User'
         self.assertEqual(self.sha, self.eligible())
 
+    def test_unattributed_history_preserves_verified_codex_evidence(self):
+        for key in ('reviews', 'comments', 'reactions'):
+            self.state[key].append({'user': None})
+        self.assertEqual(self.sha, self.eligible())
+        self.assertTrue(self.reconcile())
+        self.assertEqual([('APPROVE', self.sha)], self.api.effects)
+
     def test_security_findings_reject_old_clean_reaction(self):
         self.state['comments'].append({'user': self.author, 'body': '### 🛡️ Codex Security Review\nSecurity findings require action.\n**Reviewed commit:** `aaaaaaa`', 'created_at': '2026-10-09T01:00:02Z'})
         self.assertIsNone(self.eligible())
@@ -144,6 +151,8 @@ class ApprovalTests(unittest.TestCase):
             'running-reaction': lambda s: s['reactions'].append({'user': self.author, 'content': 'eyes'}),
             'wrong-reaction-author': lambda s: s['reactions'][0]['user'].update(id=88),
             'unknown-author': lambda s: s['comments'][0]['user'].update(type='User'),
+            'missing-summary-author': lambda s: s['comments'][0].update(user=None),
+            'missing-reaction-author': lambda s: s['reactions'][0].update(user=None),
             'duplicate-summary': lambda s: s['comments'].append(copy.deepcopy(s['comments'][0])),
             'mixed-metadata': lambda s: s['comments'][0].update(body=s['comments'][0]['body'].replace('"status":"completed"', '"status":"running"')),
             'late-old-summary': lambda s: s['comments'][0].update(body=s['comments'][0]['body'].replace('`aaaaaaa`', '`bbbbbbb`')),
