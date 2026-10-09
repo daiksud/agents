@@ -67,9 +67,3 @@ check comment-error 1 0 0 1 0 1
 check reaction-error 1 0 0 1 1 1
 check retry-error 99 0 1 2 2 1
 check approval-error 1 1 0 1 1 1
-# Validate the publication draft in the existing CI runner; remove before review.
-body="$root/tests/codex-approval-change.md"
-config="$root/skills/issue-management/assets/rumdl.toml"
-mise exec -- rumdl check --config "$config" --deny-config-warnings --fix "$body"
-mise exec -- rumdl check --config "$config" --deny-config-warnings "$body"
-git -C "$root" diff --exit-code -- tests/codex-approval-change.md
