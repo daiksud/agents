@@ -46,7 +46,7 @@ Approval and invalidation stay in this workflow. It binds approvals to the curre
 
 Event reconciliation uses a serialized per-PR concurrency group. GitHub may coalesce pending events; a later event or manual reconcile can re-evaluate current evidence.
 
-CI calls the same workflow to revoke and verify removal of its approvals when current evidence is not eligible. Failure-only Draft recovery is part of the check stage; the final ordinary job keeps the required check name `ci`. CI contains no review-wait loop. GitHub suppresses most workflow events caused by `GITHUB_TOKEN`, so CI performs its state changes directly rather than relying on a later Ready event.[^github-token-events]
+CI changes Draft/Ready through native `gh` steps, while approval reconciliation responds independently to review events with the accepted processing lag. Failure-only Draft recovery is part of the check stage; the final ordinary job keeps the required check name `ci`. CI contains no review-wait loop. GitHub suppresses most workflow events caused by `GITHUB_TOKEN`, so CI performs its state changes directly rather than relying on a later Ready event.[^github-token-events]
 
 Use the workflow's `workflow_dispatch` `reconcile` operation to explicitly fetch and re-evaluate current evidence. A manual reconcile is also the documented recovery for a thumbs-up that arrives after the summary event; this workflow intentionally does not add a polling framework. Local regression tests extract and execute the production shell run blocks with fixture-backed `gh` boundaries; they do not prove live event delivery or token permissions.
 
