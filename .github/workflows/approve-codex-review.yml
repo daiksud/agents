@@ -36,9 +36,9 @@ jobs:
         id: evidence
         continue-on-error: true
         run: |
-          gh api "repos/$GITHUB_REPOSITORY/pulls/$PR_NUMBER" > pr.json
           gh api "repos/$GITHUB_REPOSITORY/pulls/$PR_NUMBER/reviews?per_page=100" --paginate --slurp > reviews.json
           jq 'add' reviews.json > reviews-all.json
+          gh api "repos/$GITHUB_REPOSITORY/pulls/$PR_NUMBER" > pr.json
           gh api "repos/$GITHUB_REPOSITORY/issues/$PR_NUMBER/comments?per_page=100" --paginate --slurp > comments.json
           gh api "repos/$GITHUB_REPOSITORY/issues/$PR_NUMBER/reactions?per_page=100" --paginate --slurp > reactions.json
           jq 'add' comments.json > comments-all.json
@@ -52,6 +52,10 @@ jobs:
         run: |
           jq -r '.[] | select(.user.login == "github-actions[bot]" and .state == "APPROVED" and (.body | startswith("<!-- codex-automation-approval:v1 -->"))) | .id' reviews-all.json |
             while read -r id; do gh api -X PUT "repos/$GITHUB_REPOSITORY/pulls/$PR_NUMBER/reviews/$id/dismissals" -f message='Current evidence retrieval failed.'; done
+
+      - name: Report unrecoverable evidence failure
+        if: steps.evidence.outcome == 'failure' && hashFiles('reviews-all.json') == ''
+        run: exit 1
 
       - name: Withdraw approval while Codex review is running
         id: running
@@ -78,13 +82,15 @@ jobs:
           jq -e --arg head "$head" --arg repo "$GITHUB_REPOSITORY" --argjson number "$PR_NUMBER" 'length == 1 and .[0].status == "completed" and .[0].headSha == $head and .[0].repository == $repo and .[0].pullRequestNumber == $number' <<<"[$metadata]" >/dev/null || { dismiss_own; exit 0; }
           for kind in 'Code Review' 'Security Review'; do
             row=$(printf '%s\n' "$summary" | awk -F'|' -v kind="$kind" 'index($0, "**" kind "**") {print; found++} END {if (found != 1) exit 1}') || { dismiss_own; exit 0; }
-            printf '%s\n' "$row" | grep -Fq '✅ **Completed**' || { dismiss_own; exit 0; }
+            status=$(printf '%s\n' "$row" | awk -F'|' '{gsub(/^ +| +$/, "", $3); print $3}')
+            printf '%s\n' "$status" | grep -Eq '^✅ \*\*Completed\*\* <relative-time datetime="[^"]+">[^<]+</relative-time>$' || { dismiss_own; exit 0; }
             commit=$(printf '%s\n' "$row" | sed -n 's/.*| `\([0-9a-f]\{7,40\}\)` |.*/\1/p')
             test -n "$commit" && test "$(gh api "repos/$GITHUB_REPOSITORY/commits/$commit" --jq .sha)" = "$head" || { dismiss_own; exit 0; }
           done
           login=$(jq -r '[.[] | select(.user.login == "chatgpt-codex-connector[bot]" and (.body | startswith("<!-- codex-pull-request-review-summary -->")))][0].user.login' comments-all.json)
           jq -e --arg login "$login" '[.[] | select(.user.login == $login and .content == "+1")] | length > 0' reactions-all.json >/dev/null || { dismiss_own; exit 0; }
-          jq -e '[.[] | select(.user.login == "github-actions[bot]" and .state == "APPROVED" and (.body | startswith("<!-- codex-automation-approval:v1 -->")))] | length == 0' reviews-all.json >/dev/null || exit 0
+          jq -e --arg login "$login" '[.[] | select(.user.login == $login and .content == "eyes")] | length == 0' reactions-all.json >/dev/null || { dismiss_own; exit 0; }
+          jq -e --arg head "$head" '[.[] | select(.user.login == "github-actions[bot]" and .state == "APPROVED" and .commit_id == $head and (.body | startswith("<!-- codex-automation-approval:v1 -->")))] | length == 0' reviews-all.json >/dev/null || exit 0
           gh api "repos/$GITHUB_REPOSITORY/pulls/$PR_NUMBER/reviews" -X POST -f event=APPROVE -f commit_id="$head" -f body='<!-- codex-automation-approval:v1 -->'
 
   controlled-ci:
