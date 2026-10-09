@@ -2,7 +2,7 @@ name: ci-pr
 
 on:
   pull_request:
-    types: [opened, synchronize, reopened]
+    types: [opened, synchronize, reopened, edited]
 
 permissions: {}
 
@@ -18,6 +18,7 @@ env:
   GH_REPO: ${{ github.repository }}
   PR_NUMBER: ${{ github.event.pull_request.number }}
   EXPECTED_HEAD: ${{ github.event.pull_request.head.sha }}
+  EXPECTED_BASE: ${{ github.event.pull_request.base.ref }}
   HEAD_BRANCH: ${{ github.event.pull_request.head.ref }}
   MUTATION_ELIGIBLE: ${{ github.event.pull_request.head.repo.full_name == github.repository && !github.event.pull_request.head.repo.fork && github.event.pull_request.user.login != 'dependabot[bot]' && github.actor != 'dependabot[bot]' }}
 
@@ -45,16 +46,16 @@ jobs:
           # Reject superseded runs, including an old run rerun on the same SHA.
           latest_run="$(gh api --method GET "repos/$GH_REPO/actions/workflows/ci-pr.yml/runs" \
             -f event=pull_request -f branch="$HEAD_BRANCH" -f head_sha="$EXPECTED_HEAD" \
-            -F per_page=100 --jq ".workflow_runs | map(select(.head_repository.full_name == \"$GH_REPO\")) | max_by(.id) | .id")"
+            -F per_page=100 --jq ".workflow_runs | map(select(.head_repository.full_name == \"$GH_REPO\" and any(.pull_requests[]; .number == $PR_NUMBER))) | max_by(.id) | .id")"
           attempt="$(gh api "repos/$GH_REPO/actions/runs/$GITHUB_RUN_ID" --jq '.run_attempt')"
           if [[ "$latest_run" != "$GITHUB_RUN_ID" || "$attempt" != "$GITHUB_RUN_ATTEMPT" ]]; then
             echo "This run has been superseded; refusing to change PR state."
             exit 1
           fi
 
-          current="$(gh pr view "$PR_NUMBER" --repo "$GH_REPO" --json state,headRefOid --jq '.state + " " + .headRefOid')"
-          if [[ "$current" != "OPEN $EXPECTED_HEAD" ]]; then
-            echo "PR is closed or HEAD changed; refusing to change PR state."
+          current="$(gh pr view "$PR_NUMBER" --repo "$GH_REPO" --json state,headRefOid,baseRefName --jq '.state + " " + .headRefOid + " " + .baseRefName')"
+          if [[ "$current" != "OPEN $EXPECTED_HEAD $EXPECTED_BASE" ]]; then
+            echo "PR is closed or HEAD/base changed; refusing to change PR state."
             exit 1
           fi
 
