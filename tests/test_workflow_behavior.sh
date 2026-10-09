@@ -3,52 +3,73 @@ set -euo pipefail
 root=$(cd "$(dirname "$0")/.." && pwd)
 tmp=$(mktemp -d)
 trap 'rm -rf "$tmp"' EXIT
-fixtures="$tmp/fixtures"; work="$tmp/work"
-mkdir "$fixtures" "$work"
-cd "$work"
-awk '/- name: Fetch current pull request evidence/{capture=1} capture && /^        run: \|/{run=1; next} run && /^      - name: Withdraw known/{exit} run{sub(/^          /,""); print}' "$root/.github/workflows/approve-codex-review.yml" >"$tmp/evidence.sh"
-awk '/- name: Approve current clean Codex evidence/{capture=1} capture && /^        run: \|/{run=1; next} run && (/^      - name:/ || /^  controlled-ci:/){exit} run{sub(/^          /,""); print}' "$root/.github/workflows/approve-codex-review.yml" >"$tmp/production.sh"
-awk '/- name: Withdraw approval while Codex review is running/{capture=1} capture && /^        run: \|/{run=1; next} run && /^      - name:/{exit} run{sub(/^          /,"" ); print}' "$root/.github/workflows/approve-codex-review.yml" >"$tmp/running.sh"
-awk '/- name: Withdraw known approval after evidence failure/{capture=1} capture && /^        run: \|/{run=1; next} run && /^      - name:/{exit} run{sub(/^          /,"" ); print}' "$root/.github/workflows/approve-codex-review.yml" >"$tmp/failure.sh"
-test -s "$tmp/evidence.sh" -a -s "$tmp/production.sh" -a -s "$tmp/running.sh" -a -s "$tmp/failure.sh"
-cat >"$tmp/gh" <<'EOF'
+awk '/- name: Approve completed Codex reviews/{capture=1} capture && /^        run: \|/{run=1; next} run && /^  controlled-ci:/{exit} run{sub(/^          /, ""); print}' "$root/.github/workflows/approve-codex-review.yml" >"$tmp/approve.sh"
+test -s "$tmp/approve.sh"
+export PATH="$tmp:$PATH" GH_LOG="$tmp/calls" COUNT_FILE="$tmp/count"
+export GITHUB_REPOSITORY=example/repo PR_NUMBER=1 COMMENT_ID=7
+cat >"$tmp/gh" <<'MOCK'
 #!/usr/bin/env bash
 set -euo pipefail
-printf '%s %s\n' "${GH_METHOD:-GET}" "$*" >>"$GH_LOG"
-if [[ ${1:-} == api ]]; then
-  for arg in "$@"; do if [[ $arg == .sha || $arg == .head.sha ]]; then printf '%s' "$HEAD"; exit 0; fi; done
-  endpoint=''; for arg in "$@"; do [[ $arg == repos/* ]] && endpoint=$arg; done
-  endpoint=${endpoint%%\?*}
-  case "$endpoint" in
-    repos/*/pulls/1/reviews) cat "$GH_FIX/reviews.json";;
-    repos/*/pulls/1) cat "$GH_FIX/pr.json";;
-    repos/*/issues/1/comments) [[ ${FAIL_ENDPOINT:-} == comments ]] && exit 1; cat "$GH_FIX/comments.json";;
-    repos/*/issues/1/reactions) cat "$GH_FIX/reactions.json";;
-    repos/*/issues/1/timeline) printf '[]';;
-    repos/*/commits/*) printf '{"sha":"%s"}' "$HEAD";;
-  esac
-fi
-EOF
-chmod +x "$tmp/gh"
-export PATH="$tmp:$PATH" GH_LOG="$tmp/gh.log" GH_FIX="$fixtures" HEAD=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa GITHUB_REPOSITORY=example/repo PR_NUMBER=1 OPERATION=reconcile GITHUB_RUN_ID=1 GITHUB_RUN_ATTEMPT=1 GITHUB_ACTOR=tester
-printf '%s' '{"state":"open","draft":false,"head":{"sha":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"}}' >"$fixtures/pr.json"
-printf '%s' '[[{"user":{"login":"chatgpt-codex-connector[bot]","id":7,"node_id":"N"},"body":"<!-- codex-pull-request-review-summary -->\n<!-- codex-security-review:v1 {\"status\":\"completed\",\"headSha\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"repository\":\"example/repo\",\"pullRequestNumber\":1} -->\n| 📝 **Code Review** | ✅ **Completed** <relative-time datetime=\"2026-10-09T01:00:00Z\">now</relative-time> | `aaaaaaa` |\n| 🔒 **Security Review** | ✅ **Completed** <relative-time datetime=\"2026-10-09T01:00:01Z\">now</relative-time> | `aaaaaaa` |"}]]' >"$fixtures/comments.json"
-printf '%s' '[[{"user":{"login":"chatgpt-codex-connector[bot]","id":7,"node_id":"N"},"content":"+1"}]]' >"$fixtures/reactions.json"
-printf '%s' '[[]]' >"$fixtures/reviews.json"
-bash "$tmp/evidence.sh"; (source "$tmp/production.sh")
-grep -q 'POST' "$tmp/gh.log"
-printf '%s' '[[{"id":9,"user":{"login":"github-actions[bot]","type":"Bot"},"state":"APPROVED","body":"<!-- codex-automation-approval:v1 -->","commit_id":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"},{"id":8,"user":{"login":"other-reviewer","type":"User"},"state":"APPROVED"}]]' >"$fixtures/reviews.json"
-jq '.draft = true' "$fixtures/pr.json" >"$fixtures/pr.tmp"; mv "$fixtures/pr.tmp" "$fixtures/pr.json"
-: >"$tmp/gh.log"; bash "$tmp/evidence.sh"; (source "$tmp/production.sh") || true
-grep -q 'PUT.*dismissals' "$tmp/gh.log"; ! grep -q 'reviews/8/dismissals' "$tmp/gh.log"
-jq '.draft = false' "$fixtures/pr.json" >"$fixtures/pr.tmp"; mv "$fixtures/pr.tmp" "$fixtures/pr.json"
-jq '.[0][0].body |= gsub("\\*\\*Code Review\\*\\* \\| ✅ \\*\\*Completed"; "**Code Review** | 🔄 **Running")' "$fixtures/comments.json" >"$fixtures/comments.tmp"; mv "$fixtures/comments.tmp" "$fixtures/comments.json"
-export GITHUB_EVENT_NAME=issue_comment GITHUB_EVENT_ACTION=edited GITHUB_OUTPUT="$tmp/output"
-: >"$tmp/gh.log"; bash "$tmp/evidence.sh"; source "$tmp/running.sh"
-test "$(grep -c 'PUT.*dismissals' "$tmp/gh.log")" -eq 1
-export FAIL_ENDPOINT=comments
-: >"$tmp/gh.log"; bash "$tmp/evidence.sh" || true; source "$tmp/failure.sh"
-test "$(grep -c 'PUT.*reviews/9/dismissals' "$tmp/gh.log")" -eq 1
-! grep -q 'reviews/8/dismissals' "$tmp/gh.log"
-! grep -q 'POST' "$tmp/gh.log"
-echo 'workflow behavior: approval and selective withdrawal calls observed'
+printf '%s\n' "$*" >>"$GH_LOG"
+case "$*" in
+  'api repos/example/repo/issues/comments/7 --jq .body')
+    count=$(( $(cat "$COUNT_FILE") + 1 )); echo "$count" >"$COUNT_FILE"
+    [[ "$SCENARIO" != comment-error ]] || exit 1
+    echo '<!-- codex-pull-request-review-summary -->'
+    for kind in 'Code Review' 'Security Review'; do
+      status='✅ **Completed**'
+      if [[ "$kind" == "${INCOMPLETE_KIND:-}" && ( "$SCENARIO" == incomplete || ( "$SCENARIO" == restart && "$count" -gt 1 ) ) ]]; then
+        status='🔄 **Running**'
+      fi
+      printf '| %s | %s <relative-time datetime="2026-10-09T01:00:00Z">now</relative-time> | `old-sha` |\n' "**$kind**" "$status"
+    done;;
+  'api repos/example/repo/issues/1/reactions?per_page=100 --paginate --slurp')
+    [[ "$SCENARIO" != reaction-error ]] || exit 1
+    [[ "$SCENARIO" != retry-error || $(cat "$COUNT_FILE") -eq 1 ]] || exit 1
+    reaction=eyes
+    if (( $(cat "$COUNT_FILE") >= THUMB_AT )); then reaction=+1; fi
+    # Another user's thumbs-up is on page one; Codex's reaction is on page two.
+    printf '[[{"user":{"login":"someone-else"},"content":"+1"}],[{"user":{"login":"chatgpt-codex-connector[bot]"},"content":"%s"},{"user":{"login":"chatgpt-codex-connector[bot]"},"content":"eyes"}]]' "$reaction";;
+  'pr review 1 --repo example/repo --approve')
+    [[ "$SCENARIO" != approval-error ]];;
+  *) echo "Unexpected GitHub operation: $*" >&2; exit 1;;
+esac
+MOCK
+cat >"$tmp/sleep" <<'MOCK'
+#!/usr/bin/env bash
+set -euo pipefail
+[[ "$*" == 30 ]]
+printf 'sleep %s\n' "$*" >>"$GH_LOG"
+MOCK
+chmod +x "$tmp/gh" "$tmp/sleep"
+check() {
+  export SCENARIO=$1 THUMB_AT=$2 INCOMPLETE_KIND=${8:-}
+  local expected_approvals=$3 expected_sleeps=$4 expected_summaries=$5 expected_reactions=$6 expected_exit=$7 actual_exit=0
+  : >"$GH_LOG"; echo 0 >"$COUNT_FILE"
+  bash "$tmp/approve.sh" || actual_exit=$?
+  test "$actual_exit" -eq "$expected_exit"
+  test "$(grep -c '^pr review ' "$GH_LOG" || true)" -eq "$expected_approvals"
+  test "$(grep -c '^sleep ' "$GH_LOG" || true)" -eq "$expected_sleeps"
+  test "$(cat "$COUNT_FILE")" -eq "$expected_summaries"
+  test "$(grep -c '/reactions?' "$GH_LOG" || true)" -eq "$expected_reactions"
+  echo "PASS: $SCENARIO ${INCOMPLETE_KIND:-} (thumb check $THUMB_AT)"
+}
+# Scenario, first Codex thumbs-up check, approvals, sleeps, summary reads, reaction reads, exit.
+check immediate 1 1 0 1 1 0
+check delayed 3 1 2 3 3 0
+check last-check 7 1 6 7 7 0
+check timeout 99 0 6 7 7 0
+for kind in 'Code Review' 'Security Review'; do
+  check incomplete 1 0 0 1 0 0 "$kind"
+  check restart 2 0 1 2 1 0 "$kind"
+done
+check comment-error 1 0 0 1 0 1
+check reaction-error 1 0 0 1 1 1
+check retry-error 99 0 1 2 2 1
+check approval-error 1 1 0 1 1 1
+# Validate the publication draft in the existing CI runner; remove before review.
+body="$root/tests/codex-approval-change.md"
+config="$root/skills/issue-management/assets/rumdl.toml"
+mise exec -- rumdl check --config "$config" --deny-config-warnings --fix "$body"
+mise exec -- rumdl check --config "$config" --deny-config-warnings "$body"
+git -C "$root" diff --exit-code -- tests/codex-approval-change.md
