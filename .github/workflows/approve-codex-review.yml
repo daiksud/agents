@@ -34,6 +34,7 @@ jobs:
     steps:
       - name: Fetch current pull request evidence
         id: evidence
+        continue-on-error: true
         run: |
           gh api "repos/$GITHUB_REPOSITORY/pulls/$PR_NUMBER" > pr.json
           gh api "repos/$GITHUB_REPOSITORY/issues/$PR_NUMBER/comments?per_page=100" --paginate --slurp > comments.json
@@ -46,17 +47,25 @@ jobs:
           jq -e '[.[] | select(.user.login == "chatgpt-codex-connector[bot]" and (.body | startswith("<!-- codex-pull-request-review-summary -->")))] | length == 1' comments-all.json >/dev/null || exit 0
           jq -r '[.[] | select(.user.login == "chatgpt-codex-connector[bot]" and (.body | startswith("<!-- codex-pull-request-review-summary -->")))][0].body' comments-all.json > summary.txt
 
+      - name: Withdraw known approval after evidence failure
+        if: steps.evidence.outcome == 'failure' && hashFiles('reviews-all.json') != ''
+        run: |
+          jq -r '.[] | select(.user.login == "github-actions[bot]" and .state == "APPROVED" and (.body | startswith("<!-- codex-automation-approval:v1 -->"))) | .id' reviews-all.json |
+            while read -r id; do gh api -X PUT "repos/$GITHUB_REPOSITORY/pulls/$PR_NUMBER/reviews/$id/dismissals" -f message='Current evidence retrieval failed.'; done
+
       - name: Withdraw approval while Codex review is running
-        if: github.event_name == 'issue_comment' && (github.event.action == 'created' || github.event.action == 'edited') && startsWith(github.event.comment.body, '<!-- codex-pull-request-review-summary -->')
+        id: running
+        if: steps.evidence.outcome == 'success' && github.event_name == 'issue_comment' && (github.event.action == 'created' || github.event.action == 'edited') && startsWith(github.event.comment.body, '<!-- codex-pull-request-review-summary -->')
         run: |
           summary=$(jq -r --arg id 'chatgpt-codex-connector[bot]' '[.[] | select(.user.login == $id and (.body | startswith("<!-- codex-pull-request-review-summary -->")))][0].body' comments-all.json)
-          running=$(printf '%s\n' "$summary" | awk -F'|' '/\*\*Code Review\*\*/ || /\*\*Security Review\*\*/ {print $3}' | grep -c '✅\|🔄' || true)
-          if printf '%s\n' "$summary" | awk -F'|' '/\*\*Code Review\*\*/ || /\*\*Security Review\*\*/ {print $3}' | grep -q '🔄'; then
+          if printf '%s\n' "$summary" | awk -F'|' 'index($0, "**Code Review**") || index($0, "**Security Review**") {print $3}' | grep -Fq '🔄'; then
+            echo 'running=true' >> "$GITHUB_OUTPUT"
             jq -r '.[] | select(.user.login == "github-actions[bot]" and .state == "APPROVED" and (.body | startswith("<!-- codex-automation-approval:v1 -->"))) | .id' reviews-all.json |
               while read -r id; do gh api -X PUT "repos/$GITHUB_REPOSITORY/pulls/$PR_NUMBER/reviews/$id/dismissals" -f message='Codex review is running.'; done
           fi
 
       - name: Approve current clean Codex evidence
+        if: steps.evidence.outcome == 'success' && steps.running.outputs.running != 'true'
         run: |
           dismiss_own() {
             jq -r '.[] | select(.user.login == "github-actions[bot]" and .state == "APPROVED" and (.body | startswith("<!-- codex-automation-approval:v1 -->"))) | .id' reviews-all.json |

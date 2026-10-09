@@ -14,3 +14,6 @@ test "$(jq '[.[] | select(.user.login == "other-reviewer")] | length' <<<"$revie
 summary='| 📝 **Code Review** | 🔄 **Running** | `abc1234` | Manual |'
 ! grep -Fq '✅ **Completed**' <<<"$summary"
 grep -Fq '🔄 **Running**' <<<"$summary"
+clean='| 📝 **Code Review** | ✅ **Completed** | `abc1234` | Manual |'
+row=$(printf '%s\n' "$clean" | awk -F'|' 'index($0, "**Code Review**") {print $3}')
+grep -Fq '✅ **Completed**' <<<"$row"
