@@ -44,24 +44,39 @@ jobs:
                       cmd[2]+=('&' if '?' in cmd[2] else '?')+'per_page=100'; cmd+=['--paginate','--slurp']
                   out=json.loads(subprocess.run(cmd,text=True,capture_output=True,check=True).stdout)
                   return [x for page in out for x in page] if cmd[-1]=='--slurp' else out
-              cmd+=['--input','-']; return json.loads(subprocess.run(cmd,input=json.dumps(fields),text=True,capture_output=True,check=True).stdout)
+              cmd += ['--input', '-']
+              return json.loads(subprocess.run(cmd, input=json.dumps(fields), text=True,
+                                               capture_output=True, check=True).stdout)
           def bot(x, login):
-              u=x.get('user') or {}; return u.get('login')==login and u.get('type')=='Bot'
+              u=x.get('user') or {}
+              return u.get('login')==login and u.get('type')=='Bot'
           def commit(x, resolve):
               values=re.findall(r'\*\*Reviewed commit:\*\* `([0-9a-f]{7,40})`',x.get('body',''))
-              if len(values)!=1: raise ValueError('Codex result has no unique reviewed commit')
+              if len(values)!=1:
+                  raise ValueError('Codex result has no unique reviewed commit')
               return resolve(values[0])
-          def owned(rs): return [r for r in rs if bot(r,ACTIONS) and r.get('state')=='APPROVED' and r.get('body','').startswith(APPROVAL)]
+          def owned(rs):
+              return [r for r in rs if bot(r,ACTIONS) and r.get('state')=='APPROVED'
+                      and r.get('body','').startswith(APPROVAL)]
           def dismiss(repo,n,rs):
-              for r in owned(rs): api(f'repos/{repo}/pulls/{n}/reviews/{r["id"]}/dismissals','PUT',message='Current Codex review conditions are not satisfied.')
-          def fetch(repo,n): return {'repo':repo,'number':n,'pr':api(f'repos/{repo}/pulls/{n}'),'comments':api(f'repos/{repo}/issues/{n}/comments'),'reviews':api(f'repos/{repo}/pulls/{n}/reviews'),'reactions':api(f'repos/{repo}/issues/{n}/reactions')}
+              for r in owned(rs):
+                  api(f'repos/{repo}/pulls/{n}/reviews/{r["id"]}/dismissals', 'PUT',
+                      message='Current Codex review conditions are not satisfied.')
+          def fetch(repo,n):
+              return {'repo':repo,'number':n,'pr':api(f'repos/{repo}/pulls/{n}'),
+                      'comments':api(f'repos/{repo}/issues/{n}/comments'),
+                      'reviews':api(f'repos/{repo}/pulls/{n}/reviews'),
+                      'reactions':api(f'repos/{repo}/issues/{n}/reactions')}
           def eligible(s,resolve):
               pr=s['pr']; head=pr['head']['sha']
-              if pr['state']!='open' or pr['draft']: return False
+              if pr['state']!='open' or pr['draft']:
+                  return False
               ss=[c for c in s['comments'] if bot(c,CODEX) and c.get('body','').startswith('<!-- codex-pull-request-review-summary -->')]
-              if len(ss)!=1: return False
+              if len(ss)!=1:
+                  return False
               c=ss[0]; author=c.get('user') or {}
-              if not all(author.get(k) for k in ('login','id','node_id')): return False
+              if not all(author.get(k) for k in ('login','id','node_id')):
+                  return False
               m=re.findall(r'<!-- codex-security-review:v1 (.*?) -->',c['body'])
               if len(m)!=1: return False
               security=json.loads(m[0])
