@@ -273,7 +273,7 @@ jobs:
                   # Re-fetch the complete evidence. An old event is never approval evidence.
                   current = fetch(api, repo, number)
                   record_observed_start(api, current)
-                  if eligible(current, resolve) != head or current != state:
+                  if eligible(current, resolve) != head:
                       revoke(api, repo, number, current['reviews'])
                       return False
                   if not any(r['commit_id'] == head for r in approvals(current['reviews'])):

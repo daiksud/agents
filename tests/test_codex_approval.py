@@ -101,6 +101,19 @@ class ApprovalTests(unittest.TestCase):
         self.reconcile()
         self.assertEqual([('DISMISS', 1)], self.api.effects)
 
+    def test_unrelated_metadata_change_preserves_current_approval(self):
+        self.state['reviews'] = [self.bot_review(1)]
+        reads = []
+        def changed(key):
+            if key == '1':
+                reads.append(key)
+                if len(reads) == 2:
+                    self.state['pr']['updated_at'] = '2026-10-09T01:00:03Z'
+        self.api.on_get = changed
+        self.assertTrue(self.reconcile())
+        self.assertEqual([], self.api.effects)
+        self.assertEqual('APPROVED', self.state['reviews'][0]['state'])
+
     def test_late_event_uses_current_ready_history(self):
         self.state['timeline'] = [{'event': 'ready_for_review', 'created_at': '2026-10-09T01:00:02Z'}]
         self.assertIsNone(self.eligible())
