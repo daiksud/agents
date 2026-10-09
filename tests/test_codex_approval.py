@@ -125,6 +125,15 @@ class ApprovalTests(unittest.TestCase):
         self.state['timeline'] = [{'event': 'ready_for_review', 'created_at': '2026-10-09T01:00:02Z'}]
         self.assertIsNone(self.eligible())
 
+    def test_base_change_revokes_until_both_reviews_complete(self):
+        self.state['reviews'] = [self.bot_review(1)]
+        self.state['timeline'] = [{'event': 'base_ref_changed', 'created_at': '2026-10-09T01:00:02Z'}]
+        self.reconcile()
+        self.assertEqual([('DISMISS', 1)], self.api.effects)
+        self.state['comments'][0]['body'] = self.state['comments'][0]['body'].replace('01:00:00Z', '01:00:03Z').replace('01:00:01Z', '01:00:04Z')
+        self.reconcile()
+        self.assertEqual([('DISMISS', 1), ('APPROVE', self.sha)], self.api.effects)
+
     def test_controlled_ready_revokes_before_transition(self):
         self.state['reviews'] = [self.bot_review(1)]
         self.logic['controlled'](self.api, 'example/repo', 1, 'ready', self.sha,

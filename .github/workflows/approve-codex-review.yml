@@ -171,7 +171,7 @@ jobs:
               barriers = [timestamp(r['submitted_at']) for r in state['reviews']
                           if authored(r, BOT) and r.get('body', '').startswith(BARRIER)]
               for event in state['timeline']:
-                  if event['event'] in ('ready_for_review', 'convert_to_draft') or (
+                  if event['event'] in ('ready_for_review', 'convert_to_draft', 'base_ref_changed') or (
                       event['event'] == 'review_requested'
                       and (event.get('requested_reviewer') or {}).get('login') == CODEX):
                       barriers.append(timestamp(event['created_at']))
