@@ -91,6 +91,8 @@ jobs:
           jq -e --arg login "$login" '[.[] | select(.user.login == $login and .content == "+1")] | length > 0' reactions-all.json >/dev/null || { dismiss_own; exit 0; }
           jq -e --arg login "$login" '[.[] | select(.user.login == $login and .content == "eyes")] | length == 0' reactions-all.json >/dev/null || { dismiss_own; exit 0; }
           jq -e --arg head "$head" '[.[] | select(.user.login == "github-actions[bot]" and .state == "APPROVED" and .commit_id == $head and (.body | startswith("<!-- codex-automation-approval:v1 -->")))] | length == 0' reviews-all.json >/dev/null || exit 0
+          current_head=$(gh api "repos/$GITHUB_REPOSITORY/pulls/$PR_NUMBER" --jq .head.sha)
+          test "$current_head" = "$head" || { dismiss_own; exit 0; }
           gh api "repos/$GITHUB_REPOSITORY/pulls/$PR_NUMBER/reviews" -X POST -f event=APPROVE -f commit_id="$head" -f body='<!-- codex-automation-approval:v1 -->'
 
   controlled-ci:
