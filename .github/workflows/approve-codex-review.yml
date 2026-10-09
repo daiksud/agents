@@ -62,11 +62,11 @@ jobs:
               for r in owned(rs):
                   api(f'repos/{repo}/pulls/{n}/reviews/{r["id"]}/dismissals', 'PUT',
                       message='Current Codex review conditions are not satisfied.')
-          def fetch(repo,n):
-              return {'repo':repo,'number':n,'pr':api(f'repos/{repo}/pulls/{n}'),
-                      'comments':api(f'repos/{repo}/issues/{n}/comments'),
-                      'reviews':api(f'repos/{repo}/pulls/{n}/reviews'),
-                      'reactions':api(f'repos/{repo}/issues/{n}/reactions')}
+          def fetch(repo, n, api_call=api):
+              return {'repo':repo,'number':n,'pr':api_call(f'repos/{repo}/pulls/{n}'),
+                      'comments':api_call(f'repos/{repo}/issues/{n}/comments'),
+                      'reviews':api_call(f'repos/{repo}/pulls/{n}/reviews'),
+                      'reactions':api_call(f'repos/{repo}/issues/{n}/reactions')}
           def eligible(s,resolve):
               pr=s['pr']; head=pr['head']['sha']
               if pr['state']!='open' or pr['draft']:
@@ -88,15 +88,11 @@ jobs:
                   if not ref or not re.search(r'✅ \*\*Completed\*\*',cells[2]) or resolve(ref[1])!=head: return False
               reactions=[r['content'] for r in s['reactions'] if all((r.get('user') or {}).get(k)==author[k] for k in ('login','id','node_id'))]
               if '+1' not in reactions or 'eyes' in reactions: return False
-              for x in s['comments']:
-                  if not bot(x,CODEX): continue
-                  body=x.get('body','')
-                  if body.startswith('### 🛡️ Codex Security Review') and commit(x,resolve)==head and CLEAN not in body: return False
-                  if body.startswith('Codex Review:') and commit(x,resolve)==head and 'major issues' not in body.lower(): return False
               return True
           def reconcile(api_call, repo, n):
-              state=fetch(repo,n)
+              state={'repo': repo, 'number': n, 'reviews': api_call(f'repos/{repo}/pulls/{n}/reviews')}
               try:
+                  state.update(fetch(repo, n, api_call))
                   resolve=lambda sha: api_call(f'repos/{repo}/commits/{sha}')['sha']
                   if not eligible(state,resolve): dismiss(repo,n,state['reviews']); return False
                   if not any(r.get('commit_id')==state['pr']['head']['sha'] for r in owned(state['reviews'])):
@@ -105,14 +101,11 @@ jobs:
               except Exception:
                   dismiss(repo,n,state['reviews']); raise
           if __name__ == '__main__':
-              repo=os.environ['GITHUB_REPOSITORY']; n=int(os.environ['PR_NUMBER']); state=fetch(repo,n)
-              try:
-                  resolve=lambda sha: api(f'repos/{repo}/commits/{sha}')['sha']
-                  if not eligible(state,resolve): dismiss(repo,n,state['reviews']); print('Current Codex evidence is not eligible for approval.')
-                  elif not any(r.get('commit_id')==state['pr']['head']['sha'] for r in owned(state['reviews'])):
-                      api(f'repos/{repo}/pulls/{n}/reviews','POST',event='APPROVE',commit_id=state['pr']['head']['sha'],body=APPROVAL); print('Current completed clean Codex reviews approved.')
-              except Exception:
-                  dismiss(repo,n,state['reviews']); raise
+              repo=os.environ['GITHUB_REPOSITORY']; n=int(os.environ['PR_NUMBER'])
+              if reconcile(api, repo, n):
+                  print('Current completed clean Codex reviews approved.')
+              else:
+                  print('Current Codex evidence is not eligible for approval.')
           PY
   controlled-ci:
     name: ${{ inputs.operation }}
