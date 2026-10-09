@@ -9,7 +9,8 @@ cd "$work"
 awk '/- name: Fetch current pull request evidence/{capture=1} capture && /^        run: \|/{run=1; next} run && /^      - name: Withdraw known/{exit} run{sub(/^          /,""); print}' "$root/.github/workflows/approve-codex-review.yml" >"$tmp/evidence.sh"
 awk '/- name: Approve current clean Codex evidence/{capture=1} capture && /^        run: \|/{run=1; next} run && (/^      - name:/ || /^  controlled-ci:/){exit} run{sub(/^          /,""); print}' "$root/.github/workflows/approve-codex-review.yml" >"$tmp/production.sh"
 awk '/- name: Withdraw approval while Codex review is running/{capture=1} capture && /^        run: \|/{run=1; next} run && /^      - name:/{exit} run{sub(/^          /,"" ); print}' "$root/.github/workflows/approve-codex-review.yml" >"$tmp/running.sh"
-test -s "$tmp/evidence.sh" -a -s "$tmp/production.sh" -a -s "$tmp/running.sh"
+awk '/- name: Withdraw known approval after evidence failure/{capture=1} capture && /^        run: \|/{run=1; next} run && /^      - name:/{exit} run{sub(/^          /,"" ); print}' "$root/.github/workflows/approve-codex-review.yml" >"$tmp/failure.sh"
+test -s "$tmp/evidence.sh" -a -s "$tmp/production.sh" -a -s "$tmp/running.sh" -a -s "$tmp/failure.sh"
 cat >"$tmp/gh" <<'EOF'
 #!/usr/bin/env bash
 set -euo pipefail
@@ -21,7 +22,7 @@ if [[ ${1:-} == api ]]; then
   case "$endpoint" in
     repos/*/pulls/1/reviews) cat "$GH_FIX/reviews.json";;
     repos/*/pulls/1) cat "$GH_FIX/pr.json";;
-    repos/*/issues/1/comments) cat "$GH_FIX/comments.json";;
+    repos/*/issues/1/comments) [[ ${FAIL_ENDPOINT:-} == comments ]] && exit 1; cat "$GH_FIX/comments.json";;
     repos/*/issues/1/reactions) cat "$GH_FIX/reactions.json";;
     repos/*/issues/1/timeline) printf '[]';;
     repos/*/commits/*) printf '{"sha":"%s"}' "$HEAD";;
@@ -37,12 +38,17 @@ printf '%s' '[[]]' >"$fixtures/reviews.json"
 bash "$tmp/evidence.sh"; (source "$tmp/production.sh")
 grep -q 'POST' "$tmp/gh.log"
 printf '%s' '[[{"id":9,"user":{"login":"github-actions[bot]","type":"Bot"},"state":"APPROVED","body":"<!-- codex-automation-approval:v1 -->","commit_id":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"},{"id":8,"user":{"login":"other-reviewer","type":"User"},"state":"APPROVED"}]]' >"$fixtures/reviews.json"
-sed -i '' 's/"draft":false/"draft":true/' "$fixtures/pr.json"
+jq '.draft = true' "$fixtures/pr.json" >"$fixtures/pr.tmp"; mv "$fixtures/pr.tmp" "$fixtures/pr.json"
 : >"$tmp/gh.log"; bash "$tmp/evidence.sh"; (source "$tmp/production.sh") || true
 grep -q 'PUT.*dismissals' "$tmp/gh.log"; ! grep -q 'reviews/8/dismissals' "$tmp/gh.log"
-sed -i '' 's/"draft":true/"draft":false/' "$fixtures/pr.json"
+jq '.draft = false' "$fixtures/pr.json" >"$fixtures/pr.tmp"; mv "$fixtures/pr.tmp" "$fixtures/pr.json"
 perl -0pi -e 's/\*\*Code Review\*\* \| ✅ \*\*Completed/\*\*Code Review** | 🔄 **Running/' "$fixtures/comments.json"
 export GITHUB_EVENT_NAME=issue_comment GITHUB_EVENT_ACTION=edited GITHUB_OUTPUT="$tmp/output"
 : >"$tmp/gh.log"; bash "$tmp/evidence.sh"; source "$tmp/running.sh"
 test "$(grep -c 'PUT.*dismissals' "$tmp/gh.log")" -eq 1
+export FAIL_ENDPOINT=comments
+: >"$tmp/gh.log"; bash "$tmp/evidence.sh" || true; source "$tmp/failure.sh"
+test "$(grep -c 'PUT.*reviews/9/dismissals' "$tmp/gh.log")" -eq 1
+! grep -q 'reviews/8/dismissals' "$tmp/gh.log"
+! grep -q 'POST' "$tmp/gh.log"
 echo 'workflow behavior: approval and selective withdrawal calls observed'
