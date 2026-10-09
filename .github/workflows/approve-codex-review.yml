@@ -1,4 +1,5 @@
 name: approve codex review
+
 on:
   issue_comment: {types: [created, edited, deleted]}
   pull_request_target:
@@ -16,6 +17,7 @@ on:
       expected_base: {required: true, type: string}
       head_branch: {required: true, type: string}
       mutation_eligible: {type: boolean, default: true}
+
 permissions: {}
 concurrency:
   group: codex-approval-${{ github.repository }}-${{ inputs.pr_number || github.event.issue.number || github.event.pull_request.number }}
@@ -23,93 +25,55 @@ concurrency:
 env:
   GH_TOKEN: ${{ github.token }}
   PR_NUMBER: ${{ inputs.pr_number || github.event.issue.number || github.event.pull_request.number }}
+
 jobs:
   reconcile:
     if: (inputs.operation == '' || inputs.operation == 'reconcile') && (inputs.pr_number != '' || github.event.issue.pull_request || github.event.pull_request)
     runs-on: ubuntu-slim
     permissions: {contents: read, pull-requests: write}
     steps:
-      - name: Reconcile current Codex evidence
+      - name: Fetch current pull request evidence
+        id: evidence
         run: |
-          python3 <<'PY'
-          import json, os, re, subprocess, urllib.parse
-          CODEX='chatgpt-codex-connector[bot]'
-          ACTIONS='github-actions[bot]'
-          APPROVAL='<!-- codex-automation-approval:v1 -->'
-          def api(path, method='GET', **fields):
-              cmd=['gh','api',path,'--method',method]
-              if method=='GET':
-                  if fields: cmd[2]+=('&' if '?' in path else '?')+urllib.parse.urlencode(fields)
-                  if path.endswith(('/comments','/reviews','/reactions')):
-                      cmd[2] += ('&' if '?' in cmd[2] else '?') + 'per_page=100'
-                      cmd += ['--paginate', '--slurp']
-                  out=json.loads(subprocess.run(cmd,text=True,capture_output=True,check=True).stdout)
-                  return [x for page in out for x in page] if cmd[-1]=='--slurp' else out
-              cmd += ['--input', '-']
-              return json.loads(subprocess.run(cmd, input=json.dumps(fields), text=True,
-                                               capture_output=True, check=True).stdout)
-          def bot(x, login):
-              u=x.get('user') or {}
-              return u.get('login')==login and u.get('type')=='Bot'
-          def owned(rs):
-              return [r for r in rs if bot(r,ACTIONS) and r.get('state')=='APPROVED'
-                      and r.get('body','').startswith(APPROVAL)]
-          def dismiss(repo,n,rs):
-              for r in owned(rs):
-                  api(f'repos/{repo}/pulls/{n}/reviews/{r["id"]}/dismissals', 'PUT',
-                      message='Current Codex review conditions are not satisfied.')
-          def fetch(repo, n, api_call=api):
-              return {'repo':repo,'number':n,'pr':api_call(f'repos/{repo}/pulls/{n}'),
-                      'comments':api_call(f'repos/{repo}/issues/{n}/comments'),
-                      'reviews':api_call(f'repos/{repo}/pulls/{n}/reviews'),
-                      'reactions':api_call(f'repos/{repo}/issues/{n}/reactions')}
-          def eligible(s,resolve):
-              pr=s['pr']
-              head=pr['head']['sha']
-              if pr['state']!='open' or pr['draft']:
-                  return False
-              ss=[c for c in s['comments'] if bot(c,CODEX) and c.get('body','').startswith('<!-- codex-pull-request-review-summary -->')]
-              if len(ss)!=1:
-                  return False
-              c=ss[0]
-              author=c.get('user') or {}
-              if not all(author.get(k) for k in ('login','id','node_id')):
-                  return False
-              m=re.findall(r'<!-- codex-security-review:v1 (.*?) -->',c['body'])
-              if len(m)!=1: return False
-              security=json.loads(m[0])
-              if security.get('status')!='completed' or security.get('headSha')!=head or security.get('repository')!=s['repo'] or security.get('pullRequestNumber')!=s['number']: return False
-              for kind in ('Code Review','Security Review'):
-                  rows=[x for x in c['body'].splitlines() if '**'+kind+'**' in x]
-                  if len(rows)!=1: return False
-                  cells=rows[0].split('|')
-                  ref=re.fullmatch(r' `([0-9a-f]{7,40})` ',cells[3]) if len(cells)==6 else None
-                  if not ref or not re.search(r'✅ \*\*Completed\*\*',cells[2]) or resolve(ref[1])!=head: return False
-              reactions=[r['content'] for r in s['reactions'] if all((r.get('user') or {}).get(k)==author[k] for k in ('login','id','node_id'))]
-              if '+1' not in reactions or 'eyes' in reactions: return False
-              return True
-          def reconcile(api_call, repo, n):
-              state={'repo': repo, 'number': n, 'reviews': api_call(f'repos/{repo}/pulls/{n}/reviews')}
-              try:
-                  state.update(fetch(repo, n, api_call))
-                  resolve=lambda sha: api_call(f'repos/{repo}/commits/{sha}')['sha']
-                  if not eligible(state,resolve):
-                      dismiss(repo,n,state['reviews'])
-                      return False
-                  if not any(r.get('commit_id')==state['pr']['head']['sha'] for r in owned(state['reviews'])):
-                      api_call(f'repos/{repo}/pulls/{n}/reviews','POST',event='APPROVE',commit_id=state['pr']['head']['sha'],body=APPROVAL)
-                  return True
-              except Exception:
-                  dismiss(repo,n,state['reviews'])
-                  raise
-          if __name__ == '__main__':
-              repo=os.environ['GITHUB_REPOSITORY']
-              n=int(os.environ['PR_NUMBER'])
-              if reconcile(api, repo, n):
-                  print('Current completed clean Codex reviews approved.')
-              else:
-                  print('Current Codex evidence is not eligible for approval.')
-          PY
+          gh api "repos/$GITHUB_REPOSITORY/pulls/$PR_NUMBER" > pr.json
+          gh api "repos/$GITHUB_REPOSITORY/issues/$PR_NUMBER/comments?per_page=100" --paginate --slurp > comments.json
+          gh api "repos/$GITHUB_REPOSITORY/pulls/$PR_NUMBER/reviews?per_page=100" --paginate --slurp > reviews.json
+          gh api "repos/$GITHUB_REPOSITORY/issues/$PR_NUMBER/reactions?per_page=100" --paginate --slurp > reactions.json
+          jq -s 'add' comments.json > comments-all.json
+          jq -s 'add' reviews.json > reviews-all.json
+          jq -s 'add' reactions.json > reactions-all.json
+          jq -e '.state == "open" and .draft == false' pr.json >/dev/null || exit 0
+          jq -e '[.[] | select(.user.login == "chatgpt-codex-connector[bot]" and (.body | startswith("<!-- codex-pull-request-review-summary -->")))] | length == 1' comments-all.json >/dev/null || exit 0
+          jq -r '[.[] | select(.user.login == "chatgpt-codex-connector[bot]" and (.body | startswith("<!-- codex-pull-request-review-summary -->")))][0].body' comments-all.json > summary.txt
+
+      - name: Withdraw approval while Codex review is running
+        if: github.event_name == 'issue_comment' && (github.event.action == 'created' || github.event.action == 'edited') && startsWith(github.event.comment.body, '<!-- codex-pull-request-review-summary -->')
+        run: |
+          summary=$(jq -r --arg id 'chatgpt-codex-connector[bot]' '[.[] | select(.user.login == $id and (.body | startswith("<!-- codex-pull-request-review-summary -->")))][0].body' comments-all.json)
+          running=$(printf '%s\n' "$summary" | awk -F'|' '/\*\*Code Review\*\*/ || /\*\*Security Review\*\*/ {print $3}' | grep -c '✅\|🔄' || true)
+          if printf '%s\n' "$summary" | awk -F'|' '/\*\*Code Review\*\*/ || /\*\*Security Review\*\*/ {print $3}' | grep -q '🔄'; then
+            jq -r '.[] | select(.user.login == "github-actions[bot]" and .state == "APPROVED" and (.body | startswith("<!-- codex-automation-approval:v1 -->"))) | .id' reviews-all.json |
+              while read -r id; do gh api -X PUT "repos/$GITHUB_REPOSITORY/pulls/$PR_NUMBER/reviews/$id/dismissals" -f message='Codex review is running.'; done
+          fi
+
+      - name: Approve current clean Codex evidence
+        if: github.event_name != 'issue_comment' || github.event.action == 'deleted' || !startsWith(github.event.comment.body, '<!-- codex-pull-request-review-summary -->')
+        run: |
+          head=$(jq -r .head.sha pr.json)
+          summary=$(cat summary.txt 2>/dev/null || true)
+          metadata=$(printf '%s\n' "$summary" | sed -n 's/.*<!-- codex-security-review:v1 \(.*\) -->.*/\1/p')
+          jq -e --arg head "$head" --arg repo "$GITHUB_REPOSITORY" --argjson number "$PR_NUMBER" 'length == 1 and .[0].status == "completed" and .[0].headSha == $head and .[0].repository == $repo and .[0].pullRequestNumber == $number' <<<"[$metadata]" >/dev/null || exit 0
+          for kind in 'Code Review' 'Security Review'; do
+            row=$(printf '%s\n' "$summary" | awk -F'|' -v kind="$kind" '$0 ~ "**" kind "**" {print; found++} END {if (found != 1) exit 1}') || exit 0
+            printf '%s\n' "$row" | grep -q '✅ **Completed**' || exit 0
+            commit=$(printf '%s\n' "$row" | sed -n 's/.*| `\([0-9a-f]\{7,40\}\)` |.*/\1/p')
+            test -n "$commit" && test "$(gh api "repos/$GITHUB_REPOSITORY/commits/$commit" --jq .sha)" = "$head" || exit 0
+          done
+          login=$(jq -r '[.[] | select(.user.login == "chatgpt-codex-connector[bot]" and (.body | startswith("<!-- codex-pull-request-review-summary -->")))][0].user.login' comments-all.json)
+          jq -e --arg login "$login" '[.[] | select(.user.login == $login and .content == "+1")] | length > 0' reactions-all.json >/dev/null || exit 0
+          jq -e '[.[] | select(.user.login == "github-actions[bot]" and .state == "APPROVED" and (.body | startswith("<!-- codex-automation-approval:v1 -->")))] | length == 0' reviews-all.json >/dev/null || exit 0
+          gh api "repos/$GITHUB_REPOSITORY/pulls/$PR_NUMBER/reviews" -X POST -f event=APPROVE -f commit_id="$head" -f body='<!-- codex-automation-approval:v1 -->'
+
   controlled-ci:
     name: ${{ inputs.operation }}
     if: always() && contains(fromJSON('["draft", "ready"]'), inputs.operation)
