@@ -25,14 +25,28 @@ jobs:
       actions: read
       contents: write
       pull-requests: write
-    uses: ./.github/workflows/approve-codex-review.yml
-    with:
-      pr_number: ${{ format('{0}', github.event.pull_request.number) }}
-      operation: draft
-      expected_head: ${{ github.event.pull_request.head.sha }}
-      expected_base: ${{ github.event.pull_request.base.ref }}
-      head_branch: ${{ github.event.pull_request.head.ref }}
-      mutation_eligible: ${{ github.event.pull_request.head.repo.full_name == github.repository && !github.event.pull_request.head.repo.fork && github.event.pull_request.user.login != 'dependabot[bot]' && github.actor != 'dependabot[bot]' }}
+    runs-on: ubuntu-slim
+    timeout-minutes: 3
+    concurrency: &mutation-concurrency
+      group: codex-approval-${{ github.repository }}-${{ github.event.pull_request.number }}
+      cancel-in-progress: false
+    env: &mutation-env
+      GH_TOKEN: ${{ github.token }}
+      PR_NUMBER: ${{ github.event.pull_request.number }}
+      EXPECTED_HEAD: ${{ github.event.pull_request.head.sha }}
+      EXPECTED_BASE: ${{ github.event.pull_request.base.ref }}
+    steps: &draft-steps
+      - &check-mutation
+        name: Check mutation eligibility
+        run: |
+          pr=$(gh pr view "$PR_NUMBER" --repo "$GITHUB_REPOSITORY" --json headRefOid,baseRefName,headRepository,isCrossRepository,author)
+          test "$(jq -r .headRefOid <<<"$pr")" = "$EXPECTED_HEAD"
+          test "$(jq -r .baseRefName <<<"$pr")" = "$EXPECTED_BASE"
+          test "$(jq -r .headRepository.nameWithOwner <<<"$pr")" = "$GITHUB_REPOSITORY"
+          test "$(jq -r .isCrossRepository <<<"$pr")" = false
+          test "$(jq -r .author.login <<<"$pr")" != dependabot[bot]
+      - name: Set draft state
+        run: gh pr ready "$PR_NUMBER" --repo "$GITHUB_REPOSITORY" --undo
 
   commit-stage:
     needs: draft
@@ -71,14 +85,14 @@ jobs:
     needs: commit-stage
     if: *eligible
     permissions: *mutation-permissions
-    uses: ./.github/workflows/approve-codex-review.yml
-    with:
-      pr_number: ${{ format('{0}', github.event.pull_request.number) }}
-      expected_head: ${{ github.event.pull_request.head.sha }}
-      expected_base: ${{ github.event.pull_request.base.ref }}
-      head_branch: ${{ github.event.pull_request.head.ref }}
-      mutation_eligible: ${{ github.event.pull_request.head.repo.full_name == github.repository && !github.event.pull_request.head.repo.fork && github.event.pull_request.user.login != 'dependabot[bot]' && github.actor != 'dependabot[bot]' }}
-      operation: ready
+    runs-on: ubuntu-slim
+    timeout-minutes: 3
+    concurrency: *mutation-concurrency
+    env: *mutation-env
+    steps:
+      - *check-mutation
+      - name: Set ready state
+        run: gh pr ready "$PR_NUMBER" --repo "$GITHUB_REPOSITORY"
 
   acceptance-stage:
     needs: [commit-stage, ready]
@@ -108,7 +122,7 @@ jobs:
       - name: Check local file and frontmatter links
         run: mise exec -- rumdl check --enable MD057 --config 'MD057.check-frontmatter = true' --deny-config-warnings .
 
-  # Failure-only recovery within the check stage. Reusable workflows cannot be step calls.
+  # Failure-only recovery within the check stage.
   return-to-draft:
     needs: [draft, commit-stage, ready, acceptance-stage]
     if: >-
@@ -121,14 +135,11 @@ jobs:
        needs['commit-stage'].result != 'success' || needs.ready.result != 'success' ||
        needs['acceptance-stage'].result != 'success')
     permissions: *mutation-permissions
-    uses: ./.github/workflows/approve-codex-review.yml
-    with:
-      pr_number: ${{ format('{0}', github.event.pull_request.number) }}
-      expected_head: ${{ github.event.pull_request.head.sha }}
-      expected_base: ${{ github.event.pull_request.base.ref }}
-      head_branch: ${{ github.event.pull_request.head.ref }}
-      mutation_eligible: true
-      operation: draft
+    runs-on: ubuntu-slim
+    timeout-minutes: 3
+    concurrency: *mutation-concurrency
+    env: *mutation-env
+    steps: *draft-steps
 
   check:
     name: ci
