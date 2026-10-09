@@ -1,3 +1,6 @@
-# CI failure fixture
+---
+type: Guide
+resource: ./ci-trial-missing.md
+---
 
-# Duplicate heading
+# CI acceptance failure fixture
