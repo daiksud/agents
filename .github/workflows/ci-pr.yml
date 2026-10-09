@@ -76,8 +76,7 @@ jobs:
       - name: Check local file and frontmatter links
         run: mise exec -- rumdl check --enable MD057 --config 'MD057.check-frontmatter = true' --deny-config-warnings .
 
-  check:
-    name: ci
+  pass:
     needs: acceptance-stage
     if: always()
     runs-on: ubuntu-slim
