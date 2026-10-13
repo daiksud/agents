@@ -17,10 +17,14 @@ Associate changes and artifact creation with Issues, search existing Issues, and
 
 ### Parent Issues and Sub-issues
 
-When splitting work meeting the parent's purpose and success conditions into independently plannable/verifiable units, create linked Sub-issues rather than unrelated follow-up Issues.
+Use only a two-level hierarchy: a Feature Issue is the parent, and its direct Sub-issues are Task Issues. Tasks are leaves and must not own Sub-issues; do not nest Tasks or Features.
+
+Before creating or linking a Sub-issue, retrieve the proposed parent and any existing child to confirm their types and saved relationships. Proceed only with a Feature parent and a Task child that has no Sub-issues. Do not infer a Feature parent merely because the current Issue needs splitting.
+
+When splitting work meeting a Feature's purpose and success conditions into independently plannable/verifiable units, create direct Task Sub-issues rather than unrelated follow-up Issues. If a Task needs further decomposition, record small steps in its body or create sibling Tasks under the same Feature, never children of the Task. If it has no Feature parent, identify or establish an appropriate Feature before linking decomposed Tasks.
 
 1. Preserve decomposition reasons/order in the parent plan, and record each child's scope, validation/completion conditions, and dependencies. Connect parent success conditions to child completion conditions; do not guess child numbers/URLs before creation.
-2. Format/check the updated parent and each complete child body with common rumdl configuration before posting/updating. Record dependencies using actual numbers from created children, and link them as parent Sub-issues on GitHub. Retrieve parent and children, and check **agreement with final formatted bodies, GitHub rendering, and saved parent/child relationships** before presenting verified bodies and retrieved URLs. If saving, agreement, or relationships are unconfirmed, work is incomplete; follow [Post-save procedures](#opening-the-browser-after-saving-an-issue) for browsers.
+2. Format/check the updated parent and each complete child body with common rumdl configuration before posting/updating. Record dependencies using actual numbers from created children, and link them as parent Sub-issues on GitHub. Retrieve parent and children, and check **agreement with final formatted bodies, GitHub rendering, and saved parent/child relationships**, including that the parent is a Feature, each direct child is a Task, and no Task has Sub-issues, before presenting verified bodies and retrieved URLs. If saving, agreement, or relationships are unconfirmed, work is incomplete; follow [Post-save procedures](#opening-the-browser-after-saving-an-issue) for browsers.
 3. Child creation alone does not approve or start implementation. With retained parent execution approval and decomposition within the same success conditions, hand off approved scope after plan saving/verification without reapproval solely for decomposition. For planning-only requests, stop at recording/presentation.
 
 Judge parent completion after every Sub-issue completes and the parent's own success conditions are confirmed. Child creation or plan saving alone does not complete the parent.

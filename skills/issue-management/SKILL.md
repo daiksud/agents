@@ -7,6 +7,8 @@ description: Use for GitHub Issue searches, plan saving, creation and updates, S
 
 Own Issue plans and records. Do not reinterpret Issue creation/update or the existence of a plan as approval to execute changes. Retain execution approval from clear change requests after saving, and hand only approved scope to the responsible skill. `change-delivery` owns Git-managed file changes; `github-repo` owns execution and completion verification for GitHub-side repository settings alone.
 
+Use only the Feature → Task hierarchy for Issue decomposition; Tasks are leaves and never own Sub-issues. Before creating or linking a Sub-issue, follow [Parent Issues and Sub-issues](references/issue-recording.md#parent-issues-and-sub-issues).
+
 ## Material to read at each stage
 
 Read only material needed for the current stage. `docs/` refers to the working repository; resolve bundled links from the referring file.
