@@ -1,0 +1,33 @@
+---
+name: estimate-story-points
+description: Use to estimate story points for GitHub Issues with independent estimators on different AI models, review large divergence as unclear Task text, and record agreed estimates in Issue bodies. Do not use for Issue creation or decomposition alone, implementation, or velocity and capacity reporting.
+---
+
+# Estimate story points with independent agents
+
+Facilitate estimates for explicitly supplied Task Issues or the open direct Task Sub-issues of a parent in one repository. Read the targets and their dependencies before choosing the final target set. Do not count the parent as another Task or silently include dependencies as targets.
+
+Use the dependency [issue-management](../issue-management/SKILL.md) for publication permission, Issue edits, formatting, and save verification. Estimation does not change Git-managed files and does not need `change-delivery`. Do not create, split, reprioritize, or implement Issues, change GitHub Projects fields, report velocity or capacity, or schedule automatic re-estimation. These first-version boundaries come from [Issue #209](https://github.com/daiksud/agents/issues/209).
+
+## Prepare before reading estimates
+
+1. Retrieve current Task and parent bodies, relationships, dependencies, and every referenced Issue, PR, and file needed to understand the work. Check current states rather than assuming linked PRs remain open. Preserve original bodies and source revisions for later comparison. Keep inaccessible facts explicitly unknown.
+2. Find the organization's existing ordered numeric story-point scale and its source, including relevant calibration examples. If no scale exists, ask the requester to supply or approve one before dispatch; do not silently choose a default or convert points to time. Check documented Task granularity separately; an unknown limit does not justify inventing one.
+3. Confirm available model families and independent execution contexts. Use four estimators by default and at least three different families, one per estimator. Different aliases or effort settings of one family do not provide diversity. Fewer than three available families requires asking the requester and stopping dispatch, not role-playing missing estimators or silently lowering the minimum.
+4. Record the roster, requested model and effort, confirmed runtime model/family and context identity, scale and source, divergence threshold, consensus rule, and two-round limit before reading any vote. Distinguish accepted launch settings from verified runtime settings; unknown family identity cannot count toward the minimum. Do not change the rules to fit results.
+
+The facilitator reads all results, verifies claims, clarifies Task text, and records outcomes; it never supplies an estimate. Estimators only read approved inputs and return estimates. They must not edit files, Issues, or PRs, contact the requester, or delegate. One agent playing multiple roles is not independent estimation.
+
+## Run, review, and record
+
+| Stage | Action and material |
+| --- | --- |
+| Round 1 | Dispatch the fixed roster in parallel with the same Task snapshot, evidence, scale, and [estimator contract](references/estimator-contract.md). Keep votes private until all responses arrive. Collect a value or per-option values, confidence, work items, assumptions, risks, and ambiguities for every Task. |
+| Review | Follow [aggregation and review](references/aggregation-and-review.md). Inspect high and low reasoning first for divergent Tasks, but review every Task for contradictions. Verify every factual claim before adopting it in Issue text. Ask the requester about scope or policy rather than choosing for them. Keep clarified Task texts as local drafts. |
+| Round 2 | Run only when review changed any Task text, then re-estimate every target with the same estimators. Provide revised drafts, round-1 ranges, and clarifications, not other estimators' individual votes or a proposed consensus. Each estimator explains changes or unchanged values. Never run a third round in this version. |
+| Finalize | Apply the frozen rules only to valid final responses for the final Task text. Leave unresolved or still-divergent Tasks unestimated and record the open question. Preserve pending decisions as per-option estimates. Propose an oversized Task's split through `issue-management`; do not split automatically. |
+| Save and report | Follow [recording](references/recording.md). Format complete bodies and plan one save per Task and parent after the final round, not one save per round. Retrieve saved bodies and check agreement and rendering. Report verified results, requester decisions, unresolved questions, and incomplete saves or checks. |
+
+Do not treat a timeout, missing response, invalid value, unverified material claim, or unknown model family as a zero, a valid vote, or permission to shrink the roster after seeing results. Do not score affected cases as complete. Resolve information gaps through review and an eligible second round, or report the execution/input blocker without adding rounds. Missing capabilities, required decisions, publication permission, or `issue-management` must remain explicit blockers; return permitted drafts without claiming an estimate or save occurred.
+
+The [review scenarios](references/aggregation-and-review.md#review-scenarios) define reproducible inputs and expected judgments. They are examples for reviewing this skill, not evidence that agents were dispatched or independent validation was performed.

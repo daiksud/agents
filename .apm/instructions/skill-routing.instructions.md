@@ -19,6 +19,7 @@ Separate completion of the current artifact from later skill improvements in KPT
 | Condition | Distribution path |
 | --- | --- |
 | Searching, creating, or updating Issues; recording plans, Sub-issues, follow-up requests, or common standard candidates | `~/.agents/skills/issue-management/SKILL.md` |
+| Estimating story points or work volume for Issues | `~/.agents/skills/estimate-story-points/SKILL.md` |
 | Changes to Git-managed files, artifact creation, PR creation or updates, post-integration verification | `~/.agents/skills/change-delivery/SKILL.md` |
 | Adding, changing, fixing, or refactoring code | `~/.agents/skills/software-development/SKILL.md` |
 | Discovering and specifying user-facing behavior and acceptance conditions | `~/.agents/skills/behavior-specification/SKILL.md` |
