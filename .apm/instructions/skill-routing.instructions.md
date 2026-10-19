@@ -25,9 +25,12 @@ Separate completion of the current artifact from later skill improvements in KPT
 | Discovering and specifying user-facing behavior and acceptance conditions | `~/.agents/skills/behavior-specification/SKILL.md` |
 | Only when performing code review | `~/.agents/skills/code-review/SKILL.md` |
 | Creating or updating documents | `~/.agents/skills/document-authoring/SKILL.md` |
+| Drafting or revising Japanese prose in replies, Issues/PRs, reviews, or documents | `~/.agents/skills/yomiyasu/SKILL.md` |
 | When asked to diagnose current development practices or plan their adoption | `~/.agents/skills/engineering-assessment/SKILL.md` |
 | Diagnosing, maintaining, or applying GitHub repository settings, Rulesets, merge methods, release protection, or security settings | `~/.agents/skills/github-repo/SKILL.md` |
 | GitHub Actions workflow design, changes, failure investigation, review, or efficiency improvements | `~/.agents/skills/github-actions/SKILL.md` |
+
+When drafting or revising Japanese prose, load and follow `yomiyasu` even if the user has not explicitly invoked it. Apply the skill before finalizing Japanese responses or published artifacts. Keep code, identifiers, commands, and verbatim quotations unchanged, and preserve the English-only requirements in [Repository artifact language](language.instructions.md).
 
 Do not require Issues, PRs, or merges for consultation, comparison, explanation, or read-only investigation alone. However, when the user decides a tradeoff that may become a common standard, use `issue-management` to record a candidate Issue even during consultation or review. Read-only Reviewers/Navigators hand candidates to the Driver and do not post themselves. Use `code-review` for read-only code review, also using `github-actions` for GitHub Actions workflow review. Do not add `change-delivery` as ordinary change work to review-only requests; combine the responsible skills when changes, posting, or merging are separately requested. Read the corresponding skill before moving from investigation to changes. Follow `document-authoring` for documents, distinguishing ordinary concepts and index/history files in OKF v0.2 from specific formats, and preserving sources, unknown metadata, and checking history.
 
