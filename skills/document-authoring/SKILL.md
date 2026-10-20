@@ -1,9 +1,9 @@
 ---
 name: document-authoring
-description: Use to create or update document artifacts such as Markdown, specifications, features, ADRs, OpenAPI, and JSON Schema. Covers formats, sources, and Markdown quality. Use behavior-specification to discover acceptance conditions and examples without producing documents. Do not use solely to summarize existing documents or explain concepts.
+description: Use to create or update document artifacts such as READMEs, developer guides, Markdown, specifications, features, ADRs, OpenAPI, and JSON Schema. Covers reader needs, content planning, drafting, editing, examples, maintenance, formats, sources, and Markdown quality. Use behavior-specification to discover acceptance conditions and examples without producing documents. Do not use solely to summarize existing documents or explain concepts.
 ---
 
-# Author documents with OKF
+# Author useful documents with OKF
 
 Follow the dependency `issue-management` for Issue plans, publication permission, and Markdown quality when creating or updating documents, and `change-delivery` for approved repository changes and PR updates through public-main verification. `docs/` below refers to the working repository; `references/` refers to this skill's bundled resources.
 
@@ -11,6 +11,7 @@ Follow the dependency `issue-management` for Issue plans, publication permission
 
 - Follow [Repository artifact language](../../.apm/instructions/language.instructions.md) for repository documentation, including Markdown and feature documents. Determine the target repository's English or Japanese conventions before authoring.
 - Author ordinary Markdown and feature documents in OKF v0.2. Preserve specific formats for GitHub Issue and PR bodies and comments, Agent Skills `SKILL.md`, and contract documents such as OpenAPI and JSON Schema; do not add OKF frontmatter.
+- For reader-facing technical prose, including READMEs, guides, reference explanations, and contributor instructions, read [Developer documentation practices](references/technical-writing.md). Apply its reader, content-type, drafting, and editing guidance to the changed scope; spelling or metadata corrections do not require a new documentation plan or walkthrough.
 - When creating or updating requirements, external contracts, acceptance conditions, design decisions, or ADRs, read [Clarifying specifications with existing documents](references/specification.md), first checking authoritative existing features, ADRs, and API specifications.
 - When creating or updating OKF documents, read [Basic format and references](references/basic-format.md). Check exceptions for indexes/history and ordinary concepts, Bundle boundaries, and link resolution.
 - For documents relying on external material, updates to sourced documents, or judgments about trust, freshness, or status, read [Provenance, trust, and lifecycle](references/provenance.md). Preserve existing sources, unknown metadata, and checking history even for minor corrections.
@@ -31,12 +32,13 @@ Without `issue-management`, do not begin Issue posting or document/PR changes; s
 
 ## Creation and update process
 
-1. Check actors, document purpose and success conditions, authoritative sources, model boundaries, and existing terminology. Use `docs/` as the default Knowledge Bundle, and explicitly state the root when handling another distribution unit.
+1. Check readers, their existing knowledge, the task or decision the document supports, and observable success conditions. Use available evidence rather than inventing user research. Check authoritative sources, model boundaries, and existing terminology. Use `docs/` as the default Knowledge Bundle, and explicitly state the root when handling another distribution unit.
 2. Determine whether the target is an ordinary concept, reserved file, or specific format. Read existing content and frontmatter before making diffs; do not drop unknown keys or sources through regeneration.
 3. Use one concept per file for ordinary concepts, and include `type`. Also include the recommended `title` and `description` for concepts authored in this environment. Do not call this extra condition a mandatory OKF conformance requirement.
-4. Record `sources` for externally grounded content, linking individual claims to footnotes with stable source IDs. Do not substitute navigation links to related documents for sources.
-5. Determine whether changes are meaningful or only spelling/formatting, and update only actual confirmed generation/checking facts. Do not invent dates, human checks, or expiration dates, or claim old checks verify updated content.
-6. Perform [Document quality checks](references/validation.md), separately reporting Markdown results, content checking, warnings for unverified or expired items, and checks that cannot run.
+4. Choose the content type and outline around the reader's task, then draft and edit using [Developer documentation practices](references/technical-writing.md). Apply only relevant techniques to specialized formats and preserve their contracts. Reuse the existing plan and document structure where they fit.
+5. Record `sources` for externally grounded content, linking individual claims to footnotes with stable source IDs. Do not substitute navigation links to related documents for sources.
+6. Determine whether changes are meaningful or only spelling/formatting, and update only actual confirmed generation/checking facts. Do not invent dates, human checks, or expiration dates, or claim old checks verify updated content.
+7. Perform [Document quality checks](references/validation.md), separately reporting Markdown results, content checking, warnings for unverified or expired items, and checks that cannot run.
 
 ## Placement and content
 
