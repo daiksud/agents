@@ -60,6 +60,14 @@ Complete that case through Red → Green → Refactor. Next take the agreed uppe
 
 Here `reserve` is a pure calculation; persistence belongs at an explicit boundary. If saving stock is part of the current agreement, verify the promised saved state there with the smallest effective integration test. For mutable inputs, verify that a calculation promising no mutation leaves them unchanged. Add invalid-quantity tests only if the caller-facing rejection behavior is in scope; do not invent exceptions merely to complete the example.
 
+### Decompose run-on tests after exploration
+
+Exploration can produce a test that accumulates setup, an assertion, another operation, another assertion, and so on. This may help discover a design, but when a later assertion fails it is hard to tell whether the immediately preceding operation or an earlier state change caused the problem. See the [source and adoption decisions](sources.md#adoption-decisions-for-post-exploration-test-decomposition).
+
+After discovery, compare exploratory assertions with the agreed specification; discard probes about incidental current output instead of making them permanent expectations. For each distinct agreed behavior, copy the test, keep only the setup and operations needed for its assertion, remove irrelevant preceding operations and assertions, and name the test to identify what failed. Preserve earlier contract assertions in separate tests rather than repeating every check. Run the resulting tests together and confirm that the suite still protects the intended contracts before deleting the original run-on test.
+
+Do not impose a one-assertion-per-test rule or split a multi-step scenario when that sequence itself is the agreed observable contract. Use the smallest tests that make failures diagnostic while retaining behavior coverage.
+
 ### Reproducible tests suited to their purpose
 
 First decide which contract violation to detect, and choose expectations from the specification. Use minimal data covering normal, boundary, and failure cases; do not copy implementation formulas to construct expectations. Use boolean assertions when booleans themselves are the contract. Do not impose a uniform limit on physical assertion counts.

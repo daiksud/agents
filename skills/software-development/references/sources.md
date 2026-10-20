@@ -17,6 +17,8 @@ sources:
     resource: https://martinfowler.com/bliki/Yagni.html
   - id: newsletter-p-canon-tdd
     resource: https://newsletter.kentbeck.com/p/canon-tdd
+  - id: kent-beck-run-on-tests
+    resource: https://newsletter.kentbeck.com/p/decompose-run-on-tests
   - id: continuousdelivery-foundations-test-automation
     resource: https://continuousdelivery.com/foundations/test-automation/
   - id: continuousdelivery-implementing-architecture
@@ -44,8 +46,15 @@ The reference date is 2026-09-11. Undated means the publication or update date c
 | Author and material | Date and referenced location | Use in this skill |
 | --- | --- | --- |
 | Kent Beck, Canon TDD[^newsletter-p-canon-tdd] | 2023-12-11 | Test lists, one-at-a-time iterations, and retaining expectations |
+| Kent Beck, Decompose Run-On Tests[^kent-beck-run-on-tests] | March 2013; republished 2026-10-13 | Split exploratory test chains into diagnostic, contract-based tests |
 | Jez Humble, Continuous Testing[^continuousdelivery-foundations-test-automation], Architecture[^continuousdelivery-implementing-architecture] | Undated | Fast feedback, exploration, testability, and incremental design improvement |
 | Eric Evans, DDD Reference[^www-05-ddd-reference-2015-03-pdf] | March 2015, booklet pages 39–41 and others | Bounded Context, Ubiquitous Language, and Context Map |
+
+### Adoption decisions for post-exploration test decomposition
+
+Kent Beck's Decompose Run-On Tests[^kent-beck-run-on-tests] was checked on 2026-10-21. A sequence of operations and assertions may be useful when discovering a design, but later failures can obscure which action caused the problem. Decompose such exploratory tests into focused, descriptively named cases, omitting preceding assertions when covered elsewhere in the suite.
+
+This environment additionally requires retaining only assertions that represent agreed, observable contracts; discard exploratory probes about incidental current behavior instead of turning them into requirements. Verify the suite preserves intended contract coverage before removing the original test. Do not mandate one assertion per test or split a multi-step scenario whose sequence is itself an agreed behavior.
 
 ### Adoption decisions for XP values
 
@@ -87,6 +96,7 @@ The following examples checked on 2026-09-13 were also summarized and restructur
 | Taming Copilot[^taming-copilot] | Consider standard features and existing dependencies first and integrate necessary changes into existing structure. Do not omit required contracts, error cases, or TDD, or use shortest code or only user-listed files as the scope criterion |
 
 [^newsletter-p-canon-tdd]: [Canon TDD](https://newsletter.kentbeck.com/p/canon-tdd). Basis for the referenced scope and adoption decisions stated in the text.
+[^kent-beck-run-on-tests]: [Decompose Run-On Tests](https://newsletter.kentbeck.com/p/decompose-run-on-tests). Originally published March 2013 and republished 2026-10-13; source of the run-on-test decomposition technique. The contract triage and multi-step exceptions above are this environment's application policy.
 [^continuousdelivery-foundations-test-automation]: [Continuous Testing](https://continuousdelivery.com/foundations/test-automation/). Basis for the referenced scope and adoption decisions stated in the text.
 [^continuousdelivery-implementing-architecture]: [Architecture](https://continuousdelivery.com/implementing/architecture/). Basis for the referenced scope and adoption decisions stated in the text.
 [^www-05-ddd-reference-2015-03-pdf]: [DDD Reference](https://www.domainlanguage.com/wp-content/uploads/2016/05/DDD_Reference_2015-03.pdf). Basis for the referenced scope and adoption decisions stated in the text.
