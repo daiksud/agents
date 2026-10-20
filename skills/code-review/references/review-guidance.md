@@ -89,6 +89,7 @@ Corresponding areas: contracts and intent, users and operations, external bounda
 - Check public API purpose, arguments, returns, failures, and side effects are understandable through types or user specifications. Prioritize preserving invisible contracts over duplicating information apparent in code.
 - Compare API/default changes with existing callers and compatibility policy. Check migration methods and impact for breaking changes; version bumps alone do not validate compatibility.
 - Compare feature, configuration, or startup-procedure changes with README and operational procedures. For complex functionality, investigate whether examples show necessary decisions or failure responses.
+- For reader-facing documentation changes, use [Review task completion before presentation](../../document-authoring/references/technical-writing.md#review-task-completion-before-presentation) as read-only review criteria. Connect missing context, incorrect examples, or navigation gaps to the intended reader's task; retain this skill's finding criteria and review boundaries.
 - For deployment/data migration, check partial failures, mixed old/new versions, and recovery procedures. Do not uniformly demand destructive reverse migrations when safe forward repair is designed.
 
 ## Findings and results

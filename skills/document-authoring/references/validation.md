@@ -11,5 +11,6 @@ No OKF conformance validation is provided. Follow [Basic format and references](
 - For repository documents, follow [Markdown quality for GitHub](../../issue-management/references/markdown-quality.md) in the dependency `issue-management`, formatting/checking complete Markdown through rumdl. Do not arbitrarily overwrite existing project configuration.
 - For missing/outdated rumdl, installation/upgrades or temporary execution involving downloads follow that material's permission-checking procedures. Inability to execute is not a pass.
 - Check categories, terminology, links, documented commands, and diffs.
+- For reader-facing technical prose, apply [Review task completion before presentation](technical-writing.md#review-task-completion-before-presentation) to the changed scope. Check usefulness and accuracy before wording, and separate executed walkthroughs from static inspection or unavailable checks; minor spelling or metadata edits do not require a new walkthrough.
 - Check feature headings/steps after formatting. Read source content and contract meanings as well.
 - Do not report Markdown success as OKF conformance, source truth, human content checking, or proof of computation execution. Distinguish unverified, expired, and unexecutable checks.
