@@ -5,8 +5,6 @@ description: Choose test layers, state, time, external boundaries, UI, and perfo
 sources:
   - id: practice-sources
     resource: sources.md
-  - id: kent-beck-run-on-tests
-    resource: https://newsletter.kentbeck.com/p/decompose-run-on-tests
 ---
 
 ## Change units and reproducible validation
@@ -64,9 +62,9 @@ Here `reserve` is a pure calculation; persistence belongs at an explicit boundar
 
 ### Decompose run-on tests after exploration
 
-Exploration can produce a test that accumulates setup, an assertion, another operation, another assertion, and so on. This may help discover a design, but when a later assertion fails it is hard to tell whether the immediately preceding operation or an earlier state change caused the problem.[^kent-beck-run-on-tests]
+Exploration can produce a test that accumulates setup, an assertion, another operation, another assertion, and so on. This may help discover a design, but when a later assertion fails it is hard to tell whether the immediately preceding operation or an earlier state change caused the problem. See the [source and adoption decisions](sources.md#adoption-decisions-for-post-exploration-test-decomposition).
 
-After discovery, copy the test for each distinct observable behavior. Keep the setup and operations needed to reach that behavior's assertion, remove irrelevant preceding operations and assertions, and give the test a name that identifies what failed. Keep earlier assertions in separate tests when needed rather than repeating every check. Run the resulting tests together and confirm that the suite still protects the intended contracts before deleting the original run-on test.
+After discovery, compare exploratory assertions with the agreed specification; discard probes about incidental current output instead of making them permanent expectations. For each distinct agreed behavior, copy the test, keep only the setup and operations needed for its assertion, remove irrelevant preceding operations and assertions, and name the test to identify what failed. Preserve earlier contract assertions in separate tests rather than repeating every check. Run the resulting tests together and confirm that the suite still protects the intended contracts before deleting the original run-on test.
 
 Do not impose a one-assertion-per-test rule or split a multi-step scenario when that sequence itself is the agreed observable contract. Use the smallest tests that make failures diagnostic while retaining behavior coverage.
 
@@ -147,5 +145,3 @@ Retain the smallest effective unit, integration, or browser coverage for each di
 - Verify failure caused by the target defect before the fix, success after the fix, and related acceptance validation. Do not claim automated tests alone prove user value; also use exploration, demos, and user feedback.
 - If skill judgments also change, combine this with independent simulated evaluation. Do not require TDD for changes only to skill text.
 - In the final report, show executed tests, Red and Green results, other validation, and unverified scope. Do not report unexecuted checks or inadequate environments as success.
-
-[^kent-beck-run-on-tests]: [Kent Beck: Decompose Run-On Tests](https://newsletter.kentbeck.com/p/decompose-run-on-tests). Adopt post-exploration decomposition, diagnostic test naming, and suite-wide coverage without a mechanical assertion-count rule.
