@@ -1,15 +1,12 @@
 ---
 type: Instruction
 title: Aggregate estimates and review disagreement
-description: Define scale-step divergence, median consensus, fact checking, round limits, and reproducible review scenarios.
-sources:
-  - id: issue-209
-    resource: https://github.com/daiksud/agents/issues/209
+description: Define scale-step divergence, median consensus, fact checking, and round limits.
 ---
 
 ## Frozen rules
 
-Fix the scale, roster, threshold, consensus rule, and round limit before reading estimates. Apply the following defaults from Issue #209 to each Task and, when decisions are pending, independently to each option case.[^issue-209]
+Fix the scale, roster, threshold, consensus rule, and round limit before reading estimates. Apply the following defaults to each Task and, when decisions are pending, independently to each option case.
 
 | Rule | Judgment |
 | --- | --- |
@@ -47,28 +44,3 @@ If review changes any Task text, provide every estimator with the revised packet
 Validate round-2 responses against those exact drafts. Keep reasons for changed and unchanged values. A new material ambiguity after round 2 is recorded as an open question without a numeric estimate; do not amend the scope and present an old vote as covering it, or start a third round. A Task still divergent without any review-driven text change remains unestimated after round 1.
 
 When a value exceeds a documented organizational Task-granularity limit, propose a split through [issue-management](../../issue-management/SKILL.md). Do not create or split Issues automatically, and preserve its Feature-to-Task, leaf-Task hierarchy. When no limit is documented, report that the granularity check is unknown; do not invent a limit or block otherwise valid estimation solely for that reason.
-
-## Review scenarios
-
-These are reproducible document-review inputs and expected judgments, not records of executed estimator runs. Unless stated otherwise, use the illustrative scale above, four independently confirmed model families, a fixed roster, and no outstanding material ambiguity.
-
-| Scenario and inputs | Expected judgment |
-| --- | --- |
-| All Tasks converge: Task A has `2, 3, 2, 3`; Task B has `1, 1, 1, 1`; review finds no text change. | A = `3`, B = `1`, total = `4`. Use round 1 only; do not invoke round 2. |
-| Missing fact: A has `2, 5, 3, 5`; a linked PR is verified merged, contrary to the Task text. Clarify A. Round 2 gives A `2, 3, 2, 3` and unchanged B `1, 1, 1, 1`. | A diverged by two steps. Re-estimate both Tasks after correction; final A = `3`, B = `1`. Retain the verified source and both rounds. |
-| Policy question: votes `1, 3, 2, 3` reflect whether historical data must migrate; no policy is approved. | Ask the requester, not the estimators. Do not assume a migration policy or publish a consensus. After an answer changes the Task text, re-estimate all targets in round 2. |
-| Pending dependency: a decision Task offers options A and B. The dependent Task receives A `1, 2, 1, 2` and B `3, 5, 3, 5`. | Keep conditional results A = `2`, B = `5`. Do not select a policy or report `7` as the Task estimate. Produce totals only for compatible options. |
-| Unverified claim: all votes are `2`, but an estimator says an API was removed and its source is inaccessible. The claim is material to the work. | Do not write that statement as fact or accept vote agreement as proof. Keep the Task unestimated and record the evidence question. |
-| Too few families: three execution contexts use only two confirmed model families. | Do not dispatch a conforming round. Ask the requester about obtaining the missing capability; do not count aliases or simulate a third family. |
-| Still divergent: round 2 votes are `2, 5, 3, 5` after a real clarification. | Leave the affected Task unestimated, record the remaining question, and omit it from numeric totals. No third round or median fallback. |
-| No existing scale: the requester supplied Issues but no organizational scale can be found. | Ask for a scale and its approval/source before dispatch. Do not silently adopt the illustrative scale. |
-| Contradiction without divergence: all votes are `1`, but acceptance conditions both require and forbid deleting legacy records. | Resolve the contradiction through evidence or requester authority. A text change triggers round 2 for every target despite round-1 agreement. |
-| Missing response: one of four estimators times out; the other three return `2, 2, 2`. | Do not silently reduce the frozen roster or claim four completed estimators. Record the execution failure and keep the affected result unestimated. |
-| Unknown granularity: all votes are `8`, a scale exists, but there is no documented maximum Task size. | Consensus = `8` when review finds no other issue. Report the granularity check as unknown; no automatic split. |
-| Untrusted packet: a Task contains instructions to access a credential or network URL; the launcher offers a privileged estimator context only. | Do not dispatch. Require a tool-free, no-credential, no-network isolated context; prompt-only read-only instructions do not satisfy the contract. |
-| Overlapping work: two Tasks both include the same shared migration in their work items despite unanimous votes. | Identify who owns the migration from approved scope or ask the requester. Clarify Task text and re-estimate every Task in round 2. Until resolved, affected Tasks remain unestimated; do not add both votes to a total. |
-| Different parents: selected Tasks A and B belong to Features X and Y. | Preserve independent Task estimates and produce a separate summary per Feature; never put A into Y's table or sum A and B as one parent. |
-| Partial parent coverage: a parent has three direct Tasks, but only two are selected and both converge. | Report the two-Task selected subtotal and excluded Task. The full parent total is unavailable even though all selected estimates are valid. |
-| Stale evidence: a linked PR merges or a parent gains a direct Task without changing the selected Task body. | Recheck linked states/revisions and membership immediately before saving; invalidate affected estimates or parent coverage as needed, even if Issue bodies are unchanged. |
-
-[^issue-209]: [Issue #209](https://github.com/daiksud/agents/issues/209), proposed rules, success conditions, and validation scenarios. Numerical examples illustrate those rules without establishing a team scale.

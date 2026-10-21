@@ -32,6 +32,10 @@ sources:
     title: Reference SQL attester
 ---
 
+## Purpose and scope
+
+This maintainer audit records the adopted specification, earlier source comparisons, and local authoring decisions. Ordinary authoring uses [document-authoring](../skills/document-authoring/SKILL.md) and its operational references. Source-reading observations below are retained history, not evidence that this reorganization reran upstream code or rechecked its current state.
+
 ## Authoritative source and interpretation
 
 The adopted authoritative source is SPEC v0.2 at full SHA `ad30107c31c06aec8a7d5636e0d1058118604e6f` in the migration destination, `open-knowledge-format`. The former location advises that it is a frozen copy and should not guide new development. The inspected frozen SPEC body matched the pinned authoritative source.[^migration][^frozen-spec][^spec]
@@ -49,7 +53,7 @@ The adopted authoritative source is SPEC v0.2 at full SHA `ad30107c31c06aec8a7d5
 | §4.2 | Structured Markdown recommended. No fixed body sections | Body authoring | Use GFM alongside feature-specific notation |
 | §4.3–4.4 | Examples with and without assets | Resource decisions | Do not invent URIs for abstract concepts |
 | §5 preamble | Each family optional. Datetimes use ISO datetime with offsets | Datetime recording | Do not fill in unknown datetimes |
-| §5.1 | Source resource required when included. IDs/signals optional; IDs recommended when citing | Source-backed creation and updates | Use sources and stable-ID footnotes |
+| §5.1 | Source resource required when included. IDs/signals optional; IDs recommended when citing | Source-backed creation and updates | Use sources and stable-ID footnotes in human-facing documents; keep execution-guidance provenance in maintainer notes |
 | §5.2 | generated.by required when included. verified is an event list; a single mapping is also permitted | Creation and content cross-checking | Distinguish creation from cross-checking and history from current content |
 | §5.3 | Derive trust tiers from verified. Do not reject unverified documents | Trust display | Do not convert CI success into human verification |
 | §5.4 | status is draft / stable / deprecated, default stable | Lifecycle | Do not equate stable with verified |

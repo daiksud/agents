@@ -10,7 +10,7 @@ description: Evidence to inspect, treatment of unknowns, improvement priorities,
 
 First organize the user's difficulties and expected outcomes, target services, flow including delivery and operations, and constraints. If the target repository alone is insufficient, identify boundaries with other repositories, organizations, and external services. Treat evidence beyond your permissions as unavailable; do not change access rights or organizations to expand assessment scope on your own.
 
-Find existing glossaries, specifications, design decisions, and assessment Issues first; decide the observation period and target SHA. Do not claim a short observation period represents general operation.
+Find existing glossaries, specifications, design decisions, and assessment Issues first; decide the observation period and target SHA. Do not claim a short observation period represents general operation. When definitions or versions affect a judgment, check authoritative material for the selected lens and record the version and date actually checked. Distinguish checking dates from source publication dates.
 
 ### Perspectives and evidence
 
@@ -51,7 +51,7 @@ Prioritize from value impact, actual waits/failures, dependencies, change risks,
 
 These examples are not prescriptions before assessment. Preserve confirmed rules and contracts. If decisions are unresolved, make confirming conditions with stakeholders a prerequisite to the first experiment. Do not make full legacy rewrites, Microservices, repository splitting, or particular products universal solutions.
 
-Operational observation and procedure-sharing perspectives were made concrete with reference to DevOps Core Principles. Consolidate referenced versions and adoption decisions, including CALMS, in [source materials](sources.md). Use the [DORA lens](dora.md) for Core / Catalog / metrics version differences.
+Use the [DORA lens](dora.md) for Core / Catalog / metrics version differences.
 
 Map each experiment to its target state, current evidence, participating roles, order/dependencies, acceptance conditions, observation method, and reassessment point. Propose rollback and stop conditions when changes pose operational risks. Do not invent numerical targets or schedules; distinguish provisional proposals from agreed conditions.
 

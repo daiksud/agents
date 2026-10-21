@@ -21,7 +21,8 @@ Read only applicable material, combining it when multiple areas are involved.
 | Security audits or changes involving permissions, external input, authentication, untrusted code, artifact/cache trust boundaries | [Safety](references/hardening.md) |
 | Slow CI, duplicate runs, caching, skip conditions, parallelization, matrix improvements | [Efficiency improvements](references/efficiency.md) |
 | Action version upgrades, internal-runtime deprecation warnings, runner compatibility | [Runtime upgrades](references/runtime-upgrades.md) |
-| Checking provenance, adoption reasons, or version-dependent claims | [Sources and application decisions](references/sources.md) |
+
+For version-dependent judgments, compare current official specifications with the target environment, settings, and release metadata. Historical checks do not establish current availability or compatibility.
 
 ## Common judgments
 
@@ -40,3 +41,5 @@ For design/investigation, show evidence and proposals; for review, findings with
 - Distinguish local tests from GitHub execution. For approved changes, compare target SHA, event, runner, and run URL, checking necessary artifacts or post-deployment state as well as execution results.
 - Do not treat failed, canceled, unexecuted, or unobtainable results as success. If execution validation is impossible, show unverified scope and checking methods.
 - Separate expected effects from measurements. CI success does not prove overall safety or performance improvement.
+
+Adapted in part from GitHub, Inc. material distributed under the [MIT License](LICENSE.txt).

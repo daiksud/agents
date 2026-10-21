@@ -19,7 +19,7 @@ Do not duplicate details here every time. Read only focused references needed fo
 | DDD | What is modeled, and how far do the same meanings and language apply? | Semantic/architecture relationships: [Architecture and Organization](architecture-and-organization.md) |
 | CI | Are small changes integrated frequently into main, with fast feedback and continued repair? | Implementation: `change-delivery`; assessment: [assessment procedures](assessment.md) |
 | Continuous Delivery | Can verified changes remain safely deliverable when needed? Continuous Deployment is a separate practice of automatically deploying verified changes to production; manual approval can coexist with CD | DORA Capability relationships: [DORA lens](dora.md) |
-| DevOps | Can the feedback loop for user outcomes, quality, and operations close from development through operations? CALMS uses Culture / Automation / Lean / Measurement / Sharing to assess organization, automation, flow, measurement, and knowledge sharing together | Evidence: [assessment procedures](assessment.md); CALMS and other sources/adoption decisions: [primary materials](sources.md) |
+| DevOps | Can the feedback loop for user outcomes, quality, and operations close from development through operations? CALMS uses Culture / Automation / Lean / Measurement / Sharing to assess organization, automation, flow, measurement, and knowledge sharing together | Evidence: [assessment procedures](assessment.md) |
 | Team Topologies / Conway | How should ownership, interaction, cognitive load, and software boundaries align? | [Architecture and Organization](architecture-and-organization.md) |
 | DORA | How can Capability, Performance, and Outcome be assessed from evidence? | [DORA lens](dora.md) |
 
@@ -49,7 +49,7 @@ These differ not only in test artifacts, but in which feedback is created when.
 
 BDD and ATDD overlap in concrete examples and shared understanding; do not require separate meetings or duplicate specifications. TDD can provide a short design/validation loop inside agreed behavior. Completed Gherkin or tests alone do not establish Discovery, agreement before implementation, or Red-first processes.
 
-Use [primary materials](sources.md) for detailed sources/version differences and [assessment procedures](assessment.md) for evidence to gather.
+Use [assessment procedures](assessment.md) for evidence to gather.
 
 ### Do not infer practices from artifacts alone
 
@@ -77,5 +77,3 @@ Examples:
 - XP design/feedback assessment → focused XP lens. Do not score how many practices are adopted.
 
 Expand assessment scope only when its effect on the user's purpose can be explained.
-
-Check sources and version differences in [primary materials and application decisions](sources.md).

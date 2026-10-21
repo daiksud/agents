@@ -2,13 +2,6 @@
 type: Guide
 title: Concrete review criteria and reporting examples
 description: Connect 11 areas to concrete investigation and distinguish formal findings, optional suggestions, and design decisions to retain from evidence.
-sources:
-  - id: github-instructions-code-review-generic-instructions-md
-    resource: https://github.com/github/awesome-copilot/blob/main/instructions/code-review-generic.instructions.md
-  - id: fowler-beck-design-rules
-    resource: https://martinfowler.com/bliki/BeckDesignRules.html
-  - id: fowler-yagni
-    resource: https://martinfowler.com/bliki/Yagni.html
 ---
 
 ## Investigation
@@ -21,6 +14,8 @@ sources:
 6. If validation is needed, reproduce read-only or in isolation. Do not run tests involving external transmission or actual-data modification. Separate executed commands/results from unexecuted checks and reasons. Ground performance/cost in frequency, measurement conditions, and measurements; distinguish unmeasurable claims from confirmed facts.
 
 ## Investigation perspectives
+
+Use impact-based severity and the target repository's conventions. Source examples' area-specific severities, line-count thresholds, and Copilot frontmatter are not shared review requirements.
 
 Not every area needs findings. Line counts, nesting depth, and design principles guide deeper investigation, but exceeding numbers or principle names alone is not a reason to fix. Use them as questions about relationships with the diff; do not duplicate the same cause across areas.
 
@@ -133,15 +128,3 @@ If documentation gaps prevent correct usage, treat them as formal findings. Comp
 The unique constraint at `orders.sql:18` and conflict retrieval at `create_order.py:24` use the same request key, protecting the contract that concurrent retries do not duplicate orders. Preserve the design of routing added registration paths through this key and constraint.
 
 Show confirmed mechanisms and protected contracts rather than merely “thorough tests” or “good design.” Report problems in other paths as formal findings first.
-
-## Sources and application policy
-
-Referenced the quality perspectives, overall-to-detail investigation, and concrete constructive reporting in GitHub awesome-copilot's Generic Code Review Instructions.[^github-instructions-code-review-generic-instructions-md]
-
-Using Martin Fowler's Beck Design Rules[^fowler-beck-design-rules] and Yagni[^fowler-yagni], established five perspectives for investigating complexity unnecessary for current requirements. These are this skill's application examples; the originals do not uniformly prohibit each structure.
-
-This skill evaluates the simplest design meeting current requirements and safety for actual changes, assigning P0–P3 severity by impact. Do not directly apply the sources' area-specific severities, line-count guidance, or Copilot frontmatter. Report review results as judgments within checked scope; do not decide GitHub approval or merge.
-
-[^github-instructions-code-review-generic-instructions-md]: [GitHub awesome-copilot Generic Code Review Instructions](https://github.com/github/awesome-copilot/blob/main/instructions/code-review-generic.instructions.md). Evidence for the reference scope and adoption decisions stated in the text.
-[^fowler-beck-design-rules]: [Beck Design Rules](https://martinfowler.com/bliki/BeckDesignRules.html). Apply to design meeting current requirements, clear intent, and judging unnecessary elements.
-[^fowler-yagni]: [Yagni](https://martinfowler.com/bliki/Yagni.html). Distinguish anticipation of hypothetical future features from currently necessary health.

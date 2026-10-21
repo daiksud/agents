@@ -2,28 +2,17 @@
 type: Reference
 title: Lightweight lookup of individual XP items
 description: Read only diagnostic meanings of individual XP Values / Principles / Practices for XP-primary assessment or support for other lenses.
-sources:
-  - id: xp-second-edition
-    resource: https://www.informit.com/store/extreme-programming-explained-embrace-change-9780134051987
-  - id: ron-jeffries-xp
-    resource: https://ronjeffries.com/xprog/what-is-extreme-programming/
-  - id: xp-second-edition-principles
-    resource: https://www.oreilly.com/library/view/extreme-programming-explained/0321278658/ch05.xhtml
-  - id: xp-second-edition-primary-practices
-    resource: https://www.oreilly.com/library/view/extreme-programming-explained/0321278658/ch07.xhtml
-  - id: xp-second-edition-corollary-practices
-    resource: https://www.oreilly.com/library/view/extreme-programming-explained/0321278658/ch09.xhtml
 ---
 
 ## Lightweight lookup of individual XP items
 
-Read when checking named-item meanings in XP-primary assessment, or using one or a few XP items to support Architecture, DORA, Lean, or other lenses. Enter through [XP taxonomy](xp.md) for classification and overall relationships; use this shared lookup for item semantics.[^xp-second-edition]
+Read when checking named-item meanings in XP-primary assessment, or using one or a few XP items to support Architecture, DORA, Lean, or other lenses. Enter through [XP taxonomy](xp.md) for classification and overall relationships; use this shared lookup for item semantics.
 
 Do not make this reference a mandatory checklist of every XP item. Even in XP-primary assessment, select only items relevant to the current problem; do not expand every item into unknowns lists.
 
 ### Values
 
-Cross-check meanings of the five Values against public XP explanations.[^ron-jeffries-xp]
+Cross-check meanings of the five Values against public XP explanations.
 
 | Value | Compact diagnostic cue |
 | --- | --- |
@@ -35,7 +24,7 @@ Cross-check meanings of the five Values against public XP explanations.[^ron-jef
 
 ### Principles
 
-Refer to the second edition's Principles chapter for their role.[^xp-second-edition-principles]
+Refer to the second edition's Principles chapter for their role.
 
 | Principle | Compact diagnostic cue |
 | --- | --- |
@@ -56,7 +45,7 @@ Refer to the second edition's Principles chapter for their role.[^xp-second-edit
 
 ### Primary Practices
 
-Refer to the second edition's Primary Practices chapter for their role.[^xp-second-edition-primary-practices]
+Refer to the second edition's Primary Practices chapter for their role.
 
 | Primary Practice | Compact diagnostic cue |
 | --- | --- |
@@ -76,7 +65,7 @@ Refer to the second edition's Primary Practices chapter for their role.[^xp-seco
 
 ### Corollary Practices
 
-Refer to the second edition's Corollary Practices chapter for application cautions. Introducing names without Primary Practices or necessary delivery/feedback foundations can be difficult or dangerous; check related foundations and current constraints first.[^xp-second-edition-corollary-practices]
+Refer to the second edition's Corollary Practices chapter for application cautions. Introducing names without Primary Practices or necessary delivery/feedback foundations can be difficult or dangerous; check related foundations and current constraints first.
 
 | Corollary Practice | Compact diagnostic cue |
 | --- | --- |
@@ -93,9 +82,3 @@ Refer to the second edition's Corollary Practices chapter for application cautio
 | Pay-Per-Use | Check whether a business model connecting actual use with economic feedback is effective |
 
 If classification or relationships to other XP items become necessary, also read [XP taxonomy](xp.md). Continue using this lookup for item-semantics assessment itself.
-
-[^xp-second-edition]: [Extreme Programming Explained: Embrace Change, 2nd Edition — Kent Beck / Cynthia Andres](https://www.informit.com/store/extreme-programming-explained-embrace-change-9780134051987). Second-edition XP taxonomy. Checked 2026-09-27.
-[^ron-jeffries-xp]: [What is Extreme Programming? — Ron Jeffries](https://ronjeffries.com/xprog/what-is-extreme-programming/). Five Values and applying small feedback. Checked 2026-09-27.
-[^xp-second-edition-principles]: [Chapter 5. Principles — Extreme Programming Explained, 2nd Edition](https://www.oreilly.com/library/view/extreme-programming-explained/0321278658/ch05.xhtml). Role of Principles. Checked 2026-09-27.
-[^xp-second-edition-primary-practices]: [Chapter 7. Primary Practices — Extreme Programming Explained, 2nd Edition](https://www.oreilly.com/library/view/extreme-programming-explained/0321278658/ch07.xhtml). Role of Primary Practices. Checked 2026-09-27.
-[^xp-second-edition-corollary-practices]: [Chapter 9. Corollary Practices — Extreme Programming Explained, 2nd Edition](https://www.oreilly.com/library/view/extreme-programming-explained/0321278658/ch09.xhtml). Corollary Practices application cautions. Checked 2026-09-27.

@@ -2,11 +2,6 @@
 type: Guide
 title: Clarifying specifications with existing documents
 description: Show procedures for recording requirements, constraints, external contracts, and acceptance conditions in existing authoritative documents, clarifying uncertainties and validation mappings.
-sources:
-  - id: github-create-specification-skill-md
-    resource: https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/skills/create-specification/SKILL.md
-  - id: github-instructions-spec-driven-workflow-v1-instructions-md
-    resource: https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/instructions/spec-driven-workflow-v1.instructions.md
 ---
 
 ## Clarifying specifications with existing documents
@@ -54,17 +49,6 @@ Put authoritative ADR links and decision-relevant summaries in Issues rather tha
 
 ### Checks
 
-- Check requirements, constraints, recommendations, and unsettled matters are distinguishable, and necessary assumptions, terms, contracts, and examples reach readers.
+- Check requirements, constraints, recommendations, and unsettled matters are distinguishable, and necessary assumptions, terms, contracts, and examples reach readers. Do not turn example test frameworks or coverage goals into common requirements.
 - Check acceptance conditions map to every requirement and document/test expectations agree. Unexecuted tests are not successful.
 - Check duplicate/conflicting authoritative sources, links/reference versions, and preservation of existing OKF formats. Even ADR-only updates include these, final diff inspection, and rumdl formatting/checking under document-authoring Markdown-quality procedures in validation plans. Distinguish executed results from unexecuted plans.
-
-### Sources and application decisions
-
-Checked GitHub awesome-copilot Create Specification[^github-create-specification-skill-md] on 2026-09-11, summarizing/restructuring explicit requirements, contracts, and acceptance conditions.
-
-Prioritize existing OKF, features, and ADRs without adopting the source's `/spec/` placement, fixed filenames, all 11 sections, or custom frontmatter. Do not turn example test frameworks or coverage goals into common requirements. This is this environment's application decision, not a universal specification-format standard.
-
-Checked GitHub awesome-copilot Spec Driven Workflow v1[^github-instructions-spec-driven-workflow-v1-instructions-md] on 2026-09-11, adopting preserved decision reasons and reconsideration conditions. Limit to important design decisions here, mapping assumptions to observations in existing ADRs. Do not adopt fixed templates for all decisions, fixed three documents, complete operation logs, or uniform six stages.
-
-[^github-create-specification-skill-md]: [GitHub awesome-copilot Create Specification](https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/skills/create-specification/SKILL.md). Evidence for reference scope and adoption decisions stated in the text.
-[^github-instructions-spec-driven-workflow-v1-instructions-md]: [GitHub awesome-copilot Spec Driven Workflow v1](https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/instructions/spec-driven-workflow-v1.instructions.md). Evidence for reference scope and adoption decisions stated in the text.

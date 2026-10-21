@@ -2,9 +2,6 @@
 type: Reference
 title: Change units and reproducible validation
 description: Choose test layers, state, time, external boundaries, UI, and performance from contracts and risks.
-sources:
-  - id: practice-sources
-    resource: sources.md
 ---
 
 ## Change units and reproducible validation
@@ -29,7 +26,7 @@ Choose expectations from the agreed specification, not current output or copied 
 
 ### Mapping contracts to observable tests
 
-Use the [applicable contracts and their owners](design.md#expressing-agreed-behavior-as-contracts) to derive representative black-box examples for the next small change.[^practice-sources]
+Use the [applicable contracts and their owners](design.md#expressing-agreed-behavior-as-contracts) to derive representative black-box examples for the next small change.
 
 - Preconditions guide valid setup and relevant input boundaries. Test caller-facing rejection only when its observable behavior is agreed or required by the current scope.
 - Postconditions guide assertions of promised results, resulting state, and necessary effects. Select observations that can detect a violation without depending on incidental internals.
@@ -62,7 +59,7 @@ Here `reserve` is a pure calculation; persistence belongs at an explicit boundar
 
 ### Decompose run-on tests after exploration
 
-Exploration can produce a test that accumulates setup, an assertion, another operation, another assertion, and so on. This may help discover a design, but when a later assertion fails it is hard to tell whether the immediately preceding operation or an earlier state change caused the problem. See the [source and adoption decisions](sources.md#adoption-decisions-for-post-exploration-test-decomposition).
+Exploration can produce a test that accumulates setup, an assertion, another operation, another assertion, and so on. This may help discover a design, but when a later assertion fails it is hard to tell whether the immediately preceding operation or an earlier state change caused the problem.
 
 After discovery, compare exploratory assertions with the agreed specification; discard probes about incidental current output instead of making them permanent expectations. For each distinct agreed behavior, copy the test, keep only the setup and operations needed for its assertion, remove irrelevant preceding operations and assertions, and name the test to identify what failed. Preserve earlier contract assertions in separate tests rather than repeating every check. Run the resulting tests together and confirm that the suite still protects the intended contracts before deleting the original run-on test.
 
@@ -122,10 +119,6 @@ When elapsed time itself is contractual, choose a clock and environment that ver
 For tests whose results vary under the same conditions, investigate order, state, time, environment, and other causes. Distinguish a successful retry from resolution of its cause. Follow dependency skill `change-delivery` for CI retries and recovery; do not uniformly defer required integration validation until after merge.
 
 Do not make test-layer ratios, coverage, mutation scores, or response-time measurements for every API shared pass/fail conditions. Choose from target contracts, risks, and existing conventions. Do not add E2E or load tests to simple functions without UI or performance contracts.
-
-Keep validation sources and adoption decisions in the [primary materials](sources.md).[^practice-sources]
-
-[^practice-sources]: References and application decisions for Canon TDD, Continuous Testing, Architecture, and QA Engineering Best Practices; [Design by Contract adoption and limits](sources.md#adoption-decisions-for-design-by-contract).
 
 ### No tests of tests
 

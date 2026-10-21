@@ -14,7 +14,7 @@ In CD, maintain a state in which validated changes can be delivered safely when 
 
 Reassess team responsibilities and relationships for collaboration, service provision, and support according to scale and constraints, considering dependencies that impede value flow and the cognitive load and experience of those responsible. Do not make the four team types a mandatory organization chart.
 
-These are guides for daily decisions; do not perform a comprehensive diagnosis of development practices for ordinary changes. Read `~/.agents/skills/engineering-assessment/references/principles.md` when checking definitions, relationships, or sources.
+These are guides for daily decisions; do not perform a comprehensive diagnosis of development practices for ordinary changes. Read `~/.agents/skills/engineering-assessment/references/principles.md` when checking definitions or relationships.
 
 ### Integration and completion
 

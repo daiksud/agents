@@ -2,31 +2,6 @@
 type: Instruction
 title: Review and merge
 description: Define PR creation, review responses, CI checks, rebasing, squash merge, and workspace cleanup.
-sources:
-  - id: gh-pr-edit
-    resource: https://cli.github.com/manual/gh_pr_edit
-  - id: github-rest-review-requests
-    resource: https://docs.github.com/en/rest/pulls/review-requests#request-reviewers-for-a-pull-request
-  - id: docs-request-a-code-review-use-code-review
-    resource: https://docs.github.com/en/copilot/how-tos/use-copilot-agents/request-a-code-review/use-code-review
-  - id: github-graphql-pulls
-    resource: https://docs.github.com/en/graphql/reference/pulls
-  - id: github-installed-apps
-    resource: https://docs.github.com/en/apps/using-github-apps/reviewing-and-modifying-installed-github-apps
-  - id: github-app-installation-api
-    resource: https://docs.github.com/en/rest/apps/apps#get-a-repository-installation-for-the-authenticated-app
-  - id: github-app-user-installations
-    resource: https://docs.github.com/en/rest/apps/installations#list-app-installations-accessible-to-the-user-access-token
-  - id: codex-github-review
-    resource: https://developers.openai.com/codex/integrations/github
-  - id: github-app-user-access
-    resource: https://docs.github.com/en/apps/creating-github-apps/authenticating-with-a-github-app/generating-a-user-access-token-for-a-github-app
-  - id: ruleset-rules
-    resource: https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-rulesets/available-rules-for-rulesets
-  - id: code-owners
-    resource: https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
-  - id: approval-code-owner-exception
-    resource: https://github.com/daiksud/agents/issues/165
 ---
 
 ## Review and merge
@@ -43,7 +18,7 @@ sources:
 - If review changes purpose, outcomes, acceptance conditions, or external impact, including reductions, save/present concrete proposals and confirm through `issue-management` “Planning and execution scope.” Record and continue adjustments meeting the same success conditions.
 - Within approval, update PR bodies alongside review responses changing content, reasons, results, or important constraints.
 - Reassess labels if content changes.
-- On drafts prioritize Copilot Code Review[^docs-request-a-code-review-use-code-review] through [Quick reviewer candidate assessment](#quick-reviewer-candidate-assessment). For Codex follow “Alternative review.” Only read-only candidate checks may precede CI completion; formal review-request APIs used as assessment/request below wait for stable-HEAD checks.
+- On drafts prioritize Copilot Code Review through [Quick reviewer candidate assessment](#quick-reviewer-candidate-assessment). For Codex follow “Alternative review.” Only read-only candidate checks may precede CI completion; formal review-request APIs used as assessment/request below wait for stable-HEAD checks.
 - Before ordinary review requests, confirm successful required CI on current HEAD and no conflicts with current base. Also check repository-required pre-review automation, without uniformly adding nonrequired CodeQL or similar checks.
 - If required CI fails or conflicts exist, fix, validate, commit, and push before review requests. Repeat checks on new HEAD until successful/resolved.
 - With no configured CI, apply the existing merge exception under [When CI is unconfigured](#when-ci-is-unconfigured), distinguishing it from execution success.
@@ -62,7 +37,7 @@ sources:
 
 ### Quick reviewer candidate assessment
 
-This selects a candidate, not a guarantee of quota, execution success, or completed review. Codex installation alone also does not complete review; verify execution after requesting.[^codex-github-review]
+This selects a candidate, not a guarantee of quota, execution success, or completed review. Codex installation alone also does not complete review; verify execution after requesting.
 
 Assessments potentially starting ordinary review occur after current-HEAD required CI/no conflicts. Read-only Copilot `suggestedReviewerActors` or Codex Connector installation checks may precede CI completion, but fallback formal-request APIs in environments without candidate queries wait for stable-HEAD checks.
 
@@ -84,7 +59,7 @@ For existing requests on the same HEAD, first check history, Bot state, and comp
 
 #### Retrieve Copilot candidates once
 
-Query target PR `suggestedReviewerActors`, a reviewer-candidate API; do not substitute Issue-assignee `suggestedActors`.[^github-graphql-pulls]
+Query target PR `suggestedReviewerActors`, a reviewer-candidate API; do not substitute Issue-assignee `suggestedActors`.
 
 Replace `OWNER`, `REPO`, and `PR_NUMBER` with targets. The following reads only and does not request review.
 
@@ -134,13 +109,13 @@ Where candidate queries are unavailable, after confirming no existing request, t
 
 #### Check Codex Connector installation for the target repo
 
-Check whether `ChatGPT Codex Connector` (slug `chatgpt-codex-connector`) is installed for the target repo. First reuse already verified installation or same-task successful events below. Otherwise use one available authenticated GitHub Apps settings view or existing tool returning target-repo installation. Without supported checking, use `unknown` instead of trial-and-error calls.[^github-installed-apps]
+Check whether `ChatGPT Codex Connector` (slug `chatgpt-codex-connector`) is installed for the target repo. First reuse already verified installation or same-task successful events below. Otherwise use one available authenticated GitHub Apps settings view or existing tool returning target-repo installation. Without supported checking, use `unknown` instead of trial-and-error calls.
 
-Existing tools include reading GitHub-returned data/known events from successful existing operations on the target repo under the same task/authentication. If `performed_via_github_app.slug` is `chatgpt-codex-connector` and repo, time, and current successful operation are matched, reuse as `available` evidence. This is an operating assessment based on access limited to both App/user permissions, separate from direct installation-list retrieval or guaranteed review success. Self-claims in comment bodies or past-task records do not substitute; do not change labels/post comments merely to check.[^github-app-user-access]
+Existing tools include reading GitHub-returned data/known events from successful existing operations on the target repo under the same task/authentication. If `performed_via_github_app.slug` is `chatgpt-codex-connector` and repo, time, and current successful operation are matched, reuse as `available` evidence. This is an operating assessment based on access limited to both App/user permissions, separate from direct installation-list retrieval or guaranteed review success. Self-claims in comment bodies or past-task records do not substitute; do not change labels/post comments merely to check.
 
 Confirmed installation means `available`; confirmed absence/out-of-scope in complete target lists means `unavailable`. For account-level information, require matching owner and All repositories or target inclusion in Selected repositories; otherwise `unknown`. Explicit suspension/disablement means `unavailable`. Public App pages, past Bot comments, and local `codex login status` are not current target-repo installation evidence.
 
-Do not use `GET /repos/{owner}/{repo}/installation` with ordinary `gh` user tokens as a general App list; it requires the target App's own JWT. `GET /user/installations` also covers the authenticated App's installations, not unrelated Apps. Without these authentication conditions, do not continue searching tokens/APIs/browser-internal APIs.[^github-app-installation-api][^github-app-user-installations]
+Do not use `GET /repos/{owner}/{repo}/installation` with ordinary `gh` user tokens as a general App list; it requires the target App's own JWT. `GET /user/installations` also covers the authenticated App's installations, not unrelated Apps. Without these authentication conditions, do not continue searching tokens/APIs/browser-internal APIs.
 
 ### Alternative review
 
@@ -176,9 +151,9 @@ If Copilot summaries, review bodies, or findings explicitly escalate to human ch
 
 ### Required Approve and CODEOWNERS assessment
 
-Check Ruleset `required_approving_review_count` and `require_code_owner_review` separately. The former is overall required approvals; the latter concerns Code Owners for changed paths. With multiple Code Owners, one owner's Approve meets that condition. Do not infer blocking from settings alone; compare PR author, applicable CODEOWNERS, latest review state, and GitHub mergeability.[^ruleset-rules][^code-owners]
+Check Ruleset `required_approving_review_count` and `require_code_owner_review` separately. The former is overall required approvals; the latter concerns Code Owners for changed paths. With multiple Code Owners, one owner's Approve meets that condition. Do not infer blocking from settings alone; compare PR author, applicable CODEOWNERS, latest review state, and GitHub mergeability.
 
-If the sole applicable Code Owner is the PR author, do not wait for self-approval or nonexistent other owners. GitHub's effective assessment permits valid non-owner approval to meet the required count in this case; check another valid Approve and GitHub mergeability, then proceed. If Copilot Approvals is enabled and its latest-HEAD review is `APPROVED` and counted toward required approval, it suffices. Default comment-only Copilot reviews are not Approve.[^approval-code-owner-exception][^docs-request-a-code-review-use-code-review]
+If the sole applicable Code Owner is the PR author, do not wait for self-approval or nonexistent other owners. GitHub's effective assessment permits valid non-owner approval to meet the required count in this case; check another valid Approve and GitHub mergeability, then proceed. If Copilot Approvals is enabled and its latest-HEAD review is `APPROVED` and counted toward required approval, it suffices. Default comment-only Copilot reviews are not Approve.
 
 This exception does not bypass explicit Copilot human-review requests, unresolved Request changes, requirements for another actor to approve the latest push, or other unmet GitHub protections. If protections remain unmet, identify actual conditions without weakening CODEOWNERS or requesting arbitrary humans.
 
@@ -291,17 +266,17 @@ gh api "repos/$OWNER/$REPO/pulls/$PR_NUMBER/reviews" \
     {state, submitted_at, commit_id, body, html_url}'
 ```
 
-Treat Issue-event `copilot_work_started` as an operational progress signal, not a permanent public API contract. Where inaccessible, judge through other evidence without asserting unexecuted. PR #166 recorded it while `requested_reviewers=[]` and reviews were absent, followed by normal completion. Because this event lacks HEAD, always combine with occurrence after current-HEAD `review_requested` and unchanged HEAD.
+Treat Issue-event `copilot_work_started` as an operational progress signal, not a permanent public API contract. Where inaccessible, judge through other evidence without asserting unexecuted. Because this event lacks HEAD, always combine with occurrence after current-HEAD `review_requested` and unchanged HEAD.
 
 ### Requesting Copilot Code Review
 
-Set the same `OWNER`, `REPO`, and `PR_NUMBER` as quick assessment, normally requesting once through the official CLI. Do not remove other existing reviewers.[^gh-pr-edit]
+Set the same `OWNER`, `REPO`, and `PR_NUMBER` as quick assessment, normally requesting once through the official CLI. Do not remove other existing reviewers.
 
 ```bash
 gh pr edit "$PR_NUMBER" --repo "$OWNER/$REPO" --add-reviewer "@copilot"
 ```
 
-Use the formal REST path below only when needed, such as environments lacking the dedicated CLI. Fixed Bot IDs or PR Node IDs are unnecessary.[^github-rest-review-requests][^docs-request-a-code-review-use-code-review]
+Use the formal REST path below only when needed, such as environments lacking the dedicated CLI. Fixed Bot IDs or PR Node IDs are unnecessary.
 
 ```bash
 gh api --method POST \
@@ -310,16 +285,3 @@ gh api --method POST \
 ```
 
 CLI/API success means acceptance, separate from execution start/normal completion. Follow “Checking execution after Copilot requests.” Do not automatically resend via API after CLI failures/timeouts; first check existing requests/execution. Empty reviewer/review arrays alone do not establish failure. Retrieve state once if acceptance is unclear; if still unknown, stop re-requesting or switching paths and record unverified scope/resumption conditions.
-
-[^docs-request-a-code-review-use-code-review]: [Copilot Code Review](https://docs.github.com/en/copilot/how-tos/use-copilot-agents/request-a-code-review/use-code-review). Evidence for reference scope and adoption decisions stated in the text.
-[^codex-github-review]: [Codex GitHub review](https://developers.openai.com/codex/integrations/github). Evidence for review configuration, requests, result checks, and installation alone not establishing completion.
-[^github-graphql-pulls]: [GitHub GraphQL Pull requests](https://docs.github.com/en/graphql/reference/pulls). Evidence for PR reviewer-candidate fields/arguments.
-[^github-installed-apps]: [Checking installed GitHub Apps](https://docs.github.com/en/apps/using-github-apps/reviewing-and-modifying-installed-github-apps). Checking installed Apps and repository access.
-[^github-app-user-access]: [GitHub App user access token scope](https://docs.github.com/en/apps/creating-github-apps/authenticating-with-a-github-app/generating-a-user-access-token-for-a-github-app). Evidence for access limited by both App/user and same-task successful operations used in candidate assessment.
-[^github-app-installation-api]: [Repository installation API](https://docs.github.com/en/rest/apps/apps#get-a-repository-installation-for-the-authenticated-app). Authentication requires the checked App's own JWT.
-[^github-app-user-installations]: [Installations accessible to user access tokens](https://docs.github.com/en/rest/apps/installations#list-app-installations-accessible-to-the-user-access-token). Installation scope limited to the authenticated GitHub App.
-[^ruleset-rules]: [Available Ruleset rules](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-rulesets/available-rules-for-rulesets). Required approval counts and Code Owner requirements.
-[^code-owners]: [About Code Owners](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners). CODEOWNERS application and approval with multiple owners.
-[^approval-code-owner-exception]: Effective approval conditions adopted in Issue #165 when the sole Code Owner is the PR author.
-[^gh-pr-edit]: [GitHub CLI: gh pr edit](https://cli.github.com/manual/gh_pr_edit). Evidence for ordinary requests with `--add-reviewer "@copilot"`.
-[^github-rest-review-requests]: [REST API: Request reviewers](https://docs.github.com/en/rest/pulls/review-requests#request-reviewers-for-a-pull-request). Formal API path used when needed.
