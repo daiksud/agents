@@ -19,339 +19,415 @@ sources:
 
 ## Source notes for Sakura Miko-inspired conversation
 
-This page is for maintaining the [conversation instruction](../.apm/instructions/sakuramiko.instructions.md). It records the evidence behind the selected speech examples and behavioral guidance. The instruction contains the rules and short examples needed during conversation; this page is not a prerequisite for using that style. The runtime instruction contains no link or import requiring these notes to be read.
+This page maintains the [conversation instruction](../.apm/instructions/sakuramiko.instructions.md). It records sources, scene context, and decisions about the selected examples. The instruction contains the behavior rules and short examples needed during conversation; it does not link to or require these notes.
 
 ### Evidence and adaptation
 
-The official profile establishes the fan name, signature greetings, characteristic endings, and the connection between the elite identity and continued effort.[^sakuramiko-profile] The fan wiki describes exuberant reactions, playful bravado, enthusiasm for favorite works, and dependable care in serious conversations.[^sakuramiko-wiki] Its phrase collection supplies further emphatic endings, repetition, and playful retorts.[^sakuramiko-phrases]
+The official profile establishes the fan name, signature greetings, characteristic endings, and the connection between the elite identity and continued effort.[^sakuramiko-profile] The fan wiki describes exuberant reactions, playful bravado, enthusiasm for favorite works, and dependable care in serious conversations.[^sakuramiko-wiki] Its phrase collection supplies the characteristic expressions used in the examples.[^sakuramiko-phrases]
 
-These are sources for a local conversational adaptation. Treating the current user as an individual `35P` listener is an explicit user preference. The behavioral guidance keeps the assistant's identity and confines the style to direct conversation, including explanations and progress updates. External writing, including drafts inside chat, follows its intended voice.
+These sources support a local conversational adaptation. Treating the current user as an individual `35P` listener is an explicit user preference. The behavioral guidance keeps the assistant's identity and confines the style to direct conversation, including explanations and progress updates. External writing, including drafts inside chat, follows its intended voice.
 
-The 30 excerpts come from Mikotoba's automatic-caption records of 30 public streams.[^sakuramiko-mikotoba] This expansion retains the original six and adds 24 from different streams. The surrounding caption windows were inspected against the site's public caption data on 2026-10-21. The original audio was not checked. The original two lexical recognition repairs remain recorded below; the 24 additions need only punctuation and caption-line normalization. Non-speech markers such as background music are omitted. Contractions, repetition, and colloquial wording remain in the instruction.
+### Canonical wording and scene evidence
 
-Each entry links to the excerpt in the instruction so its wording has one maintained location. Context and observations below are editorial summaries. A scene demonstrates a possible expression in that situation; it does not establish how often she uses it or require that reaction in every reply.
+At the user's direction, the Seesaa phrase collection is the canonical source for the displayed wording of the matching expressions, including kana, small characters, long-vowel marks, exclamation marks, and other punctuation.[^sakuramiko-phrases] Mikotoba supplies searchable occurrences, surrounding context, video IDs, dates, and timestamps.[^sakuramiko-mikotoba] Automatic captions do not override the canonical spelling.
+
+Apply a listed phrase or template only to the matching part of an observed utterance. Preserve the actual surrounding words and repetitions. When the wiki identifies the same original scene and quotes its complete sentence, use that sentence's wording and order. Do not add a second phrase, extra repetition, or an explanatory parenthetical merely because it appears in a wiki heading. Punctuation outside the matching phrase is editorial. The notes below identify the applicable variant and any correction.
+
+The 30 examples use 30 different public streams. The wiki entries, Mikotoba caption windows, and public catalog were inspected on 2026-10-21. The original stream audio was not checked. These are wiki-normalized excerpts located through caption evidence, not audio-verified transcriptions. Each entry links to its excerpt in the instruction, keeping the full Japanese example in one maintained location. Context and observations here are editorial summaries; a scene does not establish how frequently a phrase is used.
+
+### Selection history
+
+The first expansion retained the original six examples and added 24 caption-led examples. Its source notes, including the earlier `こちゃん` to `みこちゃん` and `段機` to `残機` recognition repairs, remain available in the [previous source-note revision](https://github.com/daiksud/agents/blob/4603ee37a5e167b8fc6d00d2fe79266db830f150/docs/sakuramiko-style-reference.md). Those caption contexts were also checked on 2026-10-21 without original-audio verification.
+
+The current selection follows the user's later request to search the wiki's expressions in Mikotoba and use the wiki as the spelling authority. It replaces that initial selection while preserving the behavior guidance and source records. During canonicalization, the attention-call, emphatic-ending, and bewilderment examples were changed to already located scenes whose actual sentence constructions fit the selected wiki expressions. Their individual notes explain the changes.
 
 ### Reference scenes
 
-#### Everyday enthusiasm and discovery
+#### Exploration and discovery
 
-##### Enthusiasm in ordinary conversation
+##### Starting with momentum
 
-**Context:** In free talk, she describes trying different squeeze toys, then explains what makes handling them enjoyable.
+**Context:** Moving to the Mario game screen, she announces that she is ready to begin.
 
-**Excerpt:** [Read the instruction example](../.apm/instructions/sakuramiko.instructions.md#enthusiasm-in-ordinary-conversation).
+**Excerpt:** [Read the instruction example](../.apm/instructions/sakuramiko.instructions.md#starting-with-momentum).
 
-**What to notice:** A casual intensifier and a short, direct evaluation make the enthusiasm explicit. The final reinforcement keeps the statement conversational. Ordinary explanation can carry this much energy without a signature ending.
+**What to notice:** A quick resolve leads into a playful reshaping of an ordinary action word.
 
-**Source:** [2026-07-05, 22:14](https://mikotoba.moe/?v=S8cHTG-c9e0&t=1334).
+**Wording:** The wiki body explicitly gives スターツ as the transformed form of スタート. The caption already matches it; retain the actual lead-in and add only sentence boundaries.
 
-##### Delight in trying a new tool
+**Sources:** [Canonical wiki entry](https://seesaawiki.jp/hololivetv/d/%A4%B5%A4%AF%A4%E9%A4%DF%A4%B3%A1%DA%B8%EC%CF%BF%A1%DB#content_1_1_8); [Mikotoba, 2024-07-01, 9:51](https://mikotoba.moe/?v=PXZp0xWWyZY&t=591).
 
-**Context:** After testing full-body tracking by doing an exercise with mocopi, she reacts to the successful result.
+##### Moving on with a little hesitation
 
-**Excerpt:** [Read the instruction example](../.apm/instructions/sakuramiko.instructions.md#delight-in-trying-a-new-tool).
+**Context:** She is about to switch from introducing the game to the gameplay screen, then pauses to finish the setup.
 
-**What to notice:** A brief exclamation leads straight into a warm, specific evaluation of what she has just tried.
+**Excerpt:** [Read the instruction example](../.apm/instructions/sakuramiko.instructions.md#moving-on-with-a-little-hesitation).
 
-**Source:** [2023-02-12, 32:54](https://mikotoba.moe/?v=Xk4vrEWjhek&t=1974).
+**What to notice:** Repetition and a brief hesitation make the transition sound spontaneous.
 
-##### Recognizing an unexpected possibility
+**Wording:** The heading explicitly lists お移動 as a spelling variant. Retain that variant inside お移動しますか, together with the repetitions and the following hesitation; converting the whole verb to the standalone おいどー would change her utterance.
 
-**Context:** Exploring the HoloCure update, she discovers fishing, trading, and cooking features and recognizes the new life-simulation possibilities.
+**Sources:** [Canonical wiki entry](https://seesaawiki.jp/hololivetv/d/%A4%B5%A4%AF%A4%E9%A4%DF%A4%B3%A1%DA%B8%EC%CF%BF%A1%DB#content_1_1_40); [Mikotoba, 2026-06-19, 11:09](https://mikotoba.moe/?v=kjZt_np0rvk&t=669).
 
-**Excerpt:** [Read the instruction example](../.apm/instructions/sakuramiko.instructions.md#recognizing-an-unexpected-possibility).
+##### Keeping setup conversational
 
-**What to notice:** The colloquial じゃん turns a concrete observation into a shared discovery.
+**Context:** While preparing the on-screen winning-streak counter for Soulcalibur, she strings together little effort noises.
 
-**Source:** [2023-08-17, 14:24](https://mikotoba.moe/?v=YXLXjLDmE0s&t=864).
+**Excerpt:** [Read the instruction example](../.apm/instructions/sakuramiko.instructions.md#keeping-setup-conversational).
 
-##### Surprise at a listener's creation
+**What to notice:** Rhythmic effort noises can carry an ordinary setup moment.
 
-**Context:** Looking at a fan's recreation of a character she drew, she realizes that it is a physical object rather than another drawing.
+**Wording:** The first よいしょっとらせ already matches the heading. The wiki separately lists おいしょっとらせぇぃ, おっこら、せっとら、せーい, and かっとら、せっとら、せーい. None establishes how the remaining caption sequence とらせ、よいしょとらせ should be rewritten, so preserve that attested sequence instead of replacing the entire utterance with a listed variant.
 
-**Excerpt:** [Read the instruction example](../.apm/instructions/sakuramiko.instructions.md#surprise-at-a-listeners-creation).
+**Sources:** [Canonical wiki entry](https://seesaawiki.jp/hololivetv/d/%A4%B5%A4%AF%A4%E9%A4%DF%A4%B3%A1%DA%B8%EC%CF%BF%A1%DB#content_1_1_93); [Mikotoba, 2023-10-04, 9:45](https://mikotoba.moe/?v=ltSY76x6qCw&t=585).
 
-**What to notice:** A question, a concrete discovery, and another short reaction let the surprise unfold. The polite-looking ending is part of the expressive reaction. Attention stays on what the listener made.
+##### Talking through a small operation
 
-**Source:** [2026-07-19, 1:39:28](https://mikotoba.moe/?v=E0wr-TBjsd8&t=5968).
+**Context:** She narrates the return to heal while explaining her Pokémon leveling routine.
 
-##### Amusement at fan cosplay
+**Excerpt:** [Read the instruction example](../.apm/instructions/sakuramiko.instructions.md#talking-through-a-small-operation).
 
-**Context:** Reviewing Expo cosplay photographs, she reacts to muscular costumes and the expression in one photograph.
+**What to notice:** The characteristic opening leads into a concrete next action.
 
-**Excerpt:** [Read the instruction example](../.apm/instructions/sakuramiko.instructions.md#amusement-at-fan-cosplay).
+**Wording:** Use the exact ellipsis in the wiki heading for the matching phrase. Preserve the following な and the explanation about returning to heal; the ellipsis is canonical display punctuation, not a claim about an audio-verified pause.
 
-**What to notice:** An exaggerated description gives way to a positive, concrete detail and a direct compliment.
+**Sources:** [Canonical wiki entry](https://seesaawiki.jp/hololivetv/d/%A4%B5%A4%AF%A4%E9%A4%DF%A4%B3%A1%DA%B8%EC%CF%BF%A1%DB#content_1_1_50); [Mikotoba, 2026-03-16, 24:18](https://mikotoba.moe/?v=Fm5V084dxYY&t=1458).
 
-**Source:** [2023-03-19, 49:04](https://mikotoba.moe/?v=MgP4rNeSq8w&t=2944).
+##### Choosing to go with the flow
 
-##### A surprised realization about timing
+**Context:** During Donkey Kong, she decides to keep moving with the flow.
 
-**Context:** She recounts arriving at a work venue and realizing that the scheduled gathering was still two hours away.
+**Excerpt:** [Read the instruction example](../.apm/instructions/sakuramiko.instructions.md#choosing-to-go-with-the-flow).
 
-**Excerpt:** [Read the instruction example](../.apm/instructions/sakuramiko.instructions.md#a-surprised-realization-about-timing).
+**What to notice:** A compact decision takes a playful sentence ending.
 
-**What to notice:** A quick interruption followed by a concrete surprise ends in the emphatic conversational form なんだが.
+**Wording:** The caption already matches the wiki ending っぴな. Keep the actual statement about going with the flow; the generic heading does not replace the whole sentence.
 
-**Source:** [2023-02-10, 4:16](https://mikotoba.moe/?v=gVIJGhGZ0rA&t=256).
+**Sources:** [Canonical wiki entry](https://seesaawiki.jp/hololivetv/d/%A4%B5%A4%AF%A4%E9%A4%DF%A4%B3%A1%DA%B8%EC%CF%BF%A1%DB#content_1_1_9); [Mikotoba, 2026-07-22, 2:47:06](https://mikotoba.moe/?v=6WNJL-KaxAw&t=10026).
 
-##### Disbelief at time passing
+##### Settling on a workable next step
 
-**Context:** During an announcement stream, after discussing a game she wants to try, she notices how quickly the time has passed.
+**Context:** Exploring a new ARK map, she decides that establishing a nearby home will do for the moment.
 
-**Excerpt:** [Read the instruction example](../.apm/instructions/sakuramiko.instructions.md#disbelief-at-time-passing).
+**Excerpt:** [Read the instruction example](../.apm/instructions/sakuramiko.instructions.md#settling-on-a-workable-next-step).
 
-**What to notice:** Repeated short phrases carry the surprise before she returns to the next topic.
+**What to notice:** A playful phrase closes a practical judgment about what is sufficient for now.
 
-**Source:** [2023-09-30, 43:52](https://mikotoba.moe/?v=Eit89cEL4V4&t=2632).
+**Wording:** The caption already uses the wiki spelling. Keep the surrounding actual words; the wiki heading is a phrase template, not a replacement for the complete sentence.
 
-##### Playful certainty with a qualification
+**Sources:** [Canonical wiki entry](https://seesaawiki.jp/hololivetv/d/%A4%B5%A4%AF%A4%E9%A4%DF%A4%B3%A1%DA%B8%EC%CF%BF%A1%DB#content_1_1_95); [Mikotoba, 2023-03-25, 22:25](https://mikotoba.moe/?v=9hOLpknTaYg&t=1345).
 
-**Context:** Announcing an upcoming hairstyle reveal, she confidently predicts it will look cute, then adds a small qualification.
+##### Admitting anticipation
 
-**Excerpt:** [Read the instruction example](../.apm/instructions/sakuramiko.instructions.md#playful-certainty-with-a-qualification).
+**Context:** Before starting a voice-controlled game about teaching an AI sister to drive, she admits feeling nervous.
 
-**What to notice:** The short afterthought makes the confident delivery playful; preserve both parts rather than turning it into unqualified certainty.
+**Excerpt:** [Read the instruction example](../.apm/instructions/sakuramiko.instructions.md#admitting-anticipation).
 
-**Source:** [2023-07-23, 55:27](https://mikotoba.moe/?v=AU-ixIM_ajE&t=3327).
+**What to notice:** The explanatory ending gives a small admission a familiar, expressive tone.
 
-##### Looking forward to a shared event
+**Wording:** Use the first form in the heading, ○○なんですけど. The wiki also lists a lengthened form, but the ordinary form is already canonical; keep the attested ドキドキ and ねえ around it.
 
-**Context:** After discussing ideas for an upcoming sugoroku event, she repeats how much she is looking forward to it.
+**Sources:** [Canonical wiki entry](https://seesaawiki.jp/hololivetv/d/%A4%B5%A4%AF%A4%E9%A4%DF%A4%B3%A1%DA%B8%EC%CF%BF%A1%DB#content_1_1_12); [Mikotoba, 2026-09-28, 7:25](https://mikotoba.moe/?v=BVCChUmSa3M&t=445).
 
-**Excerpt:** [Read the instruction example](../.apm/instructions/sakuramiko.instructions.md#looking-forward-to-a-shared-event).
+##### Enjoying progress with a qualification
 
-**What to notice:** Repetition and the loose final これねー make anticipation sound spontaneous.
+**Context:** During Resident Evil 4, she celebrates smooth progress, then adds that it is only so far.
 
-**Source:** [2020-06-09, 57:02](https://mikotoba.moe/?v=c_JFQaeqU90&t=3422).
+**Excerpt:** [Read the instruction example](../.apm/instructions/sakuramiko.instructions.md#enjoying-progress-with-a-qualification).
 
-##### Wanting to hear the audience again
+**What to notice:** A coined expression carries delight while the afterthought keeps the claim bounded.
 
-**Context:** While looking back on the Bloom concert, she says that watching the performance again makes her want to hear the audience in person.
+**Wording:** Use the wiki heading as the canonical coined expression. Keep the surrounding encouragement and limiting afterthought from this caption scene. Sentence separators outside the phrase are editorial punctuation.
 
-**Excerpt:** [Read the instruction example](../.apm/instructions/sakuramiko.instructions.md#wanting-to-hear-the-audience-again).
+**Sources:** [Canonical wiki entry](https://seesaawiki.jp/hololivetv/d/%A4%B5%A4%AF%A4%E9%A4%DF%A4%B3%A1%DA%B8%EC%CF%BF%A1%DB#content_1_1_56); [Mikotoba, 2026-02-10, 2:58:11](https://mikotoba.moe/?v=Hp2m_leL1Os&t=10691).
 
-**What to notice:** The concrete wish turns into a personal reaction through the contraction 思っちゃう.
+##### Arriving at a tentative discovery
 
-**Source:** [2021-02-18, 53:37](https://mikotoba.moe/?v=0Jq1WBuwcfI&t=3217).
+**Context:** Working on a Minecraft haunted-house mechanism, she thinks she has found the answer.
+
+**Excerpt:** [Read the instruction example](../.apm/instructions/sakuramiko.instructions.md#arriving-at-a-tentative-discovery).
+
+**What to notice:** Repeated interruptions build excitement without removing the tentative wording.
+
+**Wording:** Select the tentative variant explicitly listed in the wiki heading, retaining its hiragana and exclamation mark. Preserve the four preceding repetitions of 待って from the observed scene.
+
+**Sources:** [Canonical wiki entry](https://seesaawiki.jp/hololivetv/d/%A4%B5%A4%AF%A4%E9%A4%DF%A4%B3%A1%DA%B8%EC%CF%BF%A1%DB#content_1_1_97); [Mikotoba, 2025-08-12, 29:39](https://mikotoba.moe/?v=2ol4kHw6toc&t=1779).
+
+##### Sharing a discovery with listeners
+
+**Context:** After getting access to a live results display for her holoplus audience poll, she calls the listeners’ attention to it and excitedly points out that the results update in real time.
+
+**Excerpt:** [Read the instruction example](../.apm/instructions/sakuramiko.instructions.md#sharing-a-discovery-with-listeners).
+
+**What to notice:** An attention call leads directly into the concrete detail she wants to share.
+
+**Wording:** Use the wiki’s exact みんな見てー！ for the matching attention call, including the long vowel mark and exclamation mark. Preserve しかもこれ and the following remarks about the real-time display. This source replaces the previous 見てて candidate, so no inflected construction needs to be rewritten.
+
+**Sources:** [Canonical wiki entry](https://seesaawiki.jp/hololivetv/d/%A4%B5%A4%AF%A4%E9%A4%DF%A4%B3%A1%DA%B8%EC%CF%BF%A1%DB#content_1_1_88); [Mikotoba, 2026-06-28, 1:27:23](https://mikotoba.moe/?v=-c4CJP8mw3w&t=5243).
 
 #### Confidence and persistence
 
-##### Pride after something goes well
+##### Playfully claiming competence
 
-**Context:** She reports that a long recording session finished early and playfully credits her own contribution.
+**Context:** Before playing OUTLAST, she confidently invokes her elite identity.
 
-**Excerpt:** [Read the instruction example](../.apm/instructions/sakuramiko.instructions.md#pride-after-something-goes-well).
+**Excerpt:** [Read the instruction example](../.apm/instructions/sakuramiko.instructions.md#playfully-claiming-competence).
 
-**What to notice:** An actual reported result leads into an extravagant self-description. The boast is allowed to be the point of the moment and something to share with the listener.
+**What to notice:** The source’s self-description is playful bravado; a new reply should tie confidence to actual evidence.
 
-**Caption repair:** `こちゃん` was restored to `みこちゃん`, following the surrounding self-reference. No duration has been inferred from the inconsistent time figures in nearby captions.
+**Wording:** The matching phrase already agrees with the canonical wiki heading. Preserve this scene’s subject and sentence ending; the heading does not prescribe a different full sentence.
 
-**Source:** [2026-06-14, around 35:25](https://mikotoba.moe/?v=h5IvvM3TOyo&t=2125).
+**Sources:** [Canonical wiki entry](https://seesaawiki.jp/hololivetv/d/%A4%B5%A4%AF%A4%E9%A4%DF%A4%B3%A1%DA%B8%EC%CF%BF%A1%DB#content_1_5_336); [Mikotoba, 2021-07-27, 3:47](https://mikotoba.moe/?v=u4w-gkhMq5g&t=227).
 
-##### A mock apology for a clever idea
+##### Reassuring herself after a setback
 
-**Context:** While adjusting a Minecraft build, she says a solution occurred to her before she finished asking the viewers, then boasts with a mock apology.
+**Context:** After losing progress in OnlyUp!, she encourages herself by recalling that she has already reached the route once.
 
-**Excerpt:** [Read the instruction example](../.apm/instructions/sakuramiko.instructions.md#a-mock-apology-for-a-clever-idea).
+**Excerpt:** [Read the instruction example](../.apm/instructions/sakuramiko.instructions.md#reassuring-herself-after-a-setback).
 
-**What to notice:** Self-praise followed by an inverted apology creates affectionate, comic bravado.
+**What to notice:** An actual past success supports the repeated reassurance.
 
-**Source:** [2023-03-06, 2:23:35](https://mikotoba.moe/?v=lqYyXp6x7KM&t=8615).
+**Wording:** Use the first complete canonical sentence from the wiki heading. This scene supplies that sentence and the following reassurance, so do not append the separate three-times sentence from the generic wiki entry.
 
-##### Cheeky confidence after progress
+**Sources:** [Canonical wiki entry](https://seesaawiki.jp/hololivetv/d/%A4%B5%A4%AF%A4%E9%A4%DF%A4%B3%A1%DA%B8%EC%CF%BF%A1%DB#content_1_1_27); [Mikotoba, 2023-06-28, 4:38:20](https://mikotoba.moe/?v=GX6ijfo6iJA&t=16700).
 
-**Context:** While climbing in Only Up, she chooses a route, gets through it, and boasts before continuing upward.
+##### Turning uncertainty into resolve
 
-**Excerpt:** [Read the instruction example](../.apm/instructions/sakuramiko.instructions.md#cheeky-confidence-after-progress).
+**Context:** Before a GTA5 car stunt, she responds to uncertainty about clearing the road with a firm declaration that she will.
 
-**What to notice:** The emphatic casual ending and repeated judgment let a successful moment stand as a short boast.
+**Excerpt:** [Read the instruction example](../.apm/instructions/sakuramiko.instructions.md#turning-uncertainty-into-resolve).
 
-**Source:** [2023-09-08, 30:46](https://mikotoba.moe/?v=TcO205MzCXE&t=1846).
+**What to notice:** Repeating the same action with a stronger ending expresses determination.
 
-##### Confidence before trying again
+**Wording:** The wiki explicitly identifies this exact GTA5 source scene, so its complete sentence, order, 越 spelling, corner brackets, full-width question mark and full stops are authoritative. Start at 9733 seconds, where the canonical sentence begins in the captions; the earlier 9731-second caption belongs to the preceding repeated declaration. The damaged final caption is represented using the wiki form, not reconstructed by guessing.
 
-**Context:** Before another Mario Kart first-place challenge, she recalls the previous long attempt and says she is confident this time.
+**Sources:** [Canonical wiki entry](https://seesaawiki.jp/hololivetv/d/%A4%B5%A4%AF%A4%E9%A4%DF%A4%B3%A1%DA%B8%EC%CF%BF%A1%DB#content_1_6_391); [Mikotoba, 2020-12-06, 2:42:13](https://mikotoba.moe/?v=buhZCs9K3Pc&t=9733).
 
-**Excerpt:** [Read the instruction example](../.apm/instructions/sakuramiko.instructions.md#confidence-before-trying-again).
+##### Taking an extra precaution
 
-**What to notice:** A short reset with いや leads directly into modest, situational confidence.
+**Context:** After realizing she has not saved before a Pokémon battle, she prepares defensive items and mixes two sayings.
 
-**Source:** [2021-08-19, 6:48](https://mikotoba.moe/?v=5XgOWuKwcjc&t=408).
+**Excerpt:** [Read the instruction example](../.apm/instructions/sakuramiko.instructions.md#taking-an-extra-precaution).
 
-##### Competitive optimism after a setback
+**What to notice:** Mixing two sayings makes the extra caution comic.
 
-**Context:** During a Mario attempt, she pushes back at giving up on a clear and then acknowledges the limited lives remaining.
+**Wording:** Preserve the actual introductory ここは, then use the complete fixed phrase with the wiki’s two full stops rather than an editorial comma.
 
-**Excerpt:** [Read the instruction example](../.apm/instructions/sakuramiko.instructions.md#competitive-optimism-after-a-setback).
+**Sources:** [Canonical wiki entry](https://seesaawiki.jp/hololivetv/d/%A4%B5%A4%AF%A4%E9%A4%DF%A4%B3%A1%DA%B8%EC%CF%BF%A1%DB#content_1_1_73); [Mikotoba, 2025-11-09, 2:44:39](https://mikotoba.moe/?v=QCmIfoexJwM&t=9879).
 
-**What to notice:** Colloquial confidence and the practical limit appear together. The possibility remains a possibility; a lively reply can acknowledge uncertainty without losing its momentum.
+##### Staying careful when things go well
 
-**Caption repair:** `段機` was corrected to `残機` in the game context.
+**Context:** With a star in Mario, she reminds herself to stay careful when things are going well.
 
-**Source:** [2026-10-05, around 33:54](https://mikotoba.moe/?v=A-9ZJQ3s2sE&t=2034).
+**Excerpt:** [Read the instruction example](../.apm/instructions/sakuramiko.instructions.md#staying-careful-when-things-go-well).
 
-##### Persistence before an endurance challenge
+**What to notice:** A concrete reminder becomes emphatic through the characteristic final phrase.
 
-**Context:** While discussing how long a Mario Kart first-place challenge might take, she insists that continued effort will eventually finish it.
+**Wording:** Replace the earlier Puyo Puyo candidate, whose distinct ending was わけだ, with this already researched Mario scene that matches the wiki body’s complete example. This preserves the actual preceding sentence while applying both ワケ and the canonical exclamation mark, without deleting or inventing a suffix.
 
-**Excerpt:** [Read the instruction example](../.apm/instructions/sakuramiko.instructions.md#persistence-before-an-endurance-challenge).
+**Sources:** [Canonical wiki entry](https://seesaawiki.jp/hololivetv/d/%A4%B5%A4%AF%A4%E9%A4%DF%A4%B3%A1%DA%B8%EC%CF%BF%A1%DB#content_1_1_11); [Mikotoba, 2026-10-04, 31:00](https://mikotoba.moe/?v=ieSPItKmQrc&t=1860).
 
-**What to notice:** The contracted 頑張ってれば and explanatory もんなんだよ give the determination a familiar, spoken rhythm.
+##### Insisting on a constructive mood
 
-**Source:** [2021-07-23, 8:06](https://mikotoba.moe/?v=9_oc4fi_VJQ&t=486).
+**Context:** During Power Pros, she stresses the importance of keeping a good mood for a good match, including in the comments.
 
-##### Tentatively taking on a challenge
+**Excerpt:** [Read the instruction example](../.apm/instructions/sakuramiko.instructions.md#insisting-on-a-constructive-mood).
 
-**Context:** Starting a morning talk stream, she discusses overcoming something she finds difficult and decides to give it a try.
+**What to notice:** A familiar assertion leads into the practical reason behind it.
 
-**Excerpt:** [Read the instruction example](../.apm/instructions/sakuramiko.instructions.md#tentatively-taking-on-a-challenge).
+**Wording:** The literal phrase already matches the wiki heading. Keep the actual explanatory continuation and its sentence boundaries; the heading supplies no exclamation mark to add.
 
-**What to notice:** The softeners まぁ and ちょっと sit naturally beside the exploratory やってみようかな.
+**Sources:** [Canonical wiki entry](https://seesaawiki.jp/hololivetv/d/%A4%B5%A4%AF%A4%E9%A4%DF%A4%B3%A1%DA%B8%EC%CF%BF%A1%DB#content_1_1_22); [Mikotoba, 2026-06-27, 1:35:17](https://mikotoba.moe/?v=Wx_jGCdLkKU&t=5717).
 
-**Source:** [2021-12-19, 8:49](https://mikotoba.moe/?v=qj59_bpZ6uc&t=529).
+##### Insisting that she knows
 
-##### Reassurance while still in the game
+**Context:** Facing an enemy in Resident Evil 2, she says she knows it is better not to fight and starts running away.
 
-**Context:** During a Mario Kart stream with limited lives, she reassures the listeners that she is still in the challenge.
+**Excerpt:** [Read the instruction example](../.apm/instructions/sakuramiko.instructions.md#insisting-that-she-knows).
 
-**Excerpt:** [Read the instruction example](../.apm/instructions/sakuramiko.instructions.md#reassurance-while-still-in-the-game).
+**What to notice:** A brief polite assertion gives way to the characteristic playful pronunciation.
 
-**What to notice:** A concrete current fact supports repeated reassurance and an inclusive invitation to relax.
+**Wording:** Use the wiki’s complete phrase, including the characteristic ゆ and final wave dash. Preserve the actual preceding 知ってますよ。 This is an explicitly authorized wiki-based normalization, not an audio-verified transcription.
 
-**Source:** [2021-11-20, 26:10](https://mikotoba.moe/?v=0a1FxYQwjOA&t=1570).
+**Sources:** [Canonical wiki entry](https://seesaawiki.jp/hololivetv/d/%A4%B5%A4%AF%A4%E9%A4%DF%A4%B3%A1%DA%B8%EC%CF%BF%A1%DB#content_1_1_86); [Mikotoba, 2021-04-15, 1:35:20](https://mikotoba.moe/?v=SOpQCgzsOdI&t=5720).
 
-##### Renewed resolve after receiving support
+##### Calling out her own repeated mistake
 
-**Context:** After returning from a break, she recalls receiving support from other Hololive members and how it helped her move forward.
+**Context:** After repeating a Mario World mistake, she asks why it happened and answers herself.
 
-**Excerpt:** [Read the instruction example](../.apm/instructions/sakuramiko.instructions.md#renewed-resolve-after-receiving-support).
+**Excerpt:** [Read the instruction example](../.apm/instructions/sakuramiko.instructions.md#calling-out-her-own-repeated-mistake).
 
-**What to notice:** The contracted って and extended ねー keep a sincere reflection familiar and conversational.
+**What to notice:** The blunt self-retort follows a setup question; its target and context matter.
 
-**Source:** [2020-10-22, 29:51](https://mikotoba.moe/?v=nVq5pblWL8s&t=1791).
+**Wording:** The wiki body identifies this exact Mario World scene and gives both parts of the exchange. Use its question mark, canonical にぇー, and final だ instead of the caption errors. Preserve the question-and-answer order. Do not add a terminal period absent from the canonical quoted answer.
 
-##### Satisfaction after making an effort
+**Scope note:** The heading’s parenthetical （同じミスするやつは） is explanatory, not a phrase to prepend to this verified scene. Wiki date 2023-04-30 and Mikotoba catalog date 2023-05-01 differ; retain the discrepancy in source notes.
 
-**Context:** Looking back on the Hololive sports festival, she compares her involvement with the previous year and feels glad she tried harder this time.
+**Sources:** [Canonical wiki entry](https://seesaawiki.jp/hololivetv/d/%A4%B5%A4%AF%A4%E9%A4%DF%A4%B3%A1%DA%B8%EC%CF%BF%A1%DB#content_1_11_537); [Mikotoba, 2023-05-01, 3:33:00](https://mikotoba.moe/?v=X-f2gth8qSM&t=12780).
 
-**Excerpt:** [Read the instruction example](../.apm/instructions/sakuramiko.instructions.md#satisfaction-after-making-an-effort).
+##### Finding a lesson in failure
 
-**What to notice:** Repeating 頑張ろう and 頑張れて links the earlier intention with satisfaction in the result.
+**Context:** During Minecraft, she talks about learning from mistakes.
 
-**Source:** [2021-11-06, 45:28](https://mikotoba.moe/?v=0wNRGW3exQY&t=2728).
+**Excerpt:** [Read the instruction example](../.apm/instructions/sakuramiko.instructions.md#finding-a-lesson-in-failure).
 
-#### Listener rapport and care
+**What to notice:** A plain statement ends by bringing the listeners into the thought.
 
-##### A comeback to listener teasing
+**Wording:** The wiki records this complete sentence from the same Minecraft stream. Use the exact heading, removing the editorial comma and final period from the earlier caption-based draft.
 
-**Context:** A teasing remark tells her not to get between VTubers. She immediately points out that she is a VTuber too and repeats the claim in mock annoyance.
+**Sources:** [Canonical wiki entry](https://seesaawiki.jp/hololivetv/d/%A4%B5%A4%AF%A4%E9%A4%DF%A4%B3%A1%DA%B8%EC%CF%BF%A1%DB#content_1_10_518); [Mikotoba, 2022-06-23, 53:31](https://mikotoba.moe/?v=qkpLjAYx5SM&t=3211).
 
-**Excerpt:** [Read the instruction example](../.apm/instructions/sakuramiko.instructions.md#a-comeback-to-listener-teasing).
+##### Joking about when to stop
 
-**What to notice:** The response goes straight into the comeback. Repetition carries the exaggerated self-defense and the familiar, slightly bratty rapport. Her self-reference belongs to this source scene; retain the assistant's established identity in new conversation.
+**Context:** Discussing Minecraft inventory that never gets organized, she jokes about the strength in giving up.
 
-**Source:** [2022-01-09, around 1:50:42](https://mikotoba.moe/?v=zOKiTb5HBGE&t=6642).
+**Excerpt:** [Read the instruction example](../.apm/instructions/sakuramiko.instructions.md#joking-about-when-to-stop).
 
-##### Empathy with a shared letdown
+**What to notice:** An unexpectedly serious maxim makes an ordinary difficulty comic.
 
-**Context:** When a listener mentions the emptiness after the festival, she immediately shares the feeling.
+**Wording:** The wiki cites this same Minecraft scene and supplies the complete fixed sentence. Restore 時には from that source instead of the caption’s 時にね, omit the preceding address, and keep the heading’s lack of terminal punctuation.
 
-**Excerpt:** [Read the instruction example](../.apm/instructions/sakuramiko.instructions.md#empathy-with-a-shared-letdown).
+**Sources:** [Canonical wiki entry](https://seesaawiki.jp/hololivetv/d/%A4%B5%A4%AF%A4%E9%A4%DF%A4%B3%A1%DA%B8%EC%CF%BF%A1%DB#content_1_8_476); [Mikotoba, 2022-06-04, 1:22:27](https://mikotoba.moe/?v=7Rbc_EAqN2c&t=4947).
 
-**What to notice:** An immediate agreement becomes more emphatic through repetition and a casual ending.
+#### Reactions and rapport
 
-**Source:** [2024-03-18, 13:02](https://mikotoba.moe/?v=tvFxEAHSV38&t=782).
+##### Naming a disappointed reaction
 
-##### Thanks for a useful tip
+**Context:** After poor player rolls in Power Pros, she says the familiar catchphrase is about to come out.
 
-**Context:** After visiting a Tokyo Station pop-up and its message board, she thanks the people who told her about it.
+**Excerpt:** [Read the instruction example](../.apm/instructions/sakuramiko.instructions.md#naming-a-disappointed-reaction).
 
-**Excerpt:** [Read the instruction example](../.apm/instructions/sakuramiko.instructions.md#thanks-for-a-useful-tip).
+**What to notice:** The phrase is mentioned inside her reaction, with the surrounding sentence retained.
 
-**What to notice:** The thanks names the specific contribution in a short, conversational afterthought.
+**Wording:** Use the nearest primary wiki-listed spelling, including the small ぇ and full-width exclamation mark. This caption mentions the catchphrase itself, so quotation marks retain the original が出ちゃう construction while keeping the canonical punctuation inside the phrase.
 
-**Source:** [2026-01-20, 22:00](https://mikotoba.moe/?v=-vfiGfZ--ZE&t=1320).
+**Scope note:** The wiki also lists しけてんにぇ！; the primary ねぇ form is closer to this caption. Added quotation marks delimit the mentioned phrase and do not add spoken words.
 
-##### Relief and thanks after a disruption
+**Sources:** [Canonical wiki entry](https://seesaawiki.jp/hololivetv/d/%A4%B5%A4%AF%A4%E9%A4%DF%A4%B3%A1%DA%B8%EC%CF%BF%A1%DB#content_1_1_55); [Mikotoba, 2026-06-22, 2:28:37](https://mikotoba.moe/?v=Xd4GONUatlo&t=8917).
 
-**Context:** Once a lagging stream stabilizes, she thanks the listeners who stayed through the disruption.
+##### Celebrating a successful finish
 
-**Excerpt:** [Read the instruction example](../.apm/instructions/sakuramiko.instructions.md#relief-and-thanks-after-a-disruption).
+**Context:** After a successful rock-pushing RTA attempt, she celebrates the winning lap.
 
-**What to notice:** Relief leads directly into gratitude, with the familiar ending くれてな.
+**Excerpt:** [Read the instruction example](../.apm/instructions/sakuramiko.instructions.md#celebrating-a-successful-finish).
 
-**Source:** [2026-06-07, 20:36](https://mikotoba.moe/?v=de55PoGcBZY&t=1236).
+**What to notice:** The stretched reaction lets delight land before another short celebration.
 
-##### Delighted hesitation when receiving a gift
+**Wording:** Use the wiki heading’s hiragana and two wave marks exactly. The heading has no exclamation mark after this phrase, so do not carry over the earlier draft’s invented one. Keep the surrounding winning-lap and celebration words; a space separates the next exclamation.
 
-**Context:** Retelling a sticker exchange, she recalls thanking the giver and checking that receiving the rare sticker was really all right.
+**Scope note:** No new reaction or repetition is added. The exclamation after やった is editorial punctuation for the surrounding verified word, not part of the canonical phrase.
 
-**Excerpt:** [Read the instruction example](../.apm/instructions/sakuramiko.instructions.md#delighted-hesitation-when-receiving-a-gift).
+**Sources:** [Canonical wiki entry](https://seesaawiki.jp/hololivetv/d/%A4%B5%A4%AF%A4%E9%A4%DF%A4%B3%A1%DA%B8%EC%CF%BF%A1%DB#content_1_1_47); [Mikotoba, 2024-05-11, 3:13:07](https://mikotoba.moe/?v=pw-gd_S1Jzc&t=11587).
 
-**What to notice:** Repeated questions convey surprised appreciation; みたいな marks her retelling of her own reaction.
+##### Mock refusal during competition
 
-**Source:** [2026-06-21, 31:41](https://mikotoba.moe/?v=u7bx_vbW9vE&t=1901).
+**Context:** Playing Gomoku against the CPU, she repeats an emphatic refusal.
 
-##### Appreciation for an unexpected welcome
+**Excerpt:** [Read the instruction example](../.apm/instructions/sakuramiko.instructions.md#mock-refusal-during-competition).
 
-**Context:** Looking back on an unexpected audience chant before her festival song, she describes feeling welcomed.
+**What to notice:** The repeated short retort carries playful competitive energy.
 
-**Excerpt:** [Read the instruction example](../.apm/instructions/sakuramiko.instructions.md#appreciation-for-an-unexpected-welcome).
+**Wording:** Apply the wiki’s unbroken phrase, katakana ダメ, prolonged vowel, and exclamation mark to both actual repetitions. Remove the earlier draft’s commas and periods that split and softened the canonical expression.
 
-**What to notice:** A simple repeated feeling develops into a concrete emotional impression, with softly reflective wording.
+**Scope note:** This is a later solo CPU Gomoku scene, not the originating Fubuki match described by the wiki. The two occurrences are present in the caption span.
 
-**Source:** [2025-03-09, 8:36](https://mikotoba.moe/?v=VzGNuQHy5rk&t=516).
+**Sources:** [Canonical wiki entry](https://seesaawiki.jp/hololivetv/d/%A4%B5%A4%AF%A4%E9%A4%DF%A4%B3%A1%DA%B8%EC%CF%BF%A1%DB#content_1_1_74); [Mikotoba, 2024-02-10, 26:25](https://mikotoba.moe/?v=HNOTBFKo6y8&t=1585).
 
-##### Wanting to reach the listeners
+##### Reacting to an unfair-feeling setback
 
-**Context:** After riding a gondola through the festival venue, she hopes she was able to get close to as many listeners as possible.
+**Context:** In a prison game, her shovel is confiscated and she has to return to using a frying pan.
 
-**Excerpt:** [Read the instruction example](../.apm/instructions/sakuramiko.instructions.md#wanting-to-reach-the-listeners).
+**Excerpt:** [Read the instruction example](../.apm/instructions/sakuramiko.instructions.md#reacting-to-an-unfair-feeling-setback).
 
-**What to notice:** The wish ends with いいなあ and an acknowledgment, keeping the care warm and conversational.
+**What to notice:** A compact expression of disbelief conveys the disappointment.
 
-**Source:** [2026-03-08, 12:08](https://mikotoba.moe/?v=kM_hRahFbNU&t=728).
+**Wording:** The complete short excerpt is the canonical heading, which has no terminal punctuation. Remove the caption/draft period rather than inventing emphasis.
 
-##### Relief after seeing a difficult effort through
+**Sources:** [Canonical wiki entry](https://seesaawiki.jp/hololivetv/d/%A4%B5%A4%AF%A4%E9%A4%DF%A4%B3%A1%DA%B8%EC%CF%BF%A1%DB#content_1_1_53); [Mikotoba, 2025-08-22, 2:47:35](https://mikotoba.moe/?v=4n02dZlcUFA&t=10055).
 
-**Context:** During her first-album countdown, she becomes emotional about having completed work she found difficult to balance.
+##### Retelling a startled reaction
 
-**Excerpt:** [Read the instruction example](../.apm/instructions/sakuramiko.instructions.md#relief-after-seeing-a-difficult-effort-through).
+**Context:** Recounting a crab dinner, she describes touching the hot pot with her arm.
 
-**What to notice:** Repeated でも and 良かった carry relief and emotion without an elaborate explanation.
+**Excerpt:** [Read the instruction example](../.apm/instructions/sakuramiko.instructions.md#retelling-a-startled-reaction).
 
-**Source:** [2024-09-24, 20:35](https://mikotoba.moe/?v=ymQyoxB3Nb4&t=1235).
+**What to notice:** The quoted reaction stays inside the retelling of her own experience.
 
-##### Support at the other person's pace
+**Wording:** Use one exact あっちゅ！ unit from the wiki’s repeated heading, including the exclamation mark. This caption reports only one utterance, so copying the whole two-part heading would invent repetition. Keep the surrounding description of touching the hot pot.
 
-**Context:** Discussing a colleague who is resting, she hopes the colleague recovers at her own pace.
+**Scope note:** The wiki heading is あっちゅ！あっちゅ！. Using one listed unit follows its spelling without claiming the source scene contained two repetitions. The scene is a retelling, not a live burn reaction.
 
-**Excerpt:** [Read the instruction example](../.apm/instructions/sakuramiko.instructions.md#support-at-the-other-persons-pace).
+**Sources:** [Canonical wiki entry](https://seesaawiki.jp/hololivetv/d/%A4%B5%A4%AF%A4%E9%A4%DF%A4%B3%A1%DA%B8%EC%CF%BF%A1%DB#content_1_1_23); [Mikotoba, 2023-07-23, 17:22](https://mikotoba.moe/?v=AU-ixIM_ajE&t=1042).
 
-**What to notice:** The tentative かなって思う and quiet うん express care without claiming to know the colleague’s condition.
+##### Protesting an unwelcome effect
 
-**Source:** [2026-06-28, 24:10](https://mikotoba.moe/?v=-c4CJP8mw3w&t=1450).
+**Context:** After learning that a PowerPro ability has an unfavorable effect, she protests in frustration.
 
-##### Warmth when the subject is serious
+**Excerpt:** [Read the instruction example](../.apm/instructions/sakuramiko.instructions.md#protesting-an-unwelcome-effect).
 
-**Context:** In a birthday retrospective, she discusses colleagues who are graduating, respecting their choices, and continuing to support people she has worked with.
+**What to notice:** A sharp protest is followed by the concrete cause.
 
-**Excerpt:** [Read the instruction example](../.apm/instructions/sakuramiko.instructions.md#warmth-when-the-subject-is-serious).
+**Wording:** Replace the standard ASR spelling and full stop with the wiki’s exact ゆるせねー！. Preserve the following complaint about the debuff.
 
-**What to notice:** A familiar acknowledgment leads into a considered expression of support. The softer intensity fits the subject while preserving the conversational voice.
+**Sources:** [Canonical wiki entry](https://seesaawiki.jp/hololivetv/d/%A4%B5%A4%AF%A4%E9%A4%DF%A4%B3%A1%DA%B8%EC%CF%BF%A1%DB#content_1_1_92); [Mikotoba, 2026-07-01, 1:52:00](https://mikotoba.moe/?v=YaWWNlDwklg&t=6720).
 
-**Source:** [2025-03-06, 9:16](https://mikotoba.moe/?v=P_ruwUTuS0g&t=556).
+##### An emphatic comeback
+
+**Context:** During Platform 8, after objecting to being filmed, she emphatically insists that being virtual does not make her so different from the people she is addressing.
+
+**Excerpt:** [Read the instruction example](../.apm/instructions/sakuramiko.instructions.md#an-emphatic-comeback).
+
+**What to notice:** The small katakana and punctuation preserve the characteristic emphatic retort.
+
+**Wording:** The wiki heading is ○○かッ！？って！ and its body explicitly gives 舐めてんのかッ！？って！ as an example. Apply that exact small katakana ッ and punctuation to the matching clause. Preserve バーチャル and the following sentence rather than extending the template to every occurrence of って.
+
+**Sources:** [Canonical wiki entry](https://seesaawiki.jp/hololivetv/d/%A4%B5%A4%AF%A4%E9%A4%DF%A4%B3%A1%DA%B8%EC%CF%BF%A1%DB#content_1_1_3); [Mikotoba, 2024-06-03, 1:07:56](https://mikotoba.moe/?v=KaqsVSYEeKU&t=4076).
+
+##### Repeating a bewildered reaction
+
+**Context:** During a surprising musical section of Super Mario Bros. Wonder, she repeats her bewildered reaction.
+
+**Excerpt:** [Read the instruction example](../.apm/instructions/sakuramiko.instructions.md#repeating-a-bewildered-reaction).
+
+**What to notice:** Repetition and an address to the listeners turn surprise into a shared reaction.
+
+**Wording:** Replace the differently constructed eyebrow sentence with this already researched scene, which repeats the exact wiki phrase. Only restore sentence boundaries and retain the actual repetition and address to the listeners. This is her reaction to the musical game scene, not the game’s lyrics.
+
+**Sources:** [Canonical wiki entry](https://seesaawiki.jp/hololivetv/d/%A4%B5%A4%AF%A4%E9%A4%DF%A4%B3%A1%DA%B8%EC%CF%BF%A1%DB#content_1_1_21); [Mikotoba, 2023-10-25, 24:21](https://mikotoba.moe/?v=nEaLKIhfLMI&t=1461).
+
+##### Laughing at a revealing discovery
+
+**Context:** Buying a Resident Evil 4 map reveals how many items she has missed.
+
+**Excerpt:** [Read the instruction example](../.apm/instructions/sakuramiko.instructions.md#laughing-at-a-revealing-discovery).
+
+**What to notice:** The concrete discovery turns into a comic, self-directed complaint.
+
+**Wording:** Use the matching wiki ending 草なんだがｗ, including its full-width laughter marker. Preserve the caption’s actual 取り逃してて construction and the surrounding discovery; do not insert the template’s で into a different grammatical construction.
+
+**Sources:** [Canonical wiki entry](https://seesaawiki.jp/hololivetv/d/%A4%B5%A4%AF%A4%E9%A4%DF%A4%B3%A1%DA%B8%EC%CF%BF%A1%DB#content_1_1_10); [Mikotoba, 2026-02-19, 1:31:50](https://mikotoba.moe/?v=97mx0NFhfEc&t=5510).
+
+##### Accepting a lost connection
+
+**Context:** Discussing an old social-media account she cannot access, she reflects on losing that circle of friends.
+
+**Excerpt:** [Read the instruction example](../.apm/instructions/sakuramiko.instructions.md#accepting-a-lost-connection).
+
+**What to notice:** A playful farewell expression sits inside a matter-of-fact explanation of the loss.
+
+**Wording:** Replace the caption’s バッバイ with the matching ﾊﾞｯﾊﾞｲｰ variant, preserving the wiki’s half-width kana and length mark. Keep the actual surrounding reflection on losing access to that social world.
+
+**Sources:** [Canonical wiki entry](https://seesaawiki.jp/hololivetv/d/%A4%B5%A4%AF%A4%E9%A4%DF%A4%B3%A1%DA%B8%EC%CF%BF%A1%DB#content_1_1_14); [Mikotoba, 2025-12-04, 3:37:45](https://mikotoba.moe/?v=fD_KDK3GmMQ&t=13065).
 
 ### Maintaining the evidence
 
-The official profile, fan descriptions, and selected caption scenes serve different purposes. Separate her own reactions from lyrics, game dialogue, and messages she reads aloud. Preserve context, editorial interpretation, and transcription corrections when updating an example. Do not reconstruct unresolved wording as a quotation; verify the original clip before labeling an excerpt as audio-verified.
+Use the [Mikotoba video catalog](https://mikotoba.moe/search-data/catalog.json) for catalog dates and video IDs, and its public `search-data/videos/<video-id>.json` files for surrounding captions. The selected streams span 2020–2026. The repeated-mistake scene has a date discrepancy: the wiki gives 2023-04-30, while the Mikotoba catalog gives 2023-05-01. The scene entry retains both instead of silently choosing an unverified explanation.
 
-For this expansion, the site's [video catalog](https://mikotoba.moe/search-data/catalog.json) supplied the dates and video IDs, and its public `search-data/videos/<video-id>.json` files supplied the caption windows. The new selection spans 2020–2026 and uses one short excerpt per stream. The gift example explicitly recounts her own past words; its final retelling marker is retained. The disruption example occurs after an earlier guest call, when she is addressing the listeners.
+Separate her own reactions from lyrics, game dialogue, viewer messages, and other speakers. The hot-pot example retells her own reaction, and the Mario Wonder example reacts to a musical scene without quoting its lyrics. Preserve these distinctions when replacing examples. If a caption's wording remains unresolved and the wiki does not establish it, choose a clearer scene or check the original audio before claiming a transcription correction. Label an excerpt as audio-verified only after checking the original recording.
 
-Keep the source URLs, search records, and detailed observations on this page. Retain only the behavior guidance and short contextual examples needed during conversation in the instruction.
+Keep source URLs, correction decisions, and detailed observations here. The runtime instruction needs only the behavioral guidance and short contextual examples.
 
 [^sakuramiko-profile]: [Sakura Miko official talent profile](https://hololive.hololivepro.com/talents/sakuramiko/), “DATA” and “Words/ミーム”: fan name, greetings, `○○にぇ`, `エリート`, and `諦めない心にぇ`.
 [^sakuramiko-wiki]: [Sakura Miko - Hololive unofficial wiki](https://seesaawiki.jp/hololivetv/d/%A4%B5%A4%AF%A4%E9%A4%DF%A4%B3), “プロフィール、特徴（詳細）”, “性格や癖など”, “ホロライブ内での立ち位置や関係およびファンとの交流”, and “配信の特徴”.
 [^sakuramiko-phrases]: [Sakura Miko phrase collection - Hololive unofficial wiki](https://seesaawiki.jp/hololivetv/d/%A4%B5%A4%AF%A4%E9%A4%DF%A4%B3%A1%DA%B8%EC%CF%BF%A1%DB), “口癖” for emphatic endings, repetition, and playful retorts; “は行” for competitive banter.
-[^sakuramiko-mikotoba]: [Mikotoba](https://mikotoba.moe/), unofficial archive based on YouTube automatic captions. Keyword searches used during development: [`なんだが`](https://mikotoba.moe/?q=%E3%81%AA%E3%82%93%E3%81%A0%E3%81%8C&title=%E9%9B%91%E8%AB%87), [`負け`](https://mikotoba.moe/?q=%E8%B2%A0%E3%81%91&title=%E9%9B%91%E8%AB%87), [`待って`](https://mikotoba.moe/?q=%E5%BE%85%E3%81%A3%E3%81%A6&title=%E9%9B%91%E8%AB%87), [`嬉しい`](https://mikotoba.moe/?q=%E5%AC%89%E3%81%97%E3%81%84&title=%E9%9B%91%E8%AB%87), [`エリート`](https://mikotoba.moe/?q=%E3%82%A8%E3%83%AA%E3%83%BC%E3%83%88&title=%E9%9B%91%E8%AB%87), and [`諦め`](https://mikotoba.moe/?q=%E8%AB%A6%E3%82%81&title=%E3%83%9E%E3%83%AA%E3%82%AA). Earlier surrounding contexts remain available for [explanation](https://mikotoba.moe/?v=S8cHTG-c9e0&t=1338), [playful qualification](https://mikotoba.moe/?v=E0wr-TBjsd8&t=3172), [specific appreciation](https://mikotoba.moe/?v=S8cHTG-c9e0&t=4188), [serious reflection](https://mikotoba.moe/?v=P_ruwUTuS0g&t=574), [celebration](https://mikotoba.moe/?v=BqUfGBP3jMM&t=1205), [losing and a future goal](https://mikotoba.moe/?v=zOKiTb5HBGE&t=4256), [the craft reaction](https://mikotoba.moe/?v=E0wr-TBjsd8&t=5961), and [thanks for viewer comments](https://mikotoba.moe/?v=E0wr-TBjsd8&t=6624).
+[^sakuramiko-mikotoba]: [Mikotoba](https://mikotoba.moe/), unofficial archive based on YouTube automatic captions. Earlier caption-led searches: [`なんだが`](https://mikotoba.moe/?q=%E3%81%AA%E3%82%93%E3%81%A0%E3%81%8C&title=%E9%9B%91%E8%AB%87), [`負け`](https://mikotoba.moe/?q=%E8%B2%A0%E3%81%91&title=%E9%9B%91%E8%AB%87), [`待って`](https://mikotoba.moe/?q=%E5%BE%85%E3%81%A3%E3%81%A6&title=%E9%9B%91%E8%AB%87), [`嬉しい`](https://mikotoba.moe/?q=%E5%AC%89%E3%81%97%E3%81%84&title=%E9%9B%91%E8%AB%87), [`エリート`](https://mikotoba.moe/?q=%E3%82%A8%E3%83%AA%E3%83%BC%E3%83%88&title=%E9%9B%91%E8%AB%87), and [`諦め`](https://mikotoba.moe/?q=%E8%AB%A6%E3%82%81&title=%E3%83%9E%E3%83%AA%E3%82%AA). Earlier surrounding contexts remain available for [explanation](https://mikotoba.moe/?v=S8cHTG-c9e0&t=1338), [playful qualification](https://mikotoba.moe/?v=E0wr-TBjsd8&t=3172), [specific appreciation](https://mikotoba.moe/?v=S8cHTG-c9e0&t=4188), [serious reflection](https://mikotoba.moe/?v=P_ruwUTuS0g&t=574), [celebration](https://mikotoba.moe/?v=BqUfGBP3jMM&t=1205), [losing and a future goal](https://mikotoba.moe/?v=zOKiTb5HBGE&t=4256), [the craft reaction](https://mikotoba.moe/?v=E0wr-TBjsd8&t=5961), and [thanks for viewer comments](https://mikotoba.moe/?v=E0wr-TBjsd8&t=6624).
