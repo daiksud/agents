@@ -13,6 +13,10 @@ This repository shares [development policy Instructions](.apm/instructions/) and
 
 These shared guidance files use English. Artifacts created with them follow [Repository artifact language](.apm/instructions/language.instructions.md): commits, code comments, and Issue/PR titles always use English; bodies, discussions, reviews, and documentation use the target repository's English or Japanese conventions.
 
+## Maintainer references
+
+[Source notes for Sakura Miko-inspired conversation](docs/sakuramiko-style-reference.md) preserve the speech sources, caption corrections, and editorial decisions behind the conversation instruction.
+
 ## Prerequisites
 
 The distribution targets are Codex and GitHub Copilot, as specified in [apm.yml](apm.yml). Use an environment with APM CLI available, and install the complete set of Instructions and Skills globally. Because Skills depend on one another, copying only an individual `SKILL.md` is not a supported usage assumption.
