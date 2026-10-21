@@ -2,15 +2,6 @@
 type: Instruction
 title: Markdown quality for GitHub
 description: Define common rumdl configuration, installation permission, GFM structure, formatting before posting, and verification after posting.
-sources:
-  - id: rumdl-getting-started-installation
-    resource: https://rumdl.dev/getting-started/installation/
-  - id: rumdl-md060
-    resource: https://rumdl.dev/md060/
-  - id: rumdl-md076
-    resource: https://rumdl.dev/md076/
-  - id: github-docs-global-settings-md
-    resource: https://github.com/rvben/rumdl/blob/main/docs/global-settings.md
 ---
 
 ## Markdown quality for GitHub
@@ -63,15 +54,3 @@ Explicitly specify common configuration for GitHub post bodies. Check existing r
 6. For unnatural display, fix source files and repeat formatting, checks, posting, and retrieval.
 
 Apply the same formatting/checking before saving repository documents, checking frontmatter, heading hierarchy, relative links, and feature steps. If ordinary-concept titles and H1s duplicate under MD025, adjust content heading levels. For `type: Attested Computation` with computation definitions, the specification requires `# Computation`; add `--config 'MD025.front-matter-title = ""'` to existing configuration for that document only. Keep MD025 and duplicate-body-H1 checks enabled; do not avoid this by changing computation H1 to H2. Check specific contracts and validation in the dependency [document-authoring computation material](../../document-authoring/references/computation.md).
-
-### References
-
-- rumdl installation[^rumdl-getting-started-installation]
-- MD060: compact formatting[^rumdl-md060]
-- MD076: list-item spacing[^rumdl-md076]
-- Common configuration inheritance[^github-docs-global-settings-md]
-
-[^rumdl-getting-started-installation]: [rumdl installation](https://rumdl.dev/getting-started/installation/). Evidence for the reference scope and adoption decisions stated in the text.
-[^rumdl-md060]: [MD060: compact formatting](https://rumdl.dev/md060/). Evidence for the reference scope and adoption decisions stated in the text.
-[^rumdl-md076]: [MD076: list-item spacing](https://rumdl.dev/md076/). Evidence for the reference scope and adoption decisions stated in the text.
-[^github-docs-global-settings-md]: [Common configuration inheritance](https://github.com/rvben/rumdl/blob/main/docs/global-settings.md). Evidence for the reference scope and adoption decisions stated in the text.

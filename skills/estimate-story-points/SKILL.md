@@ -7,7 +7,7 @@ description: Use to estimate story points for GitHub Issues with independent est
 
 Facilitate estimates for explicitly supplied Task Issues or the open direct Task Sub-issues of a parent in one repository. Read the targets and their dependencies before choosing the final target set. Group explicitly supplied Tasks by their actual parent Feature, maintaining a separate summary and save verification per parent; unparented Tasks have no parent summary. Do not count parents as Tasks, mix parents' totals, or silently include dependencies as targets.
 
-Use the dependency [issue-management](../issue-management/SKILL.md) for publication permission, Issue edits, formatting, and save verification. Estimation does not change Git-managed files and does not need `change-delivery`. Do not create, split, reprioritize, or implement Issues, change GitHub Projects fields, report velocity or capacity, or schedule automatic re-estimation. These first-version boundaries come from [Issue #209](https://github.com/daiksud/agents/issues/209).
+Use the dependency [issue-management](../issue-management/SKILL.md) for publication permission, Issue edits, formatting, and save verification. Estimation does not change Git-managed files and does not need `change-delivery`. Do not create, split, reprioritize, or implement Issues, change GitHub Projects fields, report velocity or capacity, or schedule automatic re-estimation.
 
 ## Prepare before reading estimates
 
@@ -29,5 +29,3 @@ The facilitator reads all results, verifies claims, clarifies Task text, and rec
 | Save and report | Follow [recording](references/recording.md). Refresh source states, Task-parent membership, and parent inventories immediately before publishing. Format complete bodies and plan one save per Task and per applicable parent after the final round, not one save per round. Retrieve saved bodies and check agreement and rendering. Report verified results, requester decisions, unresolved questions, and incomplete saves or checks. |
 
 Do not treat a timeout, missing response, invalid value, unverified material claim, or unknown model family as a zero, a valid vote, or permission to shrink the roster after seeing results. Do not score affected cases as complete. Resolve information gaps through review and an eligible second round, or report the execution/input blocker without adding rounds. Missing capabilities, required decisions, publication permission, or `issue-management` must remain explicit blockers; return permitted drafts without claiming an estimate or save occurred.
-
-The [review scenarios](references/aggregation-and-review.md#review-scenarios) define reproducible inputs and expected judgments. They are examples for reviewing this skill, not evidence that agents were dispatched or independent validation was performed.

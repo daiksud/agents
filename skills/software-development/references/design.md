@@ -2,9 +2,6 @@
 type: Reference
 title: Designing responsibilities, contracts, and comments
 description: Criteria for choosing structure from model boundaries and retaining intent and public contracts in code.
-sources:
-  - id: practice-sources
-    resource: sources.md
 ---
 
 ## Designing responsibilities, contracts, and comments
@@ -17,17 +14,17 @@ sources:
 - **Courage**: Do not hide defects or uncertainty; carry out necessary Refactor based on tests and the agreed scope. This does not mean skipping approval or validation.
 - **Respect**: Respect users' decision authority and stakeholders' knowledge and time. Do not make unagreed business decisions on their behalf or gain speed through overload.
 
-This applies XP values to the implementation procedure. Use this mapping even when the distribution destination lacks shared Instructions. Keep the original sources and the scope of application in this environment in the [source materials](sources.md).[^practice-sources]
+This applies XP values to the implementation procedure. Use this mapping even when the distribution destination lacks shared Instructions.
 
 ### Simple Design and YAGNI
 
-Provided that current contracts and tests are met, examine whether structure conveys intent, duplicates the same rule, or contains unnecessary elements. Do not add interfaces that might be used someday, unused extension points, configuration for hypothetical requirements, or unrequested generalization. Add minimal structure when you can explain an actual gap in callers, contracts, or changes.[^practice-sources]
+Provided that current contracts and tests are met, examine whether structure conveys intent, duplicates the same rule, or contains unnecessary elements. Do not add interfaces that might be used someday, unused extension points, configuration for hypothetical requirements, or unrequested generalization. Add minimal structure when you can explain an actual gap in callers, contracts, or changes. Do not assign mechanical priority or scores between clarity and duplication.
 
-YAGNI is not a reason to omit necessary validation or refactoring. Handle design improvements identified at Green in Refactor within the same cycle, preserving code health that supports small changes. Judge intent and duplication from model meaning; do not make abstract types or line counts quality targets.[^practice-sources]
+YAGNI is not a reason to omit necessary validation or refactoring. Handle design improvements identified at Green in Refactor within the same cycle, preserving code health that supports small changes. Judge intent and duplication from model meaning; do not make abstract types or line counts quality targets.
 
 ### Expressing agreed behavior as contracts
 
-For the next small behavior change, start from agreed stories, domain rules, and acceptance conditions. Reuse existing specification and discovery outcomes; use `behavior-specification` for unsettled rules, without making EventStorming or another ceremony a new gate. Make only the applicable contracts explicit before the corresponding test and implementation.[^practice-sources]
+For the next small behavior change, start from agreed stories, domain rules, and acceptance conditions. Reuse existing specification and discovery outcomes; use `behavior-specification` for unsettled rules, without making EventStorming or another ceremony a new gate. Make only the applicable contracts explicit before the corresponding test and implementation.
 
 | Category | Meaning and owner |
 | --- | --- |
@@ -48,7 +45,7 @@ Follow happy-path MVP and incremental design: add conditions for current require
 
 #### Visible effects and meaningful abstractions
 
-Prefer pure calculations where they simplify reasoning. Isolate necessary I/O and mutation at explicit boundaries, and state their promised effects rather than hiding them behind a calculation name.[^practice-sources]
+Prefer pure calculations where they simplify reasoning. Isolate necessary I/O and mutation at explicit boundaries, and state their promised effects rather than hiding them behind a calculation name.
 
 - For a calculation, make its inputs and returned value clear, including whether inputs remain unchanged.
 - For an operation that persists or mutates state, retain the promised resulting state and any agreed failure behavior in its contract; select tests at the boundary capable of observing them.
@@ -76,7 +73,7 @@ Consider composition and delegation first for reuse and combining behavior. Use 
 
 ### Communicating boundaries through names, placement, and types
 
-Check existing naming and placement conventions, and follow [Repository artifact language](../../../.apm/instructions/language.instructions.md) for comments and documentation. Within the scope added or changed, make meaning and contracts traceable for users. Record decisions on applying Context Engineering and Taming Copilot in the [source materials](sources.md#sources-of-instruction-examples-and-application-decisions).[^practice-sources]
+Check existing naming and placement conventions, and follow [Repository artifact language](../../../.apm/instructions/language.instructions.md) for comments and documentation. Within the scope added or changed, make meaning and contracts traceable for users.
 
 - Use words expressing roles or business meaning in names and paths. If a value's meaning or units are unclear, use a named constant at that model boundary. Do not share different rules merely because they use the same number.
 - For new placement, make related code, types, and tests easy to find as one feature. Follow existing colocation; if tests belong in a separate directory, align corresponding names and structure. Do not move large numbers of existing files solely for colocation.
@@ -94,10 +91,6 @@ First express business meaning and dependencies through names, types, function d
 - Do not merely explain the name of an adopted pattern. Retain its rationale when code does not reveal it. Refer to existing ADRs rather than duplicating their explanations.
 - Cross-check related comments when making changes. Leave unnecessary commented-out code and history lists to version control, but check references and removal conditions when handling operational TODOs and similar notes.
 - Write code comments, including docstrings, in English under [Repository artifact language](../../../.apm/instructions/language.instructions.md); follow project conventions for their format. Do not make comments on all functions or a particular language's documentation format shared requirements.
-
-Keep design sources and adoption decisions in the [primary materials](sources.md).[^practice-sources]
-
-[^practice-sources]: References and application decisions for Simple Design, YAGNI, DDD, OOP Design Patterns, Self-explanatory Code Commenting, Context Engineering, and Taming Copilot; [Design by Contract adoption and limits](sources.md#adoption-decisions-for-design-by-contract).
 
 ## Change scope and decomposition
 

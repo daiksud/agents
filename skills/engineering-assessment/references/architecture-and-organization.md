@@ -2,15 +2,6 @@
 type: Reference
 title: Assess Architecture and Organization boundaries
 description: Assess meaning, change, runtime, deployment, and ownership boundaries and choices such as Microservices from DDD, Team Topologies, Conway, and Continuous Delivery evidence.
-sources:
-  - id: ddd-reference
-    resource: https://www.domainlanguage.com/wp-content/uploads/2016/05/DDD_Reference_2015-03.pdf
-  - id: team-topologies-key-concepts
-    resource: https://teamtopologies.com/key-concepts
-  - id: continuous-delivery-architecture
-    resource: https://continuousdelivery.com/implementing/architecture/
-  - id: dora-loosely-coupled-teams
-    resource: https://dora.dev/capabilities/loosely-coupled-teams/
 ---
 
 ## Assess Architecture and Organization boundaries
@@ -33,7 +24,7 @@ Even when boundaries look like the same line, they answer different questions.
 | Repository boundary | In which units are source, history, and automation managed? | Repositories, builds, ownership settings, tooling |
 | Team ownership boundary | Who has continuing decision, operations, and improvement responsibility? | Actual responsibility, on-call, change approvals, inquiries, team experience |
 
-One Bounded Context may become one service, repository, or team, but do not make this a design rule. In Eric Evans' DDD, Bounded Context makes model scope explicit; Context Maps handle contact points, translation, and influence between models.[^ddd-reference]
+One Bounded Context may become one service, repository, or team, but do not make this a design rule. In Eric Evans' DDD, Bounded Context makes model scope explicit; Context Maps handle contact points, translation, and influence between models.
 
 Correspondence such as the following can be tested as a hypothesis, but exact alignment is not a success condition.
 
@@ -50,9 +41,9 @@ Domain boundaries concern business problems and knowledge, not this alignment ch
 
 Check actual change, test, and deployment independence rather than architecture styles or service counts.
 
-Continuous Delivery architecture guidance treats testability and deployability as important attributes. It describes loosely coupled, well-encapsulated components that can be verified and delivered without excessive reliance on integration environments or large-scale orchestration. Improve existing systems evolutionarily as needed rather than rebuilding all at once.[^continuous-delivery-architecture]
+Continuous Delivery architecture guidance treats testability and deployability as important attributes. It describes loosely coupled, well-encapsulated components that can be verified and delivered without excessive reliance on integration environments or large-scale orchestration. Improve existing systems evolutionarily as needed rather than rebuilding all at once.
 
-DORA's Loosely Coupled Teams likewise emphasizes observable results rather than technologies.[^dora-loosely-coupled-teams]
+DORA's Loosely Coupled Teams likewise emphasizes observable results rather than technologies.
 
 - Major design changes can proceed without requiring changes from other teams.
 - Daily work does not depend on fine-grained cross-team coordination.
@@ -63,7 +54,7 @@ Mainframes can achieve these outcomes, and Microservices can fail to achieve the
 
 ### DDD does not convert semantic boundaries into architecture counts
 
-Treat DDD Subdomains as problem space and Bounded Contexts as the scope of one model and language.[^ddd-reference]
+Treat DDD Subdomains as problem space and Bounded Contexts as the scope of one model and language.
 
 At minimum, check:
 
@@ -76,7 +67,7 @@ Do not invent new Subdomains or Bounded Contexts solely to resolve technical cou
 
 ### Use Team Topologies from fast flow and cognitive load
 
-Team Topologies is a team-of-teams design approach for fast flow of value, using four team types and three interaction modes as a pattern language.[^team-topologies-key-concepts]
+Team Topologies is a team-of-teams design approach for fast flow of value, using four team types and three interaction modes as a pattern language.
 
 Do not introduce the four types as an organization chart requiring four teams. Investigate current responsibilities and cognitive load, and size necessary roles proportionately.
 
@@ -99,7 +90,7 @@ Do not establish interaction, cognitive load, or autonomy from team names or COD
 
 ### Treat Conway / Inverse Conway as interaction hypotheses
 
-Conway's Law shows that organizational communication structure and system design are not independent. Team Topologies and DORA use this relationship to consider team communication patterns and architecture independence.[^team-topologies-key-concepts][^dora-loosely-coupled-teams]
+Conway's Law shows that organizational communication structure and system design are not independent. Team Topologies and DORA use this relationship to consider team communication patterns and architecture independence.
 
 Do not prescribe Inverse Conway Maneuver as merely aligning staffing with a desired architecture diagram.
 
@@ -131,7 +122,7 @@ Microservices are not a default derived from Bounded Context counts. Evaluate th
 - API/event compatibility and versioning.
 - Tooling, platforms, and on-call capabilities supporting many deployable units.
 
-DORA also explains that adopting Microservices alone does not guarantee loose coupling, and monoliths can fit current scale and flow.[^dora-loosely-coupled-teams]
+DORA also explains that adopting Microservices alone does not guarantee loose coupling, and monoliths can fit current scale and flow.
 
 If modules or a single deployment meet current requirements, follow Simplicity / YAGNI without anticipating distributed-system costs. Do not confuse room for evolutionary separation at boundaries when needed with implementing currently unnecessary extension points.
 
@@ -147,8 +138,3 @@ Record architecture/organization judgments as one of:
 Do not infer gaps solely from absence of Microservices, absence of four team types, or a single repository.
 
 Target one problematic dependency in the first improvement. Prefer observable small experiments, such as clarifying contracts, creating test seams, removing deployment dependencies, or temporarily changing interaction modes. Do not choose wholesale service decomposition or organizational restructuring first without evidence and incremental learning.
-
-[^ddd-reference]: [DDD Reference — Eric Evans](https://www.domainlanguage.com/wp-content/uploads/2016/05/DDD_Reference_2015-03.pdf). DDD pattern reference including Bounded Context and Context Map. Fixed 2015-03 edition rechecked 2026-09-27.
-[^continuous-delivery-architecture]: [Architecture — Continuous Delivery](https://continuousdelivery.com/implementing/architecture/). Testability, deployability, loosely coupled components, and evolutionary architecture decisions. Checked 2026-09-27.
-[^dora-loosely-coupled-teams]: [Loosely coupled teams — DORA](https://dora.dev/capabilities/loosely-coupled-teams/). Independent change/test/deploy, communication dependencies, Inverse Conway, and Microservices trade-offs. Checked 2026-09-27.
-[^team-topologies-key-concepts]: [Key Concepts — Team Topologies](https://teamtopologies.com/key-concepts). Fast flow, four team types, three interaction modes, cognitive load, and Conway's Law. Checked 2026-09-27.

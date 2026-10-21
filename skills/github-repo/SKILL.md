@@ -29,7 +29,8 @@ For diagnosis, first read the reading/reporting parts of [Operations and judgmen
 | Releases, merges, main protection, Actions policy | [Setting standards](references/settings.md) |
 | Free security features, availability, billing, prerequisites | [Security](references/security.md) |
 | Retrieving settings, applying differences, failures, conflicts, reruns, result verification | [Operations and judgments](references/operations.md) |
-| Rechecking specifications, adoption reasons, APIs, or free-use conditions | [Sources and application decisions](references/sources.md) |
+
+For version-dependent judgments, recheck current official specifications for APIs, feature availability, free-use conditions, permissions, and UI names. Record observations in the target diagnosis; historical checks do not establish current applicability.
 
 ## Common boundaries
 

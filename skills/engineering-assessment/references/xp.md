@@ -2,9 +2,6 @@
 type: Reference
 title: Choose XP taxonomy and focused lenses
 description: Distinguish Values, Principles, and Primary / Corollary Practices in Extreme Programming, second edition, and select only focused lenses needed for the assessment.
-sources:
-  - id: xp-second-edition
-    resource: https://www.informit.com/store/extreme-programming-explained-embrace-change-9780134051987
 ---
 
 ## Choose XP taxonomy and focused lenses
@@ -15,7 +12,7 @@ The purpose is not to adopt or score every XP item. After checking taxonomy, rea
 
 ### Do not flatten the taxonomy
 
-XP's second edition distinguishes categories at different abstraction levels.[^xp-second-edition]
+XP's second edition distinguishes categories at different abstraction levels.
 
 ```text
 Values
@@ -47,7 +44,7 @@ When applying a Value to actual decisions, read only the [lightweight lookup of 
 
 ### Principles
 
-InformIT's Table of Contents lists these 14 named Principles. The introduction on the same publisher page inconsistently says “Eleven principles”; this repository bases taxonomy on the listed TOC and retains the discrepancy in provenance.[^xp-second-edition]
+Use the following 14 named Principles in the second-edition taxonomy.
 
 - Humanity
 - Economics
@@ -124,5 +121,3 @@ This table is not the only mapping. Select only categories and items relevant to
 - Read the [DORA lens](dora.md) for Core / Capability / metrics.
 
 For XP-primary assessment, enter through this taxonomy file and add the [lightweight lookup of individual XP items](xp-auxiliary.md) only when concrete item meanings are needed. If only classification is needed, do not read the lookup or expand every item into the unknowns list.
-
-[^xp-second-edition]: [Extreme Programming Explained: Embrace Change, 2nd Edition — Kent Beck / Cynthia Andres](https://www.informit.com/store/extreme-programming-explained-embrace-change-9780134051987). The 2004 edition's Table of Contents lists five Values, 14 named Principles, 13 Primary Practices, and 11 Corollary Practices. The same publisher page's introduction says “Eleven principles,” so use the TOC list for Principle counts and state the discrepancy. Checked 2026-09-27.

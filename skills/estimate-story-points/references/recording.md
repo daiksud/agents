@@ -2,9 +2,6 @@
 type: Instruction
 title: Record Task and parent estimates
 description: Define estimate sections, conditional totals, and final Issue saves through issue-management.
-sources:
-  - id: issue-209
-    resource: https://github.com/daiksud/agents/issues/209
 ---
 
 ## Ownership and publication
@@ -13,7 +10,7 @@ Read [issue-management](../../issue-management/SKILL.md) and its [Issue records]
 
 Preserve each full original body, its scope, acceptance conditions, links, and relevant prior history. Apply verified clarifications to the Task text, not just to an estimate note that leaves contradictory original requirements intact. Maintain one current estimate section rather than appending duplicates. Retain prior results as identified history without presenting them as estimates of changed text.
 
-Prepare all changes as local drafts through the final round. The planned write is one complete-body save per target Task and, when present, one save per distinct parent after finalization, not intermediate per-round updates.[^issue-209]
+Prepare all changes as local drafts through the final round. The planned write is one complete-body save per target Task and, when present, one save per distinct parent after finalization, not intermediate per-round updates.
 
 ## Task section
 
@@ -92,5 +89,3 @@ A **full parent total** requires a refreshed inventory showing that all relevant
 5. For each affected parent, refresh its direct-child list and statuses again after the Task saves, reconcile the summary's selected/excluded Tasks, and save/verify that parent's body only after all of its Task saves are confirmed. If relationships or other referenced evidence materially changed, hold or recompute the affected summary; never publish a stale full-total claim. If a Task save fails or its result is unknown, retrieve current state before retrying; do not resave already matching bodies. Hold a success-looking parent update and report partial completion rather than claiming a synchronized summary.
 6. On a verified content/rendering defect, correct the local source, repeat formatting, and make only the necessary recovery save. Record this exception to the planned single save; it does not authorize routine per-round writes. Open the browser only when requested, following `issue-management`.
 7. Report the retrieved Issue URLs, agreed/conditional values, totals and coverage, requester decisions, unresolved questions, and actual save/rendering checks. If writes or checks are unavailable, return permitted drafts and the exact missing capability without claiming publication or closing implementation Issues.
-
-[^issue-209]: [Issue #209](https://github.com/daiksud/agents/issues/209), desired state, success condition 7, and workflow. This procedure delegates existing publication and Markdown requirements to `issue-management`.

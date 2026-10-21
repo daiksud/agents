@@ -1,7 +1,7 @@
 ---
 type: Reference
-title: Sources for shared understanding and acceptance specifications
-description: Preserve sources for BDD/ATDD and acceptance specifications, existing checking history, and adoption decisions.
+title: behavior-specification sources and maintenance notes
+description: Human-facing source mappings, adoption rationale, and retained checking history for behavior-specification.
 sources:
 - id: cucumber-docs-bdd
   resource: https://cucumber.io/docs/bdd/
@@ -21,7 +21,24 @@ sources:
   resource: https://curiousduck.io/posts/collections/2024-06-27-atdd/
 - id: lizkeogh-20-acceptance-criteria-vs-scenarios
   resource: https://lizkeogh.com/2011/06/20/acceptance-criteria-vs-scenarios/
+- id: gherkin-markdown
+  resource: https://github.com/cucumber/gherkin/blob/main/MARKDOWN_WITH_GHERKIN.md
+- id: gherkin-ja
+  resource: https://github.com/cucumber/gherkin/blob/5c869e7b75c7d1a40f70b8ab2bd1148600467fab/gherkin-languages.json#L1944-L1994
 ---
+
+## Purpose and runtime documents
+
+These are maintainer notes for [behavior-specification](../../skills/behavior-specification/SKILL.md). Runtime entry points and task references retain the instructions needed for execution; this document preserves attribution and background for maintenance. Any source-check dates below are retained history, not new verification performed during this separation.
+
+### Source mapping
+
+Source IDs are preserved from the original files, including aliases for the same URL. Local `practice-sources` bindings identified the former bundled catalog; its content is retained in this note.
+
+| Runtime document or original catalog | Source mapping |
+| --- | --- |
+| Former bundled source catalog (`references/sources.md`) | [Sources for shared understanding and acceptance specifications](#sources-for-shared-understanding-and-acceptance-specifications) retains its source IDs and adoption notes |
+| [references/behavior.md](../../skills/behavior-specification/references/behavior.md) | `practice-sources` (original resource: `sources.md`; catalog retained here), [^gherkin-markdown], [^gherkin-ja] |
 
 ## Sources for shared understanding and acceptance specifications
 
@@ -39,6 +56,22 @@ The reference date is 2026-09-11. Undated material has no confirmed publication/
 | Elisabeth Hendrickson, ATDD Revisited[^curiousduck-collections-2024-06-27-atdd] | 2024-06-27 | Reassessment of 2008 practice, adapting participation and automation formats |
 | Liz Keogh, Acceptance Criteria vs. Scenarios[^lizkeogh-20-acceptance-criteria-vs-scenarios] | 2011-06-20 | Differences between abstract conditions and concrete examples |
 
+## Participation and automation rationale
+
+Human-readable requirements must map to automated tests, but direct execution of the same file is not mandatory. Hendrickson's 2024 reassessment recommends few examples and necessary participants from experience of natural-language automation and synchronous collaboration involving everyone becoming burdensome. Cucumber, meanwhile, emphasizes dialogue across differing expertise. Preserve this difference and choose methods that obtain stakeholders' knowledge and confirm shared understanding.[^curiousduck-collections-2024-06-27-atdd] [^cucumber-docs-bdd]
+
+## Retained source annotations
+
+These annotations preserve the original per-file attribution and checking details.
+
+### references/behavior.md
+
+- `gherkin-markdown`: Moved the format rule and reference from the existing SKILL.md, preserving the original reference rather than adding a specification change or checking history.
+- `gherkin-ja`: The fixed version of Japanese keywords specified in the existing SKILL.md.
+- `practice-sources`: References and application decisions for BDD/ATDD and rules, examples, and questions.
+
+[^gherkin-markdown]: [Markdown with Gherkin](https://github.com/cucumber/gherkin/blob/main/MARKDOWN_WITH_GHERKIN.md). Moved the format rule and reference from the existing SKILL.md, preserving the original reference rather than adding a specification change or checking history.
+[^gherkin-ja]: [Japanese Gherkin keywords](https://github.com/cucumber/gherkin/blob/5c869e7b75c7d1a40f70b8ab2bd1148600467fab/gherkin-languages.json#L1944-L1994). The fixed version of Japanese keywords specified in the existing SKILL.md.
 [^cucumber-docs-bdd]: [Behaviour-Driven Development](https://cucumber.io/docs/bdd/). Evidence for the reference scope and adoption decisions stated in the text.
 [^cucumber-bdd-examples]: [Examples](https://cucumber.io/docs/bdd/examples/). Evidence for the reference scope and adoption decisions stated in the text.
 [^cucumber-bdd-better-gherkin]: [Writing better Gherkin](https://cucumber.io/docs/bdd/better-gherkin/). Evidence for the reference scope and adoption decisions stated in the text.

@@ -15,7 +15,7 @@ These shared guidance files use English. Artifacts created with them follow [Rep
 
 ## Maintainer references
 
-[Source notes for Sakura Miko-inspired conversation](docs/sakuramiko-style-reference.md) preserve the speech sources, caption corrections, and editorial decisions behind the conversation instruction.
+[Maintainer references](docs/maintainer-references.md) collect source mappings, adoption decisions, research history, and supplementary notes for the Instructions and Skills, including the [Sakura Miko conversation sources](docs/sakuramiko-style-reference.md). Execution rules remain in Instructions and skill entry points; operational details stay in conditional skill references. Ordinary tasks do not require loading the maintainer notes.
 
 ## Prerequisites
 

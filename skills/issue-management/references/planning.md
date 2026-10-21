@@ -2,17 +2,6 @@
 type: Instruction
 title: Planning and execution scope
 description: Determine execution scope from requests and connect impact, uncertainty, and validation environments to plans.
-sources:
-  - id: github-instructions-spec-driven-workflow-v1-instructions-md
-    resource: https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/instructions/spec-driven-workflow-v1.instructions.md
-  - id: github-agents-research-technical-spike-agent-md
-    resource: https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/agents/research-technical-spike.agent.md
-  - id: github-context-map-skill-md
-    resource: https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/skills/context-map/SKILL.md
-  - id: context-engineering
-    resource: https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/instructions/context-engineering.instructions.md
-  - id: taming-copilot
-    resource: https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/instructions/taming-copilot.instructions.md
 ---
 
 ## Planning and execution scope
@@ -47,15 +36,15 @@ Before saving Issue plans, organize the following from actual files/evidence. Sh
 - Search targets and check each file's role and needed changes.
 - Investigate direct dependencies and referrers, needed updates, and impact. Documents include link targets, incoming links, and related-instruction consistency.
 - Read related tests and organize behavior they check and validation to add, update, or run. Test presence is not validation success.
-- Identify authoritative specifications, contracts, and configuration; find analogous implementation/descriptions. Show concrete reference patterns and reasons fitting the current boundaries/requirements.[^context-engineering]
-- For version-dependent judgments, check versions from configuration, locks, and implementation against corresponding official material. Latest material or memory alone does not establish target-version evidence; retain unconfirmed comparisons.[^taming-copilot]
+- Identify authoritative specifications, contracts, and configuration; find analogous implementation/descriptions. Show concrete reference patterns and reasons fitting the current boundaries/requirements.
+- For version-dependent judgments, check versions from configuration, locks, and implementation against corresponding official material. Latest material or memory alone does not establish target-version evidence; retain unconfirmed comparisons.
 - Check evidence-based risks relevant to changes, such as public API compatibility, data migration, or configuration changes.
 
 Integrate results and referenced files/scope into existing Issue plans, validation, and risks. Small changes may use short descriptions without fixed tables, empty fields, or dedicated files. Missing/inaccessible matters do not prove “no impact”; retain unverified scope/checking methods, connecting important matters to [Validation of important uncertainties](#validation-of-important-uncertainties).
 
 Include maps in [Starting and planning](#starting-and-planning) records without another approval wait. Changes needing confirmation follow the same procedures.
 
-If branch switches or related changes alter investigation assumptions, reread needed files/reference versions and update plan evidence. Open tabs or past summaries alone do not establish current state. Divide changes into verifiable related contracts, implementation, and tests rather than by file counts.[^context-engineering]
+If branch switches or related changes alter investigation assumptions, reread needed files/reference versions and update plan evidence. Open tabs or past summaries alone do not establish current state. Divide changes into verifiable related contracts, implementation, and tests rather than by file counts.
 
 ### Reassessing the remaining plan
 
@@ -93,19 +82,3 @@ For global settings, additional permissions, costs, or installations with unveri
 - Execute dependent operations after preceding success is confirmed.
 - Use completion waits or spaced checks for review/CI, avoiding excessive polling.
 - Distinguish fewer tool calls from hiding execution display; do not promise unavailable display controls.
-
-### Sources and application decisions
-
-Checked GitHub awesome-copilot Spec Driven Workflow v1[^github-instructions-spec-driven-workflow-v1-instructions-md] and Technical spike research mode[^github-agents-research-technical-spike-agent-md] on 2026-09-11, summarizing/restructuring uncertainty-scaled investigation/prototypes, pre-experiment success conditions, and evidence-based decision updates.
-
-This environment limits them to important outcome/feasibility uncertainties, distinguishes business agreement from technical validation, and integrates existing Issues/approval. It does not require the sources' fixed three documents, confidence scores, uniform six stages, complete operation logs, comprehensive investigation, or dedicated prototype documents. This is an application decision, not wholesale adoption.
-
-Checked GitHub awesome-copilot context-map[^github-context-map-skill-md] on 2026-09-11, summarizing/restructuring target, dependency, test, pattern, and risk perspectives. Include document links, related instructions, and referrer impact in existing Issue planning here. Do not introduce fixed tables/checklists or separate map review waits; integrate checking into existing plan approval.
-
-Checked Context Engineering[^context-engineering] and Taming Copilot[^taming-copilot] on 2026-09-13, integrating concrete reference patterns, target-version evidence, and rechecking changed assumptions. IDE tab/cursor operations, creating `COPILOT.md`, one-file-at-a-time changes, or announcements before every tool are not common requirements.
-
-[^context-engineering]: [Context Engineering](https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/instructions/context-engineering.instructions.md). Apply related information, reference patterns, and context updates to investigation here.
-[^taming-copilot]: [Taming Copilot](https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/instructions/taming-copilot.instructions.md). Apply tool checking of version-dependent information to target-version comparisons.
-[^github-instructions-spec-driven-workflow-v1-instructions-md]: [GitHub awesome-copilot Spec Driven Workflow v1](https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/instructions/spec-driven-workflow-v1.instructions.md). Evidence for reference scope and adoption decisions stated in the text.
-[^github-agents-research-technical-spike-agent-md]: [Technical spike research mode](https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/agents/research-technical-spike.agent.md). Evidence for reference scope and adoption decisions stated in the text.
-[^github-context-map-skill-md]: [GitHub awesome-copilot context-map](https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/skills/context-map/SKILL.md). Evidence for reference scope and adoption decisions stated in the text.

@@ -2,13 +2,6 @@
 type: Instruction
 title: Repository setting operations and judgments
 description: Proceed from read-only diagnosis through approved differences and revalidation while preserving permission and failure boundaries.
-sources:
-  - id: repository-api
-    resource: https://docs.github.com/en/rest/repos/repos
-  - id: rules-api
-    resource: https://docs.github.com/en/rest/repos/rules
-  - id: actions-permissions-api
-    resource: https://docs.github.com/en/rest/actions/permissions
 ---
 
 ## Read-only diagnosis
@@ -19,7 +12,9 @@ sources:
 4. Select expected values/observations from [Setting standards](settings.md) and [Security](security.md). Do not add unrelated items to limited diagnosis; comprehensive diagnosis retains all five items and free features.
 5. Check all API pages, needed detail, and UI, recording retrieval time, evidence URLs, and targets. Separate file declarations from effective GitHub settings, and enabled settings from successful execution.
 
-Choose GitHub integrations, `gh api`, or official UI explicitly supporting necessary operations in the environment. GET-only integrations are not update APIs; do not claim unavailable admin APIs/CLIs executed. Check official authentication, API versions, and required parameters; use minimal existing permissions. Do not expose credentials in bodies/logs or bypass authentication/additional permissions.[^repository-api][^rules-api][^actions-permissions-api]
+Choose GitHub integrations, `gh api`, or official UI explicitly supporting necessary operations in the environment. GET-only integrations are not update APIs; do not claim unavailable admin APIs/CLIs executed. Check official authentication, API versions, and required parameters; use minimal existing permissions. Do not expose credentials in bodies/logs or bypass authentication/additional permissions.
+
+For official/UI/API disagreements, preserve confirmed scope and differences without inventing missing specifications or endpoints. Hold affected operations when costs, permissions, or destructive effects remain unverified, even within existing execution approval.
 
 ## Judgment and reporting
 
@@ -34,7 +29,7 @@ For each item record expected/current values, evidence, judgment, proposals, per
 | Unverified | Permissions, retrieval failures, unknown costs, or similar gaps prevent judgment |
 | Approved exception | Difference from standards with target, reason, approver, and approval evidence recorded |
 
-Do not uniformly interpret 403/404, absent fields, or null as disabled. Even where disabled settings return 404, first independently establish target existence/permissions; remain unverified until permission deficiencies and similar alternatives are excluded. Do not replace unreturned bypass lists with empty arrays.[^repository-api][^rules-api]
+Do not uniformly interpret 403/404, absent fields, or null as disabled. Even where disabled settings return 404, first independently establish target existence/permissions; remain unverified until permission deficiencies and similar alternatives are excluded. Do not replace unreturned bypass lists with empty arrays.
 
 Do not count exceptions, inapplicable, or unverified items as conforming. Separate completed diagnosis presentation from realization of all standards. Saving Issues/documents and execution approval are separate; stop by [Skill deliverable paths](../SKILL.md).
 
@@ -57,7 +52,3 @@ On reruns recreate differences from current settings without unnecessary writes 
 Separate succeeded, unstarted, failed application, and applied-but-unverified items. Independent approved work may proceed, without unexplained retries or blanket success claims. Recovery preserves others' updates/stronger protections; avoid mechanically restoring whole snapshots. Report irreversible effects even after reverting settings, such as published immutable-release constraints.
 
 Without administrative operations, show target repository, permissions, official UI paths, expected values, and post-operation checks. Completed manual-operation requests do not prove changed settings; remain incomplete until retrieval is possible.
-
-[^repository-api]: Repository/security permissions, reads/updates, response meanings.
-[^rules-api]: Ruleset inheritance, bypass information, effective rules, updates.
-[^actions-permissions-api]: Administrative permissions and Actions permissions read/update contracts.

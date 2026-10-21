@@ -1,41 +1,70 @@
 ---
 type: Reference
-title: Sources for design and testing
-description: Retain implementation, design, and testing sources, existing verification history, and adoption decisions.
+title: software-development sources and maintenance notes
+description: Human-facing source mappings, adoption rationale, and retained checking history for software-development.
 sources:
-  - id: minodriven-designing-for-code-reading
-    resource: https://speakerdeck.com/minodriven/designing-for-code-reading
-  - id: beck-andres-getting-started-xp
-    resource: https://www.informit.com/articles/article.aspx?p=390816
-  - id: beck-andres-primary-practices
-    resource: https://www.informit.com/articles/article.aspx?p=390816&seqNum=3
-  - id: ron-jeffries-xp
-    resource: https://ronjeffries.com/xprog/what-is-extreme-programming/
-  - id: fowler-beck-design-rules
-    resource: https://martinfowler.com/bliki/BeckDesignRules.html
-  - id: fowler-yagni
-    resource: https://martinfowler.com/bliki/Yagni.html
-  - id: newsletter-p-canon-tdd
-    resource: https://newsletter.kentbeck.com/p/canon-tdd
-  - id: kent-beck-run-on-tests
-    resource: https://newsletter.kentbeck.com/p/decompose-run-on-tests
-  - id: continuousdelivery-foundations-test-automation
-    resource: https://continuousdelivery.com/foundations/test-automation/
-  - id: continuousdelivery-implementing-architecture
-    resource: https://continuousdelivery.com/implementing/architecture/
-  - id: www-05-ddd-reference-2015-03-pdf
-    resource: https://www.domainlanguage.com/wp-content/uploads/2016/05/DDD_Reference_2015-03.pdf
-  - id: github-instructions-oop-design-patterns-instructions-md
-    resource: https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/instructions/oop-design-patterns.instructions.md
-  - id: github-instructions-self-explanatory-code-commenting-instructions-md
-    resource: https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/instructions/self-explanatory-code-commenting.instructions.md
-  - id: github-instructions-qa-engineering-best-practices-instructions-md
-    resource: https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/instructions/qa-engineering-best-practices.instructions.md
-  - id: context-engineering
-    resource: https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/instructions/context-engineering.instructions.md
-  - id: taming-copilot
-    resource: https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/instructions/taming-copilot.instructions.md
+- id: minodriven-designing-for-code-reading
+  resource: https://speakerdeck.com/minodriven/designing-for-code-reading
+- id: beck-andres-getting-started-xp
+  resource: https://www.informit.com/articles/article.aspx?p=390816
+- id: beck-andres-primary-practices
+  resource: https://www.informit.com/articles/article.aspx?p=390816&seqNum=3
+- id: ron-jeffries-xp
+  resource: https://ronjeffries.com/xprog/what-is-extreme-programming/
+- id: fowler-beck-design-rules
+  resource: https://martinfowler.com/bliki/BeckDesignRules.html
+- id: fowler-yagni
+  resource: https://martinfowler.com/bliki/Yagni.html
+- id: newsletter-p-canon-tdd
+  resource: https://newsletter.kentbeck.com/p/canon-tdd
+- id: kent-beck-run-on-tests
+  resource: https://newsletter.kentbeck.com/p/decompose-run-on-tests
+- id: continuousdelivery-foundations-test-automation
+  resource: https://continuousdelivery.com/foundations/test-automation/
+- id: continuousdelivery-implementing-architecture
+  resource: https://continuousdelivery.com/implementing/architecture/
+- id: www-05-ddd-reference-2015-03-pdf
+  resource: https://www.domainlanguage.com/wp-content/uploads/2016/05/DDD_Reference_2015-03.pdf
+- id: github-instructions-oop-design-patterns-instructions-md
+  resource: https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/instructions/oop-design-patterns.instructions.md
+- id: github-instructions-self-explanatory-code-commenting-instructions-md
+  resource: https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/instructions/self-explanatory-code-commenting.instructions.md
+- id: github-instructions-qa-engineering-best-practices-instructions-md
+  resource: https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/instructions/qa-engineering-best-practices.instructions.md
+- id: context-engineering
+  resource: https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/instructions/context-engineering.instructions.md
+- id: taming-copilot
+  resource: https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/instructions/taming-copilot.instructions.md
+- id: issue-99
+  resource: https://github.com/daiksud/agents/issues/99
+- id: issue-140
+  resource: https://github.com/daiksud/agents/issues/140
+- id: github-copilot-cli-changelog
+  resource: https://github.com/github/copilot-cli/blob/v1.0.88/changelog.md#L1710
+- id: issue-87
+  resource: https://github.com/daiksud/agents/issues/87
+- id: issue-100
+  resource: https://github.com/daiksud/agents/issues/100
+- id: issue-161
+  resource: https://github.com/daiksud/agents/issues/161
 ---
+
+## Purpose and runtime documents
+
+These are maintainer notes for [software-development](../../skills/software-development/SKILL.md). Runtime entry points and task references retain the instructions needed for execution; this document preserves attribution and background for maintenance. Any source-check dates below are retained history, not new verification performed during this separation.
+
+### Source mapping
+
+Source IDs are preserved from the original files, including aliases for the same URL. Local `practice-sources` bindings identified the former bundled catalog; its content is retained in this note.
+
+| Runtime document or original catalog | Source mapping |
+| --- | --- |
+| Former bundled source catalog (`references/sources.md`) | [Sources for design and testing](#sources-for-design-and-testing) retains its source IDs and adoption notes |
+| [references/agent-communication.md](../../skills/software-development/references/agent-communication.md) | [^issue-99], [^issue-140] |
+| [references/copilot-cli-pairing.md](../../skills/software-development/references/copilot-cli-pairing.md) | [^github-copilot-cli-changelog], [^issue-87], [^issue-99], [^issue-100], [^issue-161] |
+| [references/design.md](../../skills/software-development/references/design.md) | `practice-sources` (original resource: `sources.md`; catalog retained here) |
+| [references/navigator-recovery.md](../../skills/software-development/references/navigator-recovery.md) | [^issue-140], [^issue-100], [^issue-161] |
+| [references/testing.md](../../skills/software-development/references/testing.md) | `practice-sources` (original resource: `sources.md`; catalog retained here) |
 
 ## Sources for design and testing
 
@@ -74,7 +103,7 @@ Starting with TDD, incremental design, and automated validation; selecting outco
 
 MinoDriven's Designing for code reading[^minodriven-designing-for-code-reading], published 2026-09-30, was checked on 2026-10-06: slides 13–20 cover contract categories and black-box tests, 23–27 cover side effects and isolation, and 29–36 cover abstraction. Adopt these ideas to implement existing agreed domain behavior faithfully within this repository's incremental workflow.
 
-Detailed guidance belongs in [design](design.md#expressing-agreed-behavior-as-contracts) and [testing](testing.md#mapping-contracts-to-observable-tests). Caller/callee ownership, current-scope enforcement, and the inventory example are local application choices, not universal business rules or verbatim deck requirements.
+Detailed guidance belongs in [design](../../skills/software-development/references/design.md#expressing-agreed-behavior-as-contracts) and [testing](../../skills/software-development/references/testing.md#mapping-contracts-to-observable-tests). Caller/callee ownership, current-scope enforcement, and the inventory example are local application choices, not universal business rules or verbatim deck requirements.
 
 Reuse specification outcomes without mandatory discovery ceremonies. Identify only applicable conditions and implement one assert-first item at a time. Preserve happy-path MVP, resilient assertions, and ordinary review/CI; do not adopt repeated internal guards, speculative hardening, mandatory classes, a new framework, fixed templates, coverage quotas, or whole-repository retrofits. Contracts and tests are scoped evidence, not formal proof or the deck's near-total correctness claim.
 
@@ -92,9 +121,46 @@ The following examples checked on 2026-09-13 were also summarized and restructur
 
 | Material | Incorporated content and adjustments |
 | --- | --- |
-| Context Engineering[^context-engineering] | Use meaningful names, paths, constants, discoverable placement, boundary types and public contracts, and explanations of complex flow. Prioritize existing placement and the [shared artifact language policy](../../../.apm/instructions/language.instructions.md); do not require banning local type inference, uniform index files, internal exposure, or IDE operations |
+| Context Engineering[^context-engineering] | Use meaningful names, paths, constants, discoverable placement, boundary types and public contracts, and explanations of complex flow. Prioritize existing placement and the [shared artifact language policy](../../.apm/instructions/language.instructions.md); do not require banning local type inference, uniform index files, internal exposure, or IDE operations |
 | Taming Copilot[^taming-copilot] | Consider standard features and existing dependencies first and integrate necessary changes into existing structure. Do not omit required contracts, error cases, or TDD, or use shortest code or only user-listed files as the scope criterion |
 
+## Retained source annotations
+
+These annotations preserve the original per-file attribution and checking details.
+
+### references/agent-communication.md
+
+- `issue-140`: [Issue #140](https://github.com/daiksud/agents/issues/140) on condition-specific required reading and Navigator sharing boundaries.
+- `issue-99`: [Issue #99](https://github.com/daiksud/agents/issues/99) records low-entropy Controlled English internal communication and its boundary with external artifacts.
+
+### references/copilot-cli-pairing.md
+
+- `issue-99`: [Issue #99](https://github.com/daiksud/agents/issues/99) on separating runtime-independent internal communication protocols from runtime-specific transport.
+- `github-copilot-cli-changelog`: [Copilot CLI changelog v1.0.88](https://github.com/github/copilot-cli/blob/v1.0.88/changelog.md#L1710) states `sync` tasks do not return reusable `agent_id` values; use `mode: "background"` for follow-up communication.
+- `issue-87`: [Issue #87](https://github.com/daiksud/agents/issues/87) on continuing communication and actual response checks.
+- `issue-100`: [Issue #100](https://github.com/daiksud/agents/issues/100) on evidence preservation, retirement, and rechecking boundaries.
+- `issue-161`: [Issue #161](https://github.com/daiksud/agents/issues/161) on automatic re-pairing without user confirmation and context transfer.
+
+### references/design.md
+
+- `practice-sources`: References and application decisions for Simple Design, YAGNI, DDD, OOP Design Patterns, Self-explanatory Code Commenting, Context Engineering, and Taming Copilot; [Design by Contract adoption and limits](#adoption-decisions-for-design-by-contract).
+
+### references/navigator-recovery.md
+
+- `issue-140`: [Issue #140](https://github.com/daiksud/agents/issues/140) on recovery-only detail and retaining mandatory contracts at entry points.
+- `issue-161`: [Issue #161](https://github.com/daiksud/agents/issues/161) on automatic re-pairing without user confirmation and transferring as much context as possible.
+- `issue-100`: [Issue #100](https://github.com/daiksud/agents/issues/100) on evidence preservation, retiring the former Navigator, and revalidation from unconfirmed stages.
+
+### references/testing.md
+
+- `practice-sources`: References and application decisions for Canon TDD, Continuous Testing, Architecture, and QA Engineering Best Practices; [Design by Contract adoption and limits](#adoption-decisions-for-design-by-contract).
+
+[^issue-99]: [Issue #99](https://github.com/daiksud/agents/issues/99) records low-entropy Controlled English internal communication and its boundary with external artifacts.
+[^issue-140]: [Issue #140](https://github.com/daiksud/agents/issues/140) on condition-specific required reading and Navigator sharing boundaries.
+[^github-copilot-cli-changelog]: [Copilot CLI changelog v1.0.88](https://github.com/github/copilot-cli/blob/v1.0.88/changelog.md#L1710) states `sync` tasks do not return reusable `agent_id` values; use `mode: "background"` for follow-up communication.
+[^issue-87]: [Issue #87](https://github.com/daiksud/agents/issues/87) on continuing communication and actual response checks.
+[^issue-100]: [Issue #100](https://github.com/daiksud/agents/issues/100) on evidence preservation, retirement, and rechecking boundaries.
+[^issue-161]: [Issue #161](https://github.com/daiksud/agents/issues/161) on automatic re-pairing without user confirmation and context transfer.
 [^newsletter-p-canon-tdd]: [Canon TDD](https://newsletter.kentbeck.com/p/canon-tdd). Basis for the referenced scope and adoption decisions stated in the text.
 [^kent-beck-run-on-tests]: [Decompose Run-On Tests](https://newsletter.kentbeck.com/p/decompose-run-on-tests). Originally published March 2013 and republished 2026-10-13; source of the run-on-test decomposition technique. The contract triage and multi-step exceptions above are this environment's application policy.
 [^continuousdelivery-foundations-test-automation]: [Continuous Testing](https://continuousdelivery.com/foundations/test-automation/). Basis for the referenced scope and adoption decisions stated in the text.

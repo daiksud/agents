@@ -2,13 +2,6 @@
 type: Reference
 title: Shared understanding and feature documents
 description: Define shared understanding in BDD/ATDD, declarative examples, and repository-language Markdown with Gherkin.
-sources:
-  - id: practice-sources
-    resource: sources.md
-  - id: gherkin-markdown
-    resource: https://github.com/cucumber/gherkin/blob/main/MARKDOWN_WITH_GHERKIN.md
-  - id: gherkin-ja
-    resource: https://github.com/cucumber/gherkin/blob/5c869e7b75c7d1a40f70b8ab2bd1148600467fab/gherkin-languages.json#L1944-L1994
 ---
 
 ## Shared understanding and feature documents
@@ -30,18 +23,18 @@ Use this material for specification work and document creation without code, wit
 
 ### Feature document format
 
-- Apply `document-authoring` and follow Markdown with Gherkin.[^gherkin-markdown]
-- Follow [Repository artifact language](../../../.apm/instructions/language.instructions.md). For Japanese repositories, use Japanese keywords:[^gherkin-ja] headings `機能`, `背景`, `ルール`, and `シナリオ`; bulleted steps `前提`, `もし`, `ならば`, `かつ`, and `しかし`. For English repositories, use headings `Feature`, `Background`, `Rule`, and `Scenario`; bulleted steps `Given`, `When`, `Then`, `And`, and `But`.
+- Apply `document-authoring` and follow [Markdown with Gherkin](https://github.com/cucumber/gherkin/blob/main/MARKDOWN_WITH_GHERKIN.md).
+- Follow [Repository artifact language](../../../.apm/instructions/language.instructions.md). For Japanese repositories, use Japanese keywords: headings `機能`, `背景`, `ルール`, and `シナリオ`; bulleted steps `前提`, `もし`, `ならば`, `かつ`, and `しかし`. For English repositories, use headings `Feature`, `Background`, `Rule`, and `Scenario`; bulleted steps `Given`, `When`, `Then`, `And`, and `But`.
 - When parsing, select the matching dialect (`ja` for Japanese, `en` for English). Check heading and step structure after rumdl formatting.
 - While editing is unavailable in Plan mode, show drafts within the plan; save before implementation code once editing is possible.
 
-### Relationships and application decisions
+### Relationships and execution boundaries
 
-BDD is collaborative practice developing shared understanding through examples; Cucumber describes it as iterating Discovery, Formulation, and Automation. ATDD considers acceptance tests before implementation, connecting requirements and validation. Their subjects overlap; this does not mean adding separate mandatory meetings or stages. TDD is programming iteration that progresses tests and implementation one at a time from a list of expected-behavior tests.
+BDD is collaborative practice developing shared understanding through examples, iterating Discovery, Formulation, and Automation. ATDD considers acceptance tests before implementation, connecting requirements and validation. Their subjects overlap; this does not mean adding separate mandatory meetings or stages. TDD is programming iteration that progresses tests and implementation one at a time from a list of expected-behavior tests.
 
 This skill starts with stories to organize purposes, rules, meaningful examples, acceptance conditions, and unanswered questions. Only when code changes are also requested does it hand agreed specifications and examples to `software-development`, connecting to that skill's test-first and assert-first implementation. Specification-only requests do not start implementation or TDD. Story-first work and conditional handoff are this environment's operating policy. Do not treat BDD, ATDD, and TDD as synonyms or claim one universal procedure for all organizations.
 
-Human-readable requirements must map to automated tests, but direct execution of the same file is not mandatory. Hendrickson's 2024 reassessment recommends few examples and necessary participants from experience of natural-language automation and synchronous collaboration involving everyone becoming burdensome. Cucumber, meanwhile, emphasizes dialogue across differing expertise. Preserve this difference and choose methods that obtain stakeholders' knowledge and confirm shared understanding.
+Use only examples needed for shared understanding and participants with the required knowledge. Choose methods that obtain stakeholders' knowledge and confirm shared understanding. Human-readable requirements must map to automated tests, but direct execution of the same file is not mandatory.
 
 ### Concrete, declarative example
 
@@ -64,9 +57,3 @@ The following Japanese-repository example assumes agreement on the story “buye
 Examples at 4,999 yen or exceptional paths for the same rule can also check rule interpretation. Keep amounts concrete without exposing cart-screen click sequences or internal function names. Retain unsettled shipping charges or treatment of discounted amounts as questions rather than guessing expectations.
 
 When saving the content above, add frontmatter following `document-authoring`. File paths and repository-language Markdown with Gherkin are this environment's operating conventions, not universal definitions of BDD.
-
-Preserve sources and adoption decisions for shared understanding and examples in [Primary sources](sources.md).[^practice-sources]
-
-[^gherkin-markdown]: Moved the format rule and reference from the existing SKILL.md, preserving the original reference rather than adding a specification change or checking history.
-[^gherkin-ja]: The fixed version of Japanese keywords specified in the existing SKILL.md.
-[^practice-sources]: References and application decisions for BDD/ATDD and rules, examples, and questions.

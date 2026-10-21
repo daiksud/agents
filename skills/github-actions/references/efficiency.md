@@ -2,18 +2,11 @@
 type: Instruction
 title: GitHub Actions efficiency improvements
 description: Choose causes of waiting and usage from execution history and improve while preserving required validation and trust boundaries.
-sources:
-  - id: copilot-efficiency
-    resource: https://github.com/github/awesome-copilot/tree/4f4796f0bf30e105700f97ed8408c12b6aa95e06/skills/github-actions-efficiency
-  - id: github-syntax
-    resource: https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax
-  - id: github-cache
-    resource: https://docs.github.com/en/actions/reference/workflows-and-actions/dependency-caching
 ---
 
 ## Measure causes and choose a few improvements
 
-Check workflows, required checks, supported-environment documents, and run/job/step history. For new workflows define baseline validation through [Design](workflow-design.md). For existing workflows investigate caches, duplicate triggers, unnecessary runs, and long dependency paths, choosing a few evidence-based changes effective for the purpose. Missing configuration alone does not prove waste.[^copilot-efficiency]
+Check workflows, required checks, supported-environment documents, and run/job/step history. For new workflows define baseline validation through [Design](workflow-design.md). For existing workflows investigate caches, duplicate triggers, unnecessary runs, and long dependency paths, choosing a few evidence-based changes effective for the purpose. Missing configuration alone does not prove waste.
 
 Read-only examples for the working repository:
 
@@ -37,9 +30,9 @@ Align events, changes, runners, matrices, cache states, and sampling periods bef
 
 ### Checks for each change
 
-- **Caching**: Investigate download/save/extraction costs and hit rates. Include compatibility values such as lockfiles, OS, architecture, and tool versions in keys; validate dependencies after partial-match restoration. Avoid duplicating setup Actions' built-in caches. Do not save Secrets/authenticated settings; check creator/reader trust boundaries in [Safety](hardening.md). PRs may read base/default-branch caches.[^github-cache]
+- **Caching**: Investigate download/save/extraction costs and hit rates. Include compatibility values such as lockfiles, OS, architecture, and tool versions in keys; validate dependencies after partial-match restoration. Avoid duplicating setup Actions' built-in caches. Do not save Secrets/authenticated settings; check creator/reader trust boundaries in [Safety](hardening.md). PRs may read base/default-branch caches.
 - **Duplicate runs**: Compare push/PR runs for the same change without losing necessary branch-protection, release, schema, migration, or shared-library validation.
-- **Path decisions**: Skipping whole workflows may leave required checks Pending. Even with job-level decisions/aggregation, propagate required-validation failures to final results. Include dependencies, lockfiles, configuration, and workflows themselves, checking changed-file comparison bases, limits, and retrieval-failure behavior. Running all checks after workflow changes alone does not prove waste.[^github-syntax]
+- **Path decisions**: Skipping whole workflows may leave required checks Pending. Even with job-level decisions/aggregation, propagate required-validation failures to final results. Include dependencies, lockfiles, configuration, and workflows themselves, checking changed-file comparison bases, limits, and retrieval-failure behavior. Running all checks after workflow changes alone does not prove waste.
 - **Concurrency**: Check cancellation of old PR validation, including workflow and PR/ref identifiers in groups. Do not uniformly enable mid-production-deployment cancellation. Even `cancel-in-progress: false` replaces the default pending slot; separately check queue semantics when all deployments must be retained. Consider `queue: max` where supported, checking limits and incompatibility with `cancel-in-progress: true`.
 - **Matrices**: Investigate contracts guaranteed by each combination. Undocumented support requirements alone do not justify removal; check users, dependencies, and history. State retained/lost guarantees when reducing.
 - **Parallelism/job consolidation**: Compare critical paths, startup/setup costs, and artifact handoffs. Parallelism may shorten elapsed time while increasing total usage. Do not substitute fixed multipliers for acceptable waiting/cost decisions.
@@ -50,7 +43,3 @@ Align events, changes, runners, matrices, cache states, and sampling periods bef
 For approved changes, use safe existing working branches to check related/unrelated changes, workflow changes, and cancellation during consecutive updates. First pushes on new branches alone do not validate path decisions. Audit-only requests propose validation without test pushes/dispatches.
 
 Check cold/warm caches and required checks/artifacts. Investigate unexpected skips/runs as defects even when YAML appears valid. Report improvements, preserved guarantees, validated runs, measurements, and uncertainties.
-
-[^copilot-efficiency]: Restructured measurement, selection, and validation perspectives from SKILL.md and actions/reporting/patterns/review-rubric.
-[^github-cache]: Dependency caching reference. Check restoration compatibility and cross-branch access.
-[^github-syntax]: Workflow syntax. Check filters, concurrency, and queue specifications in the target environment.

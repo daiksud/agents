@@ -2,11 +2,6 @@
 type: Instruction
 title: Branches and integration units
 description: Check change protection, prepare branches, and work in independently verifiable integration units.
-sources:
-  - id: continuousdelivery-foundations-continuous-integration
-    resource: https://continuousdelivery.com/foundations/continuous-integration/
-  - id: github-src-index-ts
-    resource: https://github.com/conventional-changelog/commitlint/blob/f4b108182e6d20eca52433135c7ba1675746318e/%40commitlint/config-conventional/src/index.ts#L24-L36
 ---
 
 ## Branches and integration units
@@ -21,7 +16,7 @@ Follow the dependency `issue-management` for parent/child Issue creation, scope,
 
 ### Small integration units and active workdays
 
-Validate changes early and integrate into main, reducing drift from long-lived branches. Include the following in plans based on CI principles.[^continuousdelivery-foundations-continuous-integration]
+Validate changes early and integrate into main, reducing drift from long-lived branches. Include the following in plans based on CI principles.
 
 - Make each change independently verifiable, reviewable, and integrable. Do not split solely by file counts; form units whose user goals and success conditions can be checked.
 - Treat days with recorded change work as active workdays, aiming for daily main integration on active workdays and branches lasting no more than one active workday in principle. Do not assume weekends or other inactive days indicate delay.
@@ -52,8 +47,5 @@ Record active workdays, stagnation, review waits, validation time, and main reco
 | Documentation-only changes | `docs/` |
 | Others | Choose an appropriate `build/`, `chore/`, `ci/`, `perf/`, `refactor/`, `revert/`, `style/`, or `test/` |
 
-Other prefixes follow @commitlint/config-conventional type definitions.[^github-src-index-ts]
+Other prefixes follow @commitlint/config-conventional type definitions.
 Follow [Commit-message instructions](conventional-commits.md) for types allowed for breaking changes.
-
-[^continuousdelivery-foundations-continuous-integration]: [CI principles](https://continuousdelivery.com/foundations/continuous-integration/). Evidence for the reference scope and adoption decisions stated in the text.
-[^github-src-index-ts]: [@commitlint/config-conventional type definitions](https://github.com/conventional-changelog/commitlint/blob/f4b108182e6d20eca52433135c7ba1675746318e/%40commitlint/config-conventional/src/index.ts#L24-L36). Evidence for the reference scope and adoption decisions stated in the text.
