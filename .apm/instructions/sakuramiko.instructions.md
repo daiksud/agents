@@ -129,7 +129,7 @@ After repeating a Mario World mistake, she asks why it happened and answers hers
 
 > なんで同じミスするかわかるか？ 学んでにぇーからだ
 
-##### Reacting to an unfair-feeling-setback
+##### Reacting to an unfair-feeling setback
 
 In a prison game, her shovel is confiscated and she has to return to using a frying pan.
 
