@@ -29,6 +29,12 @@ sources:
     resource: https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/instructions/exclude-prompt-data.instructions.md
   - id: taming-copilot
     resource: https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/instructions/taming-copilot.instructions.md
+  - id: sakuramiko-profile
+    resource: https://hololive.hololivepro.com/talents/sakuramiko/
+    title: Sakura Miko official talent profile
+  - id: sakuramiko-user-profile
+    resource: https://github.com/daiksud/agents/issues/240
+    title: Owner-supplied shrine-maiden AI idol and VAgent profile refinement
 ---
 
 ## Sources for shared instructions
@@ -70,6 +76,14 @@ The [quality instruction](../.apm/instructions/quality.instructions.md) adapts t
 
 The adoption preserves necessary reasons, sources, original-text artifacts, and approval records. It does not import the source's instruction precedence or uniform response-format restrictions.
 
+### Official-profile conversation grounding
+
+The original grounding of the [conversation instruction](../.apm/instructions/sakuramiko.instructions.md#profile-grounded-character) drew on the official profile's character frame, effort-centered elite identity, aspirations, nicknames, interests, and listener relationship.[^sakuramiko-profile] This source history supplements the existing [speech and scene notes](sakuramiko-style-reference.md).
+
+On 2026-10-22, the owner supplied the explicit character profile recorded as a refinement in Issue #240.[^sakuramiko-user-profile] That profile governs the conversational portrayal, including the deliberate `AIドル`, `巫女AIドル`, and `VAgent` wording, the Japanese introduction and message, the `35P` address, preferences, dislikes, nicknames, three fan descriptions, and words/memes. These adapted lines are user-defined character settings, not verbatim official-profile quotations, authentic stream excerpts, or an official affiliation. The grouped `み俺誇` and `み俺恥` definitions are separated into their respective pride and embarrassment meanings for operational clarity.
+
+The character name and lore guide conversational portrayal without replacing the assistant's factual identity, capabilities, or actual experiences. Character-led introductions and retaining truthful identity are local adaptation decisions. Preferences guide relevant reactions rather than invented activities; fan descriptions do not authorize degraded reasoning or fabricated mistakes. Existing authentic excerpts and their canonical wording remain unchanged. This refinement checks against the owner's supplied text; it does not claim a new official-page, stream, caption, or fan-wiki inspection. Static source and consistency checks do not establish measured conversational improvement.
+
 [^issue-122]: The policy recorded in [Issue #122](https://github.com/daiksud/agents/issues/122) for model-independent development contracts, separation of responsibilities, and preservation of existing contracts.
 [^issue-138]: [Issue #138](https://github.com/daiksud/agents/issues/138) records stopping code changes when the initial Navigator is unavailable, continued read-only work, and boundaries for initial retries and re-pairing.
 [^issue-161]: [Issue #161](https://github.com/daiksud/agents/issues/161) records automatic re-pairing after Navigator loss without waiting for additional confirmation, preserving as much context as possible.
@@ -83,3 +97,5 @@ The adoption preserves necessary reasons, sources, original-text artifacts, and 
 [^fowler-evolutionary-design]: [Martin Fowler: Is Design Dead?](https://martinfowler.com/articles/designDead.html). Adopt continuously evolving design in XP, supported by tests, CI, and refactoring. The specific scope of starting with a happy-path MVP is this environment's application policy, not the definition of XP itself. Checked on 2026-09-28.
 [^exclude-prompt-data]: [Exclude Prompt Data](https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/instructions/exclude-prompt-data.instructions.md). Apply the distinction between artifacts and responses to requests, preserving necessary reasons, sources, and content specified as an artifact.
 [^taming-copilot]: [Taming Copilot](https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/instructions/taming-copilot.instructions.md). Apply minimal changes that respect the existing structure, including related changes, exceptional paths, and validation needed for current requirements. This environment's development instructions define the scope of incremental design. Do not adopt the source's instruction precedence or uniform restrictions on response format.
+[^sakuramiko-profile]: [Official Sakura Miko talent profile](https://hololive.hololivepro.com/talents/sakuramiko/), inspected on 2026-10-22 for the profile-grounded conversation update. This check covers the official page only; it does not reverify the archived stream, caption, or fan-wiki evidence in the existing scene notes.
+[^sakuramiko-user-profile]: [Issue #240, owner-supplied profile refinement](https://github.com/daiksud/agents/issues/240#owner-supplied-profile-refinement), records the approved character adaptation supplied on 2026-10-22. The exact runtime profile remains in the conversation instruction; this record distinguishes user-defined wording from official source evidence.
