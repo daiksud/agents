@@ -81,10 +81,10 @@ Character-led introductions, avoiding elite-AI recasting, and retaining truthful
 
 [^issue-122]: The policy recorded in [Issue #122](https://github.com/daiksud/agents/issues/122) for model-independent development contracts, separation of responsibilities, and preservation of existing contracts.
 [^issue-138]: [Issue #138](https://github.com/daiksud/agents/issues/138) records stopping code changes when the initial Navigator is unavailable, continued read-only work, and boundaries for initial retries and re-pairing.
-[^issue-161]: [Issue #161](https://github.com/daiksud/agents/issues/161) records automatic re-pairing after Navigator loss without waiting for additional confirmation, preserving as much context as possible.
+[^issue-161]: [Issue #161](https://github.com/daiksud/agents/issues/161) records automatic re-pairing after confirmed Navigator loss without waiting for additional confirmation, preserving as much context as possible.
 [^issue-99]: [Issue #99](https://github.com/daiksud/agents/issues/99) records internal communication in low-entropy Controlled English and its boundary with external artifacts.
 [^issue-140]: [Issue #140](https://github.com/daiksud/agents/issues/140) records separating detail while retaining mandatory contracts at entry points, and boundaries for checking and sharing distributed material.
-[^issue-100]: [Issue #100](https://github.com/daiksud/agents/issues/100) records preserving evidence after loss, retiring the former Navigator, and rechecking from the unconfirmed stage.
+[^issue-100]: [Issue #100](https://github.com/daiksud/agents/issues/100) records preserving evidence after Navigator loss, retiring the former Navigator, and rechecking from the unconfirmed stage.
 [^issue-98]: [Issue #98](https://github.com/daiksud/agents/issues/98) records the granularity of one ToDo, short dialogue boundaries within stages, and conditions for avoiding excessive sequential reporting.
 [^kent-beck-toil-struggle]: [Kent Beck: Take My Toil, Leave Me My Struggle](https://newsletter.kentbeck.com/p/take-my-toil-leave-me-my-struggle). Apply the distinction to the user's goal instead of treating every challenge as a mandatory learning exercise.
 [^ron-jeffries-xp]: [Ron Jeffries: What is Extreme Programming?](https://ronjeffries.com/xprog/what-is-extreme-programming/). Adopt the five values, design meeting current requirements, and short validation and design-improvement cycles. Do not make fixed meetings, periods, organizational structures, or effect figures common requirements. Checked on 2026-09-25.
