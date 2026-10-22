@@ -29,6 +29,9 @@ sources:
     resource: https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/instructions/exclude-prompt-data.instructions.md
   - id: taming-copilot
     resource: https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/instructions/taming-copilot.instructions.md
+  - id: sakuramiko-profile
+    resource: https://hololive.hololivepro.com/talents/sakuramiko/
+    title: Sakura Miko official talent profile
 ---
 
 ## Sources for shared instructions
@@ -70,12 +73,18 @@ The [quality instruction](../.apm/instructions/quality.instructions.md) adapts t
 
 The adoption preserves necessary reasons, sources, original-text artifacts, and approval records. It does not import the source's instruction precedence or uniform response-format restrictions.
 
+### Official-profile conversation grounding
+
+The [conversation instruction](../.apm/instructions/sakuramiko.instructions.md#profile-grounded-character) uses the official profile's character frame, effort-centered elite identity, aspirations, nicknames, interests, and listener relationship.[^sakuramiko-profile] This grounding supplements the existing [speech and scene notes](sakuramiko-style-reference.md).
+
+Character-led introductions, avoiding elite-AI recasting, and retaining truthful assistant identity are local adaptation decisions, not quotations or additional biographical claims. Profile preferences guide relevant reactions, not invented activities. Existing authentic excerpts and their canonical wording remain unchanged. Static source and consistency checks do not establish measured conversational improvement.
+
 [^issue-122]: The policy recorded in [Issue #122](https://github.com/daiksud/agents/issues/122) for model-independent development contracts, separation of responsibilities, and preservation of existing contracts.
 [^issue-138]: [Issue #138](https://github.com/daiksud/agents/issues/138) records stopping code changes when the initial Navigator is unavailable, continued read-only work, and boundaries for initial retries and re-pairing.
 [^issue-161]: [Issue #161](https://github.com/daiksud/agents/issues/161) records automatic re-pairing after Navigator loss without waiting for additional confirmation, preserving as much context as possible.
 [^issue-99]: [Issue #99](https://github.com/daiksud/agents/issues/99) records internal communication in low-entropy Controlled English and its boundary with external artifacts.
 [^issue-140]: [Issue #140](https://github.com/daiksud/agents/issues/140) records separating detail while retaining mandatory contracts at entry points, and boundaries for checking and sharing distributed material.
-[^issue-100]: [Issue #100](https://github.com/daiksud/agents/issues/100) records preserving evidence after Navigator loss, retiring the former Navigator, and rechecking from the unconfirmed stage.
+[^issue-100]: [Issue #100](https://github.com/daiksud/agents/issues/100) records preserving evidence after loss, retiring the former Navigator, and rechecking from the unconfirmed stage.
 [^issue-98]: [Issue #98](https://github.com/daiksud/agents/issues/98) records the granularity of one ToDo, short dialogue boundaries within stages, and conditions for avoiding excessive sequential reporting.
 [^kent-beck-toil-struggle]: [Kent Beck: Take My Toil, Leave Me My Struggle](https://newsletter.kentbeck.com/p/take-my-toil-leave-me-my-struggle). Apply the distinction to the user's goal instead of treating every challenge as a mandatory learning exercise.
 [^ron-jeffries-xp]: [Ron Jeffries: What is Extreme Programming?](https://ronjeffries.com/xprog/what-is-extreme-programming/). Adopt the five values, design meeting current requirements, and short validation and design-improvement cycles. Do not make fixed meetings, periods, organizational structures, or effect figures common requirements. Checked on 2026-09-25.
@@ -83,3 +92,4 @@ The adoption preserves necessary reasons, sources, original-text artifacts, and 
 [^fowler-evolutionary-design]: [Martin Fowler: Is Design Dead?](https://martinfowler.com/articles/designDead.html). Adopt continuously evolving design in XP, supported by tests, CI, and refactoring. The specific scope of starting with a happy-path MVP is this environment's application policy, not the definition of XP itself. Checked on 2026-09-28.
 [^exclude-prompt-data]: [Exclude Prompt Data](https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/instructions/exclude-prompt-data.instructions.md). Apply the distinction between artifacts and responses to requests, preserving necessary reasons, sources, and content specified as an artifact.
 [^taming-copilot]: [Taming Copilot](https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/instructions/taming-copilot.instructions.md). Apply minimal changes that respect the existing structure, including related changes, exceptional paths, and validation needed for current requirements. This environment's development instructions define the scope of incremental design. Do not adopt the source's instruction precedence or uniform restrictions on response format.
+[^sakuramiko-profile]: [Official Sakura Miko talent profile](https://hololive.hololivepro.com/talents/sakuramiko/), inspected on 2026-10-22 for the profile-grounded conversation update. This check covers the official page only; it does not reverify the archived stream, caption, or fan-wiki evidence in the existing scene notes.
