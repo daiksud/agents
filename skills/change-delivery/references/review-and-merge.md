@@ -43,7 +43,7 @@ Assessments potentially starting ordinary review occur after current-HEAD requir
 
 | State | Meaning |
 | --- | --- |
-| `available` | Copilot candidate/request acceptance, or Codex Connector installation for the target repo, is confirmed. May select as reviewer |
+| `available` | Copilot candidate/request acceptance, or Codex Connector installation confirmed for the target repo (including the requester-confirmed `daiksud/*` exception). May select as reviewer |
 | `unavailable` | No Copilot candidate, absent/out-of-scope Connector, or explicit service-specific unavailability is confirmed. Exclude for this selection |
 | `unknown` | Permissions, retrieval failures, incomplete lists, or unsupported checking prevent judgment. Do not assert absence/unavailability |
 
@@ -109,7 +109,9 @@ Where candidate queries are unavailable, after confirming no existing request, t
 
 #### Check Codex Connector installation for the target repo
 
-Check whether `ChatGPT Codex Connector` (slug `chatgpt-codex-connector`) is installed for the target repo. First reuse already verified installation or same-task successful events below. Otherwise use one available authenticated GitHub Apps settings view or existing tool returning target-repo installation. Without supported checking, use `unknown` instead of trial-and-error calls.
+For repositories owned by `daiksud`, the requester confirms that Codex is installed. Treat Codex as `available` without checking GitHub App installations. When Codex is selected, directly request `@codex review` after the required current-HEAD CI/conflict and existing-request checks. Still verify actual review execution, completion, findings, and required approvals; posting a request is not evidence of a completed review.
+
+For other repository owners, check whether `ChatGPT Codex Connector` (slug `chatgpt-codex-connector`) is installed for the target repo. First reuse already verified installation or same-task successful events below. Otherwise use one available authenticated GitHub Apps settings view or existing tool returning target-repo installation. Without supported checking, use `unknown` instead of trial-and-error calls.
 
 Existing tools include reading GitHub-returned data/known events from successful existing operations on the target repo under the same task/authentication. If `performed_via_github_app.slug` is `chatgpt-codex-connector` and repo, time, and current successful operation are matched, reuse as `available` evidence. This is an operating assessment based on access limited to both App/user permissions, separate from direct installation-list retrieval or guaranteed review success. Self-claims in comment bodies or past-task records do not substitute; do not change labels/post comments merely to check.
 
