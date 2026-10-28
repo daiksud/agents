@@ -118,7 +118,7 @@ Where candidate queries are unavailable, after confirming no existing request, t
 
 #### Check Codex Connector installation for the target repo
 
-For repositories owned by `daiksud`, the requester confirms that Codex is installed. Treat Codex as `available` without checking GitHub App installations. When Codex is selected, directly request `@codex review` after the required current-HEAD CI/conflict and existing-request checks. Still verify actual review execution, completion, findings, and required approvals; posting a request is not evidence of a completed review.
+For repositories owned by `daiksud`, the requester confirms that Codex is installed. Treat Codex as `available` without checking GitHub App installations. When Codex is selected, directly request `@codex review` after the required current-HEAD CI/conflict and existing-request checks and the Ready-state check in [Alternative review](#alternative-review). Still verify actual review execution, completion, findings, and required approvals; posting a request is not evidence of a completed review.
 
 For other repository owners, check whether `ChatGPT Codex Connector` (slug `chatgpt-codex-connector`) is installed for the target repo. First reuse already verified installation or same-task successful events below. Otherwise use one available authenticated GitHub Apps settings view or existing tool returning target-repo installation. Without supported checking, use `unknown` instead of trial-and-error calls.
 
@@ -131,6 +131,8 @@ Do not use `GET /repos/{owner}/{repo}/installation` with ordinary `gh` user toke
 ### Alternative review
 
 This procedure owns requests/completion decisions. Read `code-review` only when reviewing diffs, without starting requests/fixes/merge from that skill.
+
+The user-selected operating policy for this workflow requires Codex review requests, including retries, to use a PR that is Ready for review (`isDraft == false`). After current-HEAD required CI succeeds and conflicts are resolved, mark a draft Ready if needed, then retrieve its state before posting `@codex review`. Hold the request while it remains a draft or its state cannot be verified. Ready does not establish review completion, approval, or permission to merge.
 
 1. Record reasons for Codex selection, Copilot/Codex judgments, evidence URLs/results, and time in the PR. Preserve explicit unavailability discovered after Copilot requests and follow the same selection. Distinguish unavailability from unverified candidates without reapproval for each switch.
 2. Disagreement with findings, missing Approve, elapsed waiting, or temporary retrieval failure alone do not justify switching. For same-service retries follow [Retrying reviews without results](#retrying-reviews-without-results); waiting alone does not authorize switching services.
@@ -203,7 +205,7 @@ If APIs/UI cannot group individual replies in pending reviews and submit them, r
 - For rebased published history use `git push --force-with-lease`; check unknown remote updates without overwriting.
 - Immediately before merge, confirm latest-commit review completed, zero findings requiring action, passing CI, and zero conflicts. Apply “Required Approve and CODEOWNERS assessment”; sole-owner authorship alone does not justify waiting for self-approval.
 - Immediately before merge, recheck latest main SHA and required checks/distribution validation triggered by its push. Initial checks do not substitute; wait for running/unverified results and prioritize recovery on failures without merging ordinary PRs. Approved recovery PRs resolving that failure are exempt from this main-success condition, while meeting their own reviews/checks/approvals. Use existing unconfigured-CI exceptions only if CI is absent.
-- Once all conditions pass, mark the draft Ready for review and squash-merge.
+- Once all conditions pass, confirm the PR is Ready for review (mark it Ready if still a draft), then squash-merge.
 - Squash messages also follow [Commit-message instructions](conventional-commits.md).
 - Confirm the PR merged and target history is linear.
 
