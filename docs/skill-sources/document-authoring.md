@@ -30,6 +30,8 @@ sources:
 - id: docs-for-developers-publisher
   resource: https://link.springer.com/book/10.1007/978-1-4842-7217-6
   title: Docs for Developers, first edition publisher overview
+  - id: change-record-agreement
+    resource: https://github.com/daiksud/agents/issues/253
 ---
 
 ## Purpose and scope
@@ -118,4 +120,6 @@ The public contents identify comments, READMEs, introductory, conceptual, proced
 
 ## Change-record policy adoption
 
-[Policy authoring](../../skills/document-authoring/references/engineering-policies.md) and specification placement apply the agreement in [Issue #253](https://github.com/daiksud/agents/issues/253). The current rationale and boundaries live in [Change records policy](../engineering-policies/change-records.md): actual validation reporting is required while execution is discretionary unless independently required; PRs/commits retain historical judgment and topical policies retain current guidance. This adoption does not establish renewed checking of the external sources above.
+[Policy authoring](../../skills/document-authoring/references/engineering-policies.md) and specification placement apply the agreement in [Issue #253](https://github.com/daiksud/agents/issues/253).[^change-record-agreement] The current rationale and boundaries live in [Change records policy](../engineering-policies/change-records.md): actual validation reporting is required while execution is discretionary unless independently required; PRs/commits retain historical judgment and topical policies retain current guidance. This adoption does not establish renewed checking of the external sources above.
+
+[^change-record-agreement]: Owner-agreed change-record policy and implementation scope in Issue #253.

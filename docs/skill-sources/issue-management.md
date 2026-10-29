@@ -31,6 +31,8 @@ sources:
     resource: https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/instructions/context-engineering.instructions.md
   - id: taming-copilot
     resource: https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/instructions/taming-copilot.instructions.md
+  - id: change-record-agreement
+    resource: https://github.com/daiksud/agents/issues/253
 ---
 
 ## Scope
@@ -122,4 +124,6 @@ Applying Conventional Commits to Issue and PR titles is this environment's local
 
 ## Change-record policy adoption
 
-[PR writing](../../skills/issue-management/references/github-writing.md) apply the agreement in [Issue #253](https://github.com/daiksud/agents/issues/253). The current rationale and boundaries live in [Change records policy](../engineering-policies/change-records.md): actual validation reporting is required while execution is discretionary unless independently required; PRs/commits retain historical judgment and topical policies retain current guidance. This adoption does not establish renewed checking of the external sources above.
+[PR writing](../../skills/issue-management/references/github-writing.md) apply the agreement in [Issue #253](https://github.com/daiksud/agents/issues/253).[^change-record-agreement] The current rationale and boundaries live in [Change records policy](../engineering-policies/change-records.md): actual validation reporting is required while execution is discretionary unless independently required; PRs/commits retain historical judgment and topical policies retain current guidance. This adoption does not establish renewed checking of the external sources above.
+
+[^change-record-agreement]: Owner-agreed change-record policy and implementation scope in Issue #253.

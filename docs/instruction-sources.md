@@ -35,6 +35,8 @@ sources:
   - id: sakuramiko-user-profile
     resource: https://github.com/daiksud/agents/issues/240
     title: Owner-supplied shrine-maiden AI idol and VAgent profile refinement
+  - id: change-record-agreement
+    resource: https://github.com/daiksud/agents/issues/253
 ---
 
 ## Sources for shared instructions
@@ -102,4 +104,6 @@ The character name and lore guide conversational portrayal without replacing the
 
 ## Change-record policy adoption
 
-[Change records](../.apm/instructions/change-records.instructions.md) and the development, delivery, quality, and language instructions apply the agreement in [Issue #253](https://github.com/daiksud/agents/issues/253). The current rationale and boundaries live in [Change records policy](engineering-policies/change-records.md): actual validation reporting is required while execution is discretionary unless independently required; PRs/commits retain historical judgment and topical policies retain current guidance. This adoption does not establish renewed checking of the external sources above.
+[Change records](../.apm/instructions/change-records.instructions.md) and the development, delivery, quality, and language instructions apply the agreement in [Issue #253](https://github.com/daiksud/agents/issues/253).[^change-record-agreement] The current rationale and boundaries live in [Change records policy](engineering-policies/change-records.md): actual validation reporting is required while execution is discretionary unless independently required; PRs/commits retain historical judgment and topical policies retain current guidance. This adoption does not establish renewed checking of the external sources above.
+
+[^change-record-agreement]: Owner-agreed change-record policy and implementation scope in Issue #253.

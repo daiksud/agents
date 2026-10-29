@@ -9,6 +9,8 @@ sources:
   resource: https://martinfowler.com/bliki/BeckDesignRules.html
 - id: fowler-yagni
   resource: https://martinfowler.com/bliki/Yagni.html
+  - id: change-record-agreement
+    resource: https://github.com/daiksud/agents/issues/253
 ---
 
 ## Purpose and runtime documents
@@ -47,4 +49,6 @@ These annotations preserve the original per-file attribution and checking detail
 
 ## Change-record policy adoption
 
-[Review](../../skills/code-review/SKILL.md) and its PR-record guidance apply the agreement in [Issue #253](https://github.com/daiksud/agents/issues/253). The current rationale and boundaries live in [Change records policy](../engineering-policies/change-records.md): actual validation reporting is required while execution is discretionary unless independently required; PRs/commits retain historical judgment and topical policies retain current guidance. This adoption does not establish renewed checking of the external sources above.
+[Review](../../skills/code-review/SKILL.md) and its PR-record guidance apply the agreement in [Issue #253](https://github.com/daiksud/agents/issues/253).[^change-record-agreement] The current rationale and boundaries live in [Change records policy](../engineering-policies/change-records.md): actual validation reporting is required while execution is discretionary unless independently required; PRs/commits retain historical judgment and topical policies retain current guidance. This adoption does not establish renewed checking of the external sources above.
+
+[^change-record-agreement]: Owner-agreed change-record policy and implementation scope in Issue #253.

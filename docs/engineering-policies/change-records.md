@@ -11,7 +11,7 @@ sources:
 
 This repository uses PR descriptions and squash commits to retain the judgment made in each change, and topical `docs/engineering-policies/` documents to explain current durable policy. The common guidance offers the same foundation to consuming repositories while respecting their existing conventions. Installing the package does not install templates or migrate ADRs.
 
-The operational rules live in [Change records](../../.apm/instructions/change-records.instructions.md), [PR writing](../../skills/issue-management/references/github-writing.md), [delivery](../../skills/change-delivery/references/review-and-merge.md), and [policy authoring](../../skills/document-authoring/references/engineering-policies.md). This policy reflects the agreement in [Issue #253](https://github.com/daiksud/agents/issues/253).
+The operational rules live in [Change records](../../.apm/instructions/change-records.instructions.md), [PR writing](../../skills/issue-management/references/github-writing.md), [delivery](../../skills/change-delivery/references/review-and-merge.md), and [policy authoring](../../skills/document-authoring/references/engineering-policies.md). This policy reflects the agreement in [Issue #253](https://github.com/daiksud/agents/issues/253).[^change-record-agreement]
 
 ## Rationale and trade-offs
 
@@ -29,5 +29,7 @@ Engineering Policies describe current choices, applicability, rationale, alterna
 - Keeping every decision only in PRs avoids living-document maintenance but makes durable guidance harder to discover. Topical policies address decisions affecting future work.
 - Mandatory validation execution or mandatory reasons for `Not run` provide more uniform process at the cost of discretion and boilerplate. Accurate status plus independently required checks is the chosen boundary.
 - Separate automatically synchronized templates or new PR lint could enforce consistency but add machinery beyond the current need. The reusable and self-adoption templates are maintained together by ordinary review.
+
+[^change-record-agreement]: Owner-agreed record policy and adoption boundaries in Issue #253.
 
 Introducing/revising PR: [#255](https://github.com/daiksud/agents/pull/255).
