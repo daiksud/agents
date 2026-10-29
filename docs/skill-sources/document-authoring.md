@@ -87,7 +87,7 @@ Checked GitHub awesome-copilot Create Specification[^github-create-specification
 
 Prioritize existing OKF, features, and ADRs without adopting the source's `/spec/` placement, fixed filenames, all 11 sections, or custom frontmatter. Do not turn example test frameworks or coverage goals into common requirements. This is this environment's application decision, not a universal specification-format standard.
 
-Checked GitHub awesome-copilot Spec Driven Workflow v1[^github-instructions-spec-driven-workflow-v1-instructions-md] on 2026-09-11, adopting preserved decision reasons and reconsideration conditions. Limit to important design decisions here, mapping assumptions to observations in existing ADRs. Do not adopt fixed templates for all decisions, fixed three documents, complete operation logs, or uniform six stages.
+Checked GitHub awesome-copilot Spec Driven Workflow v1[^github-instructions-spec-driven-workflow-v1-instructions-md] on 2026-09-11, adopting preserved decision reasons and reconsideration conditions. Limit to important design decisions here, mapping assumptions to observations in existing ADRs. Under the later change-record policy, adopting repositories instead maintain current topical Engineering Policies and retain historical judgments in PRs/commits. Do not adopt fixed templates for all decisions, fixed three documents, complete operation logs, or uniform six stages.
 
 ## Developer-documentation adoption
 
@@ -115,3 +115,7 @@ The public contents identify comments, READMEs, introductory, conceptual, proced
 [^docs-for-developers-planning]: [Planning your documentation, chapter overview](https://link.springer.com/chapter/10.1007/978-1-4842-7217-6_2). See the per-document mapping above for the original evidence scope.
 [^docs-for-developers-translator]: [Yoshimasa Iwase, Docs for Developers presentation](https://speakerdeck.com/iwashi86/docs-for-developers). See the per-document mapping above for the original evidence scope.
 [^docs-for-developers-publisher]: [Docs for Developers, first edition publisher overview](https://link.springer.com/book/10.1007/978-1-4842-7217-6). See the per-document mapping above for the original evidence scope.
+
+## Change-record policy adoption
+
+[Policy authoring](../../skills/document-authoring/references/engineering-policies.md) and specification placement apply the agreement in [Issue #253](https://github.com/daiksud/agents/issues/253). The current rationale and boundaries live in [Change records policy](../engineering-policies/change-records.md): actual validation reporting is required while execution is discretionary unless independently required; PRs/commits retain historical judgment and topical policies retain current guidance. This adoption does not establish renewed checking of the external sources above.

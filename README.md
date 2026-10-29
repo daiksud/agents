@@ -55,3 +55,9 @@ The approval workflow has no `workflow_call` entry point. CI owns its Draft/Read
 This intentionally trades freshness guarantees for a smaller approval rule: an older completed Summary and existing thumbs-up may approve newer code or a new review cycle before Codex publishes updated status. Existing approvals are not withdrawn when conditions change. Elapsed time is never evidence of completion. Regression tests execute the production shell with fixture-backed `gh` and `sleep` boundaries; they do not prove live event delivery or token permissions.
 
 [^github-token-events]: GitHub documents the workflow event suppression rules for repository `GITHUB_TOKEN` operations.
+
+## Change records and Engineering Policies
+
+[Change records](.apm/instructions/change-records.instructions.md) distinguish historical decisions in PR descriptions/commits from current durable guidance in [Engineering Policies](docs/engineering-policies/change-records.md). PRs report actual validation status; `Not run` is valid unless checks are independently required. Existing required CI and the repository's validation exclusions remain applicable.
+
+The [reusable PR template](skills/change-delivery/assets/pull_request_template.md) and [self-adoption copy](.github/pull_request_template.md) are updated together. Consuming repositories are encouraged to use equivalent fields while retaining existing headings and conventions. Installation does not copy a template, migrate ADRs, or change protections; adoption procedures are separate work.

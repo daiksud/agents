@@ -22,6 +22,10 @@ Proceed from purpose, contracts, and overall design to diffs and tests; trace pa
 
 Read [Investigation procedures and perspectives](references/review-guidance.md#investigation), selecting areas relevant to the diff for deeper investigation. Do not inspect all 11 areas comprehensively every time, or make findings per area, line counts, or principle names pass criteria. Validate read-only or in isolation, avoiding actual-data changes and external transmission.
 
+## PR records and policy
+
+When a PR description is available, review its purpose, actual behavior, relevant reasoning, validation status, absence of HTML comments, and applicable Engineering Policy changes under [Change records](../../.apm/instructions/change-records.instructions.md). Follow [PR record review](references/review-guidance.md#pr-record-review) for description corrections versus implementation findings. Diff-only input does not prove a description is missing. Unperformed discretionary checks alone are not defects or merge blockers; required CI and agreed acceptance conditions still apply.
+
 ## Staged review within the pair
 
 When checking Red / Green / Refactor as Navigator, read [Staged code review within the pair](references/pair-review.md). Preserve common instructions on roles, edit permissions, and checking boundaries; do not substitute pair checks for ordinary PR review, required CI, approval, or merging.

@@ -177,3 +177,7 @@ These annotations preserve the original per-file attribution and checking detail
 [^github-instructions-qa-engineering-best-practices-instructions-md]: [QA Engineering Best Practices](https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/instructions/qa-engineering-best-practices.instructions.md). Basis for the referenced scope and adoption decisions stated in the text.
 [^context-engineering]: [Context Engineering](https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/instructions/context-engineering.instructions.md). Applied to naming, placement, types, public boundaries, and comment design.
 [^taming-copilot]: [Taming Copilot](https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/instructions/taming-copilot.instructions.md). Applied to choosing standard features, existing dependencies, and minimal structure.
+
+## Change-record policy adoption
+
+[Development](../../skills/software-development/SKILL.md) and its design/testing references apply the agreement in [Issue #253](https://github.com/daiksud/agents/issues/253). The current rationale and boundaries live in [Change records policy](../engineering-policies/change-records.md): actual validation reporting is required while execution is discretionary unless independently required; PRs/commits retain historical judgment and topical policies retain current guidance. This adoption does not establish renewed checking of the external sources above.

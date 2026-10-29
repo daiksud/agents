@@ -13,7 +13,8 @@ description: Define PR creation, review responses, CI checks, rebasing, squash m
 - Create draft PRs after pushing, linked to target Issues/Sub-issues.
 - Assign PRs to the requester confirmed in the Issue. Ask if unidentified; do not unconditionally equate authenticated users with requesters.
 - At creation, check label names/descriptions and apply appropriate labels.
-- Follow [Writing Issues and PRs](../../issue-management/references/github-writing.md) in `issue-management` for titles/bodies. State final changes, reasons, results, unverified scope, and important constraints/exclusions. Follow specified templates or needed structure without fixed headings, unnecessary tables/Alerts, empty sections, or “none” filler.
+- Follow [Writing Issues and PRs](../../issue-management/references/github-writing.md) for titles/bodies and [Change records](../../../.apm/instructions/change-records.instructions.md) for reporting versus execution. Use the [reusable template](../assets/pull_request_template.md) if no target template exists; encourage equivalent fields in downstream repositories, preserving existing headings and conventions. Do not bulk-copy templates or migrate policies merely because the package is installed. Keep this repository's `.github/pull_request_template.md` and reusable asset identical when changing either.
+- At creation and every update, remove all HTML comments and retain substantive actual validation status. `Not run` is valid without required reasons or a post-merge plan; incomplete execution alone is not a merge blocker. Preserve independently required CI and acceptance conditions.
 - Posting, updates, and review replies follow `issue-management` “Markdown quality for GitHub”: format/check complete bodies and verify saved agreement/display.
 - If review changes purpose, outcomes, acceptance conditions, or external impact, including reductions, save/present concrete proposals and confirm through `issue-management` “Planning and execution scope.” Record and continue adjustments meeting the same success conditions.
 - Within approval, update PR bodies alongside review responses changing content, reasons, results, or important constraints.
@@ -190,7 +191,7 @@ Separate replies so reviewers can check individual responses and overall explana
 | Findings only in review bodies, such as `Suppressed comments` | In an overall review comment, link the review and record fixes/commits/validation for formal findings, or reasons for optional/no-action judgments. Do not change necessity based on Approve or substitute a reply thread |
 | Overall review explanation | In an overall review comment, link the target review and give the explanation; do not mix into individual threads |
 
-1. Check findings and respond under existing fix criteria. Complete validation, commits, and push for fixes, gathering reply evidence.
+1. Check findings and respond under existing fix criteria. Report actual validation for fixes, complete commits and push, and gather reply evidence. Independently required checks remain required.
 2. Group individual replies in a pending review and prepare necessary overall comments. Do not force unnecessary overall comments; if no individual replies exist, prepare only overall comments.
 3. Submit the replies, including necessary overall comments; otherwise submit only individual replies. Submit overall-only comments as reviews too.
 4. Retrieve published individual/overall replies after submission and verify targets/content. Pending replies or successful submit requests do not substitute for publication verification.
@@ -201,12 +202,22 @@ If APIs/UI cannot group individual replies in pending reviews and submit them, r
 ### Rebase and merge
 
 - Rebase target-branch updates into working branches, keeping Git history linear.
-- Rerun relevant validation after rebasing and push remotely.
+- After rebasing, select relevant validation and report what actually ran; rerun independently required checks and push remotely.
 - For rebased published history use `git push --force-with-lease`; check unknown remote updates without overwriting.
 - Immediately before merge, confirm latest-commit review completed, zero findings requiring action, passing CI, and zero conflicts. Apply “Required Approve and CODEOWNERS assessment”; sole-owner authorship alone does not justify waiting for self-approval.
 - Immediately before merge, recheck latest main SHA and required checks/distribution validation triggered by its push. Initial checks do not substitute; wait for running/unverified results and prioritize recovery on failures without merging ordinary PRs. Approved recovery PRs resolving that failure are exempt from this main-success condition, while meeting their own reviews/checks/approvals. Use existing unconfigured-CI exceptions only if CI is absent.
 - Once all conditions pass, confirm the PR is Ready for review (mark it Ready if still a draft), then squash-merge.
-- Squash messages also follow [Commit-message instructions](conventional-commits.md).
+- Verify the final description matches the reviewed change, retains relevant decisions and actual validation status, and contains no HTML comments. Update it before merge if needed. If an applicable Engineering Policy changed, verify the topical document ends with this real PR link.
+- Preserve the final title and body as squash subject and body using `PR_TITLE` / `PR_BODY`; follow [Commit-message instructions](conventional-commits.md). Retrieve both immediately before merging and pass their contents without template comments or a replacement summary:
+
+  ```bash
+  PR_TITLE="$(gh pr view "$PR_NUMBER" --repo "$OWNER/$REPO" --json title --jq .title)"
+  PR_BODY="$(gh pr view "$PR_NUMBER" --repo "$OWNER/$REPO" --json body --jq .body)"
+  gh pr merge "$PR_NUMBER" --repo "$OWNER/$REPO" --squash \
+    --match-head-commit "$REVIEWED_HEAD" --subject "$PR_TITLE" --body "$PR_BODY"
+  ```
+
+  Check successful retrieval and description content before running merge; these variables are text, never shell code. Required approvals/checks still apply.
 - Confirm the PR merged and target history is linear.
 
 ### Post-integration main verification and recovery
@@ -217,7 +228,7 @@ Change owners also own post-merge verification. PR integration-candidate and mer
 2. Wait for running checks. Failed, canceled, unexecuted, or unobtainable results are not success; record reasons/unverified scope. Required CI not starting is not an “unconfigured CI” exception.
 3. On failure, stop ordinary work and record impact, detection time, last healthy SHA, failed checks/logs. If a causative change exists, make a revert/minimal fix a separate recovery PR. If evidence confirms temporary external-service/runner failure requiring no repository changes, record evidence/retry reasons and revalidate required checks/distribution paths on the same main SHA after recovery. Do not create empty recovery PRs; stop subsequent work until success is confirmed. Continue investigation when causes are unknown without assuming external failures. Without changes, skip steps 4–6 and proceed to step 7 after revalidation.
 4. Save/retrieve/present recovery plans requiring repository changes in Issues, judging execution scope through `issue-management` “Planning and execution scope.” Do not reapprove regression fixes within the original request or clear recovery requests. Confirm recovery changing purposes, acceptance conditions, external impact, or authority; do not extend approval to unrelated incidents. After confirming scope, protect diffs/worktree usage, `git switch main`, `git pull --ff-only`, and create a dedicated recovery branch from that main. If another worktree uses main, leave it unchanged, compare `origin/main` SHA fetched through `git fetch origin` with the failed target, and create a dedicated recovery branch from that SHA at the current location. Check unknown main updates first; do not bypass checkout protection or add recovery changes to merged former working branches.
-5. For defects, add the smallest reproducible validation and confirm failure before fixes and success afterward. Use `software-development` for code and simulated evaluations for skill judgments. For unreproducible external failures or similar cases, record evidence/unverified scope without claiming failed tests were created.
+5. For defects, add the smallest reproducible validation and confirm failure before fixes and success afterward. Use `software-development` for code and selected or independently required evaluations for skill judgments, honoring repository-specific exclusions. For unreproducible external failures or similar cases, record evidence/unverified scope without claiming failed tests were created.
 6. Merge recovery PRs through ordinary latest-HEAD review, published replies, Resolve, required approvals, and checks. Do not weaken protection/checks to appear healthy.
 7. Record the time all required checks/distribution paths pass for the recovery commit (or the same revalidated main SHA without changes), and confirm health before resuming. Do not claim recovery/overall completion while unverifiable.
 
@@ -227,7 +238,7 @@ Briefly record incident impact, occurrence/detection/recovery times, confirmed c
 
 ### When CI is unconfigured
 
-- Preserve existing merge exceptions in projects without CI. Record local validation/results, absent CI, treatment as an exception, and strong recommendation to configure CI in the PR.
+- Preserve existing merge exceptions in projects without CI. Record actual validation status (including `Not run`), absent CI, treatment as an exception, and strong recommendation to configure CI in the PR. Do not turn the exception into a universal local-execution requirement.
 - This does not mean CI executed successfully or CD was achieved. After merge, show confirmed scope/limits such as local checks.
 - Do not apply to existing required CI, failed/canceled/unexecuted jobs, or inaccessible results. Do not relax protection rules; check approval scope if settings must change.
 

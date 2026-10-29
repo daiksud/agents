@@ -34,7 +34,7 @@ okf_version: "0.2"
 # Guides
 
 - [Order handling](behavior/order.feature.md) - Order acceptance conditions.
-- [Design decisions](adr/) - Decisions and reasons.
+- [Engineering Policies](engineering-policies/) - Current choices and reasons.
 ```
 
 In `log.md`, put flat dated updates newest-first. Date headings are actual `YYYY-MM-DD` dates. Initial bold labels are conventional, not mandatory. Log dates group events, separate from metadata recording datetime with UTC offsets.

@@ -14,6 +14,10 @@ Instructions and skill entry points state what the agent must do. Operational re
 
 The authoring policy lives in [Separate execution guidance from maintainer notes](../skills/document-authoring/references/agent-documents.md). Source notes link back to the guidance they explain; ordinary tasks do not require reading this catalog. Historical checking dates remain historical, and file reorganization does not establish renewed verification.
 
+## Current Engineering Policies
+
+- [Change records](engineering-policies/change-records.md): current choice, applicability, rationale, alternatives, and trade-offs; historical judgments remain in PRs/commits.
+
 ## Instructions
 
 - [Shared instruction sources](instruction-sources.md): policy origins and adoption boundaries for change protection, collaboration, decision-making, development, and quality.

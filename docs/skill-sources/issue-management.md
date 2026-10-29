@@ -119,3 +119,7 @@ Applying Conventional Commits to Issue and PR titles is this environment's local
 [^github-instructions-spec-driven-workflow-v1-instructions-md]: [github-instructions-spec-driven-workflow-v1-instructions-md](https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/instructions/spec-driven-workflow-v1.instructions.md).
 [^github-agents-research-technical-spike-agent-md]: [github-agents-research-technical-spike-agent-md](https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/agents/research-technical-spike.agent.md).
 [^github-context-map-skill-md]: [github-context-map-skill-md](https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/skills/context-map/SKILL.md).
+
+## Change-record policy adoption
+
+[PR writing](../../skills/issue-management/references/github-writing.md) apply the agreement in [Issue #253](https://github.com/daiksud/agents/issues/253). The current rationale and boundaries live in [Change records policy](../engineering-policies/change-records.md): actual validation reporting is required while execution is discretionary unless independently required; PRs/commits retain historical judgment and topical policies retain current guidance. This adoption does not establish renewed checking of the external sources above.
