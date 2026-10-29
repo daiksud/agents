@@ -35,6 +35,15 @@ description: Define PR creation, review responses, CI checks, rebasing, squash m
 - Repeat review/fixes until zero actionable findings.
 - With Copilot, completion requires Approve on the latest commit. With Codex selected through quick assessment, apply Codex completion conditions. Candidate assessment does not replace completed review.
 
+### Retrying reviews without results
+
+Apply this policy to the selected review service, regardless of product.
+
+1. Record the PR, complete target HEAD, review service, request evidence, and request time. Before every retry, retrieve the latest review results, findings, and request history, and confirm the target HEAD and current required CI/conflict checks.
+2. If at least 10 minutes have passed since the most recent request and no review result has returned for that request and target HEAD, request review again on the same PR through the selected service's supported request method. Running status alone does not prevent retry. Wait at least 10 minutes from each immediately preceding request before the next retry, including requests made by other sessions.
+3. If a result has returned for the latest request, assess it under the ordinary completion/finding rules instead of retrying for elapsed time. Changed HEAD requires the ordinary stable-HEAD checks and latest-HEAD review; do not reuse an old result as completion. A retry does not establish service failure, completion, approval, or permission to switch reviewers.
+4. Before resending after a request timeout, check whether it was saved and use its recorded time. If the latest results/request history cannot be retrieved, or the most recent request time cannot be established, hold retries and report the uncertainty and resumption condition. Preserve explicit quota/disabled-service restrictions and human-review requirements. Check results through available tools; do not ask the user to inspect a review product's screen.
+
 ### Quick reviewer candidate assessment
 
 This selects a candidate, not a guarantee of quota, execution success, or completed review. Codex installation alone also does not complete review; verify execution after requesting.
@@ -49,12 +58,12 @@ Assessments potentially starting ordinary review occur after current-HEAD requir
 
 Perform the checks below at most once per service. Check Copilot first; if selectable, do not investigate Codex. Retain judgment, repo, authentication conditions, evidence, and checking time within the task; do not search settings, subscriptions, quotas, or other APIs again under unchanged conditions. New PRs update Copilot's PR-specific assessment; repo/authentication/installation changes update relevant assessments. HEAD changes alone do not repeat Connector checks. Do not add persistent caches or dedicated settings.
 
-Keep explicit quota-limit errors separate from candidate assessment, retaining evidence, time, affected user/billing entity, and confirmed scope in task context. Treat as `unavailable` while applicability to the same entity/quota is confirmed; HEAD/PR changes or `available` candidates alone do not discard evidence or justify requests again. Reassess with reliable evidence of quota renewal/recovery or user/billing-entity changes. Do not generalize PR-specific errors, generic 403/422, network failures, or permission gaps to account-wide quota limits; unclear scope remains unknown. Preserve the no-bypass conditions below for running/uncertain requests.
+Keep explicit quota-limit errors separate from candidate assessment, retaining evidence, time, affected user/billing entity, and confirmed scope in task context. Treat as `unavailable` while applicability to the same entity/quota is confirmed; HEAD/PR changes or `available` candidates alone do not discard evidence or justify requests again. Reassess with reliable evidence of quota renewal/recovery or user/billing-entity changes. Do not generalize PR-specific errors, generic 403/422, network failures, or permission gaps to account-wide quota limits; unclear scope remains unknown. Follow [Retrying reviews without results](#retrying-reviews-without-results) for running requests; preserve the restrictions on switching services and on requests whose latest state cannot be retrieved.
 
-For existing requests on the same HEAD, first check history, Bot state, and completed reviews. For Copilot follow [Checking execution after Copilot requests](#checking-execution-after-copilot-requests), waiting if running. If acceptance is unclear, retrieve state once; if still unknown, stop duplicate requests/switches and record uncertainties/resumption conditions. Candidate-search limits do not apply to ordinary progress checking of accepted reviews/CI.
+For existing requests on the same HEAD, first check history, Bot state, and completed reviews. For Copilot follow [Checking execution after Copilot requests](#checking-execution-after-copilot-requests). Apply [Retrying reviews without results](#retrying-reviews-without-results), including when execution is running. Candidate-search limits do not apply to ordinary progress checking of accepted reviews/CI.
 
 - If unrequested and Copilot is `available`, request Copilot.
-- If Copilot is `unavailable` or `unknown` and Codex `available`, choose Codex. Distinguish “no candidate/unavailable” from “candidate unverifiable”; do not require extra proof of permanent unavailability or reapproval for switching. Do not bypass running/uncertain existing requests.
+- If Copilot is `unavailable` or `unknown` and Codex `available`, choose Codex. Distinguish “no candidate/unavailable” from “candidate unverifiable”; do not require extra proof of permanent unavailability or reapproval for switching. Do not switch services to bypass running requests or requests whose latest state cannot be retrieved; apply [Retrying reviews without results](#retrying-reviews-without-results).
 - If neither is `available`, stop searching. Self-review and CI checks may continue, but do not claim completed external review or mergeability. Report installation/permission/checking blockers without relaxing protections.
 
 #### Retrieve Copilot candidates once
@@ -105,11 +114,11 @@ gh api graphql \
 
 Command/GraphQL failures are `unknown`. No candidates excludes Copilot for this selection without proving subscription-wide unavailability. Missing candidates with remaining pages are also `unknown`; do not fetch more pages for exploration.
 
-Where candidate queries are unavailable, after confirming no existing request, the formal API in “Requesting Copilot Code Review” may be used once as assessment/request. Record successful acceptance and wait without resending to confirm. Only explicit quota-limit/disabled-service errors establish `unavailable`; generic 403/422/network failures alone do not establish service unavailability. Do not search other candidate APIs after failure.
+Where candidate queries are unavailable, after confirming no existing request, the formal API in “Requesting Copilot Code Review” may be used once as assessment/request. Record successful acceptance; do not resend merely to confirm acceptance. For subsequent waits apply [Retrying reviews without results](#retrying-reviews-without-results). Only explicit quota-limit/disabled-service errors establish `unavailable`; generic 403/422/network failures alone do not establish service unavailability. Do not search other candidate APIs after failure.
 
 #### Check Codex Connector installation for the target repo
 
-For repositories owned by `daiksud`, the requester confirms that Codex is installed. Treat Codex as `available` without checking GitHub App installations. When Codex is selected, directly request `@codex review` after the required current-HEAD CI/conflict and existing-request checks. Still verify actual review execution, completion, findings, and required approvals; posting a request is not evidence of a completed review.
+For repositories owned by `daiksud`, the requester confirms that Codex is installed. Treat Codex as `available` without checking GitHub App installations. When Codex is selected, directly request `@codex review` after the required current-HEAD CI/conflict and existing-request checks and the Ready-state check in [Alternative review](#alternative-review). Still verify actual review execution, completion, findings, and required approvals; posting a request is not evidence of a completed review.
 
 For other repository owners, check whether `ChatGPT Codex Connector` (slug `chatgpt-codex-connector`) is installed for the target repo. First reuse already verified installation or same-task successful events below. Otherwise use one available authenticated GitHub Apps settings view or existing tool returning target-repo installation. Without supported checking, use `unknown` instead of trial-and-error calls.
 
@@ -123,9 +132,11 @@ Do not use `GET /repos/{owner}/{repo}/installation` with ordinary `gh` user toke
 
 This procedure owns requests/completion decisions. Read `code-review` only when reviewing diffs, without starting requests/fixes/merge from that skill.
 
+The user-selected operating policy for this workflow requires Codex review requests, including retries, to use a PR that is Ready for review (`isDraft == false`). After current-HEAD required CI succeeds and conflicts are resolved, mark a draft Ready if needed, then retrieve its state before posting `@codex review`. Hold the request while it remains a draft or its state cannot be verified. Ready does not establish review completion, approval, or permission to merge.
+
 1. Record reasons for Codex selection, Copilot/Codex judgments, evidence URLs/results, and time in the PR. Preserve explicit unavailability discovered after Copilot requests and follow the same selection. Distinguish unavailability from unverified candidates without reapproval for each switch.
-2. Disagreement with findings, missing Approve, elapsed waiting, or temporary retrieval failure alone do not justify switching. Follow running/uncertain-request conditions without duplicates on the same HEAD.
-3. Request `@codex review` in a PR comment. Add original paths/application instructions only when target-repository reviewer Instructions/guides/Skills exist and are externally readable. Do not add locally APM-installed common `code-review` or material merely because originals exist in another repository. Without target-specific reviewer material, defer to Codex's ordinary review. Check request comments before/after sending, investigating possible saved requests after timeouts before resending. New requests are needed only for confirmed nonsending, changed HEAD, or reruns after resolved failures.
+2. Disagreement with findings, missing Approve, elapsed waiting, or temporary retrieval failure alone do not justify switching. For same-service retries follow [Retrying reviews without results](#retrying-reviews-without-results); waiting alone does not authorize switching services.
+3. Request `@codex review` in a PR comment. Add original paths/application instructions only when target-repository reviewer Instructions/guides/Skills exist and are externally readable. Do not add locally APM-installed common `code-review` or material merely because originals exist in another repository. Without target-specific reviewer material, defer to Codex's ordinary review. Check request comments before/after sending, investigating possible saved requests after timeouts before resending. Request again for confirmed nonsending, changed HEAD, reruns after resolved failures, or under [Retrying reviews without results](#retrying-reviews-without-results).
 
 ### Codex completion assessment
 
@@ -194,7 +205,7 @@ If APIs/UI cannot group individual replies in pending reviews and submit them, r
 - For rebased published history use `git push --force-with-lease`; check unknown remote updates without overwriting.
 - Immediately before merge, confirm latest-commit review completed, zero findings requiring action, passing CI, and zero conflicts. Apply “Required Approve and CODEOWNERS assessment”; sole-owner authorship alone does not justify waiting for self-approval.
 - Immediately before merge, recheck latest main SHA and required checks/distribution validation triggered by its push. Initial checks do not substitute; wait for running/unverified results and prioritize recovery on failures without merging ordinary PRs. Approved recovery PRs resolving that failure are exempt from this main-success condition, while meeting their own reviews/checks/approvals. Use existing unconfigured-CI exceptions only if CI is absent.
-- Once all conditions pass, mark the draft Ready for review and squash-merge.
+- Once all conditions pass, confirm the PR is Ready for review (mark it Ready if still a draft), then squash-merge.
 - Squash messages also follow [Commit-message instructions](conventional-commits.md).
 - Confirm the PR merged and target history is linear.
 
@@ -242,7 +253,7 @@ Check state in this order.
 2. Check Copilot submissions through `GET /repos/{owner}/{repo}/pulls/{pull_number}/reviews`. Matching `commit_id` establishes results for current HEAD. Explicit quota-limit bodies are not normal completion; retain evidence/scope under “Quick reviewer candidate assessment.” Preserve actual states such as `APPROVED`/`COMMENTED`; “Approval recommended” in prose is not `APPROVED`.
 3. Without completed latest-HEAD review, check PR Issue events/timeline. Copilot `review_requested` with its `requested_reviewer.login` signals requested; `copilot_work_started` with `performed_via_github_app.slug == "copilot-pull-request-reviewer"` is a candidate execution-start signal.
 4. Use `copilot_work_started` as running evidence only when after Copilot `review_requested` for current HEAD and HEAD has not changed since. Use retained request SHA/time if available; on resumption without them, check timeline order of latest-HEAD updates, subsequent `review_requested`, and `copilot_work_started`. If correspondence cannot be established, use `unknown`, not asserted running.
-5. With matching current-HEAD `copilot_work_started`, continue waiting without duplicate requests or switching to Codex.
+5. With matching current-HEAD `copilot_work_started`, treat execution as running and apply [Retrying reviews without results](#retrying-reviews-without-results). Running status does not prevent the 10-minute retry; do not switch to another service merely because of elapsed waiting.
 6. Missing `copilot_work_started` alone does not prove unexecuted; permissions, paging, or propagation delays may obscure it. Combine available request API success, current-HEAD `review_requested`, existing progress displays, and other evidence to assess accepted/unknown.
 7. After HEAD changes, old-HEAD events/submissions do not establish latest-HEAD running/completion. Recheck latest request history and `commit_id`.
 
@@ -286,4 +297,4 @@ gh api --method POST \
   -f 'reviewers[]=copilot-pull-request-reviewer[bot]'
 ```
 
-CLI/API success means acceptance, separate from execution start/normal completion. Follow “Checking execution after Copilot requests.” Do not automatically resend via API after CLI failures/timeouts; first check existing requests/execution. Empty reviewer/review arrays alone do not establish failure. Retrieve state once if acceptance is unclear; if still unknown, stop re-requesting or switching paths and record unverified scope/resumption conditions.
+CLI/API success means acceptance, separate from execution start/normal completion. Follow “Checking execution after Copilot requests.” Do not automatically resend via API after CLI failures/timeouts; first check existing requests/execution. Empty reviewer/review arrays alone do not establish failure. Retrieve state if acceptance is unclear, then apply [Retrying reviews without results](#retrying-reviews-without-results), retaining any saved request time. Hold retries if latest results/request history remain inaccessible; do not switch request paths merely to bypass uncertainty.

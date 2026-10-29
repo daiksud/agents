@@ -31,6 +31,8 @@ sources:
     resource: https://docs.github.com/en/rest/apps/installations#list-app-installations-accessible-to-the-user-access-token
   - id: codex-github-review
     resource: https://developers.openai.com/codex/integrations/github
+  - id: codex-github-review-current
+    resource: https://learn.chatgpt.com/docs/third-party/github
   - id: github-app-user-access
     resource: https://docs.github.com/en/apps/creating-github-apps/authenticating-with-a-github-app/generating-a-user-access-token-for-a-github-app
   - id: ruleset-rules
@@ -102,6 +104,10 @@ Integrate with existing approval/change protection in this environment. Do not a
 
 The original [review procedure](../../skills/change-delivery/references/review-and-merge.md#checking-execution-after-copilot-requests) recorded that PR #166 emitted `copilot_work_started` while `requested_reviewers=[]` and reviews were absent, followed by normal completion.[^copilot-work-started-observation] This historical observation is not a permanent public API contract or evidence of a current review's state. The execution procedure retains the need to correlate the event with a request for the current, unchanged HEAD.
 
+## Codex Ready-state policy
+
+The requester selected Ready-only Codex review requests, including retries, for this workflow. The current official GitHub integration documentation describes the `@codex review` comment trigger but does not state a Draft/Ready prerequisite.[^codex-github-review-current] The [Alternative review procedure](../../skills/change-delivery/references/review-and-merge.md#alternative-review) therefore records Ready as an operating policy, without asserting that Codex universally rejects draft PRs. This service-specific prerequisite leaves the shared 10-minute retry policy product-independent and preserves the separate CI, review, approval, and merge conditions.
+
 [^continuousdelivery-foundations-continuous-integration]: [continuousdelivery-foundations-continuous-integration](https://continuousdelivery.com/foundations/continuous-integration/).
 [^github-src-index-ts]: [github-src-index-ts](https://github.com/conventional-changelog/commitlint/blob/f4b108182e6d20eca52433135c7ba1675746318e/%40commitlint/config-conventional/src/index.ts#L24-L36).
 [^git-commit]: [git-commit](https://github.com/github/awesome-copilot/blob/4f4796f0bf30e105700f97ed8408c12b6aa95e06/skills/git-commit/SKILL.md).
@@ -121,3 +127,4 @@ The original [review procedure](../../skills/change-delivery/references/review-a
 [^gh-pr-edit]: [gh-pr-edit](https://cli.github.com/manual/gh_pr_edit).
 [^github-rest-review-requests]: [github-rest-review-requests](https://docs.github.com/en/rest/pulls/review-requests#request-reviewers-for-a-pull-request).
 [^copilot-work-started-observation]: [copilot-work-started-observation](https://github.com/daiksud/agents/pull/166).
+[^codex-github-review-current]: [Review GitHub pull requests with Codex](https://learn.chatgpt.com/docs/third-party/github). Current request instructions checked for the Ready-state policy; no Draft/Ready prerequisite was stated.
