@@ -9,8 +9,8 @@ sources:
   resource: https://martinfowler.com/bliki/BeckDesignRules.html
 - id: fowler-yagni
   resource: https://martinfowler.com/bliki/Yagni.html
-  - id: change-record-agreement
-    resource: https://github.com/daiksud/agents/issues/253
+- id: change-record-agreement
+  resource: https://github.com/daiksud/agents/issues/253
 ---
 
 ## Purpose and runtime documents
