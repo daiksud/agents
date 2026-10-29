@@ -45,6 +45,8 @@ sources:
     resource: https://github.com/daiksud/agents/pull/166
   - id: change-record-agreement
     resource: https://github.com/daiksud/agents/issues/253
+  - id: repository-adoption
+    resource: https://github.com/daiksud/agents/issues/254
 ---
 
 ## Scope
@@ -136,3 +138,9 @@ The requester selected Ready-only Codex review requests, including retries, for 
 [Delivery](../../skills/change-delivery/SKILL.md), its reusable template, and the merge/commit references apply the agreement in [Issue #253](https://github.com/daiksud/agents/issues/253).[^change-record-agreement] The current rationale and boundaries live in [Change records policy](../engineering-policies/change-records.md): actual validation reporting is required while execution is discretionary unless independently required; PRs/commits retain historical judgment and topical policies retain current guidance. This adoption does not establish renewed checking of the external sources above.
 
 [^change-record-agreement]: Owner-agreed change-record policy and implementation scope in Issue #253.
+
+## Consumer change-record adoption
+
+[Issue #254](https://github.com/daiksud/agents/issues/254) defines the [adoption procedure](../../skills/change-delivery/references/repository-adoption.md) and [local instruction example](../../skills/change-delivery/assets/agents-change-records.md).[^repository-adoption] They reuse the foundation template and policy-authoring reference, accept equivalent arrangements, preserve prior decisions, and explicitly propose English PR bodies for verbatim squash records. Target-local file edits remain ordinary change delivery; package installation does not adopt files or settings. No APM execution or independent simulation is implied by this guidance.
+
+[^repository-adoption]: Owner-requested adoption guidance and scope in Issue #254; builds on Issue #253 rather than replacing its reusable template or Engineering Policies authoring reference.

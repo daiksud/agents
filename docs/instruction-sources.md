@@ -37,6 +37,8 @@ sources:
     title: Owner-supplied shrine-maiden AI idol and VAgent profile refinement
   - id: change-record-agreement
     resource: https://github.com/daiksud/agents/issues/253
+  - id: repository-adoption
+    resource: https://github.com/daiksud/agents/issues/254
 ---
 
 ## Sources for shared instructions
@@ -107,3 +109,9 @@ The character name and lore guide conversational portrayal without replacing the
 [Change records](../.apm/instructions/change-records.instructions.md) and the development, delivery, quality, and language instructions apply the agreement in [Issue #253](https://github.com/daiksud/agents/issues/253).[^change-record-agreement] The current rationale and boundaries live in [Change records policy](engineering-policies/change-records.md): actual validation reporting is required while execution is discretionary unless independently required; PRs/commits retain historical judgment and topical policies retain current guidance. This adoption does not establish renewed checking of the external sources above.
 
 [^change-record-agreement]: Owner-agreed change-record policy and implementation scope in Issue #253.
+
+## Consumer change-record adoption
+
+[Issue #254](https://github.com/daiksud/agents/issues/254) adds the short [change-record adoption trigger](../.apm/instructions/change-records.instructions.md) and the scoped [language choice](../.apm/instructions/language.instructions.md#pr-body-language-when-adopting-squash-records).[^repository-adoption] The detailed [adoption procedure](../skills/change-delivery/references/repository-adoption.md) owns inspection, equivalence, concrete gap-filling proposals, and preservation of prior decisions; shared instructions do not duplicate that procedure or make adoption a blocker for unrelated work.
+
+[^repository-adoption]: Owner-requested adoption guidance and scope in Issue #254; builds on Issue #253 rather than replacing its reusable template or Engineering Policies authoring reference.

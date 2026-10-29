@@ -26,6 +26,7 @@ For diagnosis, first read the reading/reporting parts of [Operations and judgmen
 
 | Condition | Reference material |
 | --- | --- |
+| Narrow PR-title/body squash-message alignment diagnosis or authorized application | [PR and squash message alignment](references/settings.md#pr-and-squash-message-alignment); do not expand to unrelated standards |
 | Releases, merges, main protection, Actions policy | [Setting standards](references/settings.md) |
 | Free security features, availability, billing, prerequisites | [Security](references/security.md) |
 | Retrieving settings, applying differences, failures, conflicts, reruns, result verification | [Operations and judgments](references/operations.md) |

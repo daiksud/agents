@@ -15,7 +15,8 @@ Do not repeat completed stages; read material needed for the current stage. Reso
 | --- | --- |
 | Work protection and branch preparation before editing, execution of approved decomposition | [Branches and integration units](references/branches.md) |
 | Drafting commit messages, staging, committing | [Commit messages](references/conventional-commits.md) |
-| PR templates and equivalent downstream adoption | [Reusable PR template](assets/pull_request_template.md) and [PR writing](../issue-management/references/github-writing.md) |
+| Start of repository change work; local change-record gaps or adoption requests | [Repository adoption](references/repository-adoption.md), [reusable PR template](assets/pull_request_template.md), and [local instruction example](assets/agents-change-records.md) |
+| Writing PR descriptions | [PR writing](../issue-management/references/github-writing.md) |
 | PR, review, CI, merge, main verification and cleanup, recovery after failure | [Review and merge](references/review-and-merge.md) |
 | Issue plans, decisions on publication permission, Issue updates, Markdown quality before and after posting | Corresponding material in the dependency `issue-management` |
 
