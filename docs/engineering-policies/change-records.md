@@ -30,4 +30,4 @@ Engineering Policies describe current choices, applicability, rationale, alterna
 - Mandatory validation execution or mandatory reasons for `Not run` provide more uniform process at the cost of discretion and boilerplate. Accurate status plus independently required checks is the chosen boundary.
 - Separate automatically synchronized templates or new PR lint could enforce consistency but add machinery beyond the current need. The reusable and self-adoption templates are maintained together by ordinary review.
 
-Introducing/revising PR: pending PR creation.
+Introducing/revising PR: [#255](https://github.com/daiksud/agents/pull/255).
