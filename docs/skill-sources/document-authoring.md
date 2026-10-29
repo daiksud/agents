@@ -30,8 +30,8 @@ sources:
 - id: docs-for-developers-publisher
   resource: https://link.springer.com/book/10.1007/978-1-4842-7217-6
   title: Docs for Developers, first edition publisher overview
-  - id: change-record-agreement
-    resource: https://github.com/daiksud/agents/issues/253
+- id: change-record-agreement
+  resource: https://github.com/daiksud/agents/issues/253
 ---
 
 ## Purpose and scope

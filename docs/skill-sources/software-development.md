@@ -47,8 +47,8 @@ sources:
   resource: https://github.com/daiksud/agents/issues/100
 - id: issue-161
   resource: https://github.com/daiksud/agents/issues/161
-  - id: change-record-agreement
-    resource: https://github.com/daiksud/agents/issues/253
+- id: change-record-agreement
+  resource: https://github.com/daiksud/agents/issues/253
 ---
 
 ## Purpose and runtime documents
