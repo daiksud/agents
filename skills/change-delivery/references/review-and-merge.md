@@ -208,16 +208,7 @@ If APIs/UI cannot group individual replies in pending reviews and submit them, r
 - Immediately before merge, recheck latest main SHA and required checks/distribution validation triggered by its push. Initial checks do not substitute; wait for running/unverified results and prioritize recovery on failures without merging ordinary PRs. Approved recovery PRs resolving that failure are exempt from this main-success condition, while meeting their own reviews/checks/approvals. Use existing unconfigured-CI exceptions only if CI is absent.
 - Once all conditions pass, confirm the PR is Ready for review (mark it Ready if still a draft), then squash-merge.
 - Verify the final description matches the reviewed change, retains relevant decisions and actual validation status, and contains no HTML comments. Update it before merge if needed. If an applicable Engineering Policy changed, verify the topical document ends with this real PR link.
-- Preserve the final title and body as squash subject and body using `PR_TITLE` / `PR_BODY`; follow [Commit-message instructions](conventional-commits.md). Retrieve both immediately before merging and pass their contents without template comments or a replacement summary:
-
-  ```bash
-  PR_TITLE="$(gh pr view "$PR_NUMBER" --repo "$OWNER/$REPO" --json title --jq .title)"
-  PR_BODY="$(gh pr view "$PR_NUMBER" --repo "$OWNER/$REPO" --json body --jq .body)"
-  gh pr merge "$PR_NUMBER" --repo "$OWNER/$REPO" --squash \
-    --match-head-commit "$REVIEWED_HEAD" --subject "$PR_TITLE" --body "$PR_BODY"
-  ```
-
-  Check successful retrieval and description content before running merge; these variables are text, never shell code. Required approvals/checks still apply.
+- Preserve the final title and description as squash subject/body under the GitHub `squash_merge_commit_title: PR_TITLE` / `squash_merge_commit_message: PR_BODY` convention. Follow [Commit-message instructions](conventional-commits.md). Use those defaults where configured; when supplying explicit CLI/API messages, retrieve the final title/body immediately before merge and retain their contents without template comments, translation, or a replacement summary. Check successful retrieval and the description before merging. This guidance does not authorize changing live settings or bypassing required approvals/checks.
 - Confirm the PR merged and target history is linear.
 
 ### Post-integration main verification and recovery
