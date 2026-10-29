@@ -1,6 +1,6 @@
 ---
 name: software-development
-description: Use to implement code additions or changes, bug fixes, and refactoring. Implement and validate through TDD, Simple Design, and small feedback cycles. Do not use for specification work, consultation, investigation, or document creation alone.
+description: Use to implement code additions or changes, bug fixes, and refactoring. Use Simple Design and small feedback cycles, with TDD techniques when selected or independently required. Do not use for specification work, consultation, investigation, or document creation alone.
 ---
 
 # Develop software through small feedback cycles
@@ -28,14 +28,14 @@ Make XP's five values concrete in shared ToDos, short tests, and pair feedback t
 For learning or practice by one human, propose beginning with this Skill's small TDD cycles, design evolving from current requirements, and short feedback from existing automated builds and tests. Distinguish human numbers from AI Driver/Navigator roles, and preserve existing staged checks, ordinary review, required CI, and integration conditions.
 
 - Follow “Start with a story,” dividing work by small meaningful user outcomes and completion conditions. Do not use commit counts or one TDD iteration as outcome units.
-- Run existing fast automated checks for each change, and slower overall checks at necessary stages. CI is frequent integration and validation of shared code; small commits or pushes alone do not achieve it. Follow `change-delivery` for execution, integration, and main checks. Releases deliver something users can actually use; distinguish integration, deployment, and release, and follow existing publication permission.
+- When selecting automated validation, prefer existing fast checks for small changes and slower overall checks at useful stages. Execution remains discretionary unless independently required under [Change records](../../.apm/instructions/change-records.instructions.md). CI is frequent integration and validation of shared code; small commits or pushes alone do not achieve it. Follow `change-delivery` for execution, integration, and main checks. Releases deliver something users can actually use; distinguish integration, deployment, and release, and follow existing publication permission.
 - For ongoing personal work or planning consultation, propose choosing small outcomes and completion conditions to deliver at the week's start, and briefly reflecting on results, difficulties, and one next change at week's end. Reuse existing Issues and ToDos; do not require weekly rituals or dedicated documents for every short code task. Follow existing procedures for reassessing plans between integration units.
-- Separate required outcomes from work to do if time allows. If time is insufficient, adjust scope without cutting quality, tests, or review. Consult through `issue-management` before reducing agreed outcomes or acceptance conditions; do not arbitrarily move them to optional.
+- Separate required outcomes from work to do if time allows. If time is insufficient, adjust scope without dropping agreed outcomes, required tests, or review. Consult through `issue-management` before reducing agreed outcomes or acceptance conditions; do not arbitrarily move them to optional.
 - Humans should choose sustainable work including rest rather than push through fatigue. Agents do not infer fatigue; when users request rest or interruption, respond by preserving confirmed results, incomplete items, and the next step. Do not create unrequested reminders or weekly automations.
 
 ## Design scope and change decomposition
 
-When judging design policy, impact, change size, or decomposition into Sub-issues or small integration units, read [Responsibilities, contracts, and comments](references/design.md#change-scope-and-decomposition). Follow `issue-management` execution scope for changes requiring confirmation; if scope grows during implementation, reassess decomposition and execution scope before exceeding approval.
+When authoring current durable design policy, use [Engineering Policies](../document-authoring/references/engineering-policies.md) for adopting repositories and retain existing ADR conventions elsewhere. When judging design policy, impact, change size, or decomposition into Sub-issues or small integration units, read [Responsibilities, contracts, and comments](references/design.md#change-scope-and-decomposition). Follow `issue-management` execution scope for changes requiring confirmation; if scope grows during implementation, reassess decomposition and execution scope before exceeding approval.
 
 ## Shared understanding and acceptance conditions
 
@@ -44,6 +44,8 @@ Before implementation, organize purposes, rules, representative examples, and un
 When adding or changing domain rules, even agreed ones, follow [Shared understanding and feature documents](../behavior-specification/references/behavior.md) in `behavior-specification`, also using `document-authoring` to save `docs/behavior/<feature-name>.feature.md` before implementation. Do not unnecessarily rewrite correct existing specifications; keep mappings to tests traceable.
 
 ## Test-driven development (TDD)
+
+These are techniques for selected TDD work, not a universal PR validation-execution requirement. Execution, method, scope, rigor, and timing are discretionary unless the task or repository independently requires them; follow [Change records](../../.apm/instructions/change-records.instructions.md). Describe `Not run`, partial checks, or post-merge plans accurately. Never claim Red/Green execution that did not occur. Required CI and explicitly agreed acceptance conditions remain required.
 
 For each small change, connect agreed behavior to [applicable preconditions, postconditions, and invariants](references/design.md#expressing-agreed-behavior-as-contracts), then to [observable tests](references/testing.md#mapping-contracts-to-observable-tests) and minimal implementation. Reuse existing agreements and identify only relevant conditions; preserve the incremental scope below.
 

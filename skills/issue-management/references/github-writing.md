@@ -44,10 +44,12 @@ Center Issues on “what state to achieve,” rather than “how it was implemen
 
 PRs record actual changes being reviewed.
 
-- Write what changed and why it was necessary.
-- Show executed validation/results, separating unverified scope.
-- Include important constraints, known limits, intentional exclusions, or particular review focus only when needed for decisions.
+- Record the problem or need, actual change and resulting behavior, and decisions needed to understand this change. Retain confirmed bug causes, constraints, relevant alternatives, and trade-offs when useful; do not invent analysis to fill sections.
+- Follow [Change records](../../../.apm/instructions/change-records.instructions.md). Every actual description states validation status: checked scope and observed results, including failures/material limitations, or `Not run`. Execution is discretionary unless independently required. No justification, particular command, or post-merge plan is mandatory boilerplate. Clearly distinguish plans, including optional post-merge checks, from completed checks.
+- Use the [reusable template](../../change-delivery/assets/pull_request_template.md) when no target template exists: Summary, Decisions, Validation. Equivalent existing headings are acceptable. Remove Decisions if unnecessary or if Summary already retains the reasoning; keep substantive validation status.
+- Remove all HTML comments when creating or updating actual descriptions, including template instructions. Comments may remain in template files. An empty Validation section or one containing only instructions does not report status.
+- Keep the judgment made at the time self-contained even when linking a living Engineering Policy. Current cross-cutting policy belongs in topical policy documents for repositories adopting that model; ordinary local decisions remain in the PR.
 - Do not copy Issue bodies verbatim; let Issues explain goals and PRs explain actual diffs.
-- If review changes content, reasons, validation results, or important constraints, update descriptions to current HEAD.
+- If review changes content, reasons, validation results, or important constraints, update descriptions to current HEAD. Before merge, check the final description for accurate decisions/status and no HTML comments; preserve it with the title as the squash message using `PR_TITLE` / `PR_BODY` in `change-delivery`.
 
 When a PR completely resolves an Issue, closing keywords such as `Closes #123`, `Fixes #123`, or `Resolves #123` may be used in PR bodies targeting the default branch. For partial resolution or remaining follow-up work, use ordinary references without automatic closure. On GitHub, merging linked PRs with closing keywords into the default branch automatically closes related Issues.

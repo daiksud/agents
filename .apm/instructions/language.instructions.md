@@ -10,7 +10,8 @@ This is the shared source of truth for language when using these Instructions an
 
 | Artifact | Required language and format |
 | --- | --- |
-| Commit messages, including squash commits | Always English for subject, body, and footers; use Conventional Commits |
+| Ordinary commit messages | Always English for subject, body, and footers; use Conventional Commits |
+| Squash commit messages | Preserve the final English PR title as subject and repository-language PR description as body through `PR_TITLE` / `PR_BODY` in `change-delivery` |
 | Code comments, including docstrings | Always English; preserve the project's comment format |
 | Issue and PR titles | Always English; use Conventional Commits |
 | Issue and PR bodies and comments | Follow the target repository's language, English or Japanese |

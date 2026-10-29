@@ -14,7 +14,7 @@ description: Commit messages follow the Conventional Commits specification.
 
 ### Subjects, bodies, and footers
 
-- Write the entire commit message, including body and footers, in English under [Repository artifact language](../../../.apm/instructions/language.instructions.md). This also applies to squash commits; a repository-language PR body must not be copied unchanged into an English commit message.
+- Write ordinary commit messages, including body and footers, in English under [Repository artifact language](../../../.apm/instructions/language.instructions.md). For squash commits, preserve the final PR title and description verbatim as subject/body through `PR_TITLE` / `PR_BODY` in [Review and merge](review-and-merge.md#rebase-and-merge). The repository-language PR body is retained as the change record; do not replace or translate away its decisions or validation status.
 - Title format is `<type>[(scope)][!]: <description>` (`[]` is optional), with a space after the colon.
 - Use `feat` for features, `fix` for bugs, and appropriate other types such as `docs`, `refactor`, `test`, or `chore`. Scope is a noun for an existing area/module, omitted if unnecessary (for example `fix(parser): handle empty input`).
 - Write specific concise English imperative subjects without final periods. Aim for 72 characters overall, without mechanical truncation or new enforced checks.
@@ -32,3 +32,5 @@ For drafting-only requests, present copyable messages and stop. Follow “Planni
 2. If staging is needed, check files/diff scope and add only approved targets. Do not stage whole files containing out-of-scope unstaged work. If others' staged changes are mixed in, do not arbitrarily unstage/move or commit them; confirm necessary coordination.
 3. After drafting, immediately before committing check the complete staged diff matches approval. Compare every message claim with diffs/confirmed background and exclude unrelated changes or unverified reasons before committing. Check results after creation and follow explicit stop conditions.
 4. For hook or other failures, do not claim success; recheck HEAD, status, and staged/unstaged diffs. Compare hook changes with approved scope, then retry ordinary commits after necessary fixes/revalidation and final index checks. Do not automatically bypass hooks or amend.
+
+Historical change decisions belong in PR descriptions and commits even when current policy is revised. Remove all HTML comments from actual PR descriptions before capturing the squash body; preserve substantive content and actual validation status.

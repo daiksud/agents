@@ -128,3 +128,12 @@ If documentation gaps prevent correct usage, treat them as formal findings. Comp
 The unique constraint at `orders.sql:18` and conflict retrieval at `create_order.py:24` use the same request key, protecting the contract that concurrent retries do not duplicate orders. Preserve the design of routing added registration paths through this key and constraint.
 
 Show confirmed mechanisms and protected contracts rather than merely “thorough tests” or “good design.” Report problems in other paths as formal findings first.
+
+## PR record review
+
+When provided, compare the description with the actual diff and checked evidence: problem/purpose, resulting behavior, reasoning needed for the change, and actual validation status. A short Summary plus Validation: `Not run` can be sufficient; Decisions is optional when unnecessary or clear in Summary.
+
+- Request description corrections for missing/inaccurate change metadata, absent substantive validation status, or any remaining HTML comments. Template comments are allowed in template files; remove all of them from actual descriptions so they do not enter squash messages.
+- Distinguish missing reporting from unperformed validation. `Not run`, partial checks, and accurately reported failures are statuses, not automatic implementation defects. A post-merge check plan is permitted but does not claim checks ran. Preserve independently required CI and agreed acceptance conditions; continue reporting evidenced implementation defects normally.
+- Check whether a changed cross-cutting policy needs a topical Engineering Policy update in repositories adopting the model, including current applicability, rationale, alternatives/trade-offs, and a real introducing/revising PR reference. A local bug fix alone does not require a policy document. Preserve change-specific judgment in the description even when it links living policy.
+- When input is diff-only, state that description review was unavailable if the output format permits; do not declare the description missing. Do not invent code-line defects or locations to fit an implementation-findings format. Use permitted summary/comment fields for metadata corrections, or hand them to the Driver through an allowed route separately from code findings.

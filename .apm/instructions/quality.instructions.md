@@ -15,4 +15,4 @@ Follow [Repository artifact language](language.instructions.md) for artifact lan
 
 Reflect defects found in exploratory or acceptance validation in the smallest reproducible check, and record impact, confirmed causes, why detection failed, recovery, and remaining improvements. Record measurements in Issues and PRs with evidence; do not treat missing data as zero or success, or use it for individual evaluation or assertions of effects from a single instance.
 
-Do not treat inability to validate, insufficient permissions, or external constraints as success; report completed scope, incomplete scope, and conditions for resumption.
+Follow [Change records](change-records.instructions.md): every PR reports actual validation status; unperformed discretionary checks alone do not make implementation incomplete or block merge. `Not run` requires no boilerplate reason or post-merge plan. Never report inability to validate, insufficient permissions, or external constraints as success; distinguish missing evidence from independently required unmet conditions and report any actual blockers.

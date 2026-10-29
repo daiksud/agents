@@ -43,6 +43,8 @@ sources:
     resource: https://github.com/daiksud/agents/issues/165
   - id: copilot-work-started-observation
     resource: https://github.com/daiksud/agents/pull/166
+  - id: change-record-agreement
+    resource: https://github.com/daiksud/agents/issues/253
 ---
 
 ## Scope
@@ -128,3 +130,9 @@ The requester selected Ready-only Codex review requests, including retries, for 
 [^github-rest-review-requests]: [github-rest-review-requests](https://docs.github.com/en/rest/pulls/review-requests#request-reviewers-for-a-pull-request).
 [^copilot-work-started-observation]: [copilot-work-started-observation](https://github.com/daiksud/agents/pull/166).
 [^codex-github-review-current]: [Review GitHub pull requests with Codex](https://learn.chatgpt.com/docs/third-party/github). Current request instructions checked for the Ready-state policy; no Draft/Ready prerequisite was stated.
+
+## Change-record policy adoption
+
+[Delivery](../../skills/change-delivery/SKILL.md), its reusable template, and the merge/commit references apply the agreement in [Issue #253](https://github.com/daiksud/agents/issues/253).[^change-record-agreement] The current rationale and boundaries live in [Change records policy](../engineering-policies/change-records.md): actual validation reporting is required while execution is discretionary unless independently required; PRs/commits retain historical judgment and topical policies retain current guidance. This adoption does not establish renewed checking of the external sources above.
+
+[^change-record-agreement]: Owner-agreed change-record policy and implementation scope in Issue #253.

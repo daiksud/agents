@@ -6,6 +6,8 @@ description: Choose test layers, state, time, external boundaries, UI, and perfo
 
 ## Change units and reproducible validation
 
+These are techniques for validation selected for the change, not a universal execution gate. Follow [Change records](../../../.apm/instructions/change-records.instructions.md): report actual scope/results or `Not run`; execution and timing are discretionary unless independently required. Claims of Red, Green, reproduction, exploration, and acceptance validation require actual execution. Preserve required CI and agreed acceptance conditions.
+
 ### Change units and validation
 
 | Decision | Selection |
@@ -136,5 +138,5 @@ Retain the smallest effective unit, integration, or browser coverage for each di
 - For defects involving domain decisions or contracts, check terminology, invariants, and existing features. Update missing or incorrect specifications before implementation. If already correct, retain them and add reproduction tests.
 - Put concrete reproduction values in the selected test layer. Add them to features only when examples needed for shared understanding are missing. Record why unit tests cannot reproduce the issue and which integration validation is required.
 - Verify failure caused by the target defect before the fix, success after the fix, and related acceptance validation. Do not claim automated tests alone prove user value; also use exploration, demos, and user feedback.
-- If skill judgments also change, combine this with independent simulated evaluation. Do not require TDD for changes only to skill text.
+- If skill judgments also change and independent simulated evaluation is selected or separately required, report its actual inputs/results; honor repository-specific exclusions. Do not require TDD for changes only to skill text.
 - In the final report, show executed tests, Red and Green results, other validation, and unverified scope. Do not report unexecuted checks or inadequate environments as success.
