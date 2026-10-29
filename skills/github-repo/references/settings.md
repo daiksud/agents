@@ -28,6 +28,18 @@ Check three values through `GET /repos/{owner}/{repo}` or `Settings` → `Genera
 
 With approval, PATCH only changed values at the same endpoint or UI, then retrieve/check all three. Do not fill absent values with defaults. First check Ruleset/merge-queue compatibility; hold conflicting changes. Do not simultaneously change auto-merge, automatic branch deletion, or commit formats.
 
+## PR and squash message alignment
+
+Use this narrow path when change-record adoption requests diagnosis or application of squash-message defaults. Installation or ordinary development alone does not authorize settings changes. Target-repository template, instruction, and policy edits belong to `change-delivery`, following [Repository adoption](../../change-delivery/references/repository-adoption.md).
+
+1. Follow the reading/reporting steps in [Operations and judgments](operations.md) for the exact repository and scope. Retrieve `GET /repos/{owner}/{repo}` and compare `squash_merge_commit_title` with `PR_TITLE` and `squash_merge_commit_message` with `PR_BODY`. Missing/inaccessible fields remain unverified, not assumed defaults. Check whether squash merging is available; do not silently enable it or alter merge methods.
+2. Confirm the final English title and agreed PR-body language are recorded locally. Propose English PR bodies for repositories adopting verbatim squash records; surface explicit local conflicts before applying the choice. Keep the final title/body comment-free and retain their full rationale and actual validation status.
+3. For diagnosis-only scope, report observed/expected values and concrete differences, then stop. For authorized settings application, follow the saved-plan, permission, prerequisite, and immediate-before-write checks in [Apply approved settings](operations.md#apply-approved-settings).
+4. PATCH only the authorized message-format differences at `/repos/{owner}/{repo}`; include `squash_merge_commit_title: PR_TITLE` when setting `squash_merge_commit_message: PR_BODY`, as required by the API. Preserve other merge methods, auto-merge, branch deletion, CI, security, and protection settings. Do not apply the broader squash-only or other setting standards as part of this narrow request.
+5. Retrieve both fields again and compare with the expected values; report successful, failed, or unverified results. API acceptance alone is not verification. These defaults do not prove a merge retained the record: ordinary delivery still checks the final description and actual squash message without authoring comments or last-minute translation.
+
+Recheck the current [GitHub repository API](https://docs.github.com/en/rest/repos/repos#update-a-repository) before version-dependent operations. No live merge or settings mutation is needed merely to validate this guidance.
+
 ## main Ruleset protection
 
 Expect active branch Rulesets on `refs/heads/main` effectively requiring PRs and preventing deletion/force pushes. Inherited conformance suffices without duplicate repository Rulesets. Legacy branch protection alone does not meet this personal Ruleset standard.

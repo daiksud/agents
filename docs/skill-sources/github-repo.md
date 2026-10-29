@@ -31,6 +31,8 @@ sources:
     resource: https://github.com/daiksud/agents/issues/165
   - id: actions-settings
     resource: https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/enabling-features-for-your-repository/managing-github-actions-settings-for-a-repository
+  - id: repository-adoption
+    resource: https://github.com/daiksud/agents/issues/254
 ---
 
 ## Scope
@@ -136,3 +138,9 @@ For official/UI/API disagreements preserve confirmed scope/differences without f
 [^approval-code-owner-exception]: [approval-code-owner-exception](https://github.com/daiksud/agents/issues/165).
 [^copilot-code-review]: [copilot-code-review](https://docs.github.com/en/copilot/how-tos/copilot-on-github/use-copilot-agents/copilot-code-review).
 [^actions-settings]: [actions-settings](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/enabling-features-for-your-repository/managing-github-actions-settings-for-a-repository).
+
+## Consumer change-record adoption
+
+[Issue #254](https://github.com/daiksud/agents/issues/254) adds a narrow [squash-message setting path](../../skills/github-repo/references/settings.md#pr-and-squash-message-alignment) for `PR_TITLE` / `PR_BODY`.[^repository-adoption] Diagnosis and authorized application remain separate; other merge, CI, security, and protection settings are preserved. Consumer template, instruction, and policy edits stay with [repository adoption](../../skills/change-delivery/references/repository-adoption.md) in ordinary change delivery. The [GitHub repository API](https://docs.github.com/en/rest/repos/repos#update-a-repository) documents the fields and requires the title field when setting the message field; this documentation change applies no live settings.
+
+[^repository-adoption]: Owner-requested adoption guidance and scope in Issue #254; builds on Issue #253 rather than replacing its reusable template or Engineering Policies authoring reference.

@@ -10,7 +10,7 @@ Issues record desired states and completion conditions; Pull Requests record act
 
 ### Titles
 
-Follow [Repository artifact language](../../../.apm/instructions/language.instructions.md): Issue/PR titles always use English and this Conventional Commits format; bodies and comments follow the target repository's English or Japanese conventions.
+Follow [Repository artifact language](../../../.apm/instructions/language.instructions.md): Issue/PR titles always use English and this Conventional Commits format; bodies and comments follow the target repository's English or Japanese conventions, with the explicit English PR-body adoption choice for verbatim squash records described in that language instruction.
 
 ```text
 <type>[(scope)][!]: <description>
