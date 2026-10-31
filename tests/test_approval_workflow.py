@@ -37,8 +37,8 @@ def fixture(scenario):
     for item in (code, security):
         item["body"] += '\n<details>\nReviews are triggered when you comment "@codex review" or "@codex security review".\n</details>\n'
     reaction = {"id": 200, "user": dict(BOT, type="User"), "content": "+1", "created_at": "2026-10-31T02:13:15Z"}
-    pr = {"state": "open", "draft": scenario == "draft", "head": {"sha": HEAD}}
-    if scenario == "structured clean":
+    pr = {"state": "open", "draft": scenario == "draft", "head": {"sha": HEAD}, "base": {"ref": "main", "sha": "b" * 40}}
+    if scenario in ("structured clean", "edited older structured request", "same-second older structured request", "structured retarget", "retarget without request"):
         security_state.update(has_any_findings=False, has_unresolved_findings=False)
     if scenario == "code findings":
         code_state["has_unresolved_findings"] = True
@@ -87,6 +87,8 @@ def fixture(scenario):
         reaction["user"]["id"] = 1
     if scenario == "closed":
         pr["state"] = "closed"
+    if scenario == "missing base":
+        del pr["base"]
     metadata = {"blockingSeverityThreshold": "P0", "headSha": HEAD, "mergeGateEnabled": False,
                 "pullRequestNumber": 7, "repository": "owner/repo", "status": "completed"}
     state = {"code_review": code_state, "security_review": security_state}
@@ -107,7 +109,7 @@ def fixture(scenario):
     if scenario == "duplicate marker":
         summary["body"] += "<!-- codex-review-state:v1 {} -->\n"
     comments = [req, summary, code, security]
-    if scenario == "no request":
+    if scenario in ("no request", "retarget without request"):
         comments = comments[1:]
     if scenario == "no security receipt":
         comments = comments[:3]
@@ -115,13 +117,15 @@ def fixture(scenario):
         comments.append(comment(104, security["body"], "2026-10-31T02:13:11Z"))
     if scenario == "unknown bot comment":
         comments.append(comment(104, "A security finding needs attention", "2026-10-31T02:13:12Z"))
-    if scenario in ("overlapping requests", "prior completed cycle", "edited older request"):
+    if scenario in ("overlapping requests", "prior completed cycle", "edited older request", "edited older structured request", "same-second older structured request"):
         older = request(90, "2026-10-31T02:00:00Z")
         comments.insert(0, older)
         if scenario != "overlapping requests":
             comments += [comment(91, code["body"], "2026-10-31T02:01:00Z"), comment(92, security["body"], "2026-10-31T02:02:00Z")]
         if scenario == "edited older request":
             older["updated_at"] = "2026-10-31T02:13:14Z"
+        if scenario in ("edited older structured request", "same-second older structured request"):
+            older["updated_at"] = summary["updated_at"] if scenario.startswith("same-second") else "2026-10-31T02:13:14Z"
     if scenario == "new request":
         comments.append(request(104, "2026-10-31T02:13:14Z"))
     if scenario == "same-second requests":
@@ -190,6 +194,8 @@ elif endpoint == 'repos/owner/repo/pulls/7':
     result = f['pr']
     if n > 1 and s == 'head changed': result['head']['sha'] = 'b'*40
     if n > 1 and s == 'closed during check': result['state'] = 'closed'
+    if n > 1 and s == 'base ref changed': result['base']['ref'] = 'release'
+    if n > 1 and s == 'base sha changed': result['base']['sha'] = 'c'*40
 elif endpoint == 'repos/owner/repo/issues/7/comments?per_page=100':
     assert a[2:] == ['--paginate', '--slurp'], a
     if s == 'pagination failed': sys.exit(55)
@@ -205,6 +211,19 @@ elif endpoint == 'repos/owner/repo/issues/7/comments?per_page=100':
             comments.append({'id': 104, 'body': '@codex review', 'created_at': '2026-10-31T02:13:20Z', 'updated_at': '2026-10-31T02:13:20Z'})
     result = [comments[:2], comments[2:]]
     if s == 'malformed pagination': result = [comments[:2], {'message': 'error'}]
+elif endpoint == 'repos/owner/repo/issues/7/timeline?per_page=100':
+    assert a[2:] == ['--paginate', '--slurp'], a
+    if s == 'timeline failed': sys.exit(55)
+    result = [[], []]
+    if s in ('prior retarget', 'retarget after review', 'retarget during review', 'same-second retarget', 'automatic retarget', 'retarget without request', 'structured retarget', 'retarget missing timestamp') or (s == 'retarget during check' and n > 1):
+        at = '2026-10-31T02:13:14Z'
+        if s == 'prior retarget': at = '2026-10-31T02:10:00Z'
+        if s == 'retarget during review': at = '2026-10-31T02:12:00Z'
+        if s == 'same-second retarget': at = '2026-10-31T02:11:22Z'
+        event = {'id': 300, 'event': 'automatic_base_change_succeeded' if s == 'automatic retarget' else 'base_ref_changed', 'created_at': at}
+        if s == 'retarget missing timestamp': del event['created_at']
+        result[1] = [event]
+    if s == 'malformed timeline': result = [[], {'message': 'error'}]
 elif endpoint == 'repos/owner/repo/issues/7/reactions?per_page=100':
     assert a[2:] == ['--paginate', '--slurp'], a
     if s == 'reaction fetch failed': sys.exit(55)
@@ -287,6 +306,22 @@ CASES = [
     ('unconfirmed approval', True, True),
     ('malformed pagination', False, True),
     ('wrong reaction account', False, False),
+    ('edited older structured request', False, False),
+    ('same-second older structured request', False, False),
+    ('prior retarget', True, False),
+    ('retarget after review', False, False),
+    ('retarget during review', False, False),
+    ('same-second retarget', False, False),
+    ('automatic retarget', False, False),
+    ('retarget without request', False, False),
+    ('structured retarget', False, False),
+    ('retarget during check', False, False),
+    ('base ref changed', False, False),
+    ('base sha changed', False, False),
+    ('missing base', False, False),
+    ('timeline failed', False, True),
+    ('malformed timeline', False, True),
+    ('retarget missing timestamp', False, False),
     ('same-second requests', False, False),
     ('same-second summary start', False, False),
     ('wrong row head', False, False),
