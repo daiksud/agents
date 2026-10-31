@@ -6,6 +6,3 @@ includes: auto
 targets:
   - copilot
   - codex
-dependencies:
-  apm:
-    - nanaism/yomiyasu/skills/yomiyasu
