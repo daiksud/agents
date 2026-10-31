@@ -25,7 +25,7 @@ Under the [collaboration instructions](.apm/instructions/collaboration.instructi
 
 ## Installation
 
-The package includes [yomiyasu](https://github.com/nanaism/yomiyasu/tree/main/skills/yomiyasu) as an external dependency for refining AI-generated Japanese. The dependency follows upstream `main` without a pinned ref.
+The shared instructions require [yomiyasu](https://github.com/nanaism/yomiyasu/tree/main/skills/yomiyasu) for refining Japanese prose. Make the skill available separately; it is not included as an APM dependency of this package.
 
 ```bash
 apm install --global --target codex,copilot daiksud/agents

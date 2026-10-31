@@ -38,6 +38,6 @@ The authoring policy lives in [Separate execution guidance from maintainer notes
 | Issue management | [Sources and adoption notes](skill-sources/issue-management.md) |
 | Software development | [Sources and adoption notes](skill-sources/software-development.md) |
 
-The external `yomiyasu` dependency is maintained upstream and is not rewritten here. Required attribution and licenses remain with the affected skill.
+The external `yomiyasu` skill is maintained upstream and is not included as a package dependency or rewritten here. Required attribution and licenses remain with the affected skill.
 
 [^guidance-separation]: [Issue #231](https://github.com/daiksud/agents/issues/231) records the requested separation, preserved execution boundaries, and migration scope, following the Sakura Miko split in [PR #230](https://github.com/daiksud/agents/pull/230).
