@@ -55,6 +55,22 @@ sources:
     resource: https://github.com/actions/runner/blob/80bb1fb827fa44d489263061e71ef4adba7ad8cd/src/Runner.Worker/Handlers/ScriptHandler.cs
   - id: github-reuse
     resource: https://docs.github.com/en/actions/how-tos/reuse-automations/reuse-workflows
+  - id: github-concurrency
+    resource: https://docs.github.com/en/actions/how-tos/write-workflows/choose-when-workflows-run/control-workflow-concurrency
+  - id: github-artifacts
+    resource: https://docs.github.com/en/actions/tutorials/store-and-share-data
+  - id: agents-staged-ci
+    resource: https://github.com/daiksud/agents/issues/242
+  - id: gh-qw-check-names
+    resource: https://github.com/daiksud/gh-qw/pull/141
+  - id: gh-settings-check-names
+    resource: https://github.com/daiksud/gh-settings/pull/455
+  - id: gh-qw-platforms
+    resource: https://github.com/daiksud/gh-qw/pull/137
+  - id: gh-qw-ci-metadata
+    resource: https://github.com/daiksud/gh-qw/blob/64afba3ce3a32e72dffdcadd4ffdaffc4c034256/.github/actions/ci-metadata/action.yml
+  - id: gh-settings-ci-metadata
+    resource: https://github.com/daiksud/gh-settings/blob/b79568b604f545823e4a36a4de59c3be5b86d4ed/.github/actions/ci-metadata/action.yml
 ---
 
 ## Scope
@@ -170,6 +186,25 @@ Originals are MIT License, Copyright GitHub, Inc. Preserve complete copyright, p
 
 These are this skill's application decisions, not wholesale adoption.
 
+### Staged CI adoption
+
+The operational contract lives in [workflow design](../../skills/github-actions/references/workflow-design.md), with related filtering and cancellation guidance in [efficiency](../../skills/github-actions/references/efficiency.md). Issue #242 records a selected shared policy for adopting repositories, not a universal GitHub requirement or permission to replace their validation with a copied workflow.[^agents-staged-ci]
+
+The original 2026-10-25 record used a common `pass` context and listed four gh-qw CI targets. Later naming decisions, implemented in gh-qw #141 and gh-settings #455, use distinct native `ci-pr` and `ci-push` aggregates and separate `prlint`; the workflow file stem, workflow name, and aggregate job/check name agree. The shared guidance follows those newer names.[^gh-qw-check-names][^gh-settings-check-names] gh-qw #137 retired Linux ARM64 and Intel Mac support. Its current matrix retains Linux amd64, macOS arm64, and Windows amd64, while gh-settings retains both process and public-Action candidate acceptance. Shared orchestration must preserve these current contracts rather than restore the historical target list.[^gh-qw-platforms][^gh-qw-ci-metadata][^gh-settings-ci-metadata]
+
+| Choice | Rationale and tradeoff |
+| --- | --- |
+| Common orchestration with local composite Actions | Consistent dependencies and artifact interfaces permit reuse while local commands and matrices retain repository-specific coverage. This avoids both blanket workflow copies and a new configuration framework. |
+| Build once, then accept the transferred candidate | Testing the same bytes makes acceptance evidence apply to the candidate. Source/platform identity and digest checks detect a wrong handoff; they do not establish current-HEAD freshness or permission to merge. |
+| Ready after Commit, with Acceptance in the same run | Review can begin after fast feedback, while `needs` keeps acceptance tied to that run. A Ready PR can still fail acceptance; review readiness and successful validation are different facts. |
+| Native concurrency and explicit aggregate results | Cancellation reduces superseded work without maintaining custom freshness/recovery coordination. GitHub does not guarantee dispatch ordering, and default dependency skips require an explicit final result check. |
+
+These are the policy's tradeoffs.[^agents-staged-ci] GitHub's dependency rules and `always()` support evaluating failed or skipped prerequisites; concurrency does not supply an atomic latest-HEAD guarantee.[^github-syntax][^github-concurrency] Artifact transfer has a separate integrity concern: the documented digest-mismatch behavior can be only a warning, so adoption must check the selected Action's behavior and make mismatches fail.[^github-artifacts]
+
+**Adoption limits as of 2026-10-31:** the merged product workflows deliberately rerun code validation on metadata edits. That behavior in #141/#455 is an implementation gap relative to #242's selected title/body isolation contract, not evidence that isolation is already implemented.[^gh-qw-check-names][^gh-settings-check-names][^agents-staged-ci] Workflow adoption must preserve required-check semantics while isolating those edits, including cancellation and skipped-success replacement. Fork/Dependabot PRs without Draft/Ready permissions remain outside this selected policy's supported path; privileged fallbacks would change its trust boundary.[^agents-staged-ci][^github-events]
+
+This guidance change does not alter actual workflows, live required contexts, review/merge policy, releases, or global APM deployment. Required-context migration remains a separately authorized settings operation. On 2026-10-31 the source comparison covered the cited repository metadata, PR records, and official dependency, event, concurrency, and artifact documentation. It was a source review, not execution of the proposed workflow contract. Later workflow adoption must distinguish static checks from actual GitHub runs when assessing stage flow, failures, metadata isolation, artifact reuse, and retained platforms.[^agents-staged-ci]
+
 ### Official checks and reassessment conditions
 
 On 2026-09-20 compared official GitHub workflow syntax, reusable workflows, cache, secure use, events, workflow commands, OIDC, Action metadata, and current checkout/setup-node material. The source mapping above preserves the claim scope and URLs formerly recorded in runtime references. Avoid more specification copies; reread target-environment authoritative versions when making version-dependent judgments.
@@ -219,3 +254,11 @@ On 2026-09-22 checked [Runner selection][^github-runner-selection], [self-hosted
 [^github-job-container-shell]: [github-job-container-shell](https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax#jobsjob_idcontainer).
 [^actions-runner-shell-handler]: [actions-runner-shell-handler](https://github.com/actions/runner/blob/80bb1fb827fa44d489263061e71ef4adba7ad8cd/src/Runner.Worker/Handlers/ScriptHandler.cs).
 [^github-reuse]: [github-reuse](https://docs.github.com/en/actions/how-tos/reuse-automations/reuse-workflows).
+[^agents-staged-ci]: [agents-staged-ci](https://github.com/daiksud/agents/issues/242).
+[^gh-qw-check-names]: [gh-qw-check-names](https://github.com/daiksud/gh-qw/pull/141).
+[^gh-settings-check-names]: [gh-settings-check-names](https://github.com/daiksud/gh-settings/pull/455).
+[^gh-qw-platforms]: [gh-qw-platforms](https://github.com/daiksud/gh-qw/pull/137).
+[^gh-qw-ci-metadata]: [gh-qw-ci-metadata](https://github.com/daiksud/gh-qw/blob/64afba3ce3a32e72dffdcadd4ffdaffc4c034256/.github/actions/ci-metadata/action.yml).
+[^gh-settings-ci-metadata]: [gh-settings-ci-metadata](https://github.com/daiksud/gh-settings/blob/b79568b604f545823e4a36a4de59c3be5b86d4ed/.github/actions/ci-metadata/action.yml).
+[^github-concurrency]: [github-concurrency](https://docs.github.com/en/actions/how-tos/write-workflows/choose-when-workflows-run/control-workflow-concurrency).
+[^github-artifacts]: [github-artifacts](https://docs.github.com/en/actions/tutorials/store-and-share-data).

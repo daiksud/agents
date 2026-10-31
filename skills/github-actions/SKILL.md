@@ -18,6 +18,7 @@ Read only applicable material, combining it when multiple areas are involved.
 | Work or reading condition | Material |
 | --- | --- |
 | New workflows, triggers, job dependencies, reuse, deployment structure, runner/shell selection or changes | [Workflow design](references/workflow-design.md) |
+| Adopting shared staged PR/main CI, Commit/Acceptance boundaries, or final check names | [Staged CI adoption](references/workflow-design.md#staged-ci-adoption) |
 | Security audits or changes involving permissions, external input, authentication, untrusted code, artifact/cache trust boundaries | [Safety](references/hardening.md) |
 | Slow CI, duplicate runs, caching, skip conditions, parallelization, matrix improvements | [Efficiency improvements](references/efficiency.md) |
 | Action version upgrades, internal-runtime deprecation warnings, runner compatibility | [Runtime upgrades](references/runtime-upgrades.md) |
