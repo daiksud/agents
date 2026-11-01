@@ -44,15 +44,13 @@ CI does not wait for reviews or merge PRs. This repository does not wait for Cod
 
 ## Codex approval automation
 
-[The approval workflow](.github/workflows/approve-codex-review.yml) runs when `chatgpt-codex-connector[bot]` creates or edits a Codex Review Summary comment on a PR. It fetches that comment again and approves when both the Code Review and Security Review rows show `Completed` and the same Codex account has a thumbs-up reaction on the PR body. Other users' reactions do not count.
+[The approval workflow](.github/workflows/approve-codex-review.yml) interprets trusted Codex code and security review results for the exact current HEAD, including finding checks and clean matching receipts when security flags are nullable. It requires the trusted Codex thumbs-up, rechecks review evidence and current HEAD, and submits the approving review with that exact `commit_id`. A successful run may withhold approval; it does not mean the PR can merge.
 
-If both reviews are complete but Codex's thumbs-up is missing, it retries every 30 seconds, up to six retries after the initial check: at most 180 seconds of waiting. Each retry rereads the Summary before checking reactions, stopping without approval if either review is no longer complete. A timeout exits normally. A failed API or approval request fails the run without withdrawing existing approvals.
+Completed same-HEAD results and an existing thumbs-up are reusable. New review requests, timestamps and reaction age do not require a repeat review. The workflow does not track base history or withdraw approvals. [Review automation responsibilities](docs/engineering-policies/review-automation.md) records the Ruleset boundary, live configuration observed on 2026-11-01, and remaining evidence limitations.
 
-Approval uses `gh pr review --approve`. The workflow does not compare reviewed commits with HEAD, check the eyes reaction, inspect review history, suppress duplicate approvals, or withdraw approvals. PR lifecycle and review-submission triggers and manual reconciliation are removed. After the polling window ends, another Summary creation or edit is needed to start a new check.
+The workflow reacts to trusted Summary creation/edits and successful `ci-pr` completion. Missing thumbs-up is polled every 30 seconds for at most six retries; a timeout reports withheld approval, while API failures fail the run. CI owns Draft/Ready operations, required checks and acceptance, and does not wait for reviews or merge PRs.
 
 The approval workflow has no `workflow_call` entry point. CI owns its Draft/Ready operations directly in `ci-pr.yml`. Each PR has workflow-level concurrency with `cancel-in-progress: true`, without HEAD/base checks, coordination with approval, or recovery to Draft after a failure. Cancellation is not an atomic latest-HEAD guarantee. Failed acceptance leaves the PR Ready but the required `pass` check unsuccessful. CI contains no review-wait loop and does not merge PRs. GitHub suppresses most workflow events caused by `GITHUB_TOKEN`, so CI changes Draft/Ready directly rather than relying on a later Ready event.[^github-token-events]
-
-This intentionally trades freshness guarantees for a smaller approval rule: an older completed Summary and existing thumbs-up may approve newer code or a new review cycle before Codex publishes updated status. Existing approvals are not withdrawn when conditions change. Elapsed time is never evidence of completion. Regression tests execute the production shell with fixture-backed `gh` and `sleep` boundaries; they do not prove live event delivery or token permissions.
 
 [^github-token-events]: GitHub documents the workflow event suppression rules for repository `GITHUB_TOKEN` operations.
 
