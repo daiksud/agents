@@ -1,19 +1,20 @@
 ---
 type: Policy
 title: Review automation and merge protection
-description: Separate the two Codex approval conditions from Ruleset enforcement of merge eligibility.
+description: Bind Codex approval to the reviewed HEAD and leave merge eligibility to Rulesets.
 ---
 
 ## Current choice and applicability
 
-This policy applies to this repository's [Codex approval workflow](../../.github/workflows/approve-codex-review.yml). It submits approval when both conditions hold:
+This policy applies to this repository's [Codex approval workflow](../../.github/workflows/approve-codex-review.yml). It follows [gh-settings #553](https://github.com/daiksud/gh-settings/pull/553) and submits approval when these conditions hold:
 
 1. Codex has reacted with 👍 on the PR.
 2. The latest Codex Review Summary shows Code Review and Security Review as Completed.
+3. Both full reviewed SHAs match the current PR HEAD.
 
-GitHub's `user.login` identifies the Codex account. The latest Summary is selected by comment ID, and only its Markdown status cells determine completion. The workflow does not add HEAD, base, timestamps, receipts, finding flags, earlier requests or requested changes as approval conditions. It submits `APPROVE` without `commit_id`, leaving target-commit selection to GitHub. It does not require structured Summary metadata. Before submission it rereads only the same two conditions; changed comment bodies or reaction IDs are not extra gates.
+GitHub's `user.login` identifies the Codex account. The latest Summary is selected by comment ID, and its Markdown status cells determine completion. After both signals are present, the workflow reads HEAD once and compares it with both full `commit_sha` fields in `codex-review-state:v1`. Missing, malformed or ambiguous commit metadata withholds approval. It submits the verified SHA as `commit_id` and requires the approval response to confirm that commit. Base, timestamps, receipts, finding flags, earlier requests and requested changes are not additional conditions.
 
-Summary creation/edits and completed `ci-pr` runs trigger evaluation. CI success is a merge-protection concern, not another approval condition. A Summary can update before its reaction appears, so the workflow polls the same two conditions with six retries at 30-second intervals. A thumbs-up alone is not an `issue_comment` trigger; after polling ends, a later Summary or `ci-pr` completion event is needed. Per-PR concurrency serializes jobs. Repeated qualifying events can submit another approval; review-history checks do not suppress it.
+Summary creation/edits and completed `ci-pr` runs trigger evaluation. CI success is a merge-protection concern. A Summary can update before its reaction appears, so the workflow waits with six retries at 30-second intervals. Each attempt reads Summary and reaction once, and reads HEAD only when both signals are present; it does not reread the signals before submission. A thumbs-up alone is not an `issue_comment` trigger; after polling ends, a later Summary or `ci-pr` completion event is needed. Per-PR concurrency serializes jobs. Repeated qualifying events can submit another approval; review-history checks do not suppress it.
 
 ## Ruleset responsibility
 
@@ -23,8 +24,8 @@ GitHub's [stale approval rule](https://docs.github.com/en/repositories/configuri
 
 ## Rationale and trade-offs
 
-The user selected these two conditions to keep automatic approval small and leave merge policy with GitHub. HEAD/base correlation, receipt validation, finding flags and request-cycle bookkeeping are intentionally removed rather than becoming parallel approval policy. The workflow does not withdraw approvals or bypass merge protection. API failures are reported as failures; a successful run can withhold approval when either condition is absent.
+Full-SHA equality prevents a retained review for another commit from approving the current HEAD. Receipt validation, finding flags, base tracking and request-cycle bookkeeping remain outside this workflow. API failures are reported as failures; a successful run can withhold approval when evidence is absent or the reviewed SHAs differ.
 
-A completed Summary and an existing thumbs-up can be reused after code or base changes, including when metadata or earlier comments describe findings. A newly issued approval therefore does not prove that the current commit or diff was reviewed, and stale dismissal of prior approvals cannot establish that proof. This is an accepted limit of the chosen policy, not a claim that Rulesets eliminate it. Actual approving reviews, required checks and resolved threads remain separate requirements. Ordinary [review and merge procedures](../../skills/change-delivery/references/review-and-merge.md) still apply.
+Completed same-HEAD results and an existing thumbs-up remain reusable after a base change, including when other metadata or earlier comments describe findings. A newly issued approval therefore does not prove which diff was reviewed. Verification and POST are separate operations: a later push cannot retarget the submitted `commit_id`, but this is not an atomic current-HEAD guarantee. There is no extra reread if Summary or reaction changes after its read. The workflow does not withdraw approvals or bypass merge protection. Actual approving reviews, required checks and resolved threads remain separate requirements. Ordinary [review and merge procedures](../../skills/change-delivery/references/review-and-merge.md) still apply.
 
 Introducing/revising PR: [#265](https://github.com/daiksud/agents/pull/265).
