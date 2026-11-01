@@ -23,3 +23,5 @@ This intentionally does not prove review-cycle identity or detect edited/replaye
 ## Alternatives and reconsideration
 
 Requiring a new request/receipt cycle after every request, or tracking base history inside the workflow, adds coordination that does not demonstrate a code change at the same HEAD. The chosen boundary uses current commit/result identity and leaves merge policy to Rulesets. If merge protection needs to change, inspect and explicitly authorize that settings change rather than silently compensating in approval automation. Ordinary [review and merge procedures](../../skills/change-delivery/references/review-and-merge.md) still apply.
+
+Introducing/revising PR: [#265](https://github.com/daiksud/agents/pull/265).
