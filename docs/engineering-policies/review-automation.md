@@ -1,27 +1,30 @@
 ---
 type: Policy
 title: Review automation and merge protection
-description: Separate Codex review interpretation from Ruleset enforcement of merge eligibility.
+description: Separate the two Codex approval conditions from Ruleset enforcement of merge eligibility.
 ---
 
 ## Current choice and applicability
 
-This policy applies to this repository's [Codex approval workflow](../../.github/workflows/approve-codex-review.yml). It interprets trusted completed review results for the current HEAD and submits approval for that commit. Rulesets own merge eligibility, including required approvals, stale approval dismissal, required checks and base synchronization. Installing this package does not apply this repository's protection settings to another repository.
+This policy applies to this repository's [Codex approval workflow](../../.github/workflows/approve-codex-review.yml). It submits approval when both conditions hold:
 
-The live [default Ruleset](https://github.com/daiksud/agents/rules/22615823), read on 2026-11-01, was active for `main`, with `dismiss_stale_reviews_on_push: true` and `strict_required_status_checks_policy: true` for `pass`. Recheck live rules and applicable bypass permissions before claiming enforcement. This change does not apply settings or use bypass permissions.
+1. Codex has reacted with 👍 on the PR.
+2. The latest Codex Review Summary shows Code Review and Security Review as Completed.
 
-GitHub's [stale approval rule](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-protected-branches/about-protected-branches#require-pull-request-reviews-before-merging) tracks changes to the approved diff, including changes introduced through the merge base. A new HEAD SHA or an update to `main` is not by itself a complete statement of dismissal conditions. [Strict required checks](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-rulesets/available-rules-for-rulesets#require-status-checks-to-pass-before-merging) require an up-to-date base before merge; this does not prove which base Codex reviewed.
+GitHub's `user.login` identifies the Codex account. The latest Summary is selected by comment ID, and only its Markdown status cells determine completion. The workflow does not add HEAD, base, timestamps, receipts, finding flags, earlier requests or requested changes as approval conditions. It submits `APPROVE` without `commit_id`, leaving target-commit selection to GitHub. It does not require structured Summary metadata. Before submission it rereads only the same two conditions; changed comment bodies or reaction IDs are not extra gates.
+
+Summary creation/edits and completed `ci-pr` runs trigger evaluation. CI success is a merge-protection concern, not another approval condition. A Summary can update before its reaction appears, so the workflow polls the same two conditions with six retries at 30-second intervals. A thumbs-up alone is not an `issue_comment` trigger; after polling ends, a later Summary or `ci-pr` completion event is needed. Per-PR concurrency serializes jobs. Repeated qualifying events can submit another approval; review-history checks do not suppress it.
+
+## Ruleset responsibility
+
+Rulesets own merge eligibility: required approvals, stale approval dismissal, required checks, base synchronization and review-thread resolution. Installing this package does not apply these settings to other repositories. The live [default Ruleset](https://github.com/daiksud/agents/rules/22615823), read on 2026-11-01, was active for `main`, with one required approval, resolved threads, `dismiss_stale_reviews_on_push: true` and strict required `pass` checks. Recheck current settings and applicable bypass permissions before claiming enforcement; this change does not alter them.
+
+GitHub's [stale approval rule](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-protected-branches/about-protected-branches#require-pull-request-reviews-before-merging) concerns the approved diff and merge-base changes, not every SHA change in isolation. [Strict required checks](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-rulesets/available-rules-for-rulesets#require-status-checks-to-pass-before-merging) require base synchronization before merging; they do not prove which diff Codex reviewed.
 
 ## Rationale and trade-offs
 
-The workflow verifies Codex Bot/App provenance, completed code and security results for the exact HEAD, findings and the trusted thumbs-up. Nullable security results additionally need the latest trusted clean receipt of each kind for that HEAD and full-SHA resolution. It rechecks trusted evidence, reaction, open state and HEAD before submitting approval with the verified `commit_id`.
+The user selected these two conditions to keep automatic approval small and leave merge policy with GitHub. HEAD/base correlation, receipt validation, finding flags and request-cycle bookkeeping are intentionally removed rather than becoming parallel approval policy. The workflow does not withdraw approvals or bypass merge protection. API failures are reported as failures; a successful run can withhold approval when either condition is absent.
 
-Completed same-HEAD results and an existing thumbs-up remain usable after another request. No timestamp, edit-time or request-cycle comparison forces the same code to be reviewed again. Base history, stale approval dismissal and merge checks stay with GitHub rather than being duplicated in the workflow. Keeping separate responsibilities avoids a permanent approval hold after a base retarget.
-
-This intentionally does not prove review-cycle identity or detect edited/replayed evidence through timestamps. A HEAD-only result does not identify the reviewed base or prove that the current diff was reviewed after a base update. A workflow may withhold approval and still exit successfully; approval is separate from passing CI and merge eligibility. Required checks remain enforced by the live rules, not by the act of approving.
-
-## Alternatives and reconsideration
-
-Requiring a new request/receipt cycle after every request, or tracking base history inside the workflow, adds coordination that does not demonstrate a code change at the same HEAD. The chosen boundary uses current commit/result identity and leaves merge policy to Rulesets. If merge protection needs to change, inspect and explicitly authorize that settings change rather than silently compensating in approval automation. Ordinary [review and merge procedures](../../skills/change-delivery/references/review-and-merge.md) still apply.
+A completed Summary and an existing thumbs-up can be reused after code or base changes, including when metadata or earlier comments describe findings. A newly issued approval therefore does not prove that the current commit or diff was reviewed, and stale dismissal of prior approvals cannot establish that proof. This is an accepted limit of the chosen policy, not a claim that Rulesets eliminate it. Actual approving reviews, required checks and resolved threads remain separate requirements. Ordinary [review and merge procedures](../../skills/change-delivery/references/review-and-merge.md) still apply.
 
 Introducing/revising PR: [#265](https://github.com/daiksud/agents/pull/265).

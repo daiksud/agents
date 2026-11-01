@@ -1,351 +1,274 @@
-"""Run the actual inline approval script against isolated, paginated gh fixtures.
+"""Execute the actual inline script with isolated GitHub API responses."""
 
-Evidence cases follow gh-settings' approval_workflow_test.go at 64dd9a6.
-No live API calls or ambient credentials are used.
-"""
+import contextlib
+import copy
+import io
 import json
 import os
 from pathlib import Path
 import subprocess
 import tempfile
+import textwrap
 import unittest
+from unittest.mock import patch
 
-HEAD = "a" * 40
-BOT = {"login": "chatgpt-codex-connector[bot]", "id": 199175422, "type": "Bot"}
-APP = {"id": 1144995, "slug": "chatgpt-codex-connector"}
-
-
-def comment(identifier, body, at):
-    return {"id": identifier, "body": body, "created_at": at, "updated_at": at,
-            "user": dict(BOT), "performed_via_github_app": dict(APP)}
+WORKFLOW = Path(os.environ.get("APPROVAL_WORKFLOW_FIXTURE", Path(__file__).resolve().parents[1] / ".github/workflows/approve-codex-review.yml"))
+ROOT = "repos/owner/repo"
+BOT = "chatgpt-codex-connector[bot]"
+PREFIX = "<!-- codex-pull-request-review-summary -->"
 
 
-def request(identifier, at):
-    return {"id": identifier, "body": "@codex review", "created_at": at,
-            "updated_at": at, "user": {"login": "author", "type": "User"}}
+def summary(code="Completed", security="Completed", identifier=10):
+    # Observed Codex table: emoji/bold labels, status, time, commit, trigger.
+    body = (PREFIX + "\n## Codex Review Summary\n\n"
+            "| Review | Status | Commit | Review trigger |\n"
+            "| --- | --- | --- | --- |\n"
+            f'| 📝 **Code Review** | ✅ **{code}** <relative-time datetime="not-a-clock">done</relative-time> | `aaaaaaa` | Manual request |\n'
+            f'| 🔒 **Security Review** | ✅ **{security}** <relative-time datetime="not-a-clock">done</relative-time> | `aaaaaaa` | Manual request |\n')
+    return {"id": identifier, "body": body, "user": {"login": BOT}}
 
 
-def fixture(scenario):
-    code_state = {"commit_sha": HEAD, "status": "completed",
-                  "has_unresolved_findings": False, "has_any_findings": False}
-    security_state = dict(code_state, has_unresolved_findings=None, has_any_findings=None)
-    req = request(100, "2026-10-31T02:11:22Z")
-    summary = comment(101, "", "2026-10-31T02:11:44Z")
-    summary["updated_at"] = "2026-10-31T02:13:13Z"
-    code = comment(102, "<!-- codex-review-receipt:v1 -->\n\nCodex Review: Didn't find any major issues. Keep them coming!\n\n**Reviewed commit:** `aaaaaaaaaa`\n", "2026-10-31T02:12:36Z")
-    security = comment(103, "<!-- codex-review-receipt:v1 -->\n\n### 🛡️ Codex Security Review · _Automatically triggered_\n\nSecurity review completed. No security issues were found in this pull request.\n\n**Reviewed commit:** `aaaaaaaaaa`\n\n[View security finding report](https://chatgpt.com/codex/cloud/tasks/task_example)", "2026-10-31T02:13:10Z")
-    for item in (code, security):
-        item["body"] += '\n<details>\nReviews are triggered when you comment "@codex review" or "@codex security review".\n</details>\n'
-    reaction = {"id": 200, "user": dict(BOT, type="User"), "content": "+1", "created_at": "2026-10-31T02:13:15Z"}
-    pr = {"state": "open", "draft": scenario == "draft", "head": {"sha": HEAD}, "base": {"ref": "main", "sha": "b" * 40}}
-    if scenario in ("structured clean", "edited older structured request", "same-second older structured request", "structured retarget", "retarget without request"):
-        security_state.update(has_any_findings=False, has_unresolved_findings=False)
-    if scenario == "code findings":
-        code_state["has_unresolved_findings"] = True
-    if scenario == "security findings":
-        security_state["has_unresolved_findings"] = True
-    if scenario == "security any findings":
-        security_state["has_any_findings"] = True
-    if scenario == "missing security flag":
-        del security_state["has_unresolved_findings"]
-    if scenario == "wrong flag type":
-        security_state["has_unresolved_findings"] = "false"
-    for kind, state in (("code", code_state), ("security", security_state)):
-        if scenario == kind + " incomplete":
-            state["status"] = "in_progress"
-        if scenario == kind + " stale":
-            state["commit_sha"] = "b" * 40
-    if scenario in ("spoofed summary", "spoofed receipt"):
-        (summary if scenario == "spoofed summary" else security)["user"] = {"login": "outsider", "id": 1, "type": "User"}
-    if scenario in ("wrong app", "wrong summary app"):
-        (summary if scenario == "wrong summary app" else security)["performed_via_github_app"] = {"id": 42}
-    if scenario == "receipt missing app":
-        del security["performed_via_github_app"]
-    if scenario == "initial automatic overlap":
-        summary["created_at"] = "2026-10-31T02:11:00Z"
-    if scenario == "same-second summary start":
-        summary["created_at"] = req["created_at"]
-    if scenario == "security receipt findings":
-        security["body"] = security["body"].replace("No security issues were found in this pull request.", "Security issues were found.")
-    if scenario == "wrong receipt head":
-        security["body"] = security["body"].replace("aaaaaaaaaa", "bbbbbbbbbb")
-    if scenario == "old same-head receipt":
-        security.update(created_at="2026-10-31T02:10:00Z", updated_at="2026-10-31T02:10:00Z")
-    if scenario == "edited receipt":
-        security["updated_at"] = "2026-10-31T02:13:12Z"
-    if scenario == "edited request":
-        req["updated_at"] = "2026-10-31T02:11:23Z"
-    if scenario == "security-only request":
-        req["body"] = "@codex security review"
-    if scenario == "old reaction":
-        reaction["created_at"] = "2026-10-31T02:11:00Z"
-    if scenario == "same-second reaction":
-        reaction["created_at"] = summary["updated_at"]
-    if scenario == "other reaction":
-        reaction["user"] = {"login": "other", "id": 1, "type": "User"}
-    if scenario == "wrong reaction account":
-        reaction["user"]["id"] = 1
-    if scenario == "closed":
-        pr["state"] = "closed"
-    if scenario == "missing base":
-        del pr["base"]
-    metadata = {"blockingSeverityThreshold": "P0", "headSha": HEAD, "mergeGateEnabled": False,
-                "pullRequestNumber": 7, "repository": "owner/repo", "status": "completed"}
-    state = {"code_review": code_state, "security_review": security_state}
-    summary["body"] = ("<!-- codex-pull-request-review-summary -->\n<!-- codex-review-state:v1 " + json.dumps(state) + " -->\n<!-- codex-security-review:v1 " + json.dumps(metadata) + " -->\n"
-        '| 📝 **Code Review** | ✅ **Completed** <relative-time datetime="2026-10-31T02:12:38.414268Z">2026-10-31T02:12:38.414268Z</relative-time> | `aaaaaaa` | Manual request |\n'
-        '| 🔒 **Security Review** | ✅ **Completed** <relative-time datetime="2026-10-31T02:13:11.462255Z">2026-10-31T02:13:11.462255Z</relative-time> | `aaaaaaa` | Manual request |\n'
-        '\n<details>\nReviews are triggered when you comment "@codex review" or "@codex security review".\n</details>\n')
-    replacements = {
-        "automatic nullable cycle": ("Manual request", "Automatic review"),
-        "wrong security metadata": ('"pullRequestNumber": 7', '"pullRequestNumber": 8'),
-        "completion before receipt": ("02:13:11.462255", "02:13:09.462255"),
-        "wrong row head": ("`aaaaaaa`", "`bbbbbbb`"),
-    }
-    if scenario in replacements:
-        summary["body"] = summary["body"].replace(*replacements[scenario])
-    if scenario == "malformed summary":
-        summary["body"] = "<!-- codex-pull-request-review-summary -->\n<!-- codex-review-state:v1 broken -->"
-    if scenario == "duplicate marker":
-        summary["body"] += "<!-- codex-review-state:v1 {} -->\n"
-    comments = [req, summary, code, security]
-    if scenario in ("no request", "retarget without request"):
-        comments = comments[1:]
-    if scenario == "no security receipt":
-        comments = comments[:3]
-    if scenario == "duplicate receipt":
-        comments.append(comment(104, security["body"], "2026-10-31T02:13:11Z"))
-    if scenario == "unknown bot comment":
-        comments.append(comment(104, "A security finding needs attention", "2026-10-31T02:13:12Z"))
-    if scenario in ("overlapping requests", "prior completed cycle", "edited older request", "edited older structured request", "same-second older structured request"):
-        older = request(90, "2026-10-31T02:00:00Z")
-        comments.insert(0, older)
-        if scenario != "overlapping requests":
-            comments += [comment(91, code["body"], "2026-10-31T02:01:00Z"), comment(92, security["body"], "2026-10-31T02:02:00Z")]
-        if scenario == "edited older request":
-            older["updated_at"] = "2026-10-31T02:13:14Z"
-        if scenario in ("edited older structured request", "same-second older structured request"):
-            older["updated_at"] = summary["updated_at"] if scenario.startswith("same-second") else "2026-10-31T02:13:14Z"
-    if scenario == "new request":
-        comments.append(request(104, "2026-10-31T02:13:14Z"))
-    if scenario == "same-second requests":
-        comments.append(request(99, req["created_at"]))
-    if scenario in ("missing timestamps", "malformed timestamps"):
-        for item in [*comments, reaction]:
-            for field in ("created_at", "updated_at"):
-                item.pop(field, None)
-                if scenario == "malformed timestamps":
-                    item[field] = "not-a-date"
-        summary["body"] = summary["body"].replace("<relative-time datetime=", "<ignored-time value=")
-    return {"comments": comments, "pr": pr, "reaction": reaction, "summary": summary, "scenario": scenario}
+def fixture():
+    return {"comments": [summary()], "reactions": [{"user": {"login": BOT, "type": "User"}, "content": "+1"}]}
+
+
+def execute(data, mutate=None, failure=None, pagination=None, response=None, summary_file=True):
+    source = textwrap.dedent(WORKFLOW.read_text().split("python3 - <<'PYTHON'\n", 1)[1].rsplit("\n          PYTHON", 1)[0])
+    data = copy.deepcopy(data)
+    writes, reads, sleeps = [], {}, []
+    stdout, stderr = io.StringIO(), io.StringIO()
+
+    def process(args, **kwargs):
+        if args == ["sleep", "30"]:
+            sleeps.append(30)
+            return subprocess.CompletedProcess(args, 0)
+        if args[:2] != ["gh", "api"]:
+            raise AssertionError("Unexpected external command")
+        if args[2] == "--method":
+            # No locally selected HEAD or extra approval fields are submitted.
+            if args != ["gh", "api", "--method", "POST", f"{ROOT}/pulls/7/reviews", "-f", "event=APPROVE"]:
+                raise AssertionError("Unexpected write")
+            if failure == "post":
+                return subprocess.CompletedProcess(args, 1, "secret API body", "secret stderr")
+            writes.append(args)
+            return subprocess.CompletedProcess(args, 0, json.dumps({"state": "APPROVED", "commit_id": "server-selected"} if response is None else response))
+        endpoint = args[2].split("?", 1)[0]
+        if args[3:] != ["--paginate", "--slurp"]:
+            raise AssertionError("Collection must be paginated")
+        reads[endpoint] = reads.get(endpoint, 0) + 1
+        if mutate:
+            mutate(endpoint, reads[endpoint], data)
+        if failure == endpoint:
+            return subprocess.CompletedProcess(args, 1, "secret API body", "secret stderr")
+        if failure == "json":
+            return subprocess.CompletedProcess(args, 0, "secret non-JSON response")
+        values = {f"{ROOT}/issues/7/comments": data["comments"], f"{ROOT}/issues/7/reactions": data["reactions"]}
+        # Any PR, HEAD, base, receipts, timeline or review-history read fails here.
+        if endpoint not in values:
+            raise AssertionError("Unexpected extra eligibility read")
+        rows = values[endpoint]
+        result = [rows[:1], rows[1:]] if pagination is None else pagination
+        return subprocess.CompletedProcess(args, 0, json.dumps(result))
+
+    with tempfile.TemporaryDirectory() as folder:
+        path = Path(folder) / "summary.md"
+        env = {"GITHUB_REPOSITORY": "owner/repo", "PR_NUMBER": "7", "GH_TOKEN": "dummy-test-token", "COMMENT_ID": "superseded-event"}
+        if summary_file:
+            env["GITHUB_STEP_SUMMARY"] = str(path)
+        with patch.dict(os.environ, env, clear=True), patch("subprocess.run", side_effect=process), contextlib.redirect_stdout(stdout), contextlib.redirect_stderr(stderr):
+            code = 0
+            try:
+                exec(compile(source, str(WORKFLOW), "exec"), {"__name__": "__main__"})
+            except SystemExit as error:
+                code = error.code
+        note = path.read_text() if path.exists() else ""
+    return {"code": code, "writes": writes, "reads": reads, "sleeps": sleeps, "output": stdout.getvalue() + stderr.getvalue(), "summary": note}
 
 
 class ApprovalWorkflowTests(unittest.TestCase):
-    def run_case(self, scenario, approve, fail):
-        workflow = Path(os.environ.get("APPROVAL_WORKFLOW_FIXTURE", Path(__file__).resolve().parents[1] / ".github/workflows/approve-codex-review.yml"))
-        block = workflow.read_text().split("        run: |\n", 1)[1]
-        lines = []
-        for line in block.splitlines():
-            if line.strip() and not line.startswith("          "):
-                break
-            lines.append(line[10:] if line.startswith("          ") else line)
-        self.assertTrue(lines, "missing inline approval script")
-        with tempfile.TemporaryDirectory() as tmp:
-            root = Path(tmp)
-            (root / "fixture.json").write_text(json.dumps(fixture(scenario)))
-            (root / "workflow.sh").write_text("\n".join(lines) + "\n")
-            (root / "gh").write_text(API_STUB)
-            (root / "sleep").write_text('#!/bin/sh\ntest "$*" = 30 || exit 1\nprintf "sleep\\n" >> "$FIXTURE_ROOT/sleeps"\n')
-            for tool in ("gh", "sleep"):
-                (root / tool).chmod(0o700)
-            env = {"PATH": tmp + os.pathsep + os.environ["PATH"], "HOME": tmp,
-                   "GH_CONFIG_DIR": tmp, "GH_TOKEN": "dummy-not-a-token",
-                   "GITHUB_REPOSITORY": "owner/repo", "PR_NUMBER": "7", "FIXTURE_ROOT": tmp,
-                   "COMMENT_ID": "101" if scenario == "comment event" else "99" if scenario == "old comment event" else ""}
-            result = subprocess.run(["bash", str(root / "workflow.sh")], env=env, capture_output=True, text=True, timeout=20)
-            output = result.stdout + result.stderr
-            self.assertEqual(result.returncode != 0, fail, output)
-            approvals = (root / "approvals").read_text() if (root / "approvals").exists() else ""
-            self.assertEqual(approvals, HEAD + "\n" if approve else "", output)
-            self.assertNotIn("dummy-not-a-token", output)
-            self.assertTrue(output.strip(), "missing approval/hold diagnostic")
-            if scenario == "missing reaction":
-                self.assertEqual((root / "sleeps").read_text().splitlines(), ["sleep"] * 6)
-            if scenario == "delayed reaction":
-                self.assertEqual((root / "sleeps").read_text().splitlines(), ["sleep"])
+    def approved(self, result):
+        self.assertEqual(result["code"], 0, result)
+        self.assertEqual(len(result["writes"]), 1, result)
+        self.assertIn("Codex approval: Approved", result["output"])
 
+    def withheld(self, result):
+        self.assertEqual(result["code"], 0, result)
+        self.assertEqual(result["writes"], [], result)
+        self.assertIn("Codex approval: Withheld", result["output"])
 
-API_STUB = r'''#!/usr/bin/env python3
-import json, os, pathlib, sys
-root = pathlib.Path(os.environ['FIXTURE_ROOT'])
-f = json.loads((root / 'fixture.json').read_text())
-s = f['scenario']
-a = sys.argv[1:]
-assert a[0] == 'api', a
-endpoint = a[1]
-counts_file = root / 'counts'
-counts = json.loads(counts_file.read_text()) if counts_file.exists() else {}
-counts[endpoint] = counts.get(endpoint, 0) + 1
-counts_file.write_text(json.dumps(counts))
-n = counts[endpoint]
-if endpoint == '--method':
-    assert a[2:] == ['POST', 'repos/owner/repo/pulls/7/reviews', '-f', 'event=APPROVE', '-f', 'commit_id=' + 'a'*40], a
-    if s in ('post rejected', 'post non-json'):
-        print('dummy-not-a-token', file=sys.stderr)
-        print(json.dumps({'message': 'denied', 'errors': [{'field': 'commit_id'}], 'secret': 'dummy-not-a-token'}) if s == 'post rejected' else 'dummy-not-a-token')
-        sys.exit(42)
-    with (root / 'approvals').open('a') as out: out.write('a'*40 + '\n')
-    result = {'state': 'APPROVED', 'commit_id': 'a'*40}
-    if s == 'unconfirmed approval': result['state'] = 'PENDING'
-elif endpoint == 'repos/owner/repo/pulls/7':
-    result = f['pr']
-    if n > 1 and s == 'head changed': result['head']['sha'] = 'b'*40
-    if n > 1 and s == 'closed during check': result['state'] = 'closed'
-    if n > 1 and s == 'base ref changed': result['base']['ref'] = 'release'
-    if n > 1 and s == 'base sha changed': result['base']['sha'] = 'c'*40
-elif endpoint == 'repos/owner/repo/issues/7/comments?per_page=100':
-    assert a[2:] == ['--paginate', '--slurp'], a
-    if s == 'pagination failed': sys.exit(55)
-    comments = f['comments']
-    if n > 1:
-        if s == 'summary changed':
-            for c in comments:
-                if c['id'] == 101: c['body'] = c['body'].replace('completed', 'in_progress')
-        if s == 'receipt edited during check':
-            for c in comments:
-                if c['id'] == 103: c['body'] += '\nchanged'; c['updated_at'] = '2026-10-31T02:13:20Z'
-        if s == 'request during check':
-            comments.append({'id': 104, 'body': '@codex review', 'created_at': '2026-10-31T02:13:20Z', 'updated_at': '2026-10-31T02:13:20Z'})
-    result = [comments[:2], comments[2:]]
-    if s == 'malformed pagination': result = [comments[:2], {'message': 'error'}]
-elif endpoint == 'repos/owner/repo/issues/7/timeline?per_page=100':
-    assert a[2:] == ['--paginate', '--slurp'], a
-    if s == 'timeline failed': sys.exit(55)
-    result = [[], []]
-    if s in ('prior retarget', 'retarget after review', 'retarget during review', 'same-second retarget', 'automatic retarget', 'retarget without request', 'structured retarget', 'retarget missing timestamp') or (s == 'retarget during check' and n > 1):
-        at = '2026-10-31T02:13:14Z'
-        if s == 'prior retarget': at = '2026-10-31T02:10:00Z'
-        if s == 'retarget during review': at = '2026-10-31T02:12:00Z'
-        if s == 'same-second retarget': at = '2026-10-31T02:11:22Z'
-        event = {'id': 300, 'event': 'automatic_base_change_succeeded' if s == 'automatic retarget' else 'base_ref_changed', 'created_at': at}
-        if s == 'retarget missing timestamp': del event['created_at']
-        result[1] = [event]
-    if s == 'malformed timeline': result = [[], {'message': 'error'}]
-elif endpoint == 'repos/owner/repo/issues/7/reactions?per_page=100':
-    assert a[2:] == ['--paginate', '--slurp'], a
-    if s == 'reaction fetch failed': sys.exit(55)
-    result = [[], [f['reaction']]]
-    if s == 'missing reaction' or (s == 'delayed reaction' and n == 1) or (s == 'reaction removed' and n > 1): result = [[], []]
-elif endpoint == 'repos/owner/repo/pulls/7/reviews?per_page=100':
-    assert a[2:] == ['--paginate', '--slurp'], a
-    result = [[], []]
-    if s == 'already approved': result[1] = [{'user': {'login': 'github-actions[bot]'}, 'state': 'APPROVED', 'commit_id': 'a'*40}]
-    if s == 'changes requested': result[1] = [{'user': {'login': 'reviewer'}, 'state': 'CHANGES_REQUESTED', 'commit_id': 'a'*40}]
-elif endpoint == 'repos/owner/repo/commits/aaaaaaaaaa':
-    if s == 'ambiguous short sha': sys.exit(22)
-    result = {'sha': 'a'*40}
-    if s == 'wrong resolved sha': result['sha'] = 'b'*40
-else:
-    raise AssertionError('unexpected API ' + str(a))
-print(json.dumps(result))
-'''
+    def test_two_conditions_approve(self):
+        self.approved(execute(fixture()))
 
-CASES = [
-    ('nullable clean', True, False),
-    ('missing timestamps', True, False),
-    ('malformed timestamps', True, False),
-    ('structured clean', True, False),
-    ('draft', True, False),
-    ('comment event', True, False),
-    ('old comment event', False, False),
-    ('prior completed cycle', True, False),
-    ('code findings', False, False),
-    ('security findings', False, False),
-    ('security any findings', False, False),
-    ('missing security flag', False, False),
-    ('wrong flag type', False, False),
-    ('code incomplete', False, False),
-    ('security incomplete', False, False),
-    ('code stale', False, False),
-    ('security stale', False, False),
-    ('spoofed summary', False, False),
-    ('spoofed receipt', False, False),
-    ('wrong app', False, False),
-    ('no security receipt', False, False),
-    ('security receipt findings', False, False),
-    ('wrong receipt head', False, False),
-    ('old same-head receipt', True, False),
-    ('edited receipt', True, False),
-    ('duplicate receipt', True, False),
-    ('unknown bot comment', True, False),
-    ('no request', True, False),
-    ('edited request', True, False),
-    ('overlapping requests', True, False),
-    ('security-only request', True, False),
-    ('new request', True, False),
-    ('old reaction', True, False),
-    ('same-second reaction', True, False),
-    ('other reaction', False, False),
-    ('missing reaction', False, False),
-    ('delayed reaction', True, False),
-    ('closed', False, False),
-    ('head changed', False, False),
-    ('closed during check', False, False),
-    ('summary changed', False, False),
-    ('request during check', True, False),
-    ('receipt edited during check', False, False),
-    ('reaction removed', False, False),
-    ('already approved', False, False),
-    ('changes requested', False, False),
-    ('ambiguous short sha', False, True),
-    ('pagination failed', False, True),
-    ('reaction fetch failed', False, True),
-    ('post rejected', False, True),
-    ('post non-json', False, True),
-    ('malformed summary', False, False),
-    ('automatic nullable cycle', True, False),
-    ('initial automatic overlap', True, False),
-    ('edited older request', True, False),
-    ('wrong summary app', False, False),
-    ('receipt missing app', False, False),
-    ('duplicate marker', False, False),
-    ('wrong security metadata', False, False),
-    ('completion before receipt', True, False),
-    ('wrong resolved sha', False, False),
-    ('unconfirmed approval', True, True),
-    ('malformed pagination', False, True),
-    ('wrong reaction account', False, False),
-    ('edited older structured request', True, False),
-    ('same-second older structured request', True, False),
-    ('prior retarget', True, False),
-    ('retarget after review', True, False),
-    ('retarget during review', True, False),
-    ('same-second retarget', True, False),
-    ('automatic retarget', True, False),
-    ('retarget without request', True, False),
-    ('structured retarget', True, False),
-    ('retarget during check', True, False),
-    ('base ref changed', True, False),
-    ('base sha changed', True, False),
-    ('missing base', True, False),
-    ('timeline failed', True, False),
-    ('malformed timeline', True, False),
-    ('retarget missing timestamp', True, False),
-    ('same-second requests', True, False),
-    ('same-second summary start', True, False),
-    ('wrong row head', False, False),
-]
+    def test_each_review_must_be_completed(self):
+        for label in ("code", "security"):
+            for status in ("Running", "Failed", "Queued", "Incomplete", ""):
+                with self.subTest(label=label, status=status):
+                    data = fixture()
+                    data["comments"] = [summary(**{label: status})]
+                    self.withheld(execute(data))
 
+    def test_missing_summary_or_review_row_withholds(self):
+        for mode in ("summary", "code", "security"):
+            with self.subTest(mode=mode):
+                data = fixture()
+                if mode == "summary":
+                    data["comments"] = []
+                else:
+                    label = "Code Review" if mode == "code" else "Security Review"
+                    data["comments"][0]["body"] = "\n".join(line for line in data["comments"][0]["body"].splitlines() if f"**{label}**" not in line)
+                self.withheld(execute(data))
 
+    def test_only_codex_summary_and_reaction_count(self):
+        for target in ("comments", "reactions"):
+            with self.subTest(target=target):
+                data = fixture()
+                data[target][0]["user"]["login"] = "other-user"
+                self.withheld(execute(data))
 
-def add_case(name, approve, fail):
-    def test(self):
-        self.run_case(name, approve, fail)
-    setattr(ApprovalWorkflowTests, "test_" + name.replace(" ", "_").replace("-", "_"), test)
+    def test_setup_notice_cannot_replace_summary(self):
+        data = fixture()
+        data["comments"][0]["body"] = "To use Codex here, create an environment."
+        self.withheld(execute(data))
 
+    def test_missing_or_other_reaction_withholds_after_bounded_wait(self):
+        for content in (None, "eyes", "heart"):
+            with self.subTest(content=content):
+                data = fixture()
+                data["reactions"] = [] if content is None else [{"user": {"login": BOT}, "content": content}]
+                result = execute(data)
+                self.withheld(result)
+                self.assertEqual(result["sleeps"], [30] * 6)
 
-for case in CASES:
-    add_case(*case)
+    def test_late_thumbs_up_uses_same_two_conditions(self):
+        def change(endpoint, count, data):
+            if endpoint.endswith("/reactions") and count == 1:
+                data["reactions"] = []
+            elif endpoint.endswith("/reactions"):
+                data["reactions"] = fixture()["reactions"]
+        result = execute(fixture(), mutate=change)
+        self.approved(result)
+        self.assertEqual(result["sleeps"], [30])
+
+    def test_incomplete_review_during_wait_withholds(self):
+        data = fixture()
+        data["reactions"] = []
+        def change(endpoint, count, data):
+            if endpoint.endswith("/comments") and count == 2:
+                data["comments"] = [summary(security="Running")]
+        self.withheld(execute(data, mutate=change))
+
+    def test_latest_codex_summary_is_used_across_pages(self):
+        for latest, expected in [(summary(identifier=20), True), (summary(security="Running", identifier=20), False)]:
+            with self.subTest(expected=expected):
+                data = fixture()
+                data["comments"] = [latest, summary(identifier=5)]
+                (self.approved if expected else self.withheld)(execute(data))
+
+    def test_non_codex_newer_summary_is_ignored(self):
+        data = fixture()
+        other = summary(security="Running", identifier=30)
+        other["user"]["login"] = "other-user"
+        data["comments"].append(other)
+        self.approved(execute(data))
+
+    def test_completed_elsewhere_does_not_replace_status(self):
+        data = fixture()
+        data["comments"] = [summary(code="Running")]
+        data["comments"][0]["body"] += "\nCode Review is **Completed** in another paragraph.\n"
+        self.withheld(execute(data))
+
+    def test_ambiguous_duplicate_review_row_withholds(self):
+        data = fixture()
+        data["comments"][0]["body"] += "| **Code Review** | **Running** | other |\n"
+        self.withheld(execute(data))
+
+    def test_head_findings_timestamps_requests_and_receipts_are_not_gates(self):
+        data = fixture()
+        item = data["comments"][0]
+        item.update(created_at="invalid", updated_at="older", performed_via_github_app=None)
+        item["body"] = item["body"].replace("`aaaaaaa`", "`another-commit`").replace("Manual request", "Automatic review")
+        item["body"] += '\n<!-- codex-review-state:v1 {"code_review":{"status":"running","commit_sha":"old","has_unresolved_findings":true},"security_review":{"status":"failed","has_any_findings":true}} -->\n'
+        item["body"] += "\n### Security findings\nAn accepted risk remains.\n"
+        data["comments"] += [{"id": 20, "body": "@codex review", "user": {"login": "author"}}, {"id": 21, "body": "A receipt reports findings", "user": {"login": BOT}}]
+        data["reactions"][0]["created_at"] = "old-or-invalid"
+        data["reviews"] = [{"state": "CHANGES_REQUESTED"}, {"state": "APPROVED"}]
+        data["pr"] = {"head": {"sha": "different"}, "base": {"ref": "retargeted"}}
+        self.approved(execute(data))
+
+    def test_structured_metadata_is_not_required(self):
+        data = fixture()
+        data["comments"][0]["body"] += "\n<!-- codex-review-state:v1 malformed -->\n"
+        self.approved(execute(data))
+
+    def test_extra_api_identity_metadata_is_not_required(self):
+        data = fixture()
+        data["comments"][0]["user"].update(id=0, type="User")
+        data["comments"][0]["performed_via_github_app"] = {"id": 0}
+        self.approved(execute(data))
+
+    def test_duplicate_reaction_rows_still_mean_thumbs_up_exists(self):
+        data = fixture()
+        data["reactions"] *= 2
+        self.approved(execute(data))
+
+    def test_unrelated_summary_edit_during_wait_does_not_add_a_gate(self):
+        def change(endpoint, count, data):
+            if endpoint.endswith("/reactions") and count == 1:
+                data["reactions"] = []
+            elif endpoint.endswith("/comments") and count == 2:
+                data["comments"][0]["body"] += "\nAdvisory text updated.\n"
+                data["reactions"] = fixture()["reactions"]
+        self.approved(execute(fixture(), mutate=change))
+
+    def test_same_two_conditions_are_read_again_before_submission(self):
+        for mode in ("running", "removed"):
+            with self.subTest(mode=mode):
+                def change(endpoint, count, data):
+                    if mode == "running" and endpoint.endswith("/comments") and count == 2:
+                        data["comments"] = [summary(code="Running")]
+                    if mode == "removed" and endpoint.endswith("/reactions") and count == 2:
+                        data["reactions"] = []
+                self.withheld(execute(fixture(), mutate=change))
+
+    def test_different_completed_summary_or_reaction_identity_still_approves(self):
+        def change(endpoint, count, data):
+            if endpoint.endswith("/comments") and count == 2:
+                data["comments"] = [summary(identifier=999)]
+                data["comments"][0]["body"] += "\nChanged advisory text.\n"
+            if endpoint.endswith("/reactions") and count == 2:
+                data["reactions"][0]["id"] = 999
+        self.approved(execute(fixture(), mutate=change))
+
+    def test_api_failures_and_invalid_json_fail_without_leaking(self):
+        for failure in (f"{ROOT}/issues/7/comments", f"{ROOT}/issues/7/reactions", "json", "post"):
+            with self.subTest(failure=failure):
+                result = execute(fixture(), failure=failure)
+                self.assertEqual(result["code"], 1, result)
+                self.assertNotIn("secret", result["output"])
+                self.assertNotIn("dummy-test-token", result["output"])
+                self.assertNotIn("Codex approval: Approved", result["output"])
+
+    def test_malformed_pagination_fails(self):
+        for value in ({}, [None], [[None]]):
+            with self.subTest(value=value):
+                result = execute(fixture(), pagination=value)
+                self.assertEqual(result["code"], 1, result)
+                self.assertEqual(result["writes"], [])
+
+    def test_unconfirmed_approval_is_reported_as_failure(self):
+        for response in ({"state": "PENDING"}, []):
+            with self.subTest(response=response):
+                result = execute(fixture(), response=response)
+                self.assertEqual(result["code"], 1, result)
+                self.assertNotIn("Codex approval: Approved", result["output"])
+
+    def test_missing_step_summary_file_does_not_change_decision(self):
+        self.approved(execute(fixture(), summary_file=False))
+
+    def test_repeated_events_do_not_consult_review_history(self):
+        self.approved(execute(fixture()))
+        self.approved(execute(fixture()))
+
 
 if __name__ == "__main__":
     unittest.main()
