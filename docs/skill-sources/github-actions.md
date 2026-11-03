@@ -23,6 +23,24 @@ sources:
     resource: https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows
   - id: github-commands
     resource: https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-commands
+  - id: securitylab-pwn-requests
+    resource: https://securitylab.github.com/resources/github-actions-preventing-pwn-requests/
+  - id: securitylab-untrusted-input
+    resource: https://securitylab.github.com/resources/github-actions-untrusted-input/
+  - id: securitylab-building-blocks
+    resource: https://securitylab.github.com/resources/github-actions-building-blocks/
+  - id: securitylab-new-patterns
+    resource: https://securitylab.github.com/resources/github-actions-new-patterns-and-mitigations/
+  - id: securitylab-scanner-config
+    resource: https://securitylab.github.com/advisories/GHSL-2026-208_kptdev_kpt_repository/
+  - id: securitylab-artifact-authorization
+    resource: https://securitylab.github.com/advisories/GHSL-2026-225_actions_attest/
+  - id: github-action-lockfiles
+    resource: https://docs.github.com/en/actions/concepts/security/workflow-dependency-lockfiles
+  - id: github-target-security
+    resource: https://docs.github.com/en/actions/reference/security/securely-using-pull_request_target
+  - id: codeql-supported-languages
+    resource: https://codeql.github.com/docs/codeql-overview/supported-languages-and-frameworks/
   - id: github-oidc
     resource: https://docs.github.com/en/actions/reference/security/oidc
   - id: copilot-runtime
@@ -108,6 +126,28 @@ Runtime material: [hardening.md](../../skills/github-actions/references/hardenin
 | [^github-runner-groups] | Runner groups. Group purpose and target runner scope. |
 | [^github-commands] | Workflow commands. Check multiline data/environment-file handling. |
 | [^github-events] | Events that trigger workflows. Check privileged-event boundaries with untrusted code/artifacts. |
+
+### Security Lab trust-boundary additions
+
+On 2026-11-03 compared all four articles and the two advisories below with the current GitHub event, secure-use, workflow-command, cache, lockfile, and CodeQL documentation. This was source/static review, not workflow execution or a security-settings change. Existing permission, input, pinning, runner, artifact, and cache rules were extended in [hardening.md](../../skills/github-actions/references/hardening.md); the entry point now distinguishes locked Actions from SHA-pinned reusable workflow calls.
+
+| Source | Adopted scope beyond existing guidance |
+| --- | --- |
+| [^securitylab-pwn-requests] | Preserve privileged metadata automation; isolate PR builds and keep their output untrusted. Trace install hooks and other execution paths. |
+| [^securitylab-untrusted-input] | Include less obvious inputs and second-stage template evaluation inside Actions; passing an input does not make its downstream interpretation safe. |
+| [^securitylab-building-blocks] | Review Action updates, implicit token access, and transitive dependencies; verified creators and immutable references do not certify code. |
+| [^securitylab-new-patterns] | Bind approvals to commits, inspect other base branches, authenticate upstream events, and prevent artifact/cache content reaching privileged execution. |
+
+The 2026 scanner advisory shows a PR-controlled host setting leaking a scanner token before code analysis; trusted tool configuration and credential destinations must survive input/configuration precedence.[^securitylab-scanner-config] The artifact-metadata advisory separately shows that valid branch syntax and an unchanged SHA do not authorize a write destination. Match repository, PR/head branch, and intended operation through trusted metadata instead of trusting artifact identifiers.[^securitylab-artifact-authorization]
+
+The following corrections constrain adoption of the historical examples:
+
+- Inspect `github.event.workflow_run.event`, not Part 4's `github.event_name != 'pull_request'`, which sees the consumer event. Workflow names, branch filters, actor checks, and base-repository ownership alone do not establish producer trust. Correlate run metadata and intended event/ref; keep PR output untrusted.[^github-events][^securitylab-new-patterns]
+- Retain quoted intermediate environment variables for script input, as current Docs recommend. Part 4's warning about environment/output injection does not justify banning this data handoff; validate values before writing command files or interpreting them downstream.[^github-secure-use][^github-commands]
+- Do not adopt Part 1's passive-checkout examples as a general exemption: formatters can load PR-controlled plugins/configuration. Use trusted logic and trace indirect execution. Current guidance includes checkout protections, but these do not justify mixing PR-changeable code with privileges.[^github-target-security]
+- Recheck current cache behavior rather than assume every low-trust trigger can poison default-branch caches. Such triggers now default to read-only there, with explicit write-capable overrides; inspect called workflows and cap caller cache access. Ordinary PR caches remain merge-ref scoped.[^github-cache]
+- Use adopted `actions.lock` coverage for direct/transitive Actions and repository identity; it excludes reusable workflow calls and their dependencies in other repositories. Pin calls to full SHAs and inspect the called repository's lockfile. The lockfile does not govern other build inputs.[^github-action-lockfiles]
+- CodeQL now supports GitHub Actions workflow and Action metadata YAML. Confirm `actions` analysis in the actual setup; application-language analysis or a clean result alone does not establish workflow safety.[^codeql-supported-languages]
 
 ### Upgrading Action internal runtimes
 
@@ -239,6 +279,15 @@ On 2026-09-22 checked [Runner selection][^github-runner-selection], [self-hosted
 [^github-runner-groups]: [github-runner-groups](https://docs.github.com/en/actions/concepts/runners/runner-groups).
 [^github-commands]: [github-commands](https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-commands).
 [^github-events]: [github-events](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows).
+[^securitylab-pwn-requests]: [securitylab-pwn-requests](https://securitylab.github.com/resources/github-actions-preventing-pwn-requests/).
+[^securitylab-untrusted-input]: [securitylab-untrusted-input](https://securitylab.github.com/resources/github-actions-untrusted-input/).
+[^securitylab-building-blocks]: [securitylab-building-blocks](https://securitylab.github.com/resources/github-actions-building-blocks/).
+[^securitylab-new-patterns]: [securitylab-new-patterns](https://securitylab.github.com/resources/github-actions-new-patterns-and-mitigations/).
+[^securitylab-scanner-config]: [securitylab-scanner-config](https://securitylab.github.com/advisories/GHSL-2026-208_kptdev_kpt_repository/).
+[^securitylab-artifact-authorization]: [securitylab-artifact-authorization](https://securitylab.github.com/advisories/GHSL-2026-225_actions_attest/).
+[^github-target-security]: [github-target-security](https://docs.github.com/en/actions/reference/security/securely-using-pull_request_target).
+[^github-action-lockfiles]: [github-action-lockfiles](https://docs.github.com/en/actions/concepts/security/workflow-dependency-lockfiles).
+[^codeql-supported-languages]: [codeql-supported-languages](https://codeql.github.com/docs/codeql-overview/supported-languages-and-frameworks/).
 [^github-metadata]: [github-metadata](https://docs.github.com/en/actions/reference/workflows-and-actions/metadata-syntax).
 [^copilot-runtime]: [copilot-runtime](https://github.com/github/awesome-copilot/blob/4f4796f0bf30e105700f97ed8408c12b6aa95e06/skills/github-actions-runtime-upgrade-conventions/SKILL.md).
 [^actions-checkout]: [actions-checkout](https://github.com/actions/checkout).
