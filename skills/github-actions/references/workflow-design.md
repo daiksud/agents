@@ -1,129 +1,163 @@
 ---
 type: Instruction
-title: GitHub Actions workflow design
-description: Choose triggers, jobs, reuse, artifacts, deployment, and recovery from requirements and validate execution paths.
+title: GitHub Actions のワークフロー設計
+description: イベント別ワークフロー、フェーズアクション、基本ステップの責務を分け、検証済み成果物の受け渡しとリリースを設計する。
 ---
 
-## Contents
+## 目次
 
-- [Determine execution paths from requirements](#determine-execution-paths-from-requirements)
-- [Staged CI adoption](#staged-ci-adoption)
-- [Runners and shells](#runners-and-shells)
+- [構成と責務](#構成と責務)
+- [フェーズの再利用](#フェーズの再利用)
+- [イベントごとの構成](#イベントごとの構成)
+- [成果物の再利用](#成果物の再利用)
+- [イベントと同時実行](#イベントと同時実行)
+- [必須チェックの移行](#必須チェックの移行)
+- [ランナーとシェル](#ランナーとシェル)
+- [検証と復旧](#検証と復旧)
 
-## Determine execution paths from requirements
+## 構成と責務
 
-For new workflows check who needs which results for which changes. For existing structures first read purpose, required check names, supported OS/runtimes, Secrets/publication permissions, deployment targets, and recovery. Start with small structures passing required validation.
+既存の目的、必須チェック、対応OSとランタイム、シークレット、公開先、復旧方法を確認してから構成を決める。新規作成では、どの変更に対して誰がどの結果を必要とするかを確認する。
 
-### Events and jobs
+基本は「イベント・操作をワークフロー、フェーズをアクション、基本操作をステップ」に分ける。このスキルで採用する設計方針であり、GitHubが要求する唯一の構成ではない。
 
-- Choose `push`/`pull_request` by comparing validated commits and duplicate runs. For merge queues check required events such as `merge_group`. Do not use `pull_request_target` to bypass insufficient PR-test permissions.
-- Match `workflow_dispatch` to manual operations, `workflow_call` to reuse, and `schedule` to recurring work. Check official target-event specifications for default-branch definitions and PR head versus merge ref.
-- `needs` expresses actual dependencies. Do not unnecessarily serialize independent checks; check downstream behavior on upstream failure/skip. Separate cleanup/diagnostic-saving conditions from conditions treating mandatory validation as successful.
-- Specify shells, working directories, dependency pinning, and appropriate timeouts. Check OS shell differences, service readiness, test isolation, and cleanup. Do not hide mandatory-test failures through indiscriminate retries or `continue-on-error`.
-- Whole-workflow path/branch filters with required checks can leave them Pending. With job-level decisions/aggregation, verify necessary validation failures/cancellations propagate to final checks.
-
-### Reuse and data handoff
-
-Consider composite Actions for shared steps and reusable workflows for shared jobs/runner structures. Match existing boundaries; duplication alone does not justify splitting. Contract `workflow_call` input types, requiredness, defaults, outputs, and Secrets, checking caller mappings. Nested calls cannot increase permissions; explicitly check Secret forwarding. Choose `secrets: inherit` after confirming necessary scope.
-
-Pass small values as outputs and files as artifacts; paths alone do not move files between jobs. Check generating commit, target OS/version, content identity, retention, and confidential data. Save only necessary diagnostics in logs/reports, excluding Secrets. Caches support reuse, not authoritative deployment artifacts.
-
-### Deployment and recovery
-
-Promote the same validated artifact between environments. Check job conditions/permissions, environment protection, concurrency conflicts, and responsibility for release decisions. `environment:` alone does not configure manual approval. Choose manual approval, Canary, or blue/green where risks/existing operations fit.
-
-Define post-deployment health checks, observed failures, and recovery artifacts/configuration. Do not assume data migrations are as reversible as code rollback. Check deployment/recovery within existing scope; use `issue-management` for changed release conditions/permissions. Hand approved recovery changes/validation to `change-delivery`.
-
-### Paths to validate
-
-Select necessary events, forks, unrelated changes, dependency-job failures/skips, and cancellation as well as normal paths. Beyond static checks/existing tests, verify required checks, outputs/artifacts, and post-deployment state through authorized GitHub runs. State inaccessible protection settings or unexecuted deployment as unverified. For test design and cleanup, apply [Testing boundaries and cleanup](../../software-development/references/testing.md#no-tests-of-tests); retain deployment-identity, failure-propagation, and security outcomes without asserting internal helper/command sequences or self-testing application runners.
-
-## Staged CI adoption
-
-Apply this selected contract when a repository adopts shared staged CI; it is not a universal GitHub requirement. Keep orchestration identical across adopting repositories, with repository-specific commands and artifact handling in local composite Actions. Do not replace existing validation with a copied workflow that drops required checks or supported targets.
-
-### Flows and check names
-
-| Workflow file | Flow | Workflow name and final job/check name |
+| 単位 | 配置例 | 持たせる責務 |
 | --- | --- | --- |
-| `ci-pr.yml` | Draft → Commit stage → Ready → Acceptance stage → final result | `ci-pr` |
-| `ci-push.yml` | Commit stage → Acceptance stage → final result, on main pushes | `ci-push` |
+| ワークフロー | `.github/workflows/pr.yml`、`push-main.yml`、`release.yml` | イベント、入力、フェーズの組み合わせ、ジョブの依存関係、成果物の再利用判断 |
+| フェーズアクション | `.github/actions/screening/action.yml`、`inspection/action.yml`、`delivery/action.yml` | フェーズ内の共通処理と入出力 |
+| ステップ | ワークフローやアクションの `steps` | lint、テスト、ビルド、成果物の取得・保存など、一つの基本操作 |
 
-Keep the file stem, workflow name, aggregate job ID, and emitted check name identical. Do not override the aggregate job's display name or share a generic `pass` check across workflows. Keep PRLint in its separate `prlint` workflow.
+ジョブはワークフロー内の実行単位として残す。`runs-on`、`permissions`、`needs`、`strategy.matrix`、`environment`、`if`、タイムアウトを管理し、その中からフェーズアクションを呼ぶ。同じ名前のジョブとアクションがあっても、ジョブは実行条件、アクションは処理内容を担当する。
 
-Ready means the Commit stage passed and the change is reviewable. It does not mean Acceptance passed or merging is approved. Acceptance failure may leave the PR Ready while the final check is unsuccessful. CI does not wait for review, approve, or merge PRs; retain existing review and merge responsibilities.
+フェーズとジョブを一対一に固定しない。別のOS、並列実行、サービスコンテナ、権限、承認条件が必要ならジョブを分ける。たとえば、公開後の確認に書き込み権限が不要なら、`delivery` の後に読み取り専用ジョブを置ける。
 
-Start Acceptance through `needs` in the same run, after Commit and the PR's Ready operation. Do not depend on a later `ready_for_review` event. Main-push validation has no Draft/Ready operations. The following illustrates PR dependencies only, not a complete workflow; the final job evaluates all mandatory results even after failure:
+## フェーズの再利用
 
-```mermaid
-flowchart TD
-    draft["Draft"] --> commit["Commit stage: required matrix"]
-    commit --> ready["Ready"]
-    ready --> acceptance["Acceptance stage: required matrix"]
-    commit --> acceptance
-    draft --> final["ci-pr: evaluate all results"]
-    commit --> final
-    ready --> final
-    acceptance --> final
-```
+複数のワークフローで使う `screening` の処理は一つのComposite Actionにまとめる。`pr`、`push-main`、`release` にはその呼び出しを置き、lint・テスト・ビルドの列をそれぞれに複製しない。`inspection` と `delivery` も同じ責務でまとめる。
 
-### Local validation and artifact contract
+| フェーズ | 処理 | 結果 |
+| --- | --- | --- |
+| `screening` | 必要なlint、単体テスト、型検査、race検査、ビルドなど | 必須検証の結果と、後続で検査する候補成果物 |
+| `inspection` | 候補成果物を取得し、統合・受け入れ・動作確認などを行う | その成果物に対応した検証結果 |
+| `delivery` | 検証済み成果物を公開・配備する | 公開したバージョン、成果物、公開先の情報 |
 
-Agree one configuration/input-output contract for local Actions before sharing orchestration: required build and acceptance matrices, stable target keys, runner selection, and the candidate artifact each acceptance leg consumes. Keep build targets distinct from acceptance kinds/runners so an additional integration or public-Action smoke test is not lost. Each repository supplies its own values and commands.
+検査の種類は対象プロジェクトの要件から選ぶ。すべてのプロジェクトに表の検査を追加しない。ビルド対象と検査の種類は別々に管理し、既存の対応環境や追加の統合テストを失わないようにする。
 
-| Responsibility | Contract |
+- Composite Actionは `runs.using: composite` で定義する。`run` を持つ各ステップには互換性のある `shell` を明示する。呼び出し元の `defaults.run.shell` だけを頼りにしない。
+- 入力は必要なバージョン、ターゲット、成果物の場所などに絞る。呼び出し元のイベントを内部で判別し、`skip-test` など多数のフラグで別の処理に変えない。
+- `run` に実行するコマンド全体を入力させる汎用アクションを作らない。基本操作は既存のスクリプトやコマンドを直接呼ぶ。ビルドステップに無関係なlintやテストを隠さない。
+- 一つのコマンドを包むだけの専用アクションは、明確な再利用上の責務がなければ作らない。ランタイム準備などの共通処理も実際に重複している範囲だけをまとめる。
+- 少量の値はoutputs、ジョブをまたぐファイルは成果物として受け渡す。出力にパスを書くだけではファイルは移らない。入力、出力、作業ディレクトリ、生成するファイル、失敗条件を明記する。
+- `uses: ./.github/actions/...` はワークスペース上のファイルを読むため、先に対象コードをcheckoutする。別のrefをcheckoutする場合は、アクションとアプリケーションのどのコードを実行するかを確認する。特権ジョブでPR由来のアクションを実行しない。
+
+複数ジョブの構成自体を複数の呼び出し元で共有するときは、`workflow_call` を使う再利用可能なワークフローを選ぶ。Composite Actionにジョブの機能を持たせようとしない。入力の型・必須性・既定値、出力、シークレット、呼び出し元の対応を明示する。呼び出しを重ねても権限は増やせない。シークレットの転送範囲を確認し、`secrets: inherit` を無条件に選ばない。
+
+## イベントごとの構成
+
+| ファイル | 起動条件 | 処理 |
+| --- | --- | --- |
+| `pr.yml` | `pull_request` | `screening` |
+| `push-main.yml` | `push`、`branches: [main]` | `screening` → `inspection`。後のリリースで使える検証済み成果物を保存する |
+| `release.yml` | `workflow_dispatch` | 対象と再利用可否を確定する。再利用できなければ `screening` → `inspection` を行い、`delivery` で公開する |
+
+リリースの対象コミット、バージョン、ターゲットを最初に確定する。`workflow_dispatch` を起動したrefと公開対象が同じとは限らない。後続のcheckout、検索、検証、公開は確定した値を使う。
+
+`prlint`、`settings-pr`、`settings-apply`、`labeler`、`codex-review` など、製品の検証と目的や権限が異なる処理は、それぞれのワークフローに置く。名前だけからイベントを一律に決めず、対象リポジトリの運用と必要な権限を確認する。`codex-review` がレビュー結果を承認へ反映する処理なら、レビューの起動まで追加しない。
+
+CIの成功、PRのDraft・Ready、レビューの承認、マージ可否は別々に扱う。この構成に移行するためだけにDraft・Readyの自動変更やCI内のレビュー待機を導入しない。既存の状態変更がある場合は、その必要性と移行範囲を確認する。
+
+## 成果物の再利用
+
+### ビルドから検査への受け渡し
+
+`screening` が作った候補を `inspection` が検査し、その同じ内容を `delivery` が公開する。検査後にビルド、バージョンの埋め込み、再パッケージなどで公開物を変えない。公開前に内容の変更が必要なら、変更した候補を検査し直す。
+
+成果物には実際にビルドしたソースのSHA、バージョン、OS・アーキテクチャ、対象ファイルのハッシュを対応付ける。小さなmanifestにまとめてよい。生成元のリポジトリ、ワークフロー、イベント、run IDと、成果物のID・アーカイブのダイジェストも追跡できるようにする。アーカイブ自身のハッシュを同じアーカイブ内に埋め込むような循環は作らない。
+
+PRのmerge SHAとhead SHAを取り違えない。取得後は期待するソースとターゲットを照合し、必要なファイルのハッシュを再計算する。欠落、不一致、破損を検証成功にしない。ダウンロード用アクションの警告だけで処理が続く場合もあるため、採用するバージョンの挙動を確認する。キャッシュは検証済み成果物の代わりにしない。
+
+### リリースでの判定
+
+`release` は、確定した対象コミットに対応する `push-main` の実行を特定してから判定する。単に最新の成功runや同じ名前の成果物を探さない。対象実行の失敗した再実行を無視して、過去の成功だけを採用しない。
+
+| 確認した状態 | 処理 |
 | --- | --- |
-| Configuration | Preserve the repository's current required tests and supported platforms; compare its authoritative matrix and support documentation before changing coverage |
-| Commit stage | Run applicable lint, unit tests, race checks, and builds; publish the built candidates and their identity manifest |
-| Handoff | Record the actual built source SHA, source/run identity, target OS/architecture, and content digests; preserve the mapping from each acceptance leg to its producer |
-| Acceptance stage | Download the candidate from that run, verify its manifest against the expected source/target and recomputed digests, and exercise that same product artifact without rebuilding it |
+| 信頼するリポジトリのmainへのpushで、対象SHA・バージョン・ターゲットが一致し、必要な `screening` と `inspection` が成功し、検査した成果物を完全に取得・照合できる | 成果物を再利用し、このreleaseの `screening` と `inspection` を省略する |
+| 該当する実行が存在しない、または成功した実行の成果物が欠落・期限切れ・対象不一致・破損で使えない | 理由を警告として示し、対象SHAから `screening` と `inspection` をすべて実行する |
+| 対象の `push-main` が失敗、キャンセル、待機中、実行中、または必要な検証を完了していない | リリースを止める。CIを正常に完了させてから再開する |
+| API障害、権限不足、実行元や検証結果の対応が不明で判定できない | リリースを止め、未確認の内容を示す |
 
-Distinguish the checked-out PR merge SHA from the PR head SHA when recording source identity. Fail missing, mismatched, or corrupt artifacts; a downloader warning is not a passing integrity check. Caches cannot substitute for this handoff. Artifact identity checks establish what was tested, not whether a PR is still the latest or mergeable.
+「存在しない」と「取得できず分からない」を区別する。再ビルドへ進めるのは、実行の不存在、または出所と検証成功を確認済みの成果物が使えないと判断できた場合に限る。バージョンが異なる成果物や破損した成果物をそのまま公開しない。
 
-### Events and concurrency
+別runから取得する場合は、対象リポジトリ、run ID、成果物IDを指定して絞り込む。`download-artifact` では、対象に `actions: read` を持つトークンを `github-token` として渡し、`run-id` を指定する。別リポジトリなら `repository` も明示する。必要な権限は取得するジョブに限定する。
 
-- Select code and base-change events/conditions explicitly. If handling `edited`, distinguish a changed base from title/body-only edits. Keep metadata-only PRLint separate from product validation.
-- Title/body-only edits must not run product stages, change Draft/Ready state, or cancel queued/running code validation. Keep them out of the product concurrency group and do not let them publish a skipped/successful replacement for the product's required check. Job-level `if` guards alone do not isolate workflow-level concurrency or check results; verify the selected event routing and emitted contexts before adoption.
-- Scope PR product concurrency by workflow and PR number, with `cancel-in-progress: true`; scope main-push concurrency separately by workflow/ref. Do not add custom HEAD/base freshness checks, latest-PR probes, rerun-generation tracking, stale-result suppression, or recovery coordination.
-- Let GitHub events, rulesets, and settings decide freshness and merge eligibility. Concurrency limits overlapping work but is not an atomic latest-HEAD guarantee or a guarantee of dispatch order. Keep artifact identity verification separate.
+再実行では同じrun IDのままattemptが増える。run IDだけで検査と成果物が対応すると考えず、成功した検査が確認した成果物IDとハッシュを照合する。再実行時に成功済みジョブの成果物を使う場合も、この対応を維持する。
 
-### Final results, permissions, and adoption
+### 省略したジョブと公開条件
 
-Make the final job depend directly on every mandatory job, including configuration, state transitions, and both stage matrices where present. Use a status condition such as `if: always()` so upstream failure/skip does not skip the gate; explicitly require every mandatory dependency and matrix leg to have succeeded. An empty/incomplete required matrix, failure, cancellation, or unexpected skip must not become success. Do not hide mandatory failures with `continue-on-error`, optional-leg defaults, or a successful last stage. A canceled run may remain canceled without executing its final job; it is not a passing result.
+再利用時は `screening` と `inspection` が意図的に `skipped` になる。`needs` の暗黙の成功条件だけでは `delivery` まで省略されるため、再利用経路と新規検証経路を明示する。
 
-Fork or Dependabot PRs lacking the permissions needed for Draft/Ready are unsupported by this policy and require human handling. Surface permission failures; do not swallow them, mark unsupported paths successful, or add elevated-token/privileged-event fallbacks. Retain the existing security, runner, and shell rules.
-
-Changing required contexts needs separately authorized settings work. Keep the old required gate until the replacement has been published, verified, and configured, then remove it through the authorized migration. Do not replace this with runtime ruleset probes or weaken other protection conditions.
-
-For later authorized workflow adoption, check normal PR/main flows, mandatory failure/skip/cancellation, metadata-only and base changes, artifact reuse/identity, and retained matrix coverage proportionately. Distinguish static checks from actual GitHub runs and unexecuted cases. Updating this guidance alone does not adopt it in any repository or change its workflows/settings.
-
-## Runners and shells
-
-Check these only when runners or shells relate to workflow design, changes, or review.
-
-- Before selecting runners, check target `runs-on` label availability, matching candidate providers (GitHub-hosted/self-hosted), groups, and repository access. Do not infer provider from labels. If same-label self-hosted runners are candidates, especially for PR code, check shared-state/network/host-credential boundaries in [Safety](hardening.md); do not finalize solely from labels before confirming GitHub-hosted status.
-- Even when `ubuntu-slim` is available, permanently use another runner only after confirming it cannot satisfy necessary processing. Habit, existing examples, or mere desire for performance are not exception reasons.
-- For execution-time requirements, compare target-runner measurements with job timeouts in official material at decision time; other runners' times alone do not prove fit. Without measurements retain existing mandatory jobs if present and try representative jobs on nonmandatory trials for new candidates. This is temporary pending suitability, not a permanent exception.
-- For exceptions check GitHub.com/GHES, visibility, and plan. On GitHub.com consult applicable [public-runner lists](https://docs.github.com/en/actions/reference/runners/github-hosted-runners#standard-github-hosted-runners-for-public-repositories) or [private-runner lists](https://docs.github.com/en/actions/reference/runners/github-hosted-runners#standard-github-hosted-runners-for-private-repositories). On GHES check its inventory without applying GitHub.com lists.
-- Compare `ubuntu-slim` constraints, recording unmet requirements/concrete constraints in workflow comments or change descriptions. Check [official constraints](https://docs.github.com/en/actions/reference/runners/github-hosted-runners#single-cpu-runners) at decision time.
-- When reporting runner choices, explicitly distinguish this skill's `ubuntu-slim` preference from universal GitHub requirements and official provision/constraint specifications. Record dated specification checks with the target decision.
-- For new workflows or approved workflow-level shell migration, always specify top-level `defaults.run.shell: bash`. Step-only `shell: bash` does not satisfy this. For limited existing-workflow changes without approved shell migration, preserve existing shells and report/propose shell policy separately.
-- Check Bash availability and command compatibility in every affected job. Where missing on self-hosted runners/containers, provide Bash-equipped runners/images if possible. For package-install steps using existing shells, explicitly specify a shell available before installation (for example `sh`); top-level Bash defaults also affect installation steps.
-- If Bash cannot be provided and commands are POSIX-compatible, retain workflow-level Bash and specify `defaults.run.shell: sh` only for that job, recording absence as the reason. For jobs/steps contracted to PowerShell or another shell, retain top-level defaults and override job `defaults.run.shell` or step `shell` with available compatible shells, recording concrete requirements. These are local exceptions necessary for environments/command compatibility. If Bash-specific commands are necessary but Bash unavailable, ask the user which policy/requirements take precedence.
-- Explicit `bash` and unspecified shells execute different commands. On Linux/macOS, unspecified shells use `bash -e {0}`, falling back to `sh -e {0}` without Bash; explicit `bash` uses `bash --noprofile --norc -eo pipefail {0}`. Job containers default to `sh` unless overridden. Check the current [workflow shell specification](https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax#defaultsrun) and [job container specification](https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax#jobsjob_idcontainer) for the target environment.
-- When changing unspecified shells to explicit Bash, check pipeline status and existing handlers/output contracts. `pipefail` returns the last nonzero command's status in a pipeline. `errexit` does not immediately exit solely from failures in `if` conditions or nonfinal `&&`/`||` list commands; that exception does not apply after the final `&&`/`||`. Compare actual pipeline positions and surrounding branches with the [Bash pipeline](https://www.gnu.org/software/bash/manual/html_node/Pipelines) and [set builtin](https://www.gnu.org/software/bash/manual/html_node/The-Set-Builtin.html) specifications. Handle only intended nonzero statuses locally while preserving other failures. Record existing-job-contract reasons for job/step overrides.
+以下は公開条件だけの例であり、完全なワークフローではない。`resolve` が対象と成果物を検証し、使える場合だけ `route: reuse`、再検証が必要な場合は `route: rebuild` を出力する前提である。`screening` はrebuildの場合だけ実行し、`inspection` はその成功を必要とする。
 
 ```yaml
-defaults:
-  run:
-    shell: bash
-
-jobs:
-  check:
-    # Confirm provider, runner group, and repository access before selecting this label.
-    # Label availability alone does not identify a GitHub-hosted runner.
-    runs-on: ubuntu-slim
-    steps:
-      - name: Check shell
-        run: printf '%s\n' "$BASH_VERSION"
+delivery:
+  needs: [resolve, screening, inspection]
+  if: >-
+    ${{ !cancelled() &&
+        needs.resolve.result == 'success' &&
+        (
+          (needs.resolve.outputs.route == 'reuse' &&
+           needs.screening.result == 'skipped' &&
+           needs.inspection.result == 'skipped') ||
+          (needs.resolve.outputs.route == 'rebuild' &&
+           needs.screening.result == 'success' &&
+           needs.inspection.result == 'success')
+        )
+    }}
 ```
+
+公開ジョブではキャンセルを許可条件にしない。`always()` だけで公開を許可せず、失敗や想定外のスキップも拒否する。`delivery` は選択した成果物を再取得・照合し、検査した内容を公開する。診断保存や後片付けの条件は、公開の成功条件から分ける。
+
+## イベントと同時実行
+
+- コード変更とbase変更に必要なイベントを選ぶ。merge queueを使う場合は `merge_group` も確認する。`workflow_dispatch`、`workflow_call`、`schedule` はそれぞれ手動操作、再利用、定期処理の目的に合わせる。定義を置くブランチなど、イベント固有の条件は[公式仕様](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows)で確認する。
+- タイトルや本文だけのPR編集は `prlint` などで扱い、製品の検証を起動・キャンセルしない。`edited` を扱う場合はbase変更と区別する。ジョブの `if` だけではワークフロー単位のconcurrencyやチェック結果を分離できないため、イベントの受け渡しと出力されるチェック名まで確認する。
+- PRの製品検証はワークフローとPR番号でconcurrencyを分け、古い実行を置き換えてよい場合は `cancel-in-progress: true` にする。mainへのpushはワークフローとrefで分ける。公開・配備の途中キャンセルは別に判断する。
+- 最新HEADやbaseを調べ続ける独自の鮮度判定、再実行世代の管理、古い結果を抑制する仕組みを追加しない。GitHubのイベントと保護設定でマージ可否を判断する。concurrencyは実行順序や、常に最新HEADだけが完了することを保証しない。
+- forkやDependabotのPRは、利用できる権限とシークレットの範囲で検証する。不足する権限を回避するために `pull_request_target` へ切り替えない。特権処理が必要な場合は[安全性](hardening.md)の指示に従って分離する。
+
+## 必須チェックの移行
+
+既存の必須チェック名と、ワークフローが実際に出力する結果を確認する。ファイル名の整理だけを理由に、必須チェックや保護設定を先に削除しない。名前を変える場合は、置き換え先を公開・検証し、認められた設定変更で切り替えてから旧チェックを取り除く。
+
+ワークフロー全体のpath・branchフィルターで必須チェックが起動しないと、Pendingのままになる場合がある。集約ジョブを置く場合は、すべての必須ジョブを直接 `needs` に含め、上流の失敗・スキップ後も判定できる状態条件を付ける。必要なマトリクス全体が揃って成功したことを確認する。空のマトリクス、失敗、キャンセル、想定外のスキップを成功に変えない。
+
+`continue-on-error` や最後のジョブの成功だけで必須検証の失敗を隠さない。意図したスキップはその条件と代わりに確認した証拠を明示する。キャンセルされて集約ジョブまで動かなかったrunも成功ではない。
+
+この設計方針の文書を更新しただけでは、利用先のワークフローや保護設定へ適用したことにならない。
+
+## ランナーとシェル
+
+ランナーやシェルが依頼に関係するときに、次を確認する。
+
+- `runs-on` のラベル、実際の提供元、ランナーグループ、リポジトリからの利用可否を確認する。ラベルだけでGitHub-hostedと判断しない。同じラベルのself-hostedも候補になる場合は、特にPRコードの実行で、共有状態・ネットワーク・ホスト認証情報へのアクセスを[安全性](hardening.md)に沿って確認する。
+- このスキルでは必要な処理を満たす場合に `ubuntu-slim` を優先する。GitHub全体の必須要件ではない。他のランナーを恒久的に選ぶ場合は、慣習や性能への期待だけでなく、満たせない具体的な要件を記録する。
+- 候補ランナーで実行時間を測定し、その時点の公式タイムアウト内に収まるか確認する。他のランナーの所要時間だけで判断しない。測定前は既存の必須ジョブを維持し、新しい候補を代表的な任意の試行で確かめる。これを恒久的な例外にしない。
+- GitHub.comでは公開・非公開リポジトリとプランに対応する[公式ランナー一覧](https://docs.github.com/en/actions/reference/runners/github-hosted-runners)を読む。`ubuntu-slim` の制約は[Single-CPUランナーの仕様](https://docs.github.com/en/actions/reference/runners/github-hosted-runners#single-cpu-runners)で確認する。GHESにはGitHub.comの一覧をそのまま適用せず、実際の利用可能な環境を確認する。
+- 新しいワークフローと、ワークフロー全体のシェル移行が対象の変更では、トップレベルに `defaults.run.shell: bash` を指定する。限られた既存処理だけの変更では、依頼に含まれないシェル移行を混ぜず、現状と提案を分けて示す。
+- 各ジョブやコンテナでBashが利用できるか、コマンドに互換性があるかを確認する。Bashを導入するステップも既定シェルの影響を受けるため、導入前に使える `sh` などをそのステップに明示する。
+- Bashを用意できず、処理がPOSIX互換なら、トップレベルのBashは維持し、該当ジョブだけ `defaults.run.shell: sh` にする。PowerShellなどを使う必要がある場合もジョブかステップで上書きし、理由を残す。Bash固有の処理が必要なのに利用できない場合は、両立しない要件を示して調整する。
+
+Linux・macOSでは、シェルを省略すると通常 `bash -e {0}`、Bashがなければ `sh -e {0}` を使う。明示した `bash` は `bash --noprofile --norc -eo pipefail {0}` で実行される。ジョブコンテナの既定は `sh` である。対象環境の[シェル仕様](https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax#defaultsrun)と[コンテナ仕様](https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax#jobsjob_idcontainer)を確認する。
+
+Bashの明示に切り替える場合は、パイプラインの終了状態と既存のエラー処理を確かめる。`pipefail` はパイプライン中で最後に失敗したコマンドの状態を返す。`errexit` は `if` の条件や、`&&`・`||` の最後以外のコマンドの失敗だけでは終了しない。最後のコマンドまで同じ例外があると考えない。[パイプライン](https://www.gnu.org/software/bash/manual/html_node/Pipelines)と[set組み込みコマンド](https://www.gnu.org/software/bash/manual/html_node/The-Set-Builtin.html)の仕様を照合し、意図した失敗だけを局所的に処理する。
+
+## 検証と復旧
+
+必要なイベント、fork、無関係な変更、依存ジョブの失敗・スキップ・キャンセルを選んで確認する。正常時だけで判断せず、必須チェックへの結果の伝わり方と、検証した成果物だけが公開されることを確認する。ヘルパーの内部構造やコマンドの並びを固定するテストを増やさない。
+
+ジョブの `needs` は実際の依存関係だけに使い、独立した検査を不要に直列化しない。作業ディレクトリ、タイムアウト、サービスの準備完了、テストの分離、後片付けを確認する。無条件の再試行や `continue-on-error` で必須検証の失敗を隠さない。ログや診断用成果物は必要な範囲に絞り、シークレットを含めない。
+
+配備では環境の保護設定、同時実行、公開後の動作確認、失敗時の復旧手順を確認する。`environment:` の指定だけでは手動承認を設定したことにならない。手動承認、カナリア、blue/greenは既存運用と必要性に合わせて選ぶ。データ移行がコードと同じように巻き戻せるとは限らないため、復旧に使う成果物と設定も確認する。
+
+静的確認、ローカル実行、GitHubでの実行を区別する。実行した場合は対象SHA、イベント、runのURL、必要な成果物や公開後の状態を記録する。取得できない保護設定や、実行していない配備・復旧は未確認として報告する。変更が認められていない設定や公開処理を、検証のためだけに実行しない。
