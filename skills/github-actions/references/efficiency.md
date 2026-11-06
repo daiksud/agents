@@ -1,14 +1,14 @@
 ---
 type: Instruction
-title: GitHub Actions efficiency improvements
-description: Choose causes of waiting and usage from execution history and improve while preserving required validation and trust boundaries.
+title: GitHub Actions の効率化
+description: 実行履歴から待ち時間や使用量の原因を調べ、必要な検証と信頼境界を保って改善する。
 ---
 
-## Measure causes and choose a few improvements
+## 原因の測定と改善の選択
 
-Check workflows, required checks, supported-environment documents, and run/job/step history. For new workflows define baseline validation through [Design](workflow-design.md). For existing workflows investigate caches, duplicate triggers, unnecessary runs, and long dependency paths, choosing a few evidence-based changes effective for the purpose. Missing configuration alone does not prove waste.
+ワークフロー、必須チェック、対応環境の文書、実行・ジョブ・ステップの履歴を調べる。新しいワークフローでは[設計方針](workflow-design.md)に従い、必要な検証を先に定める。既存のワークフローではキャッシュ、重複したトリガー、不要な実行、依存関係による待ち時間を調べ、目的に合う少数の改善を根拠に基づいて選ぶ。設定がないことだけで無駄と判断しない。
 
-Read-only examples for the working repository:
+次のコマンドで、作業対象リポジトリの実行履歴を読み取れる。
 
 ```bash
 gh run list --limit 20 --json databaseId,workflowName,event,headSha,status,conclusion,createdAt,updatedAt,url
@@ -16,30 +16,30 @@ gh run view RUN_ID --json jobs,event,headSha,conclusion,url
 gh run view RUN_ID --log-failed
 ```
 
-Replace `RUN_ID` with an actual target ID. If retrieval is unavailable, treat this as static analysis of supplied files.
+`RUN_ID` は調べる実行の ID に置き換える。履歴を取得できなければ、提供されたファイルを静的に調べた結果として扱う。
 
-### Separate effects
+### 改善効果の区別
 
-| Observation | Judgment |
+| 観測するもの | 判断すること |
 | --- | --- |
-| Elapsed time until required PR results are available | Do queues, serial dependencies, or long jobs delay users? |
-| Sum of job execution times | Does total runner usage decrease? Do not convert to prices without checking OS/billing conditions |
-| Avoided run/job/matrix execution counts | Was processing omitted while preserving required validation? |
+| 必須の PR チェックがそろうまでの経過時間 | キュー、直列の依存関係、長いジョブが待ち時間を増やしているか |
+| ジョブの実行時間の合計 | ランナーの総使用量が減るか。料金へ換算する前に OS と課金条件を確認する |
+| 省略できた実行・ジョブ・マトリクスの回数 | 必要な検証を保ったまま処理を省けたか |
 
-Align events, changes, runners, matrices, cache states, and sampling periods before/after, retaining confounders. Separate expected effects from measurements; missing data is neither zero nor confirmed improvement.
+変更前後のイベント、変更内容、ランナー、マトリクス、キャッシュ状態、測定期間をそろえて比較する。そろえられない条件も記録する。予想した効果と測定結果を分け、未取得の値をゼロや改善済みとして扱わない。
 
-### Checks for each change
+### 改善箇所ごとの確認
 
-- **Caching**: Investigate download/save/extraction costs and hit rates. Include compatibility values such as lockfiles, OS, architecture, and tool versions in keys; validate dependencies after partial-match restoration. Avoid duplicating setup Actions' built-in caches. Do not save Secrets/authenticated settings; check creator/reader trust boundaries in [Safety](hardening.md). PRs may read base/default-branch caches.
-- **Duplicate runs**: Compare push/PR runs for the same change without losing necessary branch-protection, release, schema, migration, or shared-library validation. For repositories adopting [staged CI](workflow-design.md#events-and-concurrency), retain its separation of product validation from metadata-only PRLint, including base-change routing and required-check identity.
-- **Path decisions**: Skipping whole workflows may leave required checks Pending. Even with job-level decisions/aggregation, propagate required-validation failures to final results. Include dependencies, lockfiles, configuration, and workflows themselves, checking changed-file comparison bases, limits, and retrieval-failure behavior. Running all checks after workflow changes alone does not prove waste.
-- **Concurrency**: Check cancellation of old PR validation, including workflow and PR/ref identifiers in groups. For staged CI follow its [concurrency contract](workflow-design.md#events-and-concurrency); cancellation does not prove latest-HEAD freshness, and metadata-only runs must not cancel product validation. Do not uniformly enable mid-production-deployment cancellation. Even `cancel-in-progress: false` replaces the default pending slot; separately check queue semantics when all deployments must be retained. Consider `queue: max` where supported, checking limits and incompatibility with `cancel-in-progress: true`.
-- **Matrices**: Investigate contracts guaranteed by each combination. Undocumented support requirements alone do not justify removal; check users, dependencies, and history. State retained/lost guarantees when reducing.
-- **Parallelism/job consolidation**: Compare critical paths, startup/setup costs, and artifact handoffs. Parallelism may shorten elapsed time while increasing total usage. Do not substitute fixed multipliers for acceptable waiting/cost decisions.
-- **Write-back jobs**: Check publication conditions/permissions for autoformatting and similar work. For changes to labels/manual operations, also validate event reassessment without arbitrarily changing agreements.
+- キャッシュ: ダウンロード・保存・展開のコストとヒット率を調べる。キーにはロックファイル、OS、アーキテクチャ、ツールのバージョンなど、互換性を決める値を含める。部分一致で復元した後も依存関係を検証する。セットアップ用アクションに内蔵されたキャッシュと重複させず、シークレットや認証設定を保存しない。作成側と読み取り側の信頼境界は[安全性](hardening.md)で確認する。PR から base ブランチや既定ブランチのキャッシュを読める場合もある。
+- 重複実行: 同じ変更に対する `push` と `pull_request` の実行を比較する。ブランチ保護、リリース、スキーマ、マイグレーション、共有ライブラリに必要な検証を失わないようにする。[イベントと同時実行](workflow-design.md#イベントと同時実行)に従い、タイトルや本文だけの変更は `prlint` で扱う。base ブランチ変更の扱いと必須チェックの識別は保つ。リリース時に `screening` と `inspection` を省く判断は、[成果物の再利用](workflow-design.md#成果物の再利用)の条件に従う。
+- パスによる実行判断: ワークフロー全体を省略すると、必須チェックが Pending に残る場合がある。ジョブ単位で実行を判断して結果を集約する場合も、必須の検証で起きた失敗を最終結果へ反映する。依存関係、ロックファイル、設定、ワークフロー自体を判定対象に含め、変更ファイルの比較元、取得件数の上限、取得失敗時の動作を確認する。ワークフロー変更後に全チェックを実行することだけで無駄と判断しない。
+- 同時実行: 古い PR の検証を取り消す条件を確認し、グループ名にはワークフローと PR 番号または ref の識別子を含める。[イベントと同時実行](workflow-design.md#イベントと同時実行)に従い、タイトルや本文だけの変更でコードの検証を取り消さない。キャンセルできたことだけで最新 HEAD の検証済みとは判断しない。本番デプロイの途中キャンセルを一律に有効にしない。`cancel-in-progress: false` でも、既定のキューでは待機中の実行が新しい実行に置き換わる。すべてのデプロイを残す必要がある場合はキューの動作を別途確認する。対応環境では `queue: max` を検討し、上限と `cancel-in-progress: true` と併用できない制約を確認する。
+- マトリクス: 各組み合わせで保証している動作を調べる。対応要件が文書化されていないことだけで削除せず、利用者、依存関係、履歴を確認する。組み合わせを減らす場合は、維持する保証と失う保証を示す。
+- 並列化とジョブの統合: 完了までの時間を決める経路、起動・セットアップのコスト、成果物の受け渡しを比較する。並列化で経過時間が短くなっても、総使用量は増える場合がある。許容する待ち時間とコストを固定の倍率だけで決めない。
+- 書き戻しジョブ: 自動整形などの公開条件と権限を確認する。ラベルや手動操作に関する変更では、既存の合意を勝手に変えず、イベントを再評価したときの動作も検証する。
 
-### Validate behavior and effects
+### 動作と効果の検証
 
-For approved changes, use safe existing working branches to check related/unrelated changes, workflow changes, and cancellation during consecutive updates. First pushes on new branches alone do not validate path decisions. Audit-only requests propose validation without test pushes/dispatches.
+許可された変更では安全に使える既存の作業ブランチで、関連する変更・無関係な変更・ワークフロー変更と、連続更新時のキャンセルを確認する。新しいブランチへの初回 push だけではパスによる実行判断を検証できない。監査のみの依頼では検証方法を提案し、テスト用の push や `workflow_dispatch` を実行しない。
 
-Check cold/warm caches and required checks/artifacts. Investigate unexpected skips/runs as defects even when YAML appears valid. Report improvements, preserved guarantees, validated runs, measurements, and uncertainties.
+キャッシュがない場合とある場合の両方で、必須チェックと成果物を確認する。YAML が正しくても、想定外の省略や実行は不具合として調べる。改善内容、維持した保証、確認した実行、測定結果、未確認の点を報告する。
