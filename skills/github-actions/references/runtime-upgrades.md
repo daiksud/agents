@@ -1,38 +1,40 @@
 ---
 type: Instruction
-title: Upgrading Action internal runtimes
-description: Identify deprecation-warning sources and compatibility, upgrading and validating Actions without confusing application runtimes.
+title: アクションの内部ランタイム更新
+description: 非推奨警告の発生元と互換性を確認し、アプリケーションのランタイムと区別してアクションを更新・検証する。
 ---
 
-## Identify warning sources
+## 警告の発生元
 
-Retrieve run warnings, target SHA, event, runner, and steps, tracing direct/indirect Actions. JavaScript Action `runs.using` in `action.yml`/`action.yaml` is its internal runtime, separate from `setup-node` `node-version` or application `engines`. Inspect inner Actions in composites/reusable workflows.
+ワークフロー実行の警告、対象 SHA、イベント、ランナー、ステップの情報を取得し、直接・間接に呼び出すアクションを追う。JavaScript アクションの `action.yml`・`action.yaml` にある `runs.using` は、アクション内部のランタイムを表す。`setup-node` の `node-version` やアプリケーションの `engines` とは区別する。複合アクションや再利用可能なワークフローの内部で呼び出すアクションも調べる。
 
-For warning removal alone, do not update unrelated application Node.js, locks, build settings, or job structures. Hiding warnings through environment variables or replacing runtime declarations without Action support is not a permanent fix. Without compatible releases, show constraints, upstream status, alternatives, and uncertainties.
+警告の解消だけが目的なら、無関係なアプリケーションの Node.js、ロックファイル、ビルド設定、ジョブ構成を更新しない。環境変数で警告を隠すことや、アクションが対応していないランタイムを宣言することを恒久対策にしない。互換性のあるリリースがない場合は、制約、配布元の対応状況、代替案、未確認の点を示す。
 
-## Compare compatibility and references
+## 互換性と参照先の確認
 
-1. Check current complete SHA/version comment/metadata and target stable releases/notes. Resolve tag commits in official repositories; for annotated tags trace tag objects to commits, without pinning shortened SHAs or tag names alone.
-2. Check target-version runner requirements, OS/architecture, and GitHub.com/GHES support. Old self-hosted runners do not imply authority to upgrade them.
-3. Check inputs, removals/defaults, outputs, checkout authentication/fork conditions, caches, and artifact names/content/retention/signatures. Internal-runtime descriptions alone do not prove unchanged behavior; checkout/setup-node defaults also change by version.
-4. Update compatible full SHAs with correct version comments. Search other workflows/composites/reuse targets and align necessary callers; do not uniformly replace references with different compatibility needs.
-5. Upgrade/validate small groups of related Actions, reading [Safety](hardening.md) when permissions, inputs, authentication, or cache boundaries change. Do not copy old example SHAs or fixed recommended majors.
+1. 現在の完全な SHA、バージョンコメント、メタデータと、更新先の安定リリース・リリースノートを照合する。公式リポジトリでタグが指すコミットを確認する。注釈付きタグではタグオブジェクトからコミットまで追い、短縮 SHA やタグ名だけで固定しない。
+2. 更新先バージョンのランナー要件、OS・アーキテクチャ、GitHub.com・GitHub Enterprise Server の対応状況を確認する。セルフホステッドランナーが古くても、その更新まで許可されたことにはならない。
+3. 入力、削除された機能、既定値、出力、チェックアウト時の認証とフォークの条件、キャッシュ、成果物の名前・内容・保持期間・署名を確認する。内部ランタイムの説明だけで動作が変わらないとは判断しない。`checkout`・`setup-node` の既定値もバージョンによって変わる。
+4. 互換性を確認した完全な SHA と、正しいバージョンコメントに更新する。ほかのワークフロー、複合アクション、再利用先を検索し、必要な呼び出し元をそろえる。互換性の条件が違う参照先まで一律に置き換えない。
+5. 関連するアクションを小さな単位で更新・検証する。権限、入力、認証、キャッシュの扱いが変わる場合は[安全性](hardening.md)を読む。古い例の SHA や、固定された推奨メジャーバージョンをそのまま使わない。
 
-Commands for reading target evidence (replace repository/tag with actual values):
+次のコマンドで対象の情報を確認できる。リポジトリ名とタグは実際の値に置き換える。
 
 ```bash
 gh release view TAG --repo OWNER/ACTION
 gh api repos/OWNER/ACTION/commits/TAG --jq .sha
 ```
 
-Missing releases or unconfirmed version-comment/commit relationships are not verified.
+リリースが見つからない場合や、バージョンコメントとコミットの対応を確かめられない場合は、検証済みとしない。
 
-## Separate validation
+## 検証結果の区別
 
-| Check | Evidence obtained |
+| 検証 | 確認できること |
 | --- | --- |
-| Static | Consistency of YAML, expressions, full SHAs, version comments, inputs, and runner requirements |
-| Local | Application builds/tests work in that local environment |
-| GitHub execution | Updated Actions execute for target SHA/event/runner with expected warnings, outputs, artifacts, and similar results |
+| 静的検証 | YAML、式、完全な SHA、バージョンコメント、入力、ランナー要件の整合性 |
+| ローカルでの実行 | そのローカル環境でアプリケーションのビルド・テストが動くこと |
+| GitHub での実行 | 対象の SHA・イベント・ランナーで更新後のアクションが動き、警告、出力、成果物などが想定した結果になること |
 
-For approved changes select representative and affected paths, recording run URLs, SHAs, and conclusions. Check artifacts/signatures for consumer-required content beyond generation success. For changed defaults such as fork rejection, check affected paths too. Local success alone does not validate Action execution; state inaccessible/unexecuted results and remaining checking methods. Use small upgrades and preserve behavior through these distinctions.
+許可された変更について、代表的な経路と変更の影響を受ける経路を選び、実行結果の URL、SHA、結論を記録する。成果物が生成されたことだけで終えず、利用側が求める内容と署名を確認する。フォークからの実行を拒否する既定値などが変わる場合は、その影響を受ける経路も調べる。
+
+ローカルでの成功だけでは、GitHub 上でアクションが動くことを検証できない。取得できなかった結果、実行していない検証、残る確認方法を明示する。更新を小さく保ち、それぞれの検証で確認できる範囲を区別して既存の動作を維持する。
