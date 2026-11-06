@@ -1,57 +1,65 @@
 ---
 type: Instruction
-title: GitHub Actions safety
-description: Trace trust boundaries of inputs, executed code, permissions, runners, and artifacts to judge risks and fixes.
+title: GitHub Actions の安全性
+description: 外部入力、実行コード、権限、ランナー、成果物の信頼関係を追い、リスクと修正方法を判断する。
 ---
 
-## Trace inputs through impact
+## 入力から影響までの確認
 
-For audits read the specified scope; for fix requests change approved scope. Do not assign severity solely by matching dangerous syntax; check who controls input, which code runs with which permissions, and what it can reach. Investigate each trigger through actual settings and execution paths.
+監査では指定された範囲を読み、修正では許可された範囲を変更する。危険に見える構文だけで深刻度を決めず、入力を制御できる人、実行するコードと権限、そのコードがアクセスできる対象を確認する。各トリガーから実際の設定と実行経路を追う。
 
-### Permissions, authentication, and runners
+### 権限と認証とランナー
 
-- Investigate Organization/repository defaults, workflow/job `permissions`, fork settings, and reuse targets. Trigger names alone do not determine `GITHUB_TOKEN` permissions. Start from `permissions: {}` or necessary read permissions, limiting writes to needed jobs. With explicit permissions unspecified scopes become none; `id-token` is write/none.
-- Trace Secrets through actual receiving jobs, Actions, and reuse targets. Masking does not guarantee leak prevention; do not log/artifact entire contexts, authenticated settings, or transformed secrets. Consider `persist-credentials: false` for unnecessary checkout authentication persistence, checking storage/behavior for the target Action version.
-- Where clouds support managed trust conditions, reduce long-lived keys through OIDC. Give only necessary jobs `id-token: write`, comparing actual claims, audience/subject, repository, branch/environment, and cloud role permissions. Do not apply fixed subject examples universally.
-- `runs-on` labels alone do not identify providers. Check matching GitHub-hosted/self-hosted runners, groups, and repository access, verifying actual routing where persistent self-hosted runners share custom labels. For untrusted fork-PR code, persistent state, host credentials, internal networks, and shared workspaces add risks. Absence of Secrets alone is not safety; ephemeral registration alone does not guarantee clean hosts. Check actual isolation/erasure.
+- Organization・リポジトリの既定値、ワークフロー・ジョブの `permissions`、フォークの設定、呼び出す再利用可能なワークフローを調べる。トリガー名だけでは `GITHUB_TOKEN` の権限は決まらない。`permissions: {}` または必要な読み取り権限から始め、書き込みは必要なジョブに限る。`permissions` を明示すると未指定の権限は `none` になる。`id-token` は `write` または `none` を指定する。
+- シークレットが渡るジョブ、アクション、再利用可能なワークフローを追う。マスク表示だけで漏えいを防げるとは限らない。コンテキスト全体、認証情報を含む設定、変換したシークレットをログや成果物に残さない。チェックアウト後に認証情報を保持する必要がなければ `persist-credentials: false` を検討し、対象バージョンの保存先と動作を確かめる。
+- クラウド側で信頼条件を管理できる場合は、OIDC で長期間有効なキーを減らす。`id-token: write` は必要なジョブだけに与える。実際のクレーム、`audience`・`subject`、リポジトリ、ブランチ・環境、クラウドロールの権限を照合する。`subject` の例をすべての環境に当てはめない。
+- `runs-on` のラベルだけではランナーの提供元は分からない。該当する GitHub ホステッドランナーとセルフホステッドランナー、グループ、リポジトリからの利用権限を確認する。永続的なセルフホステッドランナーが同じカスタムラベルを使う場合は、実際の割り当て先も調べる。信頼できないフォーク PR のコードを実行するときは、残存する状態、ホストの認証情報、内部ネットワーク、共有ワークスペースもリスクになる。シークレットがないことや、ランナーを一時的に登録することだけでは、ホストの安全性や初期化を保証できない。実際の隔離と消去を確認する。
 
-### External input and executed code
+### 外部入力と実行コード
 
-Do not interpolate PR titles/bodies, branch names, comments, dispatch inputs, or similar data into `run` or `github-script` code. Use quoted intermediate environment variables, or JavaScript `process.env` as data. For Action inputs, trace whether receivers evaluate them as shell commands, templates, or other code, including a second evaluation after GitHub expression expansion. Commit messages, author names/emails, and filenames can also carry untrusted input; validate the expected format and use data APIs or argument arrays rather than command concatenation.
+PR のタイトル・本文、ブランチ名、コメント、手動実行の入力などを `run` や `github-script` のコードに直接埋め込まない。環境変数に渡して引用符で囲んで参照するか、JavaScript の `process.env` からデータとして扱う。アクションへの入力は、受け取り側がシェルコマンドやテンプレートなどのコードとして評価しないかを追う。GitHub 式の展開後に、もう一度評価される経路も確認する。
+
+コミットメッセージ、作成者の名前・メールアドレス、ファイル名も信頼できない入力になり得る。想定する形式を検証し、コマンド文字列の連結を避けてデータ用 API や引数配列を使う。
 
 ```yaml
-- name: Print PR title as data
+- name: PR タイトルをデータとして出力する
   env:
     PR_TITLE: ${{ github.event.pull_request.title }}
   run: printf '%s\n' "$PR_TITLE"
 ```
 
-This demonstrates data handoff, not increased input trust. Do not reinterpret through `eval`, `bash -c`, or generated-script concatenation. Do not write newline-containing external values directly into `GITHUB_ENV`/`GITHUB_OUTPUT`. For multiline formats guarantee delimiters do not appear as standalone value lines; for arbitrary data save files and validate in readers.
+この例はデータの渡し方を示している。入力自体が信頼できるようになるわけではない。`eval`、`bash -c`、生成するスクリプトへの文字列連結で再解釈しない。改行を含む外部の値を `GITHUB_ENV`・`GITHUB_OUTPUT` に直接書き込まない。複数行の形式では、区切り文字と同じ内容の行が値に含まれないようにする。任意のデータはファイルに保存し、読み取り側で検証する。
 
-### Privileged processing and approval boundaries
+### 特権処理と承認
 
-Use `pull_request_target` when trusted base-side logic needs privileges to label or comment on PRs. Keep processing limited to validated data; do not mix PR-changeable code with privileged execution. Run untrusted builds/tests in isolated, minimally privileged `pull_request` jobs, then pass only the data needed by a separate privileged consumer when necessary. Separation does not promote that data to trusted code.
+信頼できるベースブランチ側の処理が PR へのラベル付けやコメントに権限を必要とする場合は `pull_request_target` を使う。扱う対象を検証済みのデータに限り、PR から変更できるコードを特権で実行しない。信頼できないビルドやテストは、隔離した最小権限の `pull_request` ジョブで実行する。別の特権処理が必要なら、必要なデータだけを渡す。処理を分けても、そのデータを信頼できるコードとして扱ってよいことにはならない。
 
-Privileged processing through `pull_request_target`, `workflow_run`, `issue_comment`, or similar events must not execute PR-derived checkouts, local Actions, build configuration, or dependency-install lifecycle scripts. Trace indirect execution through test discovery, formatter plugins/configuration, imported modules, generated files, and executable search paths as well as visible shells. Calling from reviewed workflows does not make called PR code trusted.
+`pull_request_target`、`workflow_run`、`issue_comment` などによる特権処理では、PR 由来のチェックアウト、ローカルアクション、ビルド設定、依存関係のインストール時のライフサイクルスクリプトを実行しない。シェルの記述だけでなく、テストの探索、フォーマッターのプラグイン・設定、読み込むモジュール、生成ファイル、実行ファイルの探索パスを通じた間接実行も追う。レビュー済みのワークフローから呼び出しても、PR のコードが信頼できるようになるわけではない。
 
-Treat tool configuration as a trust boundary even without executing PR code: a scanner can send its token to a PR-selected server before analysis. Keep credential destinations, plugin/module loading, and executable paths under trusted base-side configuration; verify configuration precedence and prevent PR files or inputs from overriding them. Processing a file as data is insufficient if it can redirect authenticated behavior.
+コードを実行しなくても、ツールの設定によって認証情報の送信先が変わり得る。たとえばスキャナーは解析を始める前に PR で指定されたサーバーへトークンを送ることがある。認証情報の送信先、プラグイン・モジュールの読み込み、実行ファイルのパスは、信頼できるベースブランチ側の設定で管理する。設定の優先順位を調べ、PR のファイルや入力で上書きできないようにする。認証を伴う動作を変更できるなら、ファイルをデータとして読むだけでも安全とはいえない。
 
-Labels, maintainer comments, actor membership, and workflow-run approval do not certify all future changes on a PR branch. Bind any review authorization to the exact commit SHA and recheck it before use; never resolve an approved mutable branch to newer code. A fixed SHA identifies bytes, not their safety or permission to execute them with privileges. `issue_comment` and `pull_request_target` do not inherit the ordinary fork-PR workflow approval gate. Inspect vulnerable workflow versions on other supported base branches too.
+ラベル、メンテナーのコメント、実行者の所属、ワークフロー実行の承認は、PR ブランチに今後加わるすべての変更を承認するものではない。レビューによる実行許可を正確なコミット SHA に結び付け、使用前に再確認する。承認時のブランチ名を解決し直して、新しいコードを使わない。固定した SHA は内容を識別するが、その安全性や特権で実行する許可までは示さない。`issue_comment` と `pull_request_target` には、通常のフォーク PR に対するワークフロー実行の承認条件が引き継がれない。ほかのサポート対象のベースブランチにも、脆弱なワークフローが残っていないか調べる。
 
-For `workflow_run`, allowlist the intended upstream workflow and inspect `github.event.workflow_run.event` for the expected initiating event, plus its repository, head SHA/ref, and conclusion. `github.event_name` identifies the consumer event (`workflow_run`), not its origin. A branch filter, matching workflow name, or `github.repository_owner` alone cannot authenticate the producer: a PR can change upstream workflow definitions/triggers. For example, a trusted-push consumer requires `github.event.workflow_run.event == 'push'` together with trusted repository/ref checks; a PR-result consumer deliberately accepts `pull_request` and keeps its output untrusted.
+`workflow_run` では実行元のワークフローを許可リストで絞る。`github.event.workflow_run.event` が想定した起動イベントかを確認し、リポジトリ、head SHA・ref、実行結果も照合する。`github.event_name` が示すのは受け取り側の `workflow_run` イベントであり、実行元のイベントではない。ブランチのフィルター、ワークフロー名の一致、`github.repository_owner` だけでは、成果物の作成元を確認できない。PR から実行元のワークフロー定義やトリガーを変更できるためである。
 
-### Actions, caches, and artifacts
+たとえば、信頼する push の結果を受け取る処理では、`github.event.workflow_run.event == 'push'` と、信頼するリポジトリ・ref の一致を確認する。PR の結果を受け取る処理では `pull_request` を明示的に受け入れ、その出力を引き続き信頼できないデータとして扱う。
 
-Compare external Actions/reusable workflows with official target-repository releases and full SHAs, reviewing changes before updating pins. A verified-creator badge verifies identity, not safe behavior. Actions can access `github.token` without an explicit token input, so audit every Action in a privileged job and its transitive dependencies, not only the step receiving a Secret.
+### アクションとキャッシュと成果物
 
-Where supported and adopted, `.github/workflows/actions.lock` locks covered action dependencies, including transitive Actions and source-repository identity. Generate/update it with `gh actions-lock` and review its diff. It does not pin reusable workflow calls: keep those at full SHAs and check dependency locking in the called repository. Otherwise retain verified full-SHA pins and inspect nested references. Locks/pins do not establish safe contents or constrain runtime downloads, package dependencies, inputs, or runner images; verify container digests and fetched dependencies separately.
+外部アクションと再利用可能なワークフローは、公式リポジトリのリリースと完全なコミット SHA を照合し、変更内容をレビューしてから参照先を更新する。作成者の検証済みバッジは本人確認を示すもので、動作の安全性を示すものではない。アクションはトークンを入力として明示的に受け取らなくても `github.token` にアクセスできる。シークレットを渡すステップだけでなく、特権ジョブ内のすべてのアクションと間接的な依存先を調べる。
 
-Keep artifacts passed from unprivileged builds to privileged processing untrusted. Select the artifact from the triggering run ID, matching repository, head SHA, event, and conclusion. Extract into a fresh temporary directory outside the workspace and executable/configuration paths; reject traversal, unexpected files, and links escaping that directory before use. Do not let extraction overwrite trusted scripts or load PR-produced binaries, modules, plugins, or configuration in privileged jobs. Read only bounded, expected data with strict schema/type checks. Validate a positive PR number and correlate it with the run through trusted GitHub API metadata before directing privileged API calls; artifact-supplied identifiers alone are not authorization. For writes, independently authorize the destination repository, PR/head branch, and operation against trusted metadata; valid branch syntax or equality with an artifact-supplied SHA does not establish that relationship. Completed/successful runs and matching digests establish neither content safety nor permission to publish a PR artifact.
+対象環境が対応し、リポジトリが採用している場合は、`.github/workflows/actions.lock` で対象アクションの依存関係を固定する。間接的に呼び出すアクションや参照元リポジトリの識別情報も固定の対象になる。`gh actions-lock` で生成・更新し、差分をレビューする。このファイルでは再利用可能なワークフローの呼び出しは固定されないため、呼び出しを完全な SHA に固定し、呼び出し先での依存関係の固定も確認する。未対応・未採用の場合は、検証済みの完全な SHA による固定を維持し、内部の参照も調べる。ロックファイルや SHA の固定だけでは、内容の安全性や、実行時のダウンロード、パッケージ依存関係、入力、ランナーイメージを管理できない。コンテナのダイジェストと取得する依存関係は別途確認する。
 
-Investigate cache creators/refs, effective cache access, and restoring jobs' permissions, including implicit setup-Action caching. `permissions: {}` restricts `GITHUB_TOKEN`, not every cache capability. Current GitHub.com defaults make default-branch caches read-only for low-trust triggers such as `pull_request_target`, `issue_comment`, and `workflow_run`; explicit write-capable `cache-mode` can override this. Check target-platform support and actual overrides, including reusable workflows. Explicitly cap the calling job at `cache-mode: read` or `none` where appropriate; an omitted caller limit can permit a called workflow to request writes. Ordinary `pull_request` caches are merge-ref scoped, not automatically writable into the base branch. Prevent low-trust cache content reaching privileged execution through shared paths or broad restore keys. Do not save Secrets/tokens/authentication settings. Digests/signatures/attestations require correspondence with allowed creators/workflows and do not prove safe contents.
+権限の低いビルドから特権処理へ渡る成果物は、引き続き信頼できないデータとして扱う。起動元の実行 ID から成果物を選び、リポジトリ、head SHA、イベント、実行結果を照合する。ワークスペースや実行ファイル・設定の置き場所から離れた、新しい一時ディレクトリへ展開する。使用前に、パストラバーサル、想定外のファイル、展開先の外を指すリンクを拒否する。展開で信頼済みのスクリプトを上書きさせず、PR が作ったバイナリ、モジュール、プラグイン、設定を特権ジョブで読み込まない。
 
-## Validation and reporting
+読み取るデータの範囲とサイズを限定し、想定するスキーマと型を厳密に検証する。特権 API 呼び出しの対象となる PR 番号は正の整数であることを確認し、信頼できる GitHub API のメタデータで実行との対応を確かめる。成果物に書かれた識別子だけを操作の許可とみなさない。書き込みでは、対象のリポジトリ、PR・head ブランチ、操作が許可されていることを、信頼できるメタデータから別途確認する。ブランチ名の構文が正しいことや、成果物に書かれた SHA との一致だけでは、その対応は確認できない。実行の完了・成功やダイジェストの一致だけで、内容が安全であることや PR の成果物を公開してよいことは判断できない。
 
-Select dependency, Secret, and static-security checks from existing coverage without uniformly adding every tool. CodeQL supports the `actions` language for workflow and Action metadata YAML; verify the target setup/version actually scans it, since application-language scanning alone does not cover these boundaries. Static findings complement execution-path review and do not prove absence of vulnerabilities.
+キャッシュの作成元と ref、実際のアクセス権限、復元するジョブの権限を調べる。セットアップ用アクションが暗黙に使うキャッシュも対象にする。`permissions: {}` が制限するのは `GITHUB_TOKEN` であり、キャッシュに関するすべての機能ではない。GitHub.com の現行の既定値では、`pull_request_target`、`issue_comment`、`workflow_run` などの信頼度の低いトリガーは、デフォルトブランチのキャッシュを読み取り専用で扱う。書き込み可能な `cache-mode` を明示すると、この制限を変更できる。対象環境の対応状況と、再利用可能なワークフローを含む実際の指定を確認する。
 
-Check attack strings remain data in isolated tests; do not test leaks or exercise privileges in real environments. For audits show locations, input sources, execution paths, effective permissions, impact, and minimal fixes under `code-review` criteria. Distinguish unreadable settings, unexecuted fixes, and unconfirmed reachability.
+必要に応じて、呼び出し側のジョブに `cache-mode: read` または `none` を明示する。呼び出し側が上限を指定しない場合は、呼び出されるワークフローが書き込みを要求できることがある。通常の `pull_request` のキャッシュはマージ ref の範囲に保存され、ベースブランチへ自動的に書き込めるものではない。共有パスや広すぎる復元キーを通じて、信頼度の低いキャッシュの内容が特権で実行されないようにする。シークレット、トークン、認証設定を保存しない。ダイジェスト、署名、アテステーションは、許可した作成元・ワークフローとの対応を確認して使う。それらだけで内容の安全性は証明できない。
+
+## 検証と報告
+
+依存関係、シークレット、静的なセキュリティの検査は、既存の検出範囲から必要なものを選ぶ。すべてのツールを一律に追加しない。CodeQL の `actions` 言語はワークフローとアクションのメタデータ YAML を対象にする。アプリケーション言語の解析だけではこれらを検査できないため、対象の設定とバージョンで実際に解析しているかを確認する。静的解析は実行経路のレビューを補うもので、脆弱性がないことを証明するものではない。
+
+攻撃を想定した文字列がデータのまま扱われるかは、隔離したテストで確認する。実環境で漏えいや特権操作を試してはならない。監査結果には該当箇所、入力元、実行経路、実際の権限、再現条件、影響、最小限の修正案を示す。読めなかった設定、実行していない修正、到達可能か未確認の経路は、確認済みの結果と分けて報告する。

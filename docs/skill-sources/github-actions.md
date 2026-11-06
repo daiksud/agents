@@ -77,6 +77,18 @@ sources:
     resource: https://docs.github.com/en/actions/how-tos/write-workflows/choose-when-workflows-run/control-workflow-concurrency
   - id: github-artifacts
     resource: https://docs.github.com/en/actions/tutorials/store-and-share-data
+  - id: agents-phase-design
+    resource: https://github.com/daiksud/agents/issues/268
+  - id: github-expressions
+    resource: https://docs.github.com/en/actions/reference/workflows-and-actions/expressions
+  - id: github-run-variables
+    resource: https://docs.github.com/en/actions/reference/workflows-and-actions/variables
+  - id: github-artifact-api
+    resource: https://docs.github.com/en/rest/actions/artifacts
+  - id: actions-download-artifact
+    resource: https://github.com/actions/download-artifact/blob/9000827ccba6bdab643e8b6fd33ac0654aef8333/README.md
+  - id: actions-upload-artifact
+    resource: https://github.com/actions/upload-artifact/blob/cf430e030ddbb5b0abf93d22962f4752f3646cd9/README.md
   - id: agents-staged-ci
     resource: https://github.com/daiksud/agents/issues/242
   - id: gh-qw-check-names
@@ -213,7 +225,7 @@ Originals are MIT License, Copyright GitHub, Inc. Preserve complete copyright, p
 | Topic | Integrated judgment |
 | --- | --- |
 | Overlap among four sources | One skill for entry/common safety/validation conditions; read task-specific detail |
-| Work boundaries | Original hardening edit prohibition applies only to audits/review. Connect fix plans/publication permission to issue-management and approved changes to change-delivery without extra severity/report/Issue procedures |
+| Work boundaries | Original hardening edit prohibition applies only to audits/review. The standalone entry point now defines scope, inspection, editing, validation, and reporting without requiring other skills; target-repository instructions and the user's authorization still apply |
 | Permissions | Do not adopt “tokens always default write,” “event names alone grant all Secrets,” or “fork PRs are unconditionally safe.” Check effective permissions, passed Secrets, code provenance, runners |
 | Untrusted output | Unprivileged-build artifacts remain untrusted, even in privileged workflow_run; validate without executing as code |
 | Action pinning | Full SHA/release/comment agreement; do not copy mutable-tag or mismatched examples |
@@ -226,11 +238,33 @@ Originals are MIT License, Copyright GitHub, Inc. Preserve complete copyright, p
 
 These are this skill's application decisions, not wholesale adoption.
 
-### Staged CI adoption
+### Standalone phase-oriented design
+
+Issue #268 records the replacement of mandatory skill dependencies and the old Commit/Acceptance adoption model. The complete `skills/github-actions/` directory is the standalone distribution unit. Its entry point and operational references use Japanese, while identifiers, commands, metadata keys, and the original MIT license retain their required forms. The maintainer catalog remains optional background.[^agents-phase-design]
+
+The current design places events and orchestration in workflows, reusable phases in Composite Actions, and basic operations in steps. Jobs retain runner, permissions, dependency, matrix, environment, condition, and timeout controls. Composite Actions run inside a calling job; reusable workflows remain appropriate when the shared unit genuinely contains multiple jobs. Composite `run` steps specify their own shells, and `./...` references need workspace files obtained through checkout.[^github-metadata][^github-reuse]
+
+| Selected policy | Rationale and limits |
+| --- | --- |
+| `pr.yml` runs screening; `push-main.yml` runs screening and inspection; manual `release.yml` delivers a verified candidate | Reuse phase implementations without copying their commands into every workflow. Keep metadata and settings automation separate. Existing validation and platform coverage must survive migration. |
+| Reuse only a trusted successful main-push candidate for the exact source, version, and target | Inspection applies to the bytes that will be published. A branch name, artifact name, or successful run alone is insufficient evidence. |
+| Rebuild for a confirmed missing run or unusable artifacts from a successful producer | Missing, expired, incompatible, or corrupt artifacts cause warning and complete screening/inspection. Failed, canceled, pending, incomplete, or unverifiable producer validation blocks delivery. |
+| Explicit reuse and rebuild conditions for delivery | Intentional skipped jobs on the reuse route must not suppress delivery, while failure, unexpected skips, and cancellation must not permit publication. |
+| Preserve existing required checks until a verified replacement is configured | Documentation changes do not migrate consumer workflows or live protection settings. Draft/Ready automation is no longer part of the selected default structure. |
+
+These are the user's selected design policies, not universal GitHub requirements.[^agents-phase-design] GitHub applies an implicit `success()` condition unless a status function is present; `always()` also evaluates true after cancellation. The example therefore combines `!cancelled()` with successful resolution and explicit results for each selected route.[^github-expressions]
+
+Cross-run download requires the selected run and a token with access to its artifacts. Artifact IDs and digests bind the selected candidate more precisely than names; replacement uploads create a different ID. A rerun keeps its run ID and increments its attempt, while the artifact-list endpoint is run-scoped. The guidance therefore requires correspondence between successful inspection and artifact identity rather than assuming that a run ID selects an attempt.[^actions-download-artifact][^actions-upload-artifact][^github-run-variables][^github-artifact-api]
+
+On 2026-11-06, source review covered Composite Action metadata, reuse, status functions, artifact retrieval and identity, run attempts, and the retained lockfile, cache-access, and runner guidance. This was documentation/source inspection, not execution of the proposed workflow. The pinned download-action README describes configurable digest-mismatch handling with an error default; the general artifact tutorial still describes a warning. The operational rule checks the adopted version and never treats a mismatch as successful verification.[^actions-download-artifact][^github-artifacts]
+
+### Historical staged CI adoption
+
+The following records describe the earlier policy and its 2026-10-31 checking scope. Issue #268 supersedes its prescribed workflow names, Draft/Ready operations, and Commit/Acceptance orchestration in the current skill. It does not change the historical records or assert that consumer repositories have migrated.[^agents-phase-design]
 
 The operational contract lives in [workflow design](../../skills/github-actions/references/workflow-design.md), with related filtering and cancellation guidance in [efficiency](../../skills/github-actions/references/efficiency.md). Issue #242 records a selected shared policy for adopting repositories, not a universal GitHub requirement or permission to replace their validation with a copied workflow.[^agents-staged-ci]
 
-The original 2026-10-25 record used a common `pass` context and listed four gh-qw CI targets. Later naming decisions, implemented in gh-qw #141 and gh-settings #455, use distinct native `ci-pr` and `ci-push` aggregates and separate `prlint`; the workflow file stem, workflow name, and aggregate job/check name agree. The shared guidance follows those newer names.[^gh-qw-check-names][^gh-settings-check-names] gh-qw #137 retired Linux ARM64 and Intel Mac support. Its current matrix retains Linux amd64, macOS arm64, and Windows amd64, while gh-settings retains both process and public-Action candidate acceptance. Shared orchestration must preserve these current contracts rather than restore the historical target list.[^gh-qw-platforms][^gh-qw-ci-metadata][^gh-settings-ci-metadata]
+The original 2026-10-25 record used a common `pass` context and listed four gh-qw CI targets. Later naming decisions, implemented in gh-qw #141 and gh-settings #455, used distinct native `ci-pr` and `ci-push` aggregates and separate `prlint`; the workflow file stem, workflow name, and aggregate job/check name agreed. The shared guidance at that revision followed those names.[^gh-qw-check-names][^gh-settings-check-names] gh-qw #137 retired Linux ARM64 and Intel Mac support. At the recorded revision its matrix retained Linux amd64, macOS arm64, and Windows amd64, while gh-settings retained both process and public-Action candidate acceptance. Later adoption must check current contracts rather than restore a historical target list.[^gh-qw-platforms][^gh-qw-ci-metadata][^gh-settings-ci-metadata]
 
 | Choice | Rationale and tradeoff |
 | --- | --- |
@@ -303,6 +337,13 @@ On 2026-09-22 checked [Runner selection][^github-runner-selection], [self-hosted
 [^github-job-container-shell]: [github-job-container-shell](https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax#jobsjob_idcontainer).
 [^actions-runner-shell-handler]: [actions-runner-shell-handler](https://github.com/actions/runner/blob/80bb1fb827fa44d489263061e71ef4adba7ad8cd/src/Runner.Worker/Handlers/ScriptHandler.cs).
 [^github-reuse]: [github-reuse](https://docs.github.com/en/actions/how-tos/reuse-automations/reuse-workflows).
+[^agents-phase-design]: [Standalone Japanese github-actions refinement](https://github.com/daiksud/agents/issues/268).
+[^github-expressions]: [Status check functions](https://docs.github.com/en/actions/reference/workflows-and-actions/expressions#status-check-functions).
+[^actions-download-artifact]: [download-artifact README at the checked commit](https://github.com/actions/download-artifact/blob/9000827ccba6bdab643e8b6fd33ac0654aef8333/README.md).
+[^actions-upload-artifact]: [upload-artifact README at the checked commit](https://github.com/actions/upload-artifact/blob/cf430e030ddbb5b0abf93d22962f4752f3646cd9/README.md).
+[^github-run-variables]: [Run ID and run attempt variables](https://docs.github.com/en/actions/reference/workflows-and-actions/variables#default-environment-variables).
+[^github-artifact-api]: [Artifact REST API](https://docs.github.com/en/rest/actions/artifacts#list-workflow-run-artifacts).
+[^github-artifacts]: [github-artifacts](https://docs.github.com/en/actions/tutorials/store-and-share-data).
 [^agents-staged-ci]: [agents-staged-ci](https://github.com/daiksud/agents/issues/242).
 [^gh-qw-check-names]: [gh-qw-check-names](https://github.com/daiksud/gh-qw/pull/141).
 [^gh-settings-check-names]: [gh-settings-check-names](https://github.com/daiksud/gh-settings/pull/455).
@@ -310,4 +351,3 @@ On 2026-09-22 checked [Runner selection][^github-runner-selection], [self-hosted
 [^gh-qw-ci-metadata]: [gh-qw-ci-metadata](https://github.com/daiksud/gh-qw/blob/64afba3ce3a32e72dffdcadd4ffdaffc4c034256/.github/actions/ci-metadata/action.yml).
 [^gh-settings-ci-metadata]: [gh-settings-ci-metadata](https://github.com/daiksud/gh-settings/blob/b79568b604f545823e4a36a4de59c3be5b86d4ed/.github/actions/ci-metadata/action.yml).
 [^github-concurrency]: [github-concurrency](https://docs.github.com/en/actions/how-tos/write-workflows/choose-when-workflows-run/control-workflow-concurrency).
-[^github-artifacts]: [github-artifacts](https://docs.github.com/en/actions/tutorials/store-and-share-data).

@@ -11,7 +11,7 @@ This repository shares [development policy Instructions](.apm/instructions/) and
 
 ## Artifact language
 
-These shared guidance files use English. Artifacts created with them follow [Repository artifact language](.apm/instructions/language.instructions.md): commits, code comments, and Issue/PR titles always use English; bodies, discussions, reviews, and documentation use the target repository's English or Japanese conventions.
+These shared guidance files generally use English. The standalone [github-actions skill](skills/github-actions/SKILL.md) and its bundled instructional references use Japanese; identifiers, commands, metadata keys, and the original license notice retain their required forms. Artifacts created with the shared guidance follow [Repository artifact language](.apm/instructions/language.instructions.md): commits, code comments, and Issue/PR titles always use English; bodies, discussions, reviews, and documentation use the target repository's English or Japanese conventions.
 
 ## Maintainer references
 
@@ -19,7 +19,9 @@ These shared guidance files use English. Artifacts created with them follow [Rep
 
 ## Prerequisites
 
-The distribution targets are Codex and GitHub Copilot, as specified in [apm.yml](apm.yml). Use an environment with APM CLI available, and install the complete set of Instructions and Skills globally. Because Skills depend on one another, copying only an individual `SKILL.md` is not a supported usage assumption.
+The distribution targets are Codex and GitHub Copilot, as specified in [apm.yml](apm.yml). For the complete shared package, use an environment with APM CLI available and install the Instructions and Skills globally. Most Skills depend on one another, so copying only an individual `SKILL.md` is not a supported usage assumption.
+
+The `github-actions` skill also supports standalone use. Copy its complete [directory](skills/github-actions/), including `SKILL.md`, `references/`, and `LICENSE.txt`, to a skill location supported by the host. It does not require other Skills, this package's shared Instructions, or APM. Repository-specific instructions still apply. Its maintainer source catalog is optional background and is not required for execution.
 
 Under the [collaboration instructions](.apm/instructions/collaboration.instructions.md), code changes require a Navigator with an independent execution context. Before the first code edit, confirm actual initial and follow-up responses from the same Navigator. If unavailable, do not begin code edits, including test code or refactoring; read-only investigation and planning within the approved scope may continue. Pair work is not required for consultation, explanation, planning alone, or documentation-only changes.
 

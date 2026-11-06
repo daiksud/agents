@@ -1,46 +1,62 @@
 ---
 name: github-actions
-description: Use for GitHub Actions workflow creation or changes, failure investigation, review, efficiency or safety improvements, and Action internal-runtime upgrades. Also use issue-management and change-delivery for changes. Do not use for Issue/PR operations alone, application implementation alone, or CI/CD conceptual explanation alone.
+description: GitHub Actions のワークフロー設計、作成、変更、失敗調査、レビュー、効率化、安全性の改善、アクションの内部ランタイム更新に使う。イベント別ワークフローと共通フェーズアクションの構成、ビルド成果物の検証・再利用・リリースも扱う。IssueやPRの操作だけ、アプリケーション実装だけ、一般的なCI/CDの説明だけには使わない。
 ---
 
-# Design and validate GitHub Actions
+# GitHub Actions の設計と改善
 
-Handle workflows that let developers receive necessary validation without excessive waiting and deliver trustworthy artifacts. Repository paths below refer to the working repository.
+必要な検証を保ち、同じ処理の重複と不要な待ち時間を減らす。検証した成果物と公開する成果物を一致させる。
 
-## Request and reference material
+このスキルは `SKILL.md` と `references/`、`LICENSE.txt` を含むディレクトリ全体で完結する。他のスキルや共通の指示ファイルの導入を前提にしない。対象リポジトリ固有の指示と、利用者が指定した作業範囲は確認する。以下の `.github/` は作業対象のリポジトリ、参照リンクはこのスキル内のファイルを指す。
 
-First check whether the request is design/investigation only, review, or includes changes. For changes, also use `issue-management` for Issue plans, publication permission, and execution scope, and `change-delivery` for approved changes through branches, PRs, required CI, and post-integration main verification. For Issue planning alone, `issue-management` can stop after saving, retrieving, checking body and display, and presenting the URL even without `change-delivery` or `software-development` installed.
+## 作業の進め方
 
-For application code fixes, reproduce regressions and fix them through `software-development` TDD. For workflow-configuration-only fixes, do not start application-code TDD, but define minimal validation appropriate to the configuration failure first. Follow `document-authoring` for documents and `code-review` for read-only review procedures and findings. If `issue-management` is unavailable, do not post Issues or substitute another Skill; show unsaved drafts and restrictions. If `change-delivery` is unavailable, do not edit workflows or substitute another Skill; show incomplete validation and main verification. If `software-development` is unavailable, do not edit application code; show reproduction details and incomplete scope. If applicable dependencies are uninstalled, check installation methods in the usage environment. Do not proceed from consultation or audits alone to editing, Issue posting, PR creation, or execution triggers.
+1. 依頼が設計・調査、レビュー、変更のどこまでを含むか確認する。相談や監査だけの依頼から、編集、Issue・PRの投稿、ワークフローの起動へ進まない。すでに認められた変更はその範囲で進める。
+2. 既存ワークフロー、呼び出すアクション・スクリプト、依存関係のロックファイル、必須チェック、対応環境、実行履歴を読む。取得できない設定や履歴は未確認として扱う。
+3. 目的と、外から確認できる成功条件を決める。必要な検証、対応プラットフォーム、リリース条件を維持し、変更に関係する資料を下表から読む。
+4. 変更前に現在のブランチと差分を確認し、既存作業を保護する。対象リポジトリの手順に沿って作業用ブランチで最小限の変更を行う。無関係な最適化やアプリケーションの更新を混ぜない。
+5. 変更の影響に応じて構文、参照、条件分岐、失敗の伝わり方を確認する。必要な実行検証は対象の権限と依頼範囲を確認して行う。修正した処理の内部構造より、成果物や成功・失敗の結果を検証する。
+6. 変更内容、判断理由、実際の検証結果、未確認事項を報告する。PRや統合まで依頼に含まれる場合は、既存のレビューと必須CIを経て進め、統合後の対象コミットも確認する。必要な権限や証拠が足りない場合は、完了した範囲と再開に必要な条件を示す。
 
-Read only applicable material, combining it when multiple areas are involved.
+## 参照する資料
 
-| Work or reading condition | Material |
+| 作業 | 資料 |
 | --- | --- |
-| New workflows, triggers, job dependencies, reuse, deployment structure, runner/shell selection or changes | [Workflow design](references/workflow-design.md) |
-| Adopting shared staged PR/main CI, Commit/Acceptance boundaries, or final check names | [Staged CI adoption](references/workflow-design.md#staged-ci-adoption) |
-| Security audits or changes involving permissions, external input, authentication, untrusted code, artifact/cache trust boundaries | [Safety](references/hardening.md) |
-| Slow CI, duplicate runs, caching, skip conditions, parallelization, matrix improvements | [Efficiency improvements](references/efficiency.md) |
-| Action version upgrades, internal-runtime deprecation warnings, runner compatibility | [Runtime upgrades](references/runtime-upgrades.md) |
+| ワークフロー、フェーズ、ジョブ、ステップの責務分担、PR・main・リリースの構成 | [ワークフロー設計](references/workflow-design.md) |
+| 検証済み成果物の受け渡し、再利用、公開 | [成果物の再利用](references/workflow-design.md#成果物の再利用) |
+| 権限、外部入力、認証、信頼できないコード、成果物やキャッシュの安全性 | [安全性](references/hardening.md) |
+| 遅いCI、重複実行、キャッシュ、スキップ条件、並列化、マトリクス | [効率化](references/efficiency.md) |
+| アクションの更新、内部ランタイムの廃止警告、ランナーの互換性 | [ランタイム更新](references/runtime-upgrades.md) |
+| ランナーやシェルの選定・変更 | [ランナーとシェル](references/workflow-design.md#ランナーとシェル) |
 
-For version-dependent judgments, compare current official specifications with the target environment, settings, and release metadata. Historical checks do not establish current availability or compatibility.
+複数の領域に関係するときだけ、該当する資料を組み合わせる。バージョンに依存する判断は、対象環境の設定と最新の公式仕様・リリース情報を照合する。過去の確認記録を現在の互換性の証拠にしない。
 
-## Common judgments
+## 構成の基本
 
-1. Investigate `.github/workflows/`, called local Actions, reusable workflows and scripts, lock files, required checks, and supported environments. If execution history or settings are inaccessible, separate static knowledge from uncertainties.
-2. Define the request's purpose and observable success conditions. Preserve existing required validation, supported environments, and release conditions; do not mix unrelated job redesign or optimization into upgrades.
-3. For each change, check effective `permissions`, Secret destinations, executed-code provenance, runners, external input, and referenced Actions, artifacts, and caches. Do not judge safety solely by trigger name or fork status. Read safety material when boundaries are affected.
-4. Pin external Actions not covered by an adopted workflow dependency lockfile, and all external reusable workflow calls, to full commit SHAs checked against releases in the target repository; verify agreement with version comments. Follow [Safety](references/hardening.md#actions-caches-and-artifacts) for lockfile coverage and transitive dependencies. Do not reuse example SHAs as recommended versions. Use verified digests for container references, and check the checkout provenance for same-repository relative references.
-5. Choose minimal changes and validation meeting the purpose. Do not uniformly require manual approval, particular branching strategies, large matrices, or Canary.
-6. For runner/shell selection or changes, read [Runners and shells in workflow design](references/workflow-design.md#runners-and-shells), checking actual available runners, provider/repository access, shell compatibility, and existing contracts.
+| 単位 | 実装場所 | 責務 |
+| --- | --- | --- |
+| `pr`、`push-main`、`release` などのイベント・操作 | ワークフロー | 起動条件、使うフェーズ、実行順序、成果物を再利用する条件 |
+| `screening`、`inspection`、`delivery` などのフェーズ | Composite Action | 同じ目的のステップをまとめ、複数のワークフローから再利用する |
+| `build`、`lint`、`test` などの基本操作 | ステップ | 一つの処理を `run` または既存アクションの `uses` で実行する |
 
-## Outcomes and checks
+ジョブはワークフロー内の実行単位である。`runs-on`、`permissions`、`needs`、`strategy.matrix`、`environment`、実行条件、タイムアウトはジョブ側で管理する。フェーズアクションを使うために、別の権限やランナーが必要な処理を一つのジョブにまとめない。
 
-For design/investigation, show evidence and proposals; for review, findings with reproduction conditions and impact; for changes, diffs and validation results. Match reporting formats to the request and existing skills.
+共通のフェーズは一か所に実装し、各ワークフローから呼び出す。一つのコマンドを包むだけのアクションや、多数のフラグで何でも切り替える共通アクションは作らない。複数ジョブの構成そのものを再利用する必要がある場合は、再利用可能なワークフローを選ぶ。
 
-- Statically check YAML syntax, Actions expressions, references, dependencies, and effects on required checks. Use available existing lint or actionlint; an ordinary YAML parser alone does not validate the Actions specification.
-- Distinguish local tests from GitHub execution. For approved changes, compare target SHA, event, runner, and run URL, checking necessary artifacts or post-deployment state as well as execution results.
-- Do not treat failed, canceled, unexecuted, or unobtainable results as success. If execution validation is impossible, show unverified scope and checking methods.
-- Separate expected effects from measurements. CI success does not prove overall safety or performance improvement.
+## 共通の確認事項
 
-Adapted in part from GitHub, Inc. material distributed under the [MIT License](LICENSE.txt).
+- 実効権限、シークレットの渡し先、実行コードの出所、ランナー、外部入力、アクション、成果物、キャッシュを確認する。イベント名やforkかどうかだけで安全性を判断しない。
+- 採用済みの依存ロックファイルで管理されていない外部アクションと、外部の再利用可能なワークフローは、公式リポジトリのリリースと照合した完全なコミットSHAに固定する。バージョンコメントとの一致、間接的な依存関係、コンテナのダイジェストも確認する。詳細は[安全性](references/hardening.md#アクションとキャッシュと成果物)を読む。
+- 同一リポジトリの相対参照は実際に読み込むコードの出所を確認する。サンプルのSHAや古い推奨バージョンをそのまま転用しない。
+- 手動承認、特定のブランチ戦略、大きなマトリクス、カナリアリリースを一律に要求しない。必要な分離と検証を満たす最も単純な構成にする。
+
+## 検証と報告
+
+設計・調査では根拠と提案を示す。レビューでは問題の場所、発生条件、影響、最小限の修正案を示す。変更では差分と検証結果を示す。
+
+- 既存のlintや `actionlint` が利用できる場合は、YAML構文に加えてActionsの式、参照、ジョブの依存関係、必須チェックへの影響を確認する。通常のYAMLパーサーだけではActionsの仕様を検証できない。
+- ローカル実行とGitHub上の実行を区別する。GitHubで確認した結果には、対象SHA、イベント、ランナー、runのURLを対応付け、必要な成果物や公開後の状態も確かめる。
+- 失敗、キャンセル、未実行、取得できない結果を成功としない。実行していない確認は、その範囲が分かるように記録する。
+- 期待する効果と測定結果を分ける。CIの成功だけで安全性全体や性能改善が確認できたとしない。
+
+GitHub, Inc. が公開した資料の一部を翻案している。[MITライセンスの原文](LICENSE.txt)を保持する。
