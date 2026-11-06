@@ -73,7 +73,7 @@ For global settings, additional permissions, costs, or installations with unveri
 
 ### Execution permissions and tool calls
 
-- Git-managed-file plans include commits, pushes, PRs, review requests/replies, fixes, squash merges, main switch and git pull, and deletion of merged branches. Do not split them into individual additional requests within the same purpose/success conditions; proceed after preceding success is verified.
+- Git-managed-file plans include commits, pushes, PRs, review requests/replies, fixes, permitted squash or merge-commit merges, main switch and git pull, and deletion of merged branches. Do not use rebase merging. Do not split these stages into individual additional requests within the same purpose/success conditions; proceed after preceding success is verified.
 - Do not replace them with optional suggestions such as “create a PR if needed” or “confirm whether to merge.” Without stop conditions, PR creation onward is default scope for Git-managed-file work.
 - During planning check commands, write destinations, network access, and current permission; state missing permissions.
 - Plan approval is not environment permission; confirm reasons/targets for additional permissions or conditions above.

@@ -1,44 +1,25 @@
 ---
 type: Policy
-title: Change records and Engineering Policies
-description: Current policy for PR decision history, validation reporting, and durable engineering guidance.
-sources:
-  - id: change-record-agreement
-    resource: https://github.com/daiksud/agents/issues/253
-  - id: repository-adoption
-    resource: https://github.com/daiksud/agents/issues/254
+title: Change records
+description: Current working information in files and self-contained design judgments in commits.
 ---
 
-## Current choice and applicability
+## Current working guidance
 
-This repository uses PR descriptions and squash commits to retain the judgment made in each change, and topical `docs/engineering-policies/` documents to explain current durable policy. The common guidance offers the same foundation to consuming repositories while respecting their existing conventions. Installing the package does not install templates or migrate ADRs.
+Repository documents contain the effective technologies, specifications, rules, responsibilities, editable boundaries, and procedures that a contributor joining today needs. Update the relevant topic in place. Do not add adoption narratives, superseded-policy sections, comparison histories, or introducing/revising PR footers.
 
-The operational rules live in [Change records](../../.apm/instructions/change-records.instructions.md), [PR writing](../../skills/issue-management/references/github-writing.md), [delivery](../../skills/change-delivery/references/review-and-merge.md), and [policy authoring](../../skills/document-authoring/references/engineering-policies.md). This policy reflects the agreement in [Issue #253](https://github.com/daiksud/agents/issues/253).[^change-record-agreement]
+Use [decision-recording](../../skills/decision-recording/SKILL.md) to choose the recording destination and intended reader. Code expresses behavior and structure through simple names, types, and composition. Tests express observable behavior and contracts. Why-not comments explain beside the code why a plausible alternative fails a current constraint; public API documentation serves API users.
 
-For repositories adopting verbatim PR-body squash records, the default proposal is English PR bodies, consistent with English commit messages. The repository records its actual choice locally; existing adoption decisions and explicit exceptions remain effective, and conflicts with explicit local language rules require resolution before affected publication. Other artifact-language conventions remain unchanged. Equivalent arrangements and prior deferrals are respected without repeatedly blocking unrelated development. The [adoption guide](../../skills/change-delivery/references/repository-adoption.md) owns the procedure requested in [Issue #254](https://github.com/daiksud/agents/issues/254).[^repository-adoption]
+## PR and commit records
 
-## Rationale and trade-offs
+PR descriptions use Summary, optional Decisions, and Validation. State the problem, actual change, resulting behavior, and the facts, constraints, alternatives, reasons, and trade-offs needed to understand the judgment. Links may supplement this text but must not be necessary to understand it. Incorporate conclusions from discussion into the final body.
 
-A PR records the problem, actual result, relevant decisions, and actual validation status. Keeping that judgment self-contained preserves confirmed causes, constraints, and reasons even after linked living policies change. The supplied template uses Summary, Decisions, and Validation; Decisions can be omitted when unnecessary or already clear in Summary. This keeps ordinary fixes short without inventing analysis for every field.
+Every PR reports actual validation status. Execution remains discretionary unless required by the task or repository; `Not run` is valid for discretionary checks. Preserve required CI, agreed acceptance conditions, and the APM and independent-validation exclusions in [AGENTS.md](../../AGENTS.md).
 
-Validation reporting is mandatory, but execution, method, scope, rigor, and timing are discretionary unless independently required. `Not run` is a complete status; partial checks and failures must be accurate. Checking after merge and correcting through a later PR is permitted. This favors honest evidence over ritual execution, accepting that unverified behavior can remain. It does not remove required CI, agreed acceptance conditions, or repository protections, including this repository's existing APM and independent-validation exclusions.
+Remove all HTML comments from actual descriptions. This repository uses English commit messages and PR titles/bodies under its [language policy](../../.apm/instructions/language.instructions.md). Preserve the final title/body verbatim in the commit created at merge, and verify the saved message. The repository's effective protections determine which permitted method is available; guidance for consumers does not apply live settings.
 
-HTML comments help template authors but pollute squash messages if retained. Templates may contain them; actual descriptions must remove all comments at creation/update, review, and merge while retaining substantive validation status. The final title and description become the squash subject/body through GitHub's `squash_merge_commit_title: PR_TITLE` / `squash_merge_commit_message: PR_BODY` convention. Maintainers must therefore keep descriptions aligned with the final reviewed change.
+## Consumer adoption
 
-Choosing PR-body language at adoption time makes verbatim squash records compatible with English commit conventions while retaining the reviewed reasoning and validation status. This can require contributors to write PR bodies in a different language from other repository prose; limiting the default to an explicit adoption proposal preserves local choices and avoids a blanket language change. Translating only at merge time would change the reviewed historical record and risks losing rationale, so it is not the chosen approach. Bundled assets do not change consumer files or live settings; settings diagnosis/application needs its own authorized scope and preserves unrelated merge, CI, security, and protection settings.
+The independent skill provides a [PR template](../../skills/decision-recording/assets/pull_request_template.md), [local instruction example](../../skills/decision-recording/assets/agents-decision-records.md), and [commitlint workflow](../../skills/decision-recording/assets/commitlint.yml). Accept equivalent arrangements and existing topical placement; no document directory or policy name is required.
 
-Engineering Policies describe current choices, applicability, rationale, alternatives, and trade-offs by topic. Revisions replace the same topical content and end with the introducing/revising PR link. This makes current guidance easy to find; readers seeking chronology follow PRs and commits instead. Ordinary feature and bug-fix decisions do not each require policy documents.
-
-## Alternatives
-
-- An append-only ADR log preserves chronology in documents but requires readers to trace supersession to find current guidance. Repositories using that convention can retain it; this repository keeps chronology in PRs/commits.
-- Keeping every decision only in PRs avoids living-document maintenance but makes durable guidance harder to discover. Topical policies address decisions affecting future work.
-- Mandatory validation execution or mandatory reasons for `Not run` provide more uniform process at the cost of discretion and boilerplate. Accurate status plus independently required checks is the chosen boundary.
-- Retaining repository-language PR bodies can preserve contributor conventions and remains available through an explicit local choice or exception. The English adoption default instead aligns new verbatim PR-body squash records with English commits; it does not silently replace existing decisions.
-- Separate automatically synchronized templates or new PR lint could enforce consistency but add machinery beyond the current need. The reusable and self-adoption templates are maintained together by ordinary review.
-
-[^change-record-agreement]: Owner-agreed record policy and adoption boundaries in Issue #253.
-
-[^repository-adoption]: Owner-requested consumer adoption guidance, scoped language choice, and settings boundaries in Issue #254.
-
-Introducing/revising PR: [#258](https://github.com/daiksud/agents/pull/258).
+The [settings guide](../../skills/decision-recording/references/github-settings.md) explains allowing squash and merge-commit merging, prohibiting rebase merging, saving PR title/body with either method, and requiring the `commitlint` check. The [Conventional Commits guide](../../skills/decision-recording/references/conventional-commits.md) defines standalone latest Bun/commitlint execution, standard configuration discovery, and the unchanged conventional default. Consumer workflow installation and live settings application are separate from distributing these assets.

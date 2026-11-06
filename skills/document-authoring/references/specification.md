@@ -13,8 +13,8 @@ Distinguish actors using systems from readers making decisions from specificatio
 ### Choose authoritative sources and placement
 
 1. Find target glossaries, features, Engineering Policies or ADRs, API documents, schemas, and related tests; identify authoritative sources for current requirements/contracts. Retain conflicts with unknown precedence as questions to authorized people.
-2. Record existing behavior in features, current durable design policy in topical Engineering Policies for adopting repositories (existing ADRs elsewhere), and API/data contracts in existing API documents/schemas. Do not copy specifications into separate documents; provide authoritative links and necessary summaries.
-3. Add documents to appropriate existing categories only where authoritative sources are missing. Shared behavior uses `docs/behavior/`, adopted current policy uses `docs/engineering-policies/` under [Engineering Policies](engineering-policies.md), existing ADR conventions remain applicable elsewhere, and others follow document-authoring placement rules. Do not require `/spec/` or separate overall specifications for every change.
+2. Record effective behavior in features, current design guidance in topical documents, and API/data contracts in existing API documents/schemas. Historical reasons and comparisons belong in self-contained PR/commit messages under [decision-recording](../../decision-recording/SKILL.md). Do not duplicate specifications in separate documents.
+3. Add documents to appropriate existing categories only where authoritative sources are missing. Shared behavior uses `docs/behavior/`; current policy uses existing placement under [Current policy authoring](engineering-policies.md). Do not require a policy directory, `/spec/`, or separate overall specifications for every change.
 4. Give ordinary Markdown concepts OKF-required type and this environment's additional title/description. Use reserved formats for indexes/logs. Preserve OpenAPI, JSON Schema, and other contract formats without OKF headers. Align terminology with target `docs/glossary.md`, updating changed meanings and applicable model boundaries.
 
 When human-readable specifications and machine-readable contracts such as OpenAPI coexist, show authoritative sources and mappings for each item. Retain purpose, assumptions, and references sufficient for standalone understanding, without duplicating entire glossaries/schemas to eliminate external context. Check linked existence/versions; inaccessible information remains unverified.
@@ -29,7 +29,7 @@ Describe needed items below for target decisions, implementation, and validation
 | Requirements, constraints, recommendations | Distinguish required behavior, selection restrictions, and optional improvements. Do not turn recommendations into agreed requirements |
 | External contracts | Decision-relevant inputs/outputs, meanings/units, failures, side effects, defaults, and compatibility; refer to existing authoritative sources |
 | Acceptance conditions | Observable results establishing each requirement, mapped to examples including necessary boundaries/exceptional paths |
-| Dependencies and reasons | Needed external capabilities/contracts, constraint evidence, and choice reasons. State technical choices when agreed constraints |
+| Dependencies and constraints | Needed external capabilities/contracts and effective constraints. Put the reasons for selecting or changing them in the PR/commit |
 | Validation mappings | Trace corresponding tests/procedures and observed results. Use existing identifiers/stable headings when tracking from multiple locations is needed |
 | Unsettled matters | Separate expectations from assumptions/proposals/questions, identifying whose decisions are needed. Do not invent unagreed thresholds or business failure handling |
 
@@ -41,11 +41,11 @@ For example, with existing shipping features and quotation API OpenAPI, update f
 
 ### Assumptions and reassessment of important design decisions
 
-When structural, external-contract, or operational choices significantly affect purpose/success conditions, record dependent assumptions and reconsideration conditions alongside reasons in current topical Engineering Policies for adopting repositories, or existing ADRs elsewhere. Attach confirmed evidence/specification references to assumptions, distinguishing unverified hypotheses. Connect reconsideration conditions to observations/changes showing assumptions failed; do not invent unsupported numbers/deadlines. Retain questions for unagreed necessary conditions.
+When structural, external-contract, or operational choices significantly affect purpose/success conditions, document the effective constraints and operating conditions needed to implement them. Record selection reasons, comparisons, and the evidence behind a change in its PR/commit. Distinguish confirmed constraints from unresolved assumptions; do not invent unsupported numbers/deadlines.
 
-For example, if retransmission is chosen because an external API guarantees idempotency for a period, reference guarantee evidence and make shortened guarantee periods or changed target operations reconsideration conditions. When met, compare original judgments and new evidence, revising the same topical Engineering Policy and retaining historical judgments in the change PR/commit for adopting repositories; preserve existing ADR history/succession conventions elsewhere. Assumption changes alone do not settle replacement approaches; follow `issue-management` planning/approval for implementation scope or policy changes, handing only approved changes to `change-delivery`.
+For example, document which operations may be retried and the API's current idempotency window. Explain why retransmission was selected and which alternatives were rejected in the corresponding commit. If that contract changes, update the affected specification and record the new judgment in the change PR/commit. Assumption changes alone do not settle replacement approaches; follow `issue-management` planning/approval for implementation scope or policy changes.
 
-Put authoritative policy/ADR links and decision-relevant summaries in Issues rather than duplicate decision records. Without authoritative documents, follow “Choose authoritative sources and placement.” Do not require new/updated policies or ADRs or empty formal fields for spelling fixes preserving design choices.
+Use policy links as supplementary navigation. A PR/commit must explain its judgment without requiring the reader to open those links. Without current specifications, follow “Choose authoritative sources and placement.” Do not require new/updated policy files or empty formal fields for spelling fixes preserving design choices.
 
 ### Checks
 

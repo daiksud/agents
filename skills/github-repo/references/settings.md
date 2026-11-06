@@ -16,29 +16,19 @@ It applies to future releases; report no retroactivity. Investigate operations a
 
 Do not migrate through tag/asset deletion/recreation, or confuse reverting settings with undoing published immutable-release restrictions. Do not claim release titles/bodies are uneditable.
 
-## Squash-only PR merge
+## PR merge methods
 
-Check three values through `GET /repos/{owner}/{repo}` or `Settings` → `General` → `Pull Requests`.
+Use [decision-recording's GitHub settings guide](../../decision-recording/references/github-settings.md) for expected values and concrete UI/API procedures. Allow squash and merge-commit merging, and prohibit rebase merging. Both methods use the final PR title and body as the resulting commit message.
 
-| Setting | Expected |
-| --- | --- |
-| `allow_squash_merge` | `true` |
-| `allow_merge_commit` | `false` |
-| `allow_rebase_merge` | `false` |
+Compare repository settings with effective branch rules and any merge queue. Required linear history prevents merge commits; allowed merge methods must agree across the repository and target ruleset. Include these related differences when adoption of both methods is requested. Apply only the requested scope, preserve unrelated protections, and retrieve the resulting settings. Do not fill absent values with defaults.
 
-With approval, PATCH only changed values at the same endpoint or UI, then retrieve/check all three. Do not fill absent values with defaults. First check Ruleset/merge-queue compatibility; hold conflicting changes. Do not simultaneously change auto-merge, automatic branch deletion, or commit formats.
+## PR and merge message alignment
 
-## PR and squash message alignment
+Use this narrow path for message-format diagnosis or application. Inspect all four squash/merge title/body fields against `PR_TITLE` / `PR_BODY` using the [independent guide](../../decision-recording/references/github-settings.md). Missing fields remain unverified. Message-format-only requests do not authorize unrelated merge-method or protection changes.
 
-Use this narrow path when change-record adoption requests diagnosis or application of squash-message defaults. Installation or ordinary development alone does not authorize settings changes. Target-repository template, instruction, and policy edits belong to `change-delivery`, following [Repository adoption](../../change-delivery/references/repository-adoption.md).
+Keep the final title/body self-contained, aligned with the reviewed change, and free of HTML comments. Respect the agreed language; never translate or summarize away the record at merge. Target-repository template and instruction edits follow [repository adoption](../../change-delivery/references/repository-adoption.md).
 
-1. Follow the reading/reporting steps in [Operations and judgments](operations.md) for the exact repository and scope. Retrieve `GET /repos/{owner}/{repo}` and compare `squash_merge_commit_title` with `PR_TITLE` and `squash_merge_commit_message` with `PR_BODY`. Missing/inaccessible fields remain unverified, not assumed defaults. Check whether squash merging is available; do not silently enable it or alter merge methods.
-2. Confirm the final English title and agreed PR-body language are recorded locally. Propose English PR bodies for repositories adopting verbatim squash records; surface explicit local conflicts before applying the choice. Keep the final title/body comment-free and retain their full rationale and actual validation status.
-3. For diagnosis-only scope, report observed/expected values and concrete differences, then stop. For authorized settings application, follow the saved-plan, permission, prerequisite, and immediate-before-write checks in [Apply approved settings](operations.md#apply-approved-settings).
-4. PATCH only the authorized message-format differences at `/repos/{owner}/{repo}`; include `squash_merge_commit_title: PR_TITLE` when setting `squash_merge_commit_message: PR_BODY`, as required by the API. Preserve other merge methods, auto-merge, branch deletion, CI, security, and protection settings. Do not apply the broader squash-only or other setting standards as part of this narrow request.
-5. Retrieve both fields again and compare with the expected values; report successful, failed, or unverified results. API acceptance alone is not verification. These defaults do not prove a merge retained the record: ordinary delivery still checks the final description and actual squash message without authoring comments or last-minute translation.
-
-Recheck the current [GitHub repository API](https://docs.github.com/en/rest/repos/repos#update-a-repository) before version-dependent operations. No live merge or settings mutation is needed merely to validate this guidance.
+For diagnosis, report exact differences. For authorized application, use [Apply approved settings](operations.md#apply-approved-settings), send only the relevant fields with their required paired title fields, then retrieve them again. These are editable defaults: verify the actual saved commit message during delivery. Installation of the skill alone does not change settings.
 
 ## main Ruleset protection
 

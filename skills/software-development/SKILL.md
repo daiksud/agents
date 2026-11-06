@@ -35,7 +35,7 @@ For learning or practice by one human, propose beginning with this Skill's small
 
 ## Design scope and change decomposition
 
-When authoring current durable design policy, use [Engineering Policies](../document-authoring/references/engineering-policies.md) for adopting repositories and retain existing ADR conventions elsewhere. When judging design policy, impact, change size, or decomposition into Sub-issues or small integration units, read [Responsibilities, contracts, and comments](references/design.md#change-scope-and-decomposition). Follow `issue-management` execution scope for changes requiring confirmation; if scope grows during implementation, reassess decomposition and execution scope before exceeding approval.
+Use [decision-recording](../decision-recording/SKILL.md) for the readers and responsibilities of documents, commits, comments, code, and tests. Current policy prose follows [Current policy authoring](../document-authoring/references/engineering-policies.md), with no prescribed directory. When judging design policy, impact, change size, or decomposition into Sub-issues or small integration units, read [Responsibilities, contracts, and comments](references/design.md#change-scope-and-decomposition). Follow `issue-management` execution scope for changes requiring confirmation; if scope grows during implementation, reassess decomposition and execution scope before exceeding approval.
 
 ## Shared understanding and acceptance conditions
 

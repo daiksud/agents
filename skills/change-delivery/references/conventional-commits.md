@@ -1,7 +1,7 @@
 ---
 type: Instruction
 title: Commit messages
-description: Commit messages follow the Conventional Commits specification.
+description: Apply recording and message conventions when staging and committing approved changes.
 ---
 
 ## Commit messages
@@ -14,15 +14,12 @@ description: Commit messages follow the Conventional Commits specification.
 
 ### Subjects, bodies, and footers
 
-- Write ordinary commit messages, including body and footers, in English under [Repository artifact language](../../../.apm/instructions/language.instructions.md). For squash commits, preserve the final PR title and description verbatim as subject/body through `PR_TITLE` / `PR_BODY` in [Review and merge](review-and-merge.md#rebase-and-merge). For repositories adopting verbatim PR-body squash records, explicitly propose English PR bodies under [Repository adoption](repository-adoption.md), consistent with English commits. Preserve existing local decisions and surface explicit language conflicts before publication. Retain the agreed final body as the change record; do not replace or translate away its decisions or validation status at merge time.
-- Title format is `<type>[(scope)][!]: <description>` (`[]` is optional), with a space after the colon.
-- Use `feat` for features, `fix` for bugs, and appropriate other types such as `docs`, `refactor`, `test`, or `chore`. Scope is a noun for an existing area/module, omitted if unnecessary (for example `fix(parser): handle empty input`).
-- Write specific concise English imperative subjects without final periods. Aim for 72 characters overall, without mechanical truncation or new enforced checks.
-- Add bodies to supplement problems, reasons, impact, or decision constraints unclear from subjects/diffs. Simple changes may use subjects alone; do not leave unfilled fields or response prose.
-- Add bodies/footers only as needed, separated from preceding sections by blank lines. Footers use `Token: value` or `Token #value`, replacing token spaces with `-` (except `BREAKING CHANGE`).
+Use [decision-recording](../../decision-recording/SKILL.md) for self-contained judgment records and its [Conventional Commits guide](../../decision-recording/references/conventional-commits.md) for subjects, bodies, footers, breaking changes, and commitlint. The default is unmodified `@commitlint/config-conventional`; honor explicit target-repository configuration rather than adding local type or length restrictions.
+
+- Write ordinary commit messages, including body and footers, in English under [Repository artifact language](../../../.apm/instructions/language.instructions.md). Follow [Repository adoption](repository-adoption.md) for the target's PR-body language. Preserve existing local choices and resolve explicit language conflicts before publication.
+- For squash and merge commits, preserve the final PR title and description verbatim as subject/body under [Integrate and merge](review-and-merge.md#integrate-and-merge). Do not replace, summarize, or translate away decisions or validation status at merge time.
+- Write specific concise subjects and include the confirmed reasons and constraints needed to understand the change. Links supplement the message; they must not be necessary to understand the judgment. Do not leave unfilled fields or invent comparisons to fill a template.
 - Use confirmed related Issue numbers. Use closing directives such as `Closes` or `Fixes` only when resolution by this change is confirmed; partial changes use references such as `Refs`.
-- This environment permits breaking changes only with `feat` or `fix`. This is a local convention differing from the standard's allowance of any type for breaking changes.
-- For breaking changes, put `!` immediately before `:` and explain in the title, or add `BREAKING CHANGE: <description>` in the footer. Explain compatibility impact and known migration methods; absence of Issue references does not justify removing necessary explanations.
 
 ### When committing
 
@@ -33,4 +30,4 @@ For drafting-only requests, present copyable messages and stop. Follow “Planni
 3. After drafting, immediately before committing check the complete staged diff matches approval. Compare every message claim with diffs/confirmed background and exclude unrelated changes or unverified reasons before committing. Check results after creation and follow explicit stop conditions.
 4. For hook or other failures, do not claim success; recheck HEAD, status, and staged/unstaged diffs. Compare hook changes with approved scope, then retry ordinary commits after necessary fixes/revalidation and final index checks. Do not automatically bypass hooks or amend.
 
-Historical change decisions belong in PR descriptions and commits even when current policy is revised. Remove all HTML comments from actual PR descriptions before capturing the squash body; preserve substantive content and actual validation status.
+Historical change decisions belong in PR descriptions and commits even when current policy is revised. Remove all HTML comments from actual PR descriptions before capturing the merge message; preserve substantive content and actual validation status.
