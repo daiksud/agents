@@ -6,7 +6,7 @@ description: Choose artifact language from artifact type and target repository c
 
 ## Repository artifact language
 
-This is the shared source of truth for language when using these Instructions and Skills in a target repository. Most guidance in `daiksud/agents` uses English; this is not a blanket English requirement for artifacts created elsewhere. The standalone `skills/github-actions/SKILL.md` and its bundled instructional references use Japanese. Preserve their identifiers, commands, metadata keys, and original MIT license notice.
+This is the shared source of truth for language when using these Instructions and Skills in a target repository. Most guidance in `daiksud/agents` uses English; this is not a blanket English requirement for artifacts created elsewhere. `skills/github-actions/SKILL.md` and its four bundled references use Japanese. Preserve their identifiers, commands, and metadata keys.
 
 | Artifact | Required language and format |
 | --- | --- |

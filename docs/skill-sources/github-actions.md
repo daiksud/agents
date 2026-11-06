@@ -79,6 +79,8 @@ sources:
     resource: https://docs.github.com/en/actions/tutorials/store-and-share-data
   - id: agents-phase-design
     resource: https://github.com/daiksud/agents/issues/268
+  - id: agents-technical-policy
+    resource: https://github.com/daiksud/agents/issues/270
   - id: github-expressions
     resource: https://docs.github.com/en/actions/reference/workflows-and-actions/expressions
   - id: github-run-variables
@@ -105,17 +107,17 @@ sources:
 
 ## Scope
 
-Maintainer reference for [github-actions](../../skills/github-actions/SKILL.md). These records explain source provenance and adoption history. Execution procedures and decision-relevant details remain in the skill and its task-specific references; ordinary execution does not require this document.
+The current Workflow / Job / Composite Action / Step design policy is in [github-actions](../../skills/github-actions/SKILL.md) and its four bundled references. This catalog preserves source mappings and historical adoption records.
 
 Checking dates below are historical records retained from the original documents. Relocating them does not establish a new specification check, human review, successful execution, or current applicability.
 
-## Source mapping
+## Historical source mapping
 
-The following mapping preserves the original source IDs and annotation scope for each runtime document and former source catalog.
+The following mapping preserves the original source IDs and annotation scope, with links to the current technical references.
 
 ### GitHub Actions efficiency improvements
 
-Runtime material: [efficiency.md](../../skills/github-actions/references/efficiency.md).
+Current reference: [efficiency.md](../../skills/github-actions/references/efficiency.md).
 
 | Source | Original annotation scope |
 | --- | --- |
@@ -125,7 +127,7 @@ Runtime material: [efficiency.md](../../skills/github-actions/references/efficie
 
 ### GitHub Actions safety
 
-Runtime material: [hardening.md](../../skills/github-actions/references/hardening.md).
+Current reference: [hardening.md](../../skills/github-actions/references/hardening.md).
 
 | Source | Original annotation scope |
 | --- | --- |
@@ -141,7 +143,7 @@ Runtime material: [hardening.md](../../skills/github-actions/references/hardenin
 
 ### Security Lab trust-boundary additions
 
-On 2026-11-03 compared all four articles and the two advisories below with the current GitHub event, secure-use, workflow-command, cache, lockfile, and CodeQL documentation. This was source/static review, not workflow execution or a security-settings change. Existing permission, input, pinning, runner, artifact, and cache rules were extended in [hardening.md](../../skills/github-actions/references/hardening.md); the entry point now distinguishes locked Actions from SHA-pinned reusable workflow calls.
+On 2026-11-03 compared all four articles and the two advisories below with the then-current GitHub event, secure-use, workflow-command, cache, lockfile, and CodeQL documentation. This was source/static review, not workflow execution or a security-settings change. Existing permission, input, pinning, runner, artifact, and cache rules were extended in the [historical hardening reference](https://github.com/daiksud/agents/blob/23aa0c80918d1195db2592019aeaa125b6f6d622/skills/github-actions/references/hardening.md); that revision's entry point distinguished locked Actions from SHA-pinned reusable workflow calls.
 
 | Source | Adopted scope beyond existing guidance |
 | --- | --- |
@@ -152,18 +154,18 @@ On 2026-11-03 compared all four articles and the two advisories below with the c
 
 The 2026 scanner advisory shows a PR-controlled host setting leaking a scanner token before code analysis; trusted tool configuration and credential destinations must survive input/configuration precedence.[^securitylab-scanner-config] The artifact-metadata advisory separately shows that valid branch syntax and an unchanged SHA do not authorize a write destination. Match repository, PR/head branch, and intended operation through trusted metadata instead of trusting artifact identifiers.[^securitylab-artifact-authorization]
 
-The following corrections constrain adoption of the historical examples:
+The 2026-11-03 revision recorded these corrections to the source examples:
 
 - Inspect `github.event.workflow_run.event`, not Part 4's `github.event_name != 'pull_request'`, which sees the consumer event. Workflow names, branch filters, actor checks, and base-repository ownership alone do not establish producer trust. Correlate run metadata and intended event/ref; keep PR output untrusted.[^github-events][^securitylab-new-patterns]
-- Retain quoted intermediate environment variables for script input, as current Docs recommend. Part 4's warning about environment/output injection does not justify banning this data handoff; validate values before writing command files or interpreting them downstream.[^github-secure-use][^github-commands]
-- Do not adopt Part 1's passive-checkout examples as a general exemption: formatters can load PR-controlled plugins/configuration. Use trusted logic and trace indirect execution. Current guidance includes checkout protections, but these do not justify mixing PR-changeable code with privileges.[^github-target-security]
-- Recheck current cache behavior rather than assume every low-trust trigger can poison default-branch caches. Such triggers now default to read-only there, with explicit write-capable overrides; inspect called workflows and cap caller cache access. Ordinary PR caches remain merge-ref scoped.[^github-cache]
+- Retain quoted intermediate environment variables for script input, as the checked documentation recommended. Part 4's warning about environment/output injection did not justify banning this data handoff; validate values before writing command files or interpreting them downstream.[^github-secure-use][^github-commands]
+- Do not adopt Part 1's passive-checkout examples as a general exemption: formatters can load PR-controlled plugins/configuration. Use trusted logic and trace indirect execution. The checked guidance included checkout protections, but these did not justify mixing PR-changeable code with privileges.[^github-target-security]
+- Recheck cache behavior rather than assume every low-trust trigger can poison default-branch caches. At that time, such triggers defaulted to read-only there, with explicit write-capable overrides; inspect called workflows and cap caller cache access. Ordinary PR caches were merge-ref scoped.[^github-cache]
 - Use adopted `actions.lock` coverage for direct/transitive Actions and repository identity; it excludes reusable workflow calls and their dependencies in other repositories. Pin calls to full SHAs and inspect the called repository's lockfile. The lockfile does not govern other build inputs.[^github-action-lockfiles]
-- CodeQL now supports GitHub Actions workflow and Action metadata YAML. Confirm `actions` analysis in the actual setup; application-language analysis or a clean result alone does not establish workflow safety.[^codeql-supported-languages]
+- The checked CodeQL documentation supported GitHub Actions workflow and Action metadata YAML. Confirm `actions` analysis in the actual setup; application-language analysis or a clean result alone does not establish workflow safety.[^codeql-supported-languages]
 
 ### Upgrading Action internal runtimes
 
-Runtime material: [runtime-upgrades.md](../../skills/github-actions/references/runtime-upgrades.md).
+Current reference: [runtime-upgrades.md](../../skills/github-actions/references/runtime-upgrades.md).
 
 | Source | Original annotation scope |
 | --- | --- |
@@ -197,7 +199,7 @@ Former source catalog: `skills/github-actions/references/sources.md`. Its adopti
 
 ### GitHub Actions workflow design
 
-Runtime material: [workflow-design.md](../../skills/github-actions/references/workflow-design.md).
+Current reference: [workflow-design.md](../../skills/github-actions/references/workflow-design.md).
 
 | Source | Original annotation scope |
 | --- | --- |
@@ -218,14 +220,14 @@ On 2026-09-20 checked these four awesome-copilot resources and related material,
 | Hardening[^copilot-hardening] | Input, trigger, permission, execution-path inspection from SKILL.md/bundled references into safety |
 | Runtime Upgrade Conventions[^copilot-runtime] | Warning investigation, compatibility, SHA pinning, small upgrades, artifact validation into upgrades |
 
-Originals are MIT License, Copyright GitHub, Inc. Preserve complete copyright, permission, and disclaimer in [LICENSE.txt](../../skills/github-actions/LICENSE.txt).[^copilot-license]
+The imported originals were distributed under the MIT License, Copyright GitHub, Inc. The corresponding notice is preserved in the [historical LICENSE.txt](https://github.com/daiksud/agents/blob/23aa0c80918d1195db2592019aeaa125b6f6d622/skills/github-actions/LICENSE.txt).[^copilot-license]
 
-### Adoption, revision, and rejection
+### Historical adoption decisions
 
 | Topic | Integrated judgment |
 | --- | --- |
 | Overlap among four sources | One skill for entry/common safety/validation conditions; read task-specific detail |
-| Work boundaries | Original hardening edit prohibition applies only to audits/review. The standalone entry point now defines scope, inspection, editing, validation, and reporting without requiring other skills; target-repository instructions and the user's authorization still apply |
+| Work boundaries | The original hardening edit prohibition was limited to audits/review. The Issue #268 revision placed scope, inspection, editing, validation, and reporting in the entry point without requiring other skills |
 | Permissions | Do not adopt “tokens always default write,” “event names alone grant all Secrets,” or “fork PRs are unconditionally safe.” Check effective permissions, passed Secrets, code provenance, runners |
 | Untrusted output | Unprivileged-build artifacts remain untrusted, even in privileged workflow_run; validate without executing as code |
 | Action pinning | Full SHA/release/comment agreement; do not copy mutable-tag or mismatched examples |
@@ -236,33 +238,23 @@ Originals are MIT License, Copyright GitHub, Inc. Preserve complete copyright, p
 | Caches | Run-ID keys or saving node_modules are not universal patterns; check compatibility, storage cost, trust |
 | Upgrades/validation | Separate internal/application runtimes; local success does not replace actual Action runs |
 
-These are this skill's application decisions, not wholesale adoption.
+These were the imported skill's application decisions, not wholesale adoption.
 
-### Standalone phase-oriented design
+### Historical standalone phase-oriented design
 
-Issue #268 records the replacement of mandatory skill dependencies and the old Commit/Acceptance adoption model. The complete `skills/github-actions/` directory is the standalone distribution unit. Its entry point and operational references use Japanese, while identifiers, commands, metadata keys, and the original MIT license retain their required forms. The maintainer catalog remains optional background.[^agents-phase-design]
+Issue #268 replaced mandatory skill dependencies and the old Commit/Acceptance adoption model. The [historical entry point](https://github.com/daiksud/agents/blob/23aa0c80918d1195db2592019aeaa125b6f6d622/skills/github-actions/SKILL.md) and four task-specific references used Japanese and covered phase-oriented design together with investigation, change, and reporting procedures.[^agents-phase-design]
 
-The current design places events and orchestration in workflows, reusable phases in Composite Actions, and basic operations in steps. Jobs retain runner, permissions, dependency, matrix, environment, condition, and timeout controls. Composite Actions run inside a calling job; reusable workflows remain appropriate when the shared unit genuinely contains multiple jobs. Composite `run` steps specify their own shells, and `./...` references need workspace files obtained through checkout.[^github-metadata][^github-reuse]
+On 2026-11-06, source review covered Composite Action metadata, reusable workflows, status functions, artifact retrieval and identity, run attempts, and the retained lockfile, cache-access, and runner guidance. This was documentation/source inspection, not execution of the proposed workflow.[^github-metadata][^github-reuse][^github-expressions][^actions-download-artifact][^actions-upload-artifact][^github-run-variables][^github-artifact-api] At that comparison, the pinned download-action README described configurable digest-mismatch handling with an error default, while the general artifact tutorial described a warning.[^actions-download-artifact][^github-artifacts]
 
-| Selected policy | Rationale and limits |
-| --- | --- |
-| `pr.yml` runs screening; `push-main.yml` runs screening and inspection; manual `release.yml` delivers a verified candidate | Reuse phase implementations without copying their commands into every workflow. Keep metadata and settings automation separate. Existing validation and platform coverage must survive migration. |
-| Reuse only a trusted successful main-push candidate for the exact source, version, and target | Inspection applies to the bytes that will be published. A branch name, artifact name, or successful run alone is insufficient evidence. |
-| Rebuild for a confirmed missing run or unusable artifacts from a successful producer | Missing, expired, incompatible, or corrupt artifacts cause warning and complete screening/inspection. Failed, canceled, pending, incomplete, or unverifiable producer validation blocks delivery. |
-| Explicit reuse and rebuild conditions for delivery | Intentional skipped jobs on the reuse route must not suppress delivery, while failure, unexpected skips, and cancellation must not permit publication. |
-| Preserve existing required checks until a verified replacement is configured | Documentation changes do not migrate consumer workflows or live protection settings. Draft/Ready automation is no longer part of the selected default structure. |
+### Technical design policy
 
-These are the user's selected design policies, not universal GitHub requirements.[^agents-phase-design] GitHub applies an implicit `success()` condition unless a status function is present; `always()` also evaluates true after cancellation. The example therefore combines `!cancelled()` with successful resolution and explicit results for each selected route.[^github-expressions]
-
-Cross-run download requires the selected run and a token with access to its artifacts. Artifact IDs and digests bind the selected candidate more precisely than names; replacement uploads create a different ID. A rerun keeps its run ID and increments its attempt, while the artifact-list endpoint is run-scoped. The guidance therefore requires correspondence between successful inspection and artifact identity rather than assuming that a run ID selects an attempt.[^actions-download-artifact][^actions-upload-artifact][^github-run-variables][^github-artifact-api]
-
-On 2026-11-06, source review covered Composite Action metadata, reuse, status functions, artifact retrieval and identity, run attempts, and the retained lockfile, cache-access, and runner guidance. This was documentation/source inspection, not execution of the proposed workflow. The pinned download-action README describes configurable digest-mismatch handling with an error default; the general artifact tutorial still describes a warning. The operational rule checks the adopted version and never treats a mismatch as successful verification.[^actions-download-artifact][^github-artifacts]
+Issue #270 records the refinement to a standalone Japanese technical design policy organized around Workflow, Job, Composite Action, and Step. The skill keeps `SKILL.md` and four references covering workflow design, safety, efficiency, and Action runtime upgrades.[^agents-technical-policy]
 
 ### Historical staged CI adoption
 
-The following records describe the earlier policy and its 2026-10-31 checking scope. Issue #268 supersedes its prescribed workflow names, Draft/Ready operations, and Commit/Acceptance orchestration in the current skill. It does not change the historical records or assert that consumer repositories have migrated.[^agents-phase-design]
+The following records describe the earlier policy and its 2026-10-31 checking scope. Issue #268 later superseded its prescribed workflow names, Draft/Ready operations, and Commit/Acceptance orchestration. That revision did not change the historical records or establish that consumer repositories had migrated.[^agents-phase-design]
 
-The operational contract lives in [workflow design](../../skills/github-actions/references/workflow-design.md), with related filtering and cancellation guidance in [efficiency](../../skills/github-actions/references/efficiency.md). Issue #242 records a selected shared policy for adopting repositories, not a universal GitHub requirement or permission to replace their validation with a copied workflow.[^agents-staged-ci]
+The [historical workflow-design reference](https://github.com/daiksud/agents/blob/23aa0c80918d1195db2592019aeaa125b6f6d622/skills/github-actions/references/workflow-design.md) and [historical efficiency reference](https://github.com/daiksud/agents/blob/23aa0c80918d1195db2592019aeaa125b6f6d622/skills/github-actions/references/efficiency.md) contain later revisions of this guidance. Issue #242 records a selected shared policy for adopting repositories, not a universal GitHub requirement or permission to replace their validation with a copied workflow.[^agents-staged-ci]
 
 The original 2026-10-25 record used a common `pass` context and listed four gh-qw CI targets. Later naming decisions, implemented in gh-qw #141 and gh-settings #455, used distinct native `ci-pr` and `ci-push` aggregates and separate `prlint`; the workflow file stem, workflow name, and aggregate job/check name agreed. The shared guidance at that revision followed those names.[^gh-qw-check-names][^gh-settings-check-names] gh-qw #137 retired Linux ARM64 and Intel Mac support. At the recorded revision its matrix retained Linux amd64, macOS arm64, and Windows amd64, while gh-settings retained both process and public-Action candidate acceptance. Later adoption must check current contracts rather than restore a historical target list.[^gh-qw-platforms][^gh-qw-ci-metadata][^gh-settings-ci-metadata]
 
@@ -279,13 +271,11 @@ These are the policy's tradeoffs.[^agents-staged-ci] GitHub's dependency rules a
 
 This guidance change does not alter actual workflows, live required contexts, review/merge policy, releases, or global APM deployment. Required-context migration remains a separately authorized settings operation. On 2026-10-31 the source comparison covered the cited repository metadata, PR records, and official dependency, event, concurrency, and artifact documentation. It was a source review, not execution of the proposed workflow contract. Later workflow adoption must distinguish static checks from actual GitHub runs when assessing stage flow, failures, metadata isolation, artifact reuse, and retained platforms.[^agents-staged-ci]
 
-### Official checks and reassessment conditions
+### Historical official checks
 
-On 2026-09-20 compared official GitHub workflow syntax, reusable workflows, cache, secure use, events, workflow commands, OIDC, Action metadata, and current checkout/setup-node material. The source mapping above preserves the claim scope and URLs formerly recorded in runtime references. Avoid more specification copies; reread target-environment authoritative versions when making version-dependent judgments.
+On 2026-09-20 compared official GitHub workflow syntax, reusable workflows, cache, secure use, events, workflow commands, OIDC, Action metadata, and then-current checkout/setup-node material. The source mapping above preserves the claim scope and URLs formerly recorded in the references.
 
-- For filters, required checks, or concurrency, check official specifications in [Efficiency](../../skills/github-actions/references/efficiency.md). Do not assume older environments support `queue: max` or its constraints.
-- For permissions, forks, runners, or OIDC, check official specifications and actual settings/claims in [Safety](../../skills/github-actions/references/hardening.md). Do not assume fixed subjects/credential locations.
-- For upgrades follow [Runtime upgrades](../../skills/github-actions/references/runtime-upgrades.md), comparing release metadata/notes/full SHA. Check dates alone do not prove latest versions or compatibility.
+The [historical efficiency reference](https://github.com/daiksud/agents/blob/23aa0c80918d1195db2592019aeaa125b6f6d622/skills/github-actions/references/efficiency.md) covered filters, required checks, and concurrency; the [historical safety reference](https://github.com/daiksud/agents/blob/23aa0c80918d1195db2592019aeaa125b6f6d622/skills/github-actions/references/hardening.md) covered permissions, forks, runners, and OIDC; the [historical runtime-upgrade reference](https://github.com/daiksud/agents/blob/23aa0c80918d1195db2592019aeaa125b6f6d622/skills/github-actions/references/runtime-upgrades.md) covered release metadata, notes, and full SHAs. These records do not establish present availability or compatibility.
 
 ### Official runner and shell specifications
 
@@ -344,6 +334,7 @@ On 2026-09-22 checked [Runner selection][^github-runner-selection], [self-hosted
 [^github-run-variables]: [Run ID and run attempt variables](https://docs.github.com/en/actions/reference/workflows-and-actions/variables#default-environment-variables).
 [^github-artifact-api]: [Artifact REST API](https://docs.github.com/en/rest/actions/artifacts#list-workflow-run-artifacts).
 [^github-artifacts]: [github-artifacts](https://docs.github.com/en/actions/tutorials/store-and-share-data).
+[^agents-technical-policy]: [GitHub Actions technical design policy](https://github.com/daiksud/agents/issues/270).
 [^agents-staged-ci]: [agents-staged-ci](https://github.com/daiksud/agents/issues/242).
 [^gh-qw-check-names]: [gh-qw-check-names](https://github.com/daiksud/gh-qw/pull/141).
 [^gh-settings-check-names]: [gh-settings-check-names](https://github.com/daiksud/gh-settings/pull/455).
