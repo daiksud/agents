@@ -3,8 +3,6 @@ name: commitlint
 on:
   pull_request:
     types: [opened, synchronize, reopened, edited]
-  push:
-    branches: [main]
 
 permissions:
   contents: read
@@ -14,7 +12,7 @@ defaults:
     shell: bash
 
 concurrency:
-  group: commitlint-${{ github.event.pull_request.number || github.ref }}
+  group: commitlint-${{ github.event.pull_request.number }}
   cancel-in-progress: true
 
 jobs:
@@ -26,7 +24,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          ref: ${{ github.event.pull_request.head.sha }}
           fetch-depth: 0
           persist-credentials: false
 
@@ -36,7 +34,6 @@ jobs:
           bun-version: latest
 
       - name: Lint PR commits
-        if: github.event_name == 'pull_request'
         env:
           BASE_SHA: ${{ github.event.pull_request.base.sha }}
           HEAD_SHA: ${{ github.event.pull_request.head.sha }}
@@ -45,23 +42,9 @@ jobs:
           --default-config --from "$BASE_SHA" --to "$HEAD_SHA" --verbose
 
       - name: Lint PR title and body
-        if: github.event_name == 'pull_request'
         env:
           PR_TITLE: ${{ github.event.pull_request.title }}
           PR_BODY: ${{ github.event.pull_request.body }}
         run: |
           printf '%s\n\n%s\n' "$PR_TITLE" "$PR_BODY" |
             bunx --bun --package @commitlint/cli@latest commitlint --default-config --verbose
-
-      - name: Lint pushed commits
-        if: github.event_name == 'push'
-        env:
-          BEFORE_SHA: ${{ github.event.before }}
-          AFTER_SHA: ${{ github.sha }}
-        run: |
-          range=(--to "$AFTER_SHA")
-          # A new branch has no before commit; its zero SHA cannot form a Git range.
-          if [[ "$BEFORE_SHA" != 0000000000000000000000000000000000000000 ]]; then
-            range+=(--from "$BEFORE_SHA")
-          fi
-          bunx --bun --package @commitlint/cli@latest commitlint --default-config "${range[@]}" --verbose

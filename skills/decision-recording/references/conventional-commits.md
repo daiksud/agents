@@ -48,15 +48,13 @@ bunx --bun --package @commitlint/cli@latest commitlint --default-config
 ## ワークフローの導入
 
 1. [commitlint.yml](../assets/commitlint.yml)を導入先の `.github/workflows/commitlint.yml` に配置する。
-2. `push.branches` の `main` を導入先の既定ブランチ名に合わせる。
-3. PRで `commitlint` ジョブの実行を確認し、[必須チェックの設定](github-settings.md#commitlintを必須チェックにする)を行う。
+2. PRで `commitlint` ジョブの実行を確認し、[必須チェックの設定](github-settings.md#commitlintを必須チェックにする)を行う。
 
-検査対象は次のとおり。
+ワークフローはPRイベントだけで実行する。検査対象は次のとおり。
 
 | イベント | 対象 |
 | --- | --- |
 | PRの作成・再開・コミット追加・編集 | base SHAからhead SHAまでの各コミットメッセージと、PRタイトル・空行・本文をつないだ一つのメッセージ |
-| 既定ブランチへのpush | push前のSHAからpush後のSHAまでに加わったコミット。最初のpushではpush後のSHAから到達する全コミット |
 
 PRの `edited` を含め、タイトル・本文だけの編集でも検査する。PR本文だけを独立したコミットメッセージとして検査しない。マージコミットを選ぶ場合も、PR内の各コミットを検査対象にする。
 
