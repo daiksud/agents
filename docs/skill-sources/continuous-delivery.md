@@ -1,7 +1,7 @@
 ---
 type: Reference
-title: GitHub Actions sources and adoption notes
-description: Preserve source mappings, adoption decisions, and historical checking scope for maintainers of the github-actions skill.
+title: Continuous delivery sources and adoption notes
+description: Preserve source mappings, adoption decisions, and historical checking scope for maintainers of the continuous-delivery skill.
 sources:
   - id: copilot-efficiency
     resource: https://github.com/github/awesome-copilot/tree/4f4796f0bf30e105700f97ed8408c12b6aa95e06/skills/github-actions-efficiency
@@ -103,13 +103,38 @@ sources:
     resource: https://github.com/daiksud/gh-qw/blob/64afba3ce3a32e72dffdcadd4ffdaffc4c034256/.github/actions/ci-metadata/action.yml
   - id: gh-settings-ci-metadata
     resource: https://github.com/daiksud/gh-settings/blob/b79568b604f545823e4a36a4de59c3be5b86d4ed/.github/actions/ci-metadata/action.yml
+  - id: agents-continuous-delivery
+    resource: https://github.com/daiksud/agents/issues/275
+  - id: github-actions-settings
+    resource: https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/enabling-features-for-your-repository/managing-github-actions-settings-for-a-repository
+  - id: github-artifact-retention
+    resource: https://docs.github.com/en/actions/how-tos/manage-workflow-runs/download-workflow-artifacts
+  - id: github-environments
+    resource: https://docs.github.com/en/actions/how-tos/deploy/configure-and-manage-deployments/manage-environments
+  - id: github-configuration-variables
+    resource: https://docs.github.com/en/actions/concepts/workflows-and-actions/variables
+  - id: actionlint
+    resource: https://github.com/rhysd/actionlint
+  - id: zizmor
+    resource: https://docs.zizmor.sh/
+  - id: github-dependabot-actions
+    resource: https://docs.github.com/en/code-security/how-tos/secure-your-supply-chain/secure-your-dependencies/auto-update-actions
 ---
 
 ## Scope
 
-The current Workflow / Job / Composite Action / Step design policy is in [github-actions](../../skills/github-actions/SKILL.md) and its four bundled references. This catalog preserves source mappings and historical adoption records.
+The current guidance for continuous delivery on GitHub is in [continuous-delivery](../../skills/continuous-delivery/SKILL.md) and its four bundled references. It covers GitHub settings, Actions workflows, and tools. This catalog preserves source mappings and historical adoption records.
 
 Checking dates below are historical records retained from the original documents. Relocating them does not establish a new specification check, human review, successful execution, or current applicability.
+
+## Current settings and tools
+
+| Guidance | Source scope |
+| --- | --- |
+| [Skill entry point](../../skills/continuous-delivery/SKILL.md) | The repository policy defines `pr.yml`, `push.yml`, and `release.yml`, four-layer responsibilities, shared phase actions, and artifact reuse.[^agents-continuous-delivery] |
+| [Workflow design](../../skills/continuous-delivery/references/workflow-design.md) | Artifact availability and retention constraints come from repository settings and artifact-download guidance.[^github-actions-settings][^github-artifact-retention] |
+| [Hardening](../../skills/continuous-delivery/references/hardening.md) | Actions policies and default token permissions, deployment environments and their protection rules, and non-sensitive configuration variables.[^github-actions-settings][^github-environments][^github-configuration-variables] |
+| [Tooling](../../skills/continuous-delivery/references/tooling.md) | `actionlint` checks workflow syntax and expressions, `zizmor` analyzes CI/CD security, and Dependabot updates Actions references. These are tool candidates selected around existing project configuration.[^actionlint][^zizmor][^github-dependabot-actions] |
 
 ## Historical source mapping
 
@@ -117,7 +142,7 @@ The following mapping preserves the original source IDs and annotation scope, wi
 
 ### GitHub Actions efficiency improvements
 
-Current reference: [efficiency.md](../../skills/github-actions/references/efficiency.md).
+Current reference: [efficiency.md](../../skills/continuous-delivery/references/efficiency.md).
 
 | Source | Original annotation scope |
 | --- | --- |
@@ -127,7 +152,7 @@ Current reference: [efficiency.md](../../skills/github-actions/references/effici
 
 ### GitHub Actions safety
 
-Current reference: [hardening.md](../../skills/github-actions/references/hardening.md).
+Current reference: [hardening.md](../../skills/continuous-delivery/references/hardening.md).
 
 | Source | Original annotation scope |
 | --- | --- |
@@ -165,7 +190,7 @@ The 2026-11-03 revision recorded these corrections to the source examples:
 
 ### Upgrading Action internal runtimes
 
-Current reference: [runtime-upgrades.md](../../skills/github-actions/references/runtime-upgrades.md).
+Current reference: [tooling.md](../../skills/continuous-delivery/references/tooling.md).
 
 | Source | Original annotation scope |
 | --- | --- |
@@ -199,7 +224,7 @@ Former source catalog: `skills/github-actions/references/sources.md`. Its adopti
 
 ### GitHub Actions workflow design
 
-Current reference: [workflow-design.md](../../skills/github-actions/references/workflow-design.md).
+Current reference: [workflow-design.md](../../skills/continuous-delivery/references/workflow-design.md).
 
 | Source | Original annotation scope |
 | --- | --- |
@@ -292,6 +317,14 @@ On 2026-09-22 checked [Runner selection][^github-runner-selection], [self-hosted
 - For jobs/steps contracted to PowerShell or other shells, retain workflow Bash and override job `defaults.run.shell` or step `shell` with available compatible shells, recording requirements. If Bash syntax is necessary but unavailable, ask which policy/job requirement takes precedence. [Workflow syntax][^github-workflow-default-shell]
 - Do not infer GHES/self-hosted labels from hosted lists; check registered target labels. Unavailable `ubuntu-slim` is a concrete selection constraint.
 
+[^agents-continuous-delivery]: [Continuous-delivery skill scope](https://github.com/daiksud/agents/issues/275).
+[^github-actions-settings]: [Managing GitHub Actions settings](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/enabling-features-for-your-repository/managing-github-actions-settings-for-a-repository).
+[^github-artifact-retention]: [Downloading workflow artifacts](https://docs.github.com/en/actions/how-tos/manage-workflow-runs/download-workflow-artifacts).
+[^github-environments]: [Managing deployment environments](https://docs.github.com/en/actions/how-tos/deploy/configure-and-manage-deployments/manage-environments).
+[^github-configuration-variables]: [Configuration variables](https://docs.github.com/en/actions/concepts/workflows-and-actions/variables).
+[^actionlint]: [actionlint documentation](https://github.com/rhysd/actionlint).
+[^zizmor]: [zizmor documentation](https://docs.zizmor.sh/).
+[^github-dependabot-actions]: [Keeping Actions up to date with Dependabot](https://docs.github.com/en/code-security/how-tos/secure-your-supply-chain/secure-your-dependencies/auto-update-actions).
 [^copilot-efficiency]: [copilot-efficiency](https://github.com/github/awesome-copilot/tree/4f4796f0bf30e105700f97ed8408c12b6aa95e06/skills/github-actions-efficiency).
 [^github-cache]: [github-cache](https://docs.github.com/en/actions/reference/workflows-and-actions/dependency-caching).
 [^github-syntax]: [github-syntax](https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax).

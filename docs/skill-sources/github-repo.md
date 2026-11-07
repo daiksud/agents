@@ -118,7 +118,7 @@ Specification checking date at authoring: 2026-09-28. This proves neither human 
 | Free security | Read standard lists and product availability per feature; do not generalize public-free features to entire products/private repos.[^security-features][^advanced-security] |
 | CodeQL setup/results | Separate default/advanced setup, acceptance, completion, analysis.[^code-scanning-api] |
 
-Bundled material: [Standards](../../skills/github-repo/references/settings.md), [Security](../../skills/github-repo/references/security.md), [Operations](../../skills/github-repo/references/operations.md). Use distributed `github-actions` for workflow implementation rather than duplicating Action/container/runner policy.
+Bundled material: [Standards](../../skills/github-repo/references/settings.md), [Security](../../skills/github-repo/references/security.md), [Operations](../../skills/github-repo/references/operations.md). Use distributed `continuous-delivery` for workflow implementation rather than duplicating Action/container/runner policy.
 
 For official/UI/API disagreements preserve confirmed scope/differences without filling unverified specifications/endpoints. Unknown costs, permissions, or destructive effects justify holding affected operations even within approval.
 

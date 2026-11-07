@@ -11,7 +11,7 @@ This repository shares task-specific [Skills](skills/) through APM.
 
 ## Artifact language
 
-Most Skills use English. The [github-actions](skills/github-actions/SKILL.md) and [decision-recording](skills/decision-recording/SKILL.md) skills use Japanese. Follow the target repository's language conventions for produced artifacts.
+Most Skills use English. The [continuous-delivery](skills/continuous-delivery/SKILL.md) and [decision-recording](skills/decision-recording/SKILL.md) skills use Japanese. Follow the target repository's language conventions for produced artifacts.
 
 ## Maintainer references
 
@@ -21,7 +21,7 @@ Most Skills use English. The [github-actions](skills/github-actions/SKILL.md) an
 
 The distribution targets are Codex and GitHub Copilot, as specified in [apm.yml](apm.yml). Use APM CLI to install the Skills globally. Some Skills depend on others, so copying only a `SKILL.md` may omit required references.
 
-The [github-actions skill](skills/github-actions/SKILL.md) can be used independently with its complete directory, containing `SKILL.md` and four bundled references.
+The [continuous-delivery skill](skills/continuous-delivery/SKILL.md) can be used independently with its complete directory, containing `SKILL.md` and four bundled references. It covers GitHub settings, Actions workflows, and tools for continuous delivery, using `pr.yml`, `push.yml`, and `release.yml` as the basic pipeline.
 
 The [decision-recording skill](skills/decision-recording/SKILL.md) can also be used independently with its complete directory. It covers the readers and purposes of documents, commit messages, comments, code, and tests, with GitHub settings and Conventional Commits guides, two recording templates, and a standalone commitlint workflow.
 
@@ -37,7 +37,7 @@ apm install --global --target codex,copilot daiksud/agents
 
 The checking procedures defined by Skills are separate from protection conditions mechanically enforced by GitHub. Each repository manages its own Rulesets and required status checks; installing this package alone does not apply the same protection settings.
 
-[github-repo](skills/github-repo/SKILL.md) diagnoses immutable releases, squash and merge-commit methods, PR-based commit messages, the main Ruleset, full-SHA requirements for external Actions, and free security features for the specified repository, and applies only the explicitly requested scope. “Diagnose the settings” ends with a report, “record the plan in an Issue” ends with a record, and “apply the settings” includes applying the differences and diagnosing again. It coordinates workflow content changes with [github-actions](skills/github-actions/SKILL.md), and does not create empty commits or PRs solely for GitHub-side settings changes.
+[github-repo](skills/github-repo/SKILL.md) diagnoses immutable releases, squash and merge-commit methods, PR-based commit messages, the main Ruleset, full-SHA requirements for external Actions, and free security features for the specified repository, and applies only the explicitly requested scope. “Diagnose the settings” ends with a report, “record the plan in an Issue” ends with a record, and “apply the settings” includes applying the differences and diagnosing again. It coordinates workflow content changes with [continuous-delivery](skills/continuous-delivery/SKILL.md), and does not create empty commits or PRs solely for GitHub-side settings changes.
 
 This repository requires `pass` for pull requests. [PR validation](.github/workflows/ci-pr.yml) follows `draft → commit-stage → ready → acceptance-stage → pass`: every run first attempts to convert the PR to Draft, runs approval-policy tests and Markdown lint, marks it Ready, and then checks local file links including frontmatter paths. Creation, new commits, reopening, and PR edits trigger validation. Each stage requires its predecessor to succeed; the final `pass` check rejects failed, cancelled, or skipped validation. There is no special handling for fork or Dependabot PRs: a denied state change fails the run instead of allowing validation to continue. [Main-push validation](.github/workflows/ci.yml) runs the same approval-policy tests and Markdown lint.
 
