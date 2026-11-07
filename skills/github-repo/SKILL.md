@@ -1,6 +1,6 @@
 ---
 name: github-repo
-description: Use to diagnose, maintain, or apply GitHub repository settings. Covers immutable releases, squash-only merges, main Rulesets, required Actions SHAs, and free security features. Do not use for ordinary Issue/PR operations, workflow-content-only fixes, or general GitHub explanation.
+description: Use to diagnose, maintain, or apply GitHub repository settings. Covers immutable releases, squash and merge-commit methods, PR-based commit messages, main Rulesets, required Actions SHAs, and free security features. Do not use for ordinary Issue/PR operations, workflow-content-only fixes, or general GitHub explanation.
 ---
 
 # Diagnose and realize GitHub repository settings
@@ -26,7 +26,7 @@ For diagnosis, first read the reading/reporting parts of [Operations and judgmen
 
 | Condition | Reference material |
 | --- | --- |
-| Narrow PR-title/body squash-message alignment diagnosis or authorized application | [PR and squash message alignment](references/settings.md#pr-and-squash-message-alignment); do not expand to unrelated standards |
+| Narrow PR-title/body merge-message alignment diagnosis or authorized application | [PR and merge message alignment](references/settings.md#pr-and-merge-message-alignment); do not expand to unrelated standards |
 | Releases, merges, main protection, Actions policy | [Setting standards](references/settings.md) |
 | Free security features, availability, billing, prerequisites | [Security](references/security.md) |
 | Retrieving settings, applying differences, failures, conflicts, reruns, result verification | [Operations and judgments](references/operations.md) |

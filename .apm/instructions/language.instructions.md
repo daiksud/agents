@@ -6,22 +6,22 @@ description: Choose artifact language from artifact type and target repository c
 
 ## Repository artifact language
 
-This is the shared source of truth for language when using these Instructions and Skills in a target repository. Most guidance in `daiksud/agents` uses English; this is not a blanket English requirement for artifacts created elsewhere. `skills/github-actions/SKILL.md` and its four bundled references use Japanese. Preserve their identifiers, commands, and metadata keys.
+This is the shared source of truth for language when using these Instructions and Skills in a target repository. Most guidance in `daiksud/agents` uses English; this is not a blanket English requirement for artifacts created elsewhere. The `github-actions` and `decision-recording` skills use Japanese instructional prose. Preserve their identifiers, commands, and metadata keys.
 
 | Artifact | Required language and format |
 | --- | --- |
 | Ordinary commit messages | Always English for subject, body, and footers; use Conventional Commits |
-| Squash commit messages | Preserve the final English PR title and final PR description verbatim through `PR_TITLE` / `PR_BODY`; adopting repositories default to English PR bodies as described below |
+| Commits created by squash or merge-commit merging | Preserve the final English PR title and final PR description verbatim through `PR_TITLE` / `PR_BODY`; adopting repositories default to English PR bodies as described below |
 | Code comments, including docstrings | Always English; preserve the project's comment format |
 | Issue and PR titles | Always English; use Conventional Commits |
 | Issue bodies and comments; PR comments | Follow the target repository's language, English or Japanese |
-| PR bodies | Follow target-repository conventions; explicitly propose English when adopting verbatim PR-body squash records, as described below |
+| PR bodies | Follow target-repository conventions; explicitly propose English when adopting verbatim PR-body commit records, as described below |
 | PR review comments, including review summaries and replies | Follow the target repository's language, English or Japanese |
 | Repository documentation, including Markdown and feature documents | Follow the target repository's language, English or Japanese |
 
-### PR-body language when adopting squash records
+### PR-body language when adopting commit records
 
-For repositories adopting verbatim PR-body squash messages, the [adoption proposal](../../skills/change-delivery/references/repository-adoption.md) defaults to English PR bodies, consistent with English commit messages. Record that choice in local instructions. Preserve other artifact-language conventions; this is not a blanket language change for all consumers. Surface conflicts with explicit target instructions before publishing affected artifacts and resolve them with the user instead of silently overwriting them. Preserve existing adoption decisions and explicit exceptions; never translate or discard recorded rationale only at merge time.
+For repositories adopting verbatim PR-body commit messages through this shared package, the [adoption proposal](../../skills/change-delivery/references/repository-adoption.md) defaults to English PR bodies, consistent with English commit messages. Record that choice in local instructions. The independent `decision-recording` skill follows the consumer's language convention. Preserve other artifact-language conventions and explicit local choices; never translate or discard recorded rationale only at merge time.
 
 ### Determine the target repository's language
 

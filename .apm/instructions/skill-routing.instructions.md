@@ -25,6 +25,7 @@ Separate completion of the current artifact from later skill improvements in KPT
 | Discovering and specifying user-facing behavior and acceptance conditions | `~/.agents/skills/behavior-specification/SKILL.md` |
 | Only when performing code review | `~/.agents/skills/code-review/SKILL.md` |
 | Creating or updating documents | `~/.agents/skills/document-authoring/SKILL.md` |
+| Choosing recording destinations and readers; preserving design decisions; adopting PR records, merge messages, or commitlint | `~/.agents/skills/decision-recording/SKILL.md` |
 | Drafting or revising Japanese prose in replies, Issues/PRs, reviews, or documents | `~/.agents/skills/yomiyasu/SKILL.md` |
 | When asked to diagnose current development practices or plan their adoption | `~/.agents/skills/engineering-assessment/SKILL.md` |
 | Diagnosing, maintaining, or applying GitHub repository settings, Rulesets, merge methods, release protection, or security settings | `~/.agents/skills/github-repo/SKILL.md` |
