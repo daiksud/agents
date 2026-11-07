@@ -25,7 +25,7 @@ description: コミットとPRの書式を揃え、単独で動くcommitlintワ�
 実行の基本形は次のとおり。
 
 ```sh
-bunx --bun --package @commitlint/cli@latest commitlint --default-config
+bunx --bun --package @commitlint/cli@21.2.4 commitlint --default-config
 ```
 
 [commitlintの標準の設定探索](https://commitlint.js.org/reference/configuration.html)を利用する。`commitlint.config.mjs`、`.commitlintrc`、`package.json` の `commitlint` フィールドなど、利用者が用意した設定を尊重する。ファイル名の判定や優先順位をワークフローで作り直さない。
@@ -36,14 +36,14 @@ bunx --bun --package @commitlint/cli@latest commitlint --default-config
 
 | 対象 | 扱い |
 | --- | --- |
-| Bun | `setup-bun` の `bun-version: latest` で導入する |
-| commitlint | `bunx` で `@commitlint/cli@latest` を取得し、`--bun` でBunのランタイムを使う |
+| Bun | `setup-bun` の `bun-version: 1.4.4` で導入する |
+| commitlint | `bunx` で `@commitlint/cli@21.2.4` を取得し、`--bun` でBunのランタイムを使う |
 | リポジトリの設定 | commitlintの標準探索で読み込む |
 | リポジトリの依存バージョン・スクリプト | ランタイムやCLIの自動選択には使わず、依存関係の一括インストールもしない |
 | 管理済みのランタイム・CLIバージョン | 利用者がワークフローを変更して指定する |
 | 設定が参照する外部プリセット・プラグイン | 利用者が必要な依存関係の導入手順をワークフローに追加する |
 
-[`setup-bun`](https://github.com/oven-sh/setup-bun)はバージョン省略時に `package.json` を参照するため、`latest` を明示する。[`bunx`](https://bun.com/docs/pm/bunx)にも `@latest` を指定し、リポジトリ内のCLIを自動選択させない。
+[`setup-bun`](https://github.com/oven-sh/setup-bun)はバージョン省略時に `package.json` を参照するため、`bun-version` に `1.4.4` を明示する。[`bunx`](https://bun.com/docs/pm/bunx)にも `@commitlint/cli@21.2.4` を指定し、リポジトリ内のCLIを自動選択させない。バージョンを更新するときは、ワークフローとこのガイドを揃える。
 
 ## ワークフローの導入
 

@@ -31,14 +31,14 @@ jobs:
       - name: Set up Bun
         uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
         with:
-          bun-version: latest
+          bun-version: 1.4.4
 
       - name: Lint PR commits
         env:
           BASE_SHA: ${{ github.event.pull_request.base.sha }}
           HEAD_SHA: ${{ github.event.pull_request.head.sha }}
         run: >-
-          bunx --bun --package @commitlint/cli@latest commitlint
+          bunx --bun --package @commitlint/cli@21.2.4 commitlint
           --default-config --from "$BASE_SHA" --to "$HEAD_SHA" --verbose
 
       - name: Lint PR title and body
@@ -47,4 +47,4 @@ jobs:
           PR_BODY: ${{ github.event.pull_request.body }}
         run: |
           printf '%s\n\n%s\n' "$PR_TITLE" "$PR_BODY" |
-            bunx --bun --package @commitlint/cli@latest commitlint --default-config --verbose
+            bunx --bun --package @commitlint/cli@21.2.4 commitlint --default-config --verbose
