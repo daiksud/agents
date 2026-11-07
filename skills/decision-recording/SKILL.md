@@ -1,6 +1,6 @@
 ---
 name: decision-recording
-description: 設計判断と変更理由を記録する。ドキュメント、コミットメッセージ、コードコメント、コード、テストの役割を整理するとき、開発中の判断やPR本文を残すとき、マージ設定とcommitlintを導入するときに使う。
+description: 設計判断と変更理由を記録する。ドキュメント、コミットメッセージ、コードコメント、コード、テストの役割を整理するとき、開発中の判断やPR本文を残すとき、PRの記録を保存するマージ設定を整備するときに使う。
 ---
 
 # 設計判断を記録する
@@ -26,6 +26,8 @@ description: 設計判断と変更理由を記録する。ドキュメント、�
 ### コミットメッセージとPR本文
 
 PRタイトル・本文を、マージ時のコミット件名・本文としてそのまま使う。レビュアーが変更を判断でき、後から読んだ人が当時の前提と理由を理解できる内容にする。
+
+コミット件名とPRタイトルにはConventional Commitsの `<type>[optional scope][!]: <description>` 形式を強く推奨する。互換性を壊す変更は `!` または `BREAKING CHANGE:` のフッターで示し、影響と必要な移行方法を説明する。
 
 - 問題と実際の変更、変更後の振る舞いを説明する。
 - 判断に使った事実と制約、実際に比較した案、採用・不採用の理由、受け入れた不利な点を必要な範囲で書く。検討していない案や不明な理由を補わない。
@@ -72,7 +74,8 @@ PRタイトル・本文を、マージ時のコミット件名・本文として
 | --- | --- |
 | 変更と判断を記録するPR本文 | [PRテンプレート](assets/pull_request_template.md) |
 | リポジトリだけで読める記録ルール | [開発者向け指示の例](assets/agents-decision-records.md) |
-| 両マージ方式、メッセージ形式、必須チェックの設定 | [GitHub設定ガイド](references/github-settings.md) |
-| Conventional Commitsとcommitlint | [記載・導入ガイド](references/conventional-commits.md)、[ワークフロー例](assets/commitlint.yml) |
+| 両マージ方式とPRタイトル・本文の保存設定 | [GitHub設定ガイド](references/github-settings.md) |
 
-commitlintのジョブ名と必須チェック名は `commitlint` にする。既存のユーザー設定を尊重し、ルールがなければ標準の `@commitlint/config-conventional` を変更せず使う。形式の検査とは別に、本文だけで判断理由が分かるかをレビューする。
+形式の検査にはcommitlintを強く推奨する。同等の既存ツールと設定があれば優先する。形式の検査とは別に、本文だけで判断理由が分かるかをレビューする。
+
+コミット規約や検査を詳しく整備する際は、[versioning](https://github.com/daiksud/agents/tree/main/skills/versioning)も利用できる。

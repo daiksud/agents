@@ -16,7 +16,7 @@ For repository artifacts: Issue/PR titles always use English and this Convention
 <type>[(scope)][!]: <description>
 ```
 
-Conventional Commits 1.0.0 specifies commit messages. Applying it to Issue/PR titles is a local convention in this environment for shared vocabulary across work items, changes, and merged commits; the standard itself does not require Issue/PR titles. Use the [Conventional Commits guide](../../decision-recording/references/conventional-commits.md) for message syntax and the unmodified default lint configuration.
+Conventional Commits 1.0.0 specifies commit messages. Applying it to Issue/PR titles is a local convention in this environment for shared vocabulary across work items, changes, and merged commits; the standard itself does not require Issue/PR titles. Honor the target repository's commitlint configuration; without one, use unmodified `@commitlint/config-conventional`. Detailed convention and lint setup guidance is available in the optional [versioning skill](https://github.com/daiksud/agents/tree/main/skills/versioning).
 
 - Use types such as `feat`, `fix`, `docs`, `refactor`, `test`, or `chore` appropriate to target commit conventions and change intent. Prioritize repository-specific permitted types.
 - Add scope only when a short noun can express a stable domain, component, or responsibility. Do not add meaningless scope as filler.
