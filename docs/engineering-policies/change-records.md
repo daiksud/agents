@@ -16,7 +16,7 @@ PR descriptions use Summary, optional Decisions, and Validation. State the probl
 
 Every PR reports actual validation status. Execution remains discretionary unless required by the task or repository; `Not run` is valid for discretionary checks. Preserve required CI, agreed acceptance conditions, and the APM and independent-validation exclusions in [AGENTS.md](../../AGENTS.md).
 
-Remove all HTML comments from actual descriptions. This repository uses English commit messages and PR titles/bodies under its [language policy](../../.apm/instructions/language.instructions.md). Preserve the final title/body verbatim in the commit created at merge, and verify the saved message. The repository's effective protections determine which permitted method is available; guidance for consumers does not apply live settings.
+Remove all HTML comments from actual descriptions. This repository uses English commit messages and PR titles/bodies. Preserve the final title/body verbatim in the commit created at merge, and verify the saved message. The repository's effective protections determine which permitted method is available; guidance for consumers does not apply live settings.
 
 ## Consumer adoption
 

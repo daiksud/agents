@@ -24,7 +24,7 @@ Use this material for specification work and document creation without code, wit
 ### Feature document format
 
 - Apply `document-authoring` and follow [Markdown with Gherkin](https://github.com/cucumber/gherkin/blob/main/MARKDOWN_WITH_GHERKIN.md).
-- Follow [Repository artifact language](../../../.apm/instructions/language.instructions.md). For Japanese repositories, use Japanese keywords: headings `機能`, `背景`, `ルール`, and `シナリオ`; bulleted steps `前提`, `もし`, `ならば`, `かつ`, and `しかし`. For English repositories, use headings `Feature`, `Background`, `Rule`, and `Scenario`; bulleted steps `Given`, `When`, `Then`, `And`, and `But`.
+- For Japanese repositories, use Japanese keywords: headings `機能`, `背景`, `ルール`, and `シナリオ`; bulleted steps `前提`, `もし`, `ならば`, `かつ`, and `しかし`. For English repositories, use headings `Feature`, `Background`, `Rule`, and `Scenario`; bulleted steps `Given`, `When`, `Then`, `And`, and `But`.
 - When parsing, select the matching dialect (`ja` for Japanese, `en` for English). Check heading and step structure after rumdl formatting.
 - While editing is unavailable in Plan mode, show drafts within the plan; save before implementation code once editing is possible.
 

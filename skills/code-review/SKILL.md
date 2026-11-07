@@ -24,11 +24,11 @@ Read [Investigation procedures and perspectives](references/review-guidance.md#i
 
 ## PR records and policy
 
-When a PR description is available, review its purpose, actual behavior, relevant reasoning, validation status, absence of HTML comments, and applicable Engineering Policy changes under [Change records](../../.apm/instructions/change-records.instructions.md). Follow [PR record review](references/review-guidance.md#pr-record-review) for description corrections versus implementation findings. Diff-only input does not prove a description is missing. Unperformed discretionary checks alone are not defects or merge blockers; required CI and agreed acceptance conditions still apply.
+When a PR description is available, review its purpose, actual behavior, relevant reasoning, validation status, absence of HTML comments, and applicable Engineering Policy changes. Follow [PR record review](references/review-guidance.md#pr-record-review) for description corrections versus implementation findings. Diff-only input does not prove a description is missing. Unperformed discretionary checks alone are not defects or merge blockers; required CI and agreed acceptance conditions still apply.
 
 ## Staged review within the pair
 
-When checking Red / Green / Refactor as Navigator, read [Staged code review within the pair](references/pair-review.md). Preserve common instructions on roles, edit permissions, and checking boundaries; do not substitute pair checks for ordinary PR review, required CI, approval, or merging.
+When checking Red / Green / Refactor as Navigator, read [Staged code review within the pair](references/pair-review.md). Follow the target repository's pairing rules for roles, edit permissions, and checking boundaries; do not substitute pair checks for ordinary PR review, required CI, approval, or merging.
 
 ## Criteria for current requirements and safe changes
 
@@ -38,7 +38,7 @@ Read [Investigation procedures and perspectives](references/review-guidance.md) 
 
 ## Findings and results
 
-Write PR review comments, summaries, and replies in the target repository's English or Japanese language under [Repository artifact language](../../.apm/instructions/language.instructions.md); the language of this review guidance does not override that convention.
+Write PR review comments, summaries, and replies in the target repository's English or Japanese language; the language of this review guidance does not override that convention.
 
 Separate formal findings requiring fixes, optional suggestions, and design decisions worth retaining, and report only useful categories. Do not downgrade evidence-based design or safe-change problems in current requirements to optional merely because they “work now,” are “local,” or are “documentation issues.” Only alternatives where the current state already satisfies contracts and safe change are optional.
 

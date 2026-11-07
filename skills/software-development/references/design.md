@@ -14,7 +14,7 @@ description: Criteria for choosing structure from model boundaries and retaining
 - **Courage**: Do not hide defects or uncertainty; carry out necessary Refactor based on tests and the agreed scope. This does not mean skipping approval or validation.
 - **Respect**: Respect users' decision authority and stakeholders' knowledge and time. Do not make unagreed business decisions on their behalf or gain speed through overload.
 
-This applies XP values to the implementation procedure. Use this mapping even when the distribution destination lacks shared Instructions.
+This applies XP values to the implementation procedure.
 
 ### Simple Design and YAGNI
 
@@ -73,7 +73,7 @@ Consider composition and delegation first for reuse and combining behavior. Use 
 
 ### Communicating boundaries through names, placement, and types
 
-Check existing naming and placement conventions, and follow [Repository artifact language](../../../.apm/instructions/language.instructions.md) for comments and documentation. Within the scope added or changed, make meaning and contracts traceable for users.
+Check existing naming, placement, and language conventions for comments and documentation. Within the scope added or changed, make meaning and contracts traceable for users.
 
 - Use words expressing roles or business meaning in names and paths. If a value's meaning or units are unclear, use a named constant at that model boundary. Do not share different rules merely because they use the same number.
 - For new placement, make related code, types, and tests easy to find as one feature. Follow existing colocation; if tests belong in a separate directory, align corresponding names and structure. Do not move large numbers of existing files solely for colocation.
@@ -90,7 +90,7 @@ First express business meaning and dependencies through simple names, types, fun
 - Retain public contract purposes, arguments, return values, failures, and side effects in a form users can understand, including types and existing API documentation. Do not remove invisible contracts such as ownership, units, or destructive input updates on the grounds of “write only reasons.”
 - Keep broader selection reasons and historical comparisons in PRs/commits. Current working guidance follows [Current policy authoring](../../document-authoring/references/engineering-policies.md); it does not replace the constraint a code reader needs beside the implementation.
 - Cross-check related comments when making changes. Leave unnecessary commented-out code and history lists to version control, but check references and removal conditions when handling operational TODOs and similar notes.
-- Write code comments, including docstrings, in English under [Repository artifact language](../../../.apm/instructions/language.instructions.md); follow project conventions for their format. Do not make comments on all functions or a particular language's documentation format shared requirements.
+- Write code comments, including docstrings, in English; follow project conventions for their format. Do not make comments on all functions or a particular language's documentation format shared requirements.
 
 ## Change scope and decomposition
 

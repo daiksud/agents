@@ -114,7 +114,7 @@ This table is not the only mapping. Select only categories and items relevant to
 
 ### Runtime division of responsibilities
 
-- Put Values and short continuously used decision principles in shared Instructions.
+- Put values and short decision principles in the relevant skill entry points.
 - `software-development` handles concrete execution of TDD, Pair Programming, Incremental Design, and similar practices.
 - `engineering-assessment` handles taxonomy, selection, and evidence judgments during assessment.
 - Read the [dedicated lens](architecture-and-organization.md) for Architecture / Organization details.

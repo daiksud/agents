@@ -1,44 +1,41 @@
 ---
 type: Guide
 title: daiksud/agents
-description: Prerequisites for shared Instructions and Skills, and installation through APM.
+description: Installation and use of shared Skills through APM.
 sources:
   - id: github-token-events
     resource: https://docs.github.com/en/actions/concepts/security/github_token
 ---
 
-This repository shares [development policy Instructions](.apm/instructions/) and [task-specific Skills](skills/) through APM.
+This repository shares task-specific [Skills](skills/) through APM.
 
 ## Artifact language
 
-These shared guidance files generally use English. The [github-actions](skills/github-actions/SKILL.md) and [decision-recording](skills/decision-recording/SKILL.md) skills use Japanese instructional prose; identifiers, commands, and metadata keys retain their required forms. Artifacts created with the shared guidance follow [Repository artifact language](.apm/instructions/language.instructions.md): commits, code comments, and Issue/PR titles always use English; bodies, discussions, reviews, and documentation use the target repository's English or Japanese conventions.
+Most Skills use English. The [github-actions](skills/github-actions/SKILL.md) and [decision-recording](skills/decision-recording/SKILL.md) skills use Japanese. Follow the target repository's language conventions for produced artifacts.
 
 ## Maintainer references
 
-[Maintainer references](docs/maintainer-references.md) collect source mappings, adoption decisions, research history, and supplementary notes for the Instructions and Skills, including the [Sakura Miko conversation sources](docs/sakuramiko-style-reference.md). Execution rules remain in Instructions and skill entry points; operational details stay in conditional skill references. Ordinary tasks do not require loading the maintainer notes.
+[Maintainer references](docs/maintainer-references.md) collect sources and maintenance notes for the Skills. Current guidance lives in the Skills and their references. Ordinary tasks do not require loading maintainer notes.
 
 ## Prerequisites
 
-The distribution targets are Codex and GitHub Copilot, as specified in [apm.yml](apm.yml). For the complete shared package, use an environment with APM CLI available and install the Instructions and Skills globally. Most Skills depend on one another, so copying only an individual `SKILL.md` is not a supported usage assumption.
+The distribution targets are Codex and GitHub Copilot, as specified in [apm.yml](apm.yml). Use APM CLI to install the Skills globally. Some Skills depend on others, so copying only a `SKILL.md` may omit required references.
 
 The [github-actions skill](skills/github-actions/SKILL.md) can be used independently with its complete directory, containing `SKILL.md` and four bundled references.
 
 The [decision-recording skill](skills/decision-recording/SKILL.md) can also be used independently with its complete directory. It covers the readers and purposes of documents, commit messages, comments, code, and tests, with GitHub settings and Conventional Commits guides, two recording templates, and a standalone commitlint workflow.
 
-Under the [collaboration instructions](.apm/instructions/collaboration.instructions.md), code changes require a Navigator with an independent execution context. Before the first code edit, confirm actual initial and follow-up responses from the same Navigator. If unavailable, do not begin code edits, including test code or refactoring; read-only investigation and planning within the approved scope may continue. Pair work is not required for consultation, explanation, planning alone, or documentation-only changes.
-
 ## Installation
 
-The shared instructions require [yomiyasu](https://github.com/nanaism/yomiyasu/tree/main/skills/yomiyasu) for refining Japanese prose. Make the skill available separately; it is not included as an APM dependency of this package.
+Use [yomiyasu](https://github.com/nanaism/yomiyasu/tree/main/skills/yomiyasu) for refining Japanese prose. It is not included as an APM dependency of this package.
 
 ```bash
 apm install --global --target codex,copilot daiksud/agents
-apm compile --global
 ```
 
-## Instructions and GitHub protection settings
+## Skills and GitHub protection settings
 
-The checking procedures defined by Instructions and Skills are separate from protection conditions mechanically enforced by GitHub. Each repository manages its own Rulesets and required status checks; installing this package alone does not apply the same protection settings.
+The checking procedures defined by Skills are separate from protection conditions mechanically enforced by GitHub. Each repository manages its own Rulesets and required status checks; installing this package alone does not apply the same protection settings.
 
 [github-repo](skills/github-repo/SKILL.md) diagnoses immutable releases, squash and merge-commit methods, PR-based commit messages, the main Ruleset, full-SHA requirements for external Actions, and free security features for the specified repository, and applies only the explicitly requested scope. “Diagnose the settings” ends with a report, “record the plan in an Issue” ends with a record, and “apply the settings” includes applying the differences and diagnosing again. It coordinates workflow content changes with [github-actions](skills/github-actions/SKILL.md), and does not create empty commits or PRs solely for GitHub-side settings changes.
 
@@ -58,6 +55,6 @@ The approval workflow has no `workflow_call` entry point. CI owns its Draft/Read
 
 ## Decision records and current guidance
 
-[decision-recording](skills/decision-recording/SKILL.md) explains what each reader needs: current working information in documents, self-contained historical judgments in PRs/commits, Why-not constraints beside code, behavior and structure in code, and observable contracts in tests. It prescribes no document directory or policy name. [Local policy](docs/engineering-policies/change-records.md) and [shared instructions](.apm/instructions/change-records.instructions.md) retain actual validation reporting; `Not run` applies to discretionary checks, with required CI and repository validation exclusions preserved.
+[decision-recording](skills/decision-recording/SKILL.md) explains what each reader needs: current working information in documents, self-contained historical judgments in PRs/commits, Why-not constraints beside code, behavior and structure in code, and observable contracts in tests. It prescribes no document directory or policy name. [Local policy](docs/engineering-policies/change-records.md) retains actual validation reporting; `Not run` applies to discretionary checks, with required CI and repository validation exclusions preserved.
 
 Use the [PR template](skills/decision-recording/assets/pull_request_template.md), [local instruction example](skills/decision-recording/assets/agents-decision-records.md), and [commitlint workflow](skills/decision-recording/assets/commitlint.yml) to adopt the practice. The [GitHub settings guide](skills/decision-recording/references/github-settings.md) covers squash and merge-commit merging with final PR title/body messages, prohibits rebase merging, and explains the required `commitlint` check. The [Conventional Commits guide](skills/decision-recording/references/conventional-commits.md) describes latest Bun/commitlint defaults and user configuration. Installation bundles these assets; consumer files and live settings require adoption in the target repository. This repository's active CI remains described above.

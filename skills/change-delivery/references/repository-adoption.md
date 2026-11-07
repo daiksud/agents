@@ -14,7 +14,7 @@ Show concrete paths and changes before applying adoption. Deliver approved file 
 
 ## Preserve target conventions
 
-Follow [Repository artifact language](../../../.apm/instructions/language.instructions.md), including the English PR-body default for repositories adopting this environment's verbatim PR records. Preserve explicit local choices, resolve language conflicts before publication, and retain the agreed text at merge without translation. This local language convention is separate from the independent skill's recording rules.
+For repositories adopting verbatim PR records, propose English PR bodies. Preserve explicit local choices, resolve language conflicts before publication, and retain the agreed text at merge without translation. This local language convention is separate from the independent skill's recording rules.
 
 Adapt the instruction fragment and local links to the target. Keep consumer rules understandable without the installed agents package; do not copy this distribution repository's entire `AGENTS.md` or its APM/independent-validation exclusions.
 

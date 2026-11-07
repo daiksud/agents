@@ -6,7 +6,7 @@ description: Show checks for each Driver/Navigator Red / Green / Refactor stage 
 
 ## Staged review within the pair
 
-A Navigator asked to perform Driver/Navigator pair checks under the common instructions applies this skill's investigation and finding criteria to the selected TDD stage's purpose. Do not substitute them for ordinary PR review, required CI, approval, or merging; reviewers remain read-only.
+A Navigator asked to perform Driver/Navigator pair checks in a pairing workflow applies this skill's investigation and finding criteria to the selected TDD stage's purpose. Do not substitute them for ordinary PR review, required CI, approval, or merging; reviewers remain read-only.
 
 A Navigator who finds user decisions qualifying as common standard candidates within the pair hands them to the Driver without copying unpublished decisions, reasons, or exceptions to public destinations. The Driver records candidate Issues under `issue-management` publication permission and recording procedures; the Navigator does not post.
 
