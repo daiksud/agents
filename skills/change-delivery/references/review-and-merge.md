@@ -1,7 +1,7 @@
 ---
 type: Instruction
 title: Review and merge
-description: Define PR creation, review responses, CI checks, rebasing, squash merge, and workspace cleanup.
+description: Define PR creation, review responses, CI checks, branch updates, permitted merges, and workspace cleanup.
 ---
 
 ## Review and merge
@@ -13,7 +13,7 @@ description: Define PR creation, review responses, CI checks, rebasing, squash m
 - Create draft PRs after pushing, linked to target Issues/Sub-issues.
 - Assign PRs to the requester confirmed in the Issue. Ask if unidentified; do not unconditionally equate authenticated users with requesters.
 - At creation, check label names/descriptions and apply appropriate labels.
-- Follow [Writing Issues and PRs](../../issue-management/references/github-writing.md) for titles/bodies and report actual validation status. Use the [reusable template](../assets/pull_request_template.md) if no target template exists; encourage equivalent fields in downstream repositories, preserving existing headings and conventions. Do not bulk-copy templates or migrate policies merely because the package is installed. Keep this repository's `.github/pull_request_template.md` and reusable asset identical when changing either.
+- Follow [Writing Issues and PRs](../../issue-management/references/github-writing.md) for titles/bodies and [decision-recording](../../decision-recording/SKILL.md) for self-contained records and reporting versus execution. Use its [PR template](../../decision-recording/assets/pull_request_template.md) if no target template exists, preserving equivalent local headings and conventions. Do not bulk-copy templates or migrate policies merely because the package is installed. Keep the target's adopted template consistent with its local recording rules.
 - At creation and every update, remove all HTML comments and retain substantive actual validation status. `Not run` is valid without required reasons or a post-merge plan; incomplete execution alone is not a merge blocker. Preserve independently required CI and acceptance conditions.
 - Posting, updates, and review replies follow `issue-management` “Markdown quality for GitHub”: format/check complete bodies and verify saved agreement/display.
 - If review changes purpose, outcomes, acceptance conditions, or external impact, including reductions, save/present concrete proposals and confirm through `issue-management` “Planning and execution scope.” Record and continue adjustments meeting the same success conditions.
@@ -199,23 +199,23 @@ Separate replies so reviewers can check individual responses and overall explana
 
 If APIs/UI cannot group individual replies in pending reviews and submit them, report the restriction. Post individual replies to target threads and separately record overall explanations as overall review comments linked to target reviews. Do not substitute individual threads for overall explanations; preserve publication-before-Resolve order. If overall comments also cannot be posted, report incomplete work, posted scope, and means needed to resume.
 
-### Rebase and merge
+### Integrate and merge
 
-- Rebase target-branch updates into working branches, keeping Git history linear.
+- Rebase target-branch updates into working branches when needed under the target's branch-update policy. This working-branch operation is separate from the prohibited rebase merge method.
 - After rebasing, select relevant validation and report what actually ran; rerun independently required checks and push remotely.
 - For rebased published history use `git push --force-with-lease`; check unknown remote updates without overwriting.
 - Immediately before merge, confirm latest-commit review completed, zero findings requiring action, passing CI, and zero conflicts. Apply “Required Approve and CODEOWNERS assessment”; sole-owner authorship alone does not justify waiting for self-approval.
 - Immediately before merge, recheck latest main SHA and required checks/distribution validation triggered by its push. Initial checks do not substitute; wait for running/unverified results and prioritize recovery on failures without merging ordinary PRs. Approved recovery PRs resolving that failure are exempt from this main-success condition, while meeting their own reviews/checks/approvals. Use existing unconfigured-CI exceptions only if CI is absent.
-- Once all conditions pass, confirm the PR is Ready for review (mark it Ready if still a draft), then squash-merge.
-- Verify the final description matches the reviewed change, retains relevant decisions and actual validation status, and contains no HTML comments. Update it before merge if needed. If an applicable Engineering Policy changed, verify the topical document ends with this real PR link.
-- Preserve the final title and description as squash subject/body under the GitHub `squash_merge_commit_title: PR_TITLE` / `squash_merge_commit_message: PR_BODY` convention. Follow [Commit-message instructions](conventional-commits.md). Use those defaults where configured; when supplying explicit CLI/API messages, retrieve the final title/body immediately before merge and retain their contents without template comments, translation, or a replacement summary. Check successful retrieval and the description before merging. This guidance does not authorize changing live settings or bypassing required approvals/checks.
-- Confirm the PR merged and target history is linear.
+- Once all conditions pass, confirm the PR is Ready for review (mark it Ready if still a draft). Use squash or merge-commit merging as permitted by the target repository's actual settings and branch rules. Do not use rebase merging or assume that adopting guidance enabled a merge method.
+- Verify the final description matches the reviewed change, retains relevant decisions and actual validation status, and contains no HTML comments. Update it before merge if needed. Changed documentation describes current guidance; adoption and replacement history stay in the PR and commit.
+- Retrieve the final PR title and body immediately before merge and supply them explicitly as the resulting commit's subject and body. Preserve their complete contents without template comments, translation, or a replacement summary. Follow [Commit-message instructions](conventional-commits.md) and the [GitHub settings guide](../../decision-recording/references/github-settings.md): both squash and merge-commit defaults use `PR_TITLE` / `PR_BODY`. This procedure does not authorize changing live settings or bypassing required approvals/checks.
+- Confirm the PR merged and the resulting commit contains the retrieved title and body. Check the actual merge method and commit SHA; target history may contain merge commits.
 
 ### Post-integration main verification and recovery
 
 Change owners also own post-merge verification. PR integration-candidate and merged-main SHAs differ; PR CI alone does not verify main.
 
-1. Compare squash-merge SHA with required checks triggered by that main push. For projects with distribution validation, also check installation paths for the same published SHA.
+1. Compare the resulting commit SHA with required checks triggered by that main push. For projects with distribution validation, also check installation paths for the same published SHA.
 2. Wait for running checks. Failed, canceled, unexecuted, or unobtainable results are not success; record reasons/unverified scope. Required CI not starting is not an “unconfigured CI” exception.
 3. On failure, stop ordinary work and record impact, detection time, last healthy SHA, failed checks/logs. If a causative change exists, make a revert/minimal fix a separate recovery PR. If evidence confirms temporary external-service/runner failure requiring no repository changes, record evidence/retry reasons and revalidate required checks/distribution paths on the same main SHA after recovery. Do not create empty recovery PRs; stop subsequent work until success is confirmed. Continue investigation when causes are unknown without assuming external failures. Without changes, skip steps 4–6 and proceed to step 7 after revalidation.
 4. Save/retrieve/present recovery plans requiring repository changes in Issues, judging execution scope through `issue-management` “Planning and execution scope.” Do not reapprove regression fixes within the original request or clear recovery requests. Confirm recovery changing purposes, acceptance conditions, external impact, or authority; do not extend approval to unrelated incidents. After confirming scope, protect diffs/worktree usage, `git switch main`, `git pull --ff-only`, and create a dedicated recovery branch from that main. If another worktree uses main, leave it unchanged, compare `origin/main` SHA fetched through `git fetch origin` with the failed target, and create a dedicated recovery branch from that SHA at the current location. Check unknown main updates first; do not bypass checkout protection or add recovery changes to merged former working branches.

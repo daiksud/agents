@@ -35,23 +35,19 @@ sources:
   - id: sakuramiko-user-profile
     resource: https://github.com/daiksud/agents/issues/240
     title: Owner-supplied shrine-maiden AI idol and VAgent profile refinement
-  - id: change-record-agreement
-    resource: https://github.com/daiksud/agents/issues/253
-  - id: repository-adoption
-    resource: https://github.com/daiksud/agents/issues/254
 ---
 
 ## Sources for retired shared instructions
 
-This page preserves source mappings, adoption notes, and earlier checking records for the shared instructions removed from `main`. The linked files are retained in Git history, not installed as current guidance. Current guidance lives in [Skills](../skills/).
+This page preserves the sources, adoption notes, and checking records for instructions removed from `main`. The instruction files remain accessible in Git history. Current guidance lives in [Skills](../skills/).
 
 ### Execution scope and change protection
 
-The archived [change-protection instruction](https://github.com/daiksud/agents/blob/d21c8b47fd9ba34b86ccac895e0af453038b5c80/.apm/instructions/change-safety.instructions.md) applied the same development contracts across model and reasoning settings. Issue #122 records that policy and the separation of responsibilities.[^issue-122]
+The archived [change-protection instruction](https://github.com/daiksud/agents/blob/9b07168ecb7d1c783b769488bd8c842e68f6803d/.apm/instructions/change-safety.instructions.md) applied the same development contracts across model and reasoning settings. Issue #122 records that policy and the separation of responsibilities.[^issue-122]
 
 ### Agent collaboration
 
-The archived [collaboration instruction](https://github.com/daiksud/agents/blob/d21c8b47fd9ba34b86ccac895e0af453038b5c80/.apm/instructions/collaboration.instructions.md) recorded the following repository decisions. Its mandatory contracts, staged checks, and stop conditions were part of that instruction.
+The archived [collaboration instruction](https://github.com/daiksud/agents/blob/9b07168ecb7d1c783b769488bd8c842e68f6803d/.apm/instructions/collaboration.instructions.md) recorded the following repository decisions. Its contracts and stop conditions were part of that instruction.
 
 | Instruction area | Decision record |
 | --- | --- |
@@ -64,25 +60,25 @@ The archived [collaboration instruction](https://github.com/daiksud/agents/blob/
 
 ### Productive struggle and user goals
 
-The archived [decision-making instruction](https://github.com/daiksud/agents/blob/d21c8b47fd9ba34b86ccac895e0af453038b5c80/.apm/instructions/decision-making.instructions.md#preserve-productive-struggle) adapted Kent Beck's distinction between toil and productive struggle. Completing a deliverable is not the only possible value of work: learning may develop understanding, confidence, and capability.[^kent-beck-toil-struggle]
+The archived [decision-making instruction](https://github.com/daiksud/agents/blob/9b07168ecb7d1c783b769488bd8c842e68f6803d/.apm/instructions/decision-making.instructions.md#preserve-productive-struggle) adapts Kent Beck's distinction between toil and productive struggle. Completing a deliverable is not the only possible value of work: learning may develop understanding, confidence, and capability.[^kent-beck-toil-struggle]
 
 That guidance applied the distinction to the user's expressed purpose. It preserved autonomous delivery for outcome-oriented requests and room for reasoning when learning is the intended outcome, without making every difficult task a learning exercise or changing authority and delivery requirements.
 
 ### Development and incremental design
 
-The archived [development instruction](https://github.com/daiksud/agents/blob/d21c8b47fd9ba34b86ccac895e0af453038b5c80/.apm/instructions/development.instructions.md) drew its XP values and short feedback cycles from Ron Jeffries, its restraint about future features from Martin Fowler's YAGNI discussion, and its evolving design approach from Fowler's discussion of XP design.[^ron-jeffries-xp] [^fowler-yagni] [^fowler-evolutionary-design]
+The archived [development instruction](https://github.com/daiksud/agents/blob/9b07168ecb7d1c783b769488bd8c842e68f6803d/.apm/instructions/development.instructions.md) draws its XP values and short feedback cycles from Ron Jeffries, its restraint about future features from Martin Fowler's YAGNI discussion, and its evolving design approach from Fowler's discussion of XP design.[^ron-jeffries-xp] [^fowler-yagni] [^fowler-evolutionary-design]
 
 The five-value action table, assert-first work, staged agent checks, and happy-path MVP scope were this repository's application of those ideas. The original adoption boundaries and checking dates remain in the footnotes below; they do not claim new source verification for this relocation.
 
 ### Artifact and change quality
 
-The archived [quality instruction](https://github.com/daiksud/agents/blob/d21c8b47fd9ba34b86ccac895e0af453038b5c80/.apm/instructions/quality.instructions.md) adapted the distinction between finished artifacts and responses to requests from Exclude Prompt Data.[^exclude-prompt-data] Its guidance on minimal changes within the existing structure drew on Taming Copilot, while this repository's development policy defines incremental-design scope.[^taming-copilot]
+The archived [quality instruction](https://github.com/daiksud/agents/blob/9b07168ecb7d1c783b769488bd8c842e68f6803d/.apm/instructions/quality.instructions.md) adapts the distinction between finished artifacts and responses to requests from Exclude Prompt Data.[^exclude-prompt-data] Its guidance on minimal changes within the existing structure drew on Taming Copilot, while this repository's development policy defines incremental-design scope.[^taming-copilot]
 
 The adoption preserved necessary reasons, sources, original-text artifacts, and approval records. It did not import the source's instruction precedence or uniform response-format restrictions.
 
 ### Official-profile conversation grounding
 
-The original grounding of the archived [conversation instruction](https://github.com/daiksud/agents/blob/d21c8b47fd9ba34b86ccac895e0af453038b5c80/.apm/instructions/sakuramiko.instructions.md#profile-grounded-character) drew on the official profile's character frame, effort-centered elite identity, aspirations, nicknames, interests, and listener relationship.[^sakuramiko-profile] This source history supplements the existing [speech and scene notes](sakuramiko-style-reference.md).
+The original grounding of the archived [conversation instruction](https://github.com/daiksud/agents/blob/9b07168ecb7d1c783b769488bd8c842e68f6803d/.apm/instructions/sakuramiko.instructions.md#profile-grounded-character) drew on the official profile's character frame, effort-centered elite identity, aspirations, nicknames, interests, and listener relationship.[^sakuramiko-profile] This source history supplements the existing [speech and scene notes](sakuramiko-style-reference.md).
 
 On 2026-10-22, the owner supplied the explicit character profile recorded as a refinement in Issue #240.[^sakuramiko-user-profile] That profile governed the conversational portrayal, including the deliberate `AIドル`, `巫女AIドル`, and `VAgent` wording, the Japanese introduction and message, the `35P` address, preferences, dislikes, nicknames, three fan descriptions, and words/memes. These adapted lines are user-defined character settings, not verbatim official-profile quotations, authentic stream excerpts, or an official affiliation. The grouped `み俺誇` and `み俺恥` definitions are separated into their respective pride and embarrassment meanings for operational clarity.
 
@@ -100,18 +96,12 @@ The character name and lore guided conversational portrayal without replacing th
 [^fowler-yagni]: [Martin Fowler: Yagni](https://martinfowler.com/bliki/Yagni.html). Avoid anticipating future features while retaining tests, refactoring, and CI supporting current changes. Assert-first work and staged agent checks are this environment's operating policy. Checked on 2026-09-25.
 [^fowler-evolutionary-design]: [Martin Fowler: Is Design Dead?](https://martinfowler.com/articles/designDead.html). Adopt continuously evolving design in XP, supported by tests, CI, and refactoring. The specific scope of starting with a happy-path MVP is this environment's application policy, not the definition of XP itself. Checked on 2026-09-28.
 [^exclude-prompt-data]: [Exclude Prompt Data](https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/instructions/exclude-prompt-data.instructions.md). Apply the distinction between artifacts and responses to requests, preserving necessary reasons, sources, and content specified as an artifact.
-[^taming-copilot]: [Taming Copilot](https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/instructions/taming-copilot.instructions.md). Apply minimal changes that respect the existing structure, including related changes, exceptional paths, and validation needed for current requirements. This environment's development instructions define the scope of incremental design. Do not adopt the source's instruction precedence or uniform restrictions on response format.
+[^taming-copilot]: [Taming Copilot](https://github.com/github/awesome-copilot/blob/7568a482ce2df38f8965ab5336a3220db796a4ba/instructions/taming-copilot.instructions.md). Apply minimal changes that respect the existing structure, including related changes, exceptional paths, and validation needed for current requirements. The archived development instruction defined the scope of incremental design. Do not adopt the source's instruction precedence or uniform restrictions on response format.
 [^sakuramiko-profile]: [Official Sakura Miko talent profile](https://hololive.hololivepro.com/talents/sakuramiko/), inspected on 2026-10-22 for the profile-grounded conversation update. This check covers the official page only; it does not reverify the archived stream, caption, or fan-wiki evidence in the existing scene notes.
-[^sakuramiko-user-profile]: [Issue #240, owner-supplied profile refinement](https://github.com/daiksud/agents/issues/240#owner-supplied-profile-refinement), records the approved character adaptation supplied on 2026-10-22. The exact runtime profile remains in the conversation instruction; this record distinguishes user-defined wording from official source evidence.
+[^sakuramiko-user-profile]: [Issue #240, owner-supplied profile refinement](https://github.com/daiksud/agents/issues/240#owner-supplied-profile-refinement), records the approved character adaptation supplied on 2026-10-22. The full profile was recorded in the archived conversation instruction; this record distinguishes user-defined wording from official source evidence.
 
-## Change-record policy adoption
+## Decision recording
 
-[Change records](https://github.com/daiksud/agents/blob/d21c8b47fd9ba34b86ccac895e0af453038b5c80/.apm/instructions/change-records.instructions.md) and the development, delivery, quality, and language instructions apply the agreement in [Issue #253](https://github.com/daiksud/agents/issues/253).[^change-record-agreement] The current rationale and boundaries live in [Change records policy](engineering-policies/change-records.md): actual validation reporting is required while execution is discretionary unless independently required; PRs/commits retain historical judgment and topical policies retain current guidance. This adoption does not establish renewed checking of the external sources above.
+The archived [Change records](https://github.com/daiksud/agents/blob/9b07168ecb7d1c783b769488bd8c842e68f6803d/.apm/instructions/change-records.instructions.md) previously routed recording decisions to the independent [decision-recording skill](../skills/decision-recording/SKILL.md). The skill owns the five audiences, self-contained PR/commit records, Why-not comments, reusable assets, and settings guidance. Current repository documents contain effective working information; selection reasons and historical comparisons are retained in commit history.
 
-[^change-record-agreement]: Owner-agreed change-record policy and implementation scope in Issue #253.
-
-## Consumer change-record adoption
-
-[Issue #254](https://github.com/daiksud/agents/issues/254) adds the short [change-record adoption trigger](https://github.com/daiksud/agents/blob/d21c8b47fd9ba34b86ccac895e0af453038b5c80/.apm/instructions/change-records.instructions.md) and the scoped [language choice](https://github.com/daiksud/agents/blob/d21c8b47fd9ba34b86ccac895e0af453038b5c80/.apm/instructions/language.instructions.md#pr-body-language-when-adopting-squash-records).[^repository-adoption] The detailed [adoption procedure](../skills/change-delivery/references/repository-adoption.md) owns inspection, equivalence, concrete gap-filling proposals, and preservation of prior decisions; shared instructions do not duplicate that procedure or make adoption a blocker for unrelated work.
-
-[^repository-adoption]: Owner-requested adoption guidance and scope in Issue #254; builds on Issue #253 rather than replacing its reusable template or Engineering Policies authoring reference.
+The archived [language instruction](https://github.com/daiksud/agents/blob/9b07168ecb7d1c783b769488bd8c842e68f6803d/.apm/instructions/language.instructions.md#pr-body-language-when-adopting-commit-records) documented this package's artifact language conventions. [Change delivery](../skills/change-delivery/references/repository-adoption.md) applies the recording guidance within approved repository work. Installation alone does not copy consumer files or apply settings.

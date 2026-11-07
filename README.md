@@ -11,21 +11,23 @@ This repository shares task-specific [Skills](skills/) through APM.
 
 ## Artifact language
 
-Most Skills use English. The [github-actions skill](skills/github-actions/SKILL.md) and its four references use Japanese. Follow each target repository's language conventions alongside the applicable skill guidance.
+Most Skills use English. The [github-actions](skills/github-actions/SKILL.md) and [decision-recording](skills/decision-recording/SKILL.md) skills use Japanese. Follow the target repository's language conventions for produced artifacts.
 
 ## Maintainer references
 
-[Maintainer references](docs/maintainer-references.md) collect source mappings, adoption decisions, and supplementary notes for the Skills and retired Instructions, including the [Sakura Miko conversation sources](docs/sakuramiko-style-reference.md). Current guidance is in the Skills and their references. Ordinary tasks do not require loading the maintainer notes.
+[Maintainer references](docs/maintainer-references.md) collect source mappings, adoption decisions, and supplementary notes for Skills and retired Instructions, including the [Sakura Miko conversation sources](docs/sakuramiko-style-reference.md). Current guidance lives in the Skills and their references. Ordinary tasks do not require loading maintainer notes.
 
 ## Prerequisites
 
-The distribution targets are Codex and GitHub Copilot, as specified in [apm.yml](apm.yml). Use APM CLI to install the Skills globally. Some Skills depend on others, so copying a single `SKILL.md` may omit required references.
+The distribution targets are Codex and GitHub Copilot, as specified in [apm.yml](apm.yml). Use APM CLI to install the Skills globally. Some Skills depend on others, so copying only a `SKILL.md` may omit required references.
 
 The [github-actions skill](skills/github-actions/SKILL.md) can be used independently with its complete directory, containing `SKILL.md` and four bundled references.
 
+The [decision-recording skill](skills/decision-recording/SKILL.md) can also be used independently with its complete directory. It covers the readers and purposes of documents, commit messages, comments, code, and tests, with GitHub settings and Conventional Commits guides, two recording templates, and a standalone commitlint workflow.
+
 ## Installation
 
-Use [yomiyasu](https://github.com/nanaism/yomiyasu/tree/main/skills/yomiyasu) when refining Japanese prose. It is not included as an APM dependency of this package.
+Use [yomiyasu](https://github.com/nanaism/yomiyasu/tree/main/skills/yomiyasu) for refining Japanese prose. It is not included as an APM dependency of this package.
 
 ```bash
 apm install --global --target codex,copilot daiksud/agents
@@ -35,7 +37,7 @@ apm install --global --target codex,copilot daiksud/agents
 
 The checking procedures defined by Skills are separate from protection conditions mechanically enforced by GitHub. Each repository manages its own Rulesets and required status checks; installing this package alone does not apply the same protection settings.
 
-[github-repo](skills/github-repo/SKILL.md) diagnoses immutable releases, squash-only merges, the main Ruleset, full-SHA requirements for external Actions, and free security features for the specified repository, and applies only the explicitly requested scope. “Diagnose the settings” ends with a report, “record the plan in an Issue” ends with a record, and “apply the settings” includes applying the differences and diagnosing again. It coordinates workflow content changes with [github-actions](skills/github-actions/SKILL.md), and does not create empty commits or PRs solely for GitHub-side settings changes.
+[github-repo](skills/github-repo/SKILL.md) diagnoses immutable releases, squash and merge-commit methods, PR-based commit messages, the main Ruleset, full-SHA requirements for external Actions, and free security features for the specified repository, and applies only the explicitly requested scope. “Diagnose the settings” ends with a report, “record the plan in an Issue” ends with a record, and “apply the settings” includes applying the differences and diagnosing again. It coordinates workflow content changes with [github-actions](skills/github-actions/SKILL.md), and does not create empty commits or PRs solely for GitHub-side settings changes.
 
 This repository requires `pass` for pull requests. [PR validation](.github/workflows/ci-pr.yml) follows `draft → commit-stage → ready → acceptance-stage → pass`: every run first attempts to convert the PR to Draft, runs approval-policy tests and Markdown lint, marks it Ready, and then checks local file links including frontmatter paths. Creation, new commits, reopening, and PR edits trigger validation. Each stage requires its predecessor to succeed; the final `pass` check rejects failed, cancelled, or skipped validation. There is no special handling for fork or Dependabot PRs: a denied state change fails the run instead of allowing validation to continue. [Main-push validation](.github/workflows/ci.yml) runs the same approval-policy tests and Markdown lint.
 
@@ -51,8 +53,8 @@ The approval workflow has no `workflow_call` entry point. CI owns its Draft/Read
 
 [^github-token-events]: GitHub documents the workflow event suppression rules for repository `GITHUB_TOKEN` operations.
 
-## Change records and Engineering Policies
+## Decision records and current guidance
 
-[Change records](docs/engineering-policies/change-records.md) distinguish historical decisions in PR descriptions/commits from current durable guidance in Engineering Policies. PRs report actual validation status; `Not run` is valid unless checks are independently required. Existing required CI and the repository's validation exclusions remain applicable.
+[decision-recording](skills/decision-recording/SKILL.md) explains what each reader needs: current working information in documents, self-contained historical judgments in PRs/commits, Why-not constraints beside code, behavior and structure in code, and observable contracts in tests. It prescribes no document directory or policy name. [Local policy](docs/engineering-policies/change-records.md) retains actual validation reporting; `Not run` applies to discretionary checks, with required CI and repository validation exclusions preserved.
 
-The [reusable PR template](skills/change-delivery/assets/pull_request_template.md) and [self-adoption copy](.github/pull_request_template.md) are updated together. Use [repository adoption](skills/change-delivery/references/repository-adoption.md) and the [local instruction example](skills/change-delivery/assets/agents-change-records.md) to fill consumer gaps while accepting equivalent arrangements and honoring prior decisions. Adoption explicitly proposes English PR bodies for verbatim squash records and routes authorized message-setting work to `github-repo`. Installation only bundles assets; it does not copy a consumer template, adopt local rules, migrate ADRs, or change GitHub settings.
+Use the [PR template](skills/decision-recording/assets/pull_request_template.md), [local instruction example](skills/decision-recording/assets/agents-decision-records.md), and [commitlint workflow](skills/decision-recording/assets/commitlint.yml) to adopt the practice. The [GitHub settings guide](skills/decision-recording/references/github-settings.md) covers squash and merge-commit merging with final PR title/body messages, prohibits rebase merging, and explains the required `commitlint` check. The [Conventional Commits guide](skills/decision-recording/references/conventional-commits.md) describes latest Bun/commitlint defaults and user configuration. Installation bundles these assets; consumer files and live settings require adoption in the target repository. This repository's active CI remains described above.

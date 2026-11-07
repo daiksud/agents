@@ -42,10 +42,11 @@ Record active workdays, stagnation, review waits, validation time, and main reco
 | --- | --- |
 | Feature additions with breaking changes | `breaking/feat/` |
 | Bug fixes with breaking changes | `breaking/fix/` |
+| Other confirmed breaking changes | `breaking/<type>/`, with the type matching the change's purpose |
 | Feature additions without breaking changes | `feat/` |
 | Bug fixes without breaking changes | `fix/` |
 | Documentation-only changes | `docs/` |
 | Others | Choose an appropriate `build/`, `chore/`, `ci/`, `perf/`, `refactor/`, `revert/`, `style/`, or `test/` |
 
 Other prefixes follow @commitlint/config-conventional type definitions.
-Follow [Commit-message instructions](conventional-commits.md) for types allowed for breaking changes.
+Follow [Commit-message instructions](conventional-commits.md) to describe confirmed compatibility impact; the branch prefix does not restrict which commit types may contain a breaking change.

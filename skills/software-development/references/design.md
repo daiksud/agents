@@ -83,12 +83,12 @@ Check existing naming, placement, and language conventions for comments and docu
 
 ### Retaining intent in code and comments
 
-First express business meaning and dependencies through names, types, function decomposition, and expressions. Before writing comments, check that they do not repeat what code already shows.
+First express business meaning and dependencies through simple names, types, function decomposition, and expressions. Do not introduce complex abstractions just to remove a comment. Follow [decision-recording](../../decision-recording/SKILL.md) for each medium's reader and purpose.
 
-- Retain design reasons, external constraints, and grounds for compatibility handling or workarounds that code alone cannot convey. Add known references and removal conditions to workarounds; do not invent unverified incidents or future plans.
-- When names, types, and decomposition do not explain complex processing, briefly supplement its purpose and flow. Do not mix responses to change requests or editing narration into comments, or require boilerplate explanations in every module.
+- Write Why-not comments beside non-obvious code: identify the plausible simpler alternative, the current constraint that prevents it, and what would fail if it were used. Do not invent incidents, constraints, alternatives, or future removal plans.
+- Keep the explanation local and sufficient without opening a link. Do not narrate code mechanics, editing activity, or the history of the workaround, or require comments in every module.
 - Retain public contract purposes, arguments, return values, failures, and side effects in a form users can understand, including types and existing API documentation. Do not remove invisible contracts such as ownership, units, or destructive input updates on the grounds of “write only reasons.”
-- Do not merely explain the name of an adopted pattern. Retain its rationale when code does not reveal it. Refer to applicable Engineering Policies or existing ADRs rather than duplicating their explanations. For repositories adopting the change-record model, follow [Engineering Policies](../../document-authoring/references/engineering-policies.md) for current durable choices and retain local/historical judgment in PRs and commits.
+- Keep broader selection reasons and historical comparisons in PRs/commits. Current working guidance follows [Current policy authoring](../../document-authoring/references/engineering-policies.md); it does not replace the constraint a code reader needs beside the implementation.
 - Cross-check related comments when making changes. Leave unnecessary commented-out code and history lists to version control, but check references and removal conditions when handling operational TODOs and similar notes.
 - Write code comments, including docstrings, in English; follow project conventions for their format. Do not make comments on all functions or a particular language's documentation format shared requirements.
 

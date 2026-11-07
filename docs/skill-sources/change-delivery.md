@@ -70,7 +70,7 @@ Runtime material: [branches.md](../../skills/change-delivery/references/branches
 
 ### Commit messages
 
-Runtime material: [conventional-commits.md](../../skills/change-delivery/references/conventional-commits.md).
+Runtime material: [Commit staging and delivery](../../skills/change-delivery/references/conventional-commits.md), with message syntax and lint configuration in [Conventional Commits and commitlint](../../skills/decision-recording/references/conventional-commits.md).
 
 | Source | Original annotation scope |
 | --- | --- |
@@ -102,7 +102,7 @@ Runtime material: [review-and-merge.md](../../skills/change-delivery/references/
 
 Checked fixed versions of three GitHub awesome-copilot resources, summarizing/restructuring commit-message-storyteller's purpose/reason writing guidance,[^commit-message-storyteller] conventional-commit's diff checks/structure,[^conventional-commit] and git-commit's purpose-based units and failure handling.[^git-commit]
 
-Integrate with existing approval/change protection in this environment. Do not adopt fixed XML, unconditional commits after drafting, repeated “Story told” explanations, or removal of all footers without Issues. 72 characters guides readability; no uniform body-length limit is established.
+Integrate with existing approval/change protection in this environment. Do not adopt fixed XML, unconditional commits after drafting, repeated “Story told” explanations, or removal of all footers without Issues. The current message and lint defaults are defined in [decision-recording](../../skills/decision-recording/references/conventional-commits.md): inherit `@commitlint/config-conventional` without rule overrides and respect the target repository's explicit commitlint configuration.
 
 ## Copilot execution observation
 
@@ -133,14 +133,14 @@ The requester selected Ready-only Codex review requests, including retries, for 
 [^copilot-work-started-observation]: [copilot-work-started-observation](https://github.com/daiksud/agents/pull/166).
 [^codex-github-review-current]: [Review GitHub pull requests with Codex](https://learn.chatgpt.com/docs/third-party/github). Current request instructions checked for the Ready-state policy; no Draft/Ready prerequisite was stated.
 
-## Change-record policy adoption
+## Change-record responsibilities
 
-[Delivery](../../skills/change-delivery/SKILL.md), its reusable template, and the merge/commit references apply the agreement in [Issue #253](https://github.com/daiksud/agents/issues/253).[^change-record-agreement] The current rationale and boundaries live in [Change records policy](../engineering-policies/change-records.md): actual validation reporting is required while execution is discretionary unless independently required; PRs/commits retain historical judgment and topical policies retain current guidance. This adoption does not establish renewed checking of the external sources above.
+[decision-recording](../../skills/decision-recording/SKILL.md) owns reusable recording rules, intended readers, adoption guidance, and the [PR template](../../skills/decision-recording/assets/pull_request_template.md). [Delivery](../../skills/change-delivery/SKILL.md) applies them through its commit and merge procedures; [Change records policy](../engineering-policies/change-records.md) states this repository's effective rules. Actual validation reporting and its distinction from execution have source agreement in [Issue #253](https://github.com/daiksud/agents/issues/253).[^change-record-agreement] These ownership mappings do not establish renewed checking of the external sources above.
 
 [^change-record-agreement]: Owner-agreed change-record policy and implementation scope in Issue #253.
 
-## Consumer change-record adoption
+## Consumer adoption
 
-[Issue #254](https://github.com/daiksud/agents/issues/254) defines the [adoption procedure](../../skills/change-delivery/references/repository-adoption.md) and [local instruction example](../../skills/change-delivery/assets/agents-change-records.md).[^repository-adoption] They reuse the foundation template and policy-authoring reference, accept equivalent arrangements, preserve prior decisions, and explicitly propose English PR bodies for verbatim squash records. Target-local file edits remain ordinary change delivery; package installation does not adopt files or settings. No APM execution or independent simulation is implied by this guidance.
+[Repository adoption](../../skills/change-delivery/references/repository-adoption.md) connects approved delivery to [decision-recording](../../skills/decision-recording/SKILL.md), its [local instruction example](../../skills/decision-recording/assets/agents-decision-records.md), and its settings and commitlint guides. Delivery retains the environment's artifact-language conventions and accepts equivalent arrangements within the approved scope. The source agreement for that adoption scope is [Issue #254](https://github.com/daiksud/agents/issues/254).[^repository-adoption] Target-local file edits remain ordinary change delivery; package installation does not adopt files or settings. No APM execution or independent simulation is implied by this guidance.
 
-[^repository-adoption]: Owner-requested adoption guidance and scope in Issue #254; builds on Issue #253 rather than replacing its reusable template or Engineering Policies authoring reference.
+[^repository-adoption]: Owner-requested adoption scope in Issue #254. Current reusable recording rules, assets, and adoption guidance are owned by [decision-recording](../../skills/decision-recording/SKILL.md).

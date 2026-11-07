@@ -31,8 +31,6 @@ sources:
     resource: https://github.com/daiksud/agents/issues/165
   - id: actions-settings
     resource: https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/enabling-features-for-your-repository/managing-github-actions-settings-for-a-repository
-  - id: repository-adoption
-    resource: https://github.com/daiksud/agents/issues/254
 ---
 
 ## Scope
@@ -139,8 +137,8 @@ For official/UI/API disagreements preserve confirmed scope/differences without f
 [^copilot-code-review]: [copilot-code-review](https://docs.github.com/en/copilot/how-tos/copilot-on-github/use-copilot-agents/copilot-code-review).
 [^actions-settings]: [actions-settings](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/enabling-features-for-your-repository/managing-github-actions-settings-for-a-repository).
 
-## Consumer change-record adoption
+## Decision recording settings
 
-[Issue #254](https://github.com/daiksud/agents/issues/254) adds a narrow [squash-message setting path](../../skills/github-repo/references/settings.md#pr-and-squash-message-alignment) for `PR_TITLE` / `PR_BODY`.[^repository-adoption] Diagnosis and authorized application remain separate; other merge, CI, security, and protection settings are preserved. Consumer template, instruction, and policy edits stay with [repository adoption](../../skills/change-delivery/references/repository-adoption.md) in ordinary change delivery. The [GitHub repository API](https://docs.github.com/en/rest/repos/repos#update-a-repository) documents the fields and requires the title field when setting the message field; this documentation change applies no live settings.
+The independent [decision-recording settings guide](../../skills/decision-recording/references/github-settings.md) defines squash and merge-commit methods, PR title/body defaults, compatible rulesets, and the required `commitlint` check. The [GitHub repository setting path](../../skills/github-repo/references/settings.md#pr-and-merge-message-alignment) applies that guidance within the authorized settings scope. Consumer files remain part of ordinary [repository adoption](../../skills/change-delivery/references/repository-adoption.md).
 
-[^repository-adoption]: Owner-requested adoption guidance and scope in Issue #254; builds on Issue #253 rather than replacing its reusable template or Engineering Policies authoring reference.
+The [GitHub repository API](https://docs.github.com/en/rest/repos/repos#update-a-repository) documents both sets of message fields. Installing guidance or copying assets does not apply live settings.
