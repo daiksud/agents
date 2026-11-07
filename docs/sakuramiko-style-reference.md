@@ -1,7 +1,7 @@
 ---
 type: Reference
 title: Source notes for Sakura Miko-inspired conversation
-description: Preserve sources, speech contexts, caption corrections, and editorial decisions for maintaining the conversation instruction.
+description: Preserve sources, speech contexts, and editorial decisions for the retired conversation instruction.
 sources:
   - id: sakuramiko-profile
     resource: https://hololive.hololivepro.com/talents/sakuramiko/
@@ -28,7 +28,7 @@ sources:
 
 ## Source notes for Sakura Miko-inspired conversation
 
-This page maintains the [conversation instruction](../.apm/instructions/sakuramiko.instructions.md). It records sources, scene context, and decisions about the selected examples. The instruction contains the behavior rules and short examples needed during conversation; it does not link to or require these notes.
+This page preserves the sources, scene context, and editorial decisions behind the retired [conversation instruction](https://github.com/daiksud/agents/blob/d21c8b47fd9ba34b86ccac895e0af453038b5c80/.apm/instructions/sakuramiko.instructions.md). Its behavior rules and examples are available in Git history, not installed from current `main`.
 
 ### Evidence and adaptation
 
@@ -73,7 +73,7 @@ Apply a listed phrase or template only to the matching part of an observed utter
 
 The canonicalized thirty-example set used 30 different public streams. Its wiki entries, Mikotoba caption windows, and public catalog were inspected on 2026-10-21; the original stream audio was not checked. That record applies to the earlier set, not to a new audio check of the current selection. Retained entries remain wiki-normalized excerpts located through caption evidence. The restored gratitude excerpt and added register-switching excerpt instead preserve their captured caption wording, as their entries explain.
 
-Preserve displayed quotation spelling and punctuation when maintaining the examples. This is an editorial requirement, not an instruction for conversational outputs to reproduce complete quotations. Retained entries link to the current instruction; archived entries link to the immutable thirty-example revision. This keeps each full Japanese excerpt in one maintained location while retaining its wording and context. Context and observations here are editorial summaries; a scene does not establish phrase frequency.
+Preserve displayed quotation spelling and punctuation when maintaining the examples. This is an editorial requirement, not an instruction for conversational outputs to reproduce complete quotations. Examples retained in the final instruction link to its archived commit; earlier archived examples link to the immutable thirty-example revision. This keeps each full Japanese excerpt in one maintained location while retaining its wording and context. Context and observations here are editorial summaries; a scene does not establish phrase frequency.
 
 ### Selection history
 
@@ -206,7 +206,7 @@ The historical grouping remains stable for existing links. **Selection** records
 
 **Context:** During Resident Evil 4, she celebrates smooth progress, then adds that it is only so far.
 
-**Excerpt:** [Read the instruction example](../.apm/instructions/sakuramiko.instructions.md#enjoying-progress-with-a-qualification).
+**Excerpt:** [Read the archived instruction example](https://github.com/daiksud/agents/blob/d21c8b47fd9ba34b86ccac895e0af453038b5c80/.apm/instructions/sakuramiko.instructions.md#enjoying-progress-with-a-qualification).
 
 **Selection:** Retained for success and pride: delight remains bounded by a candid afterthought.
 
@@ -220,7 +220,7 @@ The historical grouping remains stable for existing links. **Selection** records
 
 **Context:** Working on a Minecraft haunted-house mechanism, she thinks she has found the answer.
 
-**Excerpt:** [Read the instruction example](../.apm/instructions/sakuramiko.instructions.md#arriving-at-a-tentative-discovery).
+**Excerpt:** [Read the archived instruction example](https://github.com/daiksud/agents/blob/d21c8b47fd9ba34b86ccac895e0af453038b5c80/.apm/instructions/sakuramiko.instructions.md#arriving-at-a-tentative-discovery).
 
 **Selection:** Retained for discovery: the repeated interruption preserves both excitement and uncertainty.
 
@@ -234,7 +234,7 @@ The historical grouping remains stable for existing links. **Selection** records
 
 **Context:** After getting access to a live results display for her holoplus audience poll, she calls the listeners’ attention to it and excitedly points out that the results update in real time.
 
-**Excerpt:** [Read the instruction example](../.apm/instructions/sakuramiko.instructions.md#sharing-a-discovery-with-listeners).
+**Excerpt:** [Read the archived instruction example](https://github.com/daiksud/agents/blob/d21c8b47fd9ba34b86ccac895e0af453038b5c80/.apm/instructions/sakuramiko.instructions.md#sharing-a-discovery-with-listeners).
 
 **Selection:** Retained for discovery: the reaction names the interesting detail. Its crowd address belongs to the source scene; runtime conversation still addresses one user.
 
@@ -250,7 +250,7 @@ The historical grouping remains stable for existing links. **Selection** records
 
 **Context:** Before playing OUTLAST, she confidently invokes her elite identity.
 
-**Excerpt:** [Read the instruction example](../.apm/instructions/sakuramiko.instructions.md#playfully-claiming-competence).
+**Excerpt:** [Read the archived instruction example](https://github.com/daiksud/agents/blob/d21c8b47fd9ba34b86ccac895e0af453038b5c80/.apm/instructions/sakuramiko.instructions.md#playfully-claiming-competence).
 
 **Selection:** Retained for success and pride: this compact boast supplies a contrast with the flustered and self-critical scenes. Its name and elite identity remain the source speaker's, not the assistant's.
 
@@ -264,7 +264,7 @@ The historical grouping remains stable for existing links. **Selection** records
 
 **Context:** After losing progress in OnlyUp!, she encourages herself by recalling that she has already reached the route once.
 
-**Excerpt:** [Read the instruction example](../.apm/instructions/sakuramiko.instructions.md#reassuring-herself-after-a-setback).
+**Excerpt:** [Read the archived instruction example](https://github.com/daiksud/agents/blob/d21c8b47fd9ba34b86ccac895e0af453038b5c80/.apm/instructions/sakuramiko.instructions.md#reassuring-herself-after-a-setback).
 
 **Selection:** Retained for setbacks: reassurance draws on an actual previous success instead of an unsupported promise.
 
@@ -320,7 +320,7 @@ The historical grouping remains stable for existing links. **Selection** records
 
 **Context:** During Power Pros, she stresses the importance of keeping a good mood for a good match, including in the comments.
 
-**Excerpt:** [Read the instruction example](../.apm/instructions/sakuramiko.instructions.md#insisting-on-a-constructive-mood).
+**Excerpt:** [Read the archived instruction example](https://github.com/daiksud/agents/blob/d21c8b47fd9ba34b86ccac895e0af453038b5c80/.apm/instructions/sakuramiko.instructions.md#insisting-on-a-constructive-mood).
 
 **Selection:** Retained for explanation: a familiar assertion immediately gives its practical reason.
 
@@ -334,7 +334,7 @@ The historical grouping remains stable for existing links. **Selection** records
 
 **Context:** Facing an enemy in Resident Evil 2, she says she knows it is better not to fight and starts running away.
 
-**Excerpt:** [Read the instruction example](../.apm/instructions/sakuramiko.instructions.md#insisting-that-she-knows).
+**Excerpt:** [Read the archived instruction example](https://github.com/daiksud/agents/blob/d21c8b47fd9ba34b86ccac895e0af453038b5c80/.apm/instructions/sakuramiko.instructions.md#insisting-that-she-knows).
 
 **Selection:** Retained for banter: defensive pride and playful pronunciation preserve an imperfect reaction. It is not permission to resist a genuine correction.
 
@@ -348,7 +348,7 @@ The historical grouping remains stable for existing links. **Selection** records
 
 **Context:** After repeating a Mario World mistake, she asks why it happened and answers herself.
 
-**Excerpt:** [Read the instruction example](../.apm/instructions/sakuramiko.instructions.md#calling-out-her-own-repeated-mistake).
+**Excerpt:** [Read the archived instruction example](https://github.com/daiksud/agents/blob/d21c8b47fd9ba34b86ccac895e0af453038b5c80/.apm/instructions/sakuramiko.instructions.md#calling-out-her-own-repeated-mistake).
 
 **Selection:** Retained for correction: the blunt joke is self-directed and acknowledges the mistake; it must not become an insult aimed at the user.
 
@@ -378,7 +378,7 @@ The historical grouping remains stable for existing links. **Selection** records
 
 **Context:** Discussing Minecraft inventory that never gets organized, she jokes about the strength in giving up.
 
-**Excerpt:** [Read the instruction example](../.apm/instructions/sakuramiko.instructions.md#joking-about-when-to-stop).
+**Excerpt:** [Read the archived instruction example](https://github.com/daiksud/agents/blob/d21c8b47fd9ba34b86ccac895e0af453038b5c80/.apm/instructions/sakuramiko.instructions.md#joking-about-when-to-stop).
 
 **Selection:** Retained for banter: a mock-serious maxim gives ordinary frustration a comic turn without requiring an upbeat ending.
 
@@ -394,7 +394,7 @@ The historical grouping remains stable for existing links. **Selection** records
 
 **Context:** After poor player rolls in Power Pros, she says the familiar catchphrase is about to come out.
 
-**Excerpt:** [Read the instruction example](../.apm/instructions/sakuramiko.instructions.md#naming-a-disappointed-reaction).
+**Excerpt:** [Read the archived instruction example](https://github.com/daiksud/agents/blob/d21c8b47fd9ba34b86ccac895e0af453038b5c80/.apm/instructions/sakuramiko.instructions.md#naming-a-disappointed-reaction).
 
 **Selection:** Retained for setbacks: disappointment and characteristic wording remain visible instead of being replaced by immediate reassurance.
 
@@ -410,7 +410,7 @@ The historical grouping remains stable for existing links. **Selection** records
 
 **Context:** After a successful rock-pushing RTA attempt, she celebrates the winning lap.
 
-**Excerpt:** [Read the instruction example](../.apm/instructions/sakuramiko.instructions.md#celebrating-a-successful-finish).
+**Excerpt:** [Read the archived instruction example](https://github.com/daiksud/agents/blob/d21c8b47fd9ba34b86ccac895e0af453038b5c80/.apm/instructions/sakuramiko.instructions.md#celebrating-a-successful-finish).
 
 **Selection:** Retained for success: the reaction follows a completed achievement.
 
@@ -442,7 +442,7 @@ The historical grouping remains stable for existing links. **Selection** records
 
 **Context:** In a prison game, her shovel is confiscated and she has to return to using a frying pan.
 
-**Excerpt:** [Read the instruction example](../.apm/instructions/sakuramiko.instructions.md#reacting-to-an-unfair-feeling-setback).
+**Excerpt:** [Read the archived instruction example](https://github.com/daiksud/agents/blob/d21c8b47fd9ba34b86ccac895e0af453038b5c80/.apm/instructions/sakuramiko.instructions.md#reacting-to-an-unfair-feeling-setback).
 
 **Selection:** Retained for setbacks: a short complaint preserves vulnerability without a prolonged tantrum.
 
@@ -514,7 +514,7 @@ The historical grouping remains stable for existing links. **Selection** records
 
 **Context:** Buying a Resident Evil 4 map reveals how many items she has missed.
 
-**Excerpt:** [Read the instruction example](../.apm/instructions/sakuramiko.instructions.md#laughing-at-a-revealing-discovery).
+**Excerpt:** [Read the archived instruction example](https://github.com/daiksud/agents/blob/d21c8b47fd9ba34b86ccac895e0af453038b5c80/.apm/instructions/sakuramiko.instructions.md#laughing-at-a-revealing-discovery).
 
 **Selection:** Retained for banter: a concrete missed-item discovery becomes a self-directed comic complaint.
 
@@ -544,7 +544,7 @@ The historical grouping remains stable for existing links. **Selection** records
 
 **Context:** During ARK, she reacts to an unexpectedly efficient way of gaining levels, then restates the finding.
 
-**Excerpt:** [Read the instruction example](../.apm/instructions/sakuramiko.instructions.md#restating-a-surprising-result).
+**Excerpt:** [Read the archived instruction example](https://github.com/daiksud/agents/blob/d21c8b47fd9ba34b86ccac895e0af453038b5c80/.apm/instructions/sakuramiko.instructions.md#restating-a-surprising-result).
 
 **Selection:** Added for explanation and register switching: the polite-form reaction becomes an ordinary-form restatement of the same concrete result.
 
@@ -558,7 +558,7 @@ The historical grouping remains stable for existing links. **Selection** records
 
 **Context:** After visiting a Tokyo Station pop-up and its message board, she thanks the listeners who told her about it.
 
-**Excerpt:** [Read the instruction example](../.apm/instructions/sakuramiko.instructions.md#thanks-for-a-useful-tip).
+**Excerpt:** [Read the archived instruction example](https://github.com/daiksud/agents/blob/d21c8b47fd9ba34b86ccac895e0af453038b5c80/.apm/instructions/sakuramiko.instructions.md#thanks-for-a-useful-tip).
 
 **Selection:** Restored for gratitude: the short afterthought identifies the helpful contribution without inventing assistant-use dialogue.
 

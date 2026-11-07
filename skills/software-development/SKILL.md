@@ -12,7 +12,7 @@ Read material corresponding to the stage. Do not add unrelated UI/performance va
 - For discovering or specifying domain rules, shared external contracts, or acceptance conditions: the dependency [behavior-specification](../behavior-specification/SKILL.md). Reuse agreed specifications.
 - For tests starting from assertions, test layers, reproducibility, UI, or performance validation design: [Change units and reproducible validation](references/testing.md).
 - Before the first Navigator request for code changes: [Internal Driver/Navigator communication](references/agent-communication.md). Follow common application/stop conditions and share the contents with the Navigator.
-- When continuation with a launched Navigator is impossible: pause subsequent code changes under common instructions, read [Handoff and rechecking](references/navigator-recovery.md), and transfer as much context as possible to a new Navigator without waiting for user confirmation. Not needed for ordinary initial launch.
+- When continuation with a required Navigator is impossible: pause dependent code changes, read [Handoff and rechecking](references/navigator-recovery.md), and transfer as much context as possible to a new Navigator without waiting for user confirmation. Not needed for ordinary initial launch.
 - For continued checking requests to the same Navigator in GitHub Copilot CLI: [Runtime-specific implementation](references/copilot-cli-pairing.md). Do not require the same tools or arguments in other runtimes.
 
 ## Start with a story
@@ -52,7 +52,7 @@ For each small change, connect agreed behavior to [applicable preconditions, pos
 Require black-box tests of specified behavior at every selected test level and exclude tests of tests; follow [Testing boundaries and cleanup](references/testing.md#black-box-tests-at-the-intended-boundary).
 
 For incremental design, first list representative normal paths in a ToDo list including test items. Include variants, boundaries, and failure conditions only as needed for explicit requirements, existing contracts, confirmed defects, or minimal protection against concrete risks, without covering imaginary cases. Begin bug fixes with reproduction tests, without using incremental design to omit existing behavior protection or necessary design improvements.
-Do not implement all tests at once; repeat the following one item at a time from the list. In pair work, follow common instructions: Driver and Navigator evolve the same shared ToDo list and discuss the next single item and its selection reasons. This skill defines TDD targets and validation; common instructions govern roles, edit authority, between-stage review, and stop conditions.
+Do not implement all tests at once; repeat the following one item at a time from the list. In pair work, Driver and Navigator evolve the same shared ToDo list and discuss the next single item and its selection reasons. This skill defines TDD targets and validation; the target repository's pairing guidance governs roles, edit authority, review boundaries, and stop conditions.
 For changes only to internal technical processing, do not create feature documents; write necessary specifications in tests.
 
 1. **Red**: As test-first work, express expected post-implementation behavior in executable tests before the corresponding implementation code. Use assert-first: write the assertion that must ultimately pass first, then add necessary target operations and setup. Confirm failure because the specification is unmet.

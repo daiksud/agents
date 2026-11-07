@@ -21,7 +21,7 @@ The authoring policy lives in [Separate execution guidance from maintainer notes
 ## Historical instructions
 
 - [Retired instruction sources](instruction-sources.md): historical origins and adoption decisions for the instructions removed from `main`.
-- [Sakura Miko conversation sources](sakuramiko-style-reference.md): speech contexts, caption corrections, and editorial decisions. The short contextual excerpts remain in the conversation instruction.
+- [Sakura Miko conversation sources](sakuramiko-style-reference.md): speech contexts, caption corrections, and editorial decisions. The short contextual excerpts remain in the archived instruction revision.
 
 ## Skills
 

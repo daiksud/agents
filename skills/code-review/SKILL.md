@@ -28,7 +28,7 @@ When a PR description is available, review its purpose, actual behavior, relevan
 
 ## Staged review within the pair
 
-When checking Red / Green / Refactor as Navigator, read [Staged code review within the pair](references/pair-review.md). Preserve common instructions on roles, edit permissions, and checking boundaries; do not substitute pair checks for ordinary PR review, required CI, approval, or merging.
+When checking Red / Green / Refactor as Navigator, read [Staged code review within the pair](references/pair-review.md). Follow the target repository's pairing rules for roles, edit permissions, and checking boundaries; do not substitute pair checks for ordinary PR review, required CI, approval, or merging.
 
 ## Criteria for current requirements and safe changes
 
