@@ -18,7 +18,7 @@ description: GitHubで継続的デリバリーを実践するために、Actions
 | レイヤー | 例 | 責務 |
 | --- | --- | --- |
 | ワークフロー | `pr.yml`、`push.yml`、`release.yml` | イベント、入力、ジョブの構成 |
-| ジョブ | `screening`、`inspection`、`deployment`、`delivery` | ランナー、権限、依存関係、マトリクス、環境、実行条件、タイムアウト |
+| ジョブ | `screening`、`inspection`、`deployment`、`release` | ランナー、権限、依存関係、マトリクス、環境、実行条件、タイムアウト |
 | アクション | `.github/actions/screening/action.yml` など | フェーズの共通処理と入出力 |
 | ステップ | `build`、`lint`、`test` など | `run` によるコマンド実行、`uses` によるアクション呼び出し |
 
@@ -30,15 +30,15 @@ description: GitHubで継続的デリバリーを実践するために、Actions
 | --- | --- | --- |
 | `pr.yml` | `pull_request` | `screening` |
 | `push.yml` | `push`、`branches: [main]` | `screening` → `inspection` → `deployment` |
-| `release.yml` | `workflow_dispatch` | 成果物を使う場合は再利用判定 → `screening`・`inspection`（再利用時は省略）→ `delivery` |
+| `release.yml` | `workflow_dispatch` | 成果物を使う場合は再利用判定 → `screening`・`inspection`（再利用時は省略）→ `release` |
 
 - `screening`: lint、単体テスト、型検査、ビルドなど、プロジェクトに必要な基本検証と候補成果物の生成。
 - `inspection`: 候補成果物に対する統合・受け入れ・動作確認。
 - `deployment`: 検証済み成果物の展開・保存によるデプロイ。
-- `delivery`: 機能の公開切り替えや正式版の公開によるリリース。
+- `release`: 機能の公開切り替えや正式版の公開によるリリース。
 - `prlint`、`settings-pr`、`settings-apply`、`labeler`、`codex-review` などの補助ワークフローは目的と権限に応じて必要なものを用意する。
 
-`push.yml` の検証済み成果物を `release.yml` で再利用する。配備済み機能の公開切り替えだけなら `delivery` を実行し、ビルドやデプロイをやり直さない。再利用できない場合の生成・検証と停止条件は[ワークフロー設計](references/workflow-design.md)に従う。手動でリリースを開始し、開始後の処理を自動化する。
+`push.yml` の検証済み成果物を `release.yml` で再利用する。配備済み機能の公開切り替えだけなら `release` を実行し、ビルドやデプロイをやり直さない。再利用できない場合の生成・検証と停止条件は[ワークフロー設計](references/workflow-design.md)に従う。手動でリリースを開始し、開始後の処理を自動化する。
 
 ## マージキューを使う構成
 
@@ -48,7 +48,7 @@ description: GitHubで継続的デリバリーを実践するために、Actions
 | --- | --- | --- |
 | `merge-queue.yml` | `merge_group`、`types: [checks_requested]`、`branches: [main]` | `screening` → `inspection` |
 | `push.yml` | mainへの `push` | キューの検証結果・成果物を照合 → `deployment` |
-| `release.yml` | `workflow_dispatch` | キューで検証した成果物を再利用 → `delivery` |
+| `release.yml` | `workflow_dispatch` | キューで検証した成果物を再利用 → `release` |
 
 キューで両フェーズが成功し、mainに統合された内容と対応する成果物を確認できる場合、pushでは両フェーズを省略する。キュー不使用時は基本構成で検証する。キューとの対応、必須チェック、再利用できない場合の扱いは[ワークフロー設計](references/workflow-design.md)に従う。
 
