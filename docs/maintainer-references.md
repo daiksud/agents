@@ -29,6 +29,7 @@ The authoring policy lives in [Separate execution guidance from maintainer notes
 | Engineering assessment | [Sources and adoption notes](skill-sources/engineering-assessment.md) |
 | Story-point estimation | [Sources and maintenance scenarios](skill-sources/estimate-story-points.md) |
 | Continuous delivery | [Sources and adoption notes](skill-sources/continuous-delivery.md) |
+| Versioning | [Sources and adoption notes](skill-sources/versioning.md) |
 | GitHub repository settings | [Sources and adoption notes](skill-sources/github-repo.md) |
 | Issue management | [Sources and adoption notes](skill-sources/issue-management.md) |
 | Software development | [Sources and adoption notes](skill-sources/software-development.md) |

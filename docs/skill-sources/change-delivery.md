@@ -70,7 +70,7 @@ Runtime material: [branches.md](../../skills/change-delivery/references/branches
 
 ### Commit messages
 
-Runtime material: [Commit staging and delivery](../../skills/change-delivery/references/conventional-commits.md), with message syntax and lint configuration in [Conventional Commits and commitlint](../../skills/decision-recording/references/conventional-commits.md).
+Runtime material: [Commit staging and delivery](../../skills/change-delivery/references/conventional-commits.md), with detailed [Conventional Commits](../../skills/versioning/references/conventional-commits.md) and [commitlint](../../skills/versioning/references/commitlint.md) guidance in the optional versioning skill.
 
 | Source | Original annotation scope |
 | --- | --- |
@@ -102,7 +102,7 @@ Runtime material: [review-and-merge.md](../../skills/change-delivery/references/
 
 Checked fixed versions of three GitHub awesome-copilot resources, summarizing/restructuring commit-message-storyteller's purpose/reason writing guidance,[^commit-message-storyteller] conventional-commit's diff checks/structure,[^conventional-commit] and git-commit's purpose-based units and failure handling.[^git-commit]
 
-Integrate with existing approval/change protection in this environment. Do not adopt fixed XML, unconditional commits after drafting, repeated “Story told” explanations, or removal of all footers without Issues. The current message and lint defaults are defined in [decision-recording](../../skills/decision-recording/references/conventional-commits.md): inherit `@commitlint/config-conventional` without rule overrides and respect the target repository's explicit commitlint configuration.
+Integrate with existing approval/change protection in this environment. Do not adopt fixed XML, unconditional commits after drafting, repeated “Story told” explanations, or removal of all footers without Issues. The current [delivery guide](../../skills/change-delivery/references/conventional-commits.md) retains the message and lint defaults: inherit `@commitlint/config-conventional` without rule overrides and respect the target repository's explicit commitlint configuration. The optional [versioning skill](../../skills/versioning/SKILL.md) owns detailed convention and tool setup guidance.
 
 ## Copilot execution observation
 
@@ -141,6 +141,6 @@ The requester selected Ready-only Codex review requests, including retries, for 
 
 ## Consumer adoption
 
-[Repository adoption](../../skills/change-delivery/references/repository-adoption.md) connects approved delivery to [decision-recording](../../skills/decision-recording/SKILL.md), its [local instruction example](../../skills/decision-recording/assets/agents-decision-records.md), and its settings and commitlint guides. Delivery retains the environment's artifact-language conventions and accepts equivalent arrangements within the approved scope. The source agreement for that adoption scope is [Issue #254](https://github.com/daiksud/agents/issues/254).[^repository-adoption] Target-local file edits remain ordinary change delivery; package installation does not adopt files or settings. No APM execution or independent simulation is implied by this guidance.
+[Repository adoption](../../skills/change-delivery/references/repository-adoption.md) connects approved delivery to [decision-recording](../../skills/decision-recording/SKILL.md), its [local instruction example](../../skills/decision-recording/assets/agents-decision-records.md), and its merge settings guide. Detailed commitlint adoption is available in the optional [versioning skill](../../skills/versioning/SKILL.md). Delivery retains the environment's artifact-language conventions and accepts equivalent arrangements within the approved scope. The source agreement for that adoption scope is [Issue #254](https://github.com/daiksud/agents/issues/254).[^repository-adoption] Target-local file edits remain ordinary change delivery; package installation does not adopt files or settings. No APM execution or independent simulation is implied by this guidance.
 
 [^repository-adoption]: Owner-requested adoption scope in Issue #254. Current reusable recording rules, assets, and adoption guidance are owned by [decision-recording](../../skills/decision-recording/SKILL.md).

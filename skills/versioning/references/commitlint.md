@@ -1,24 +1,8 @@
 ---
 type: Guide
-title: Conventional Commitsとcommitlint
-description: コミットとPRの書式を揃え、単独で動くcommitlintワークフローを導入する。
+title: commitlintの導入
+description: 既存設定を尊重してPRのコミットと最終メッセージを検査し、必須チェックを整える。
 ---
-
-## 件名と本文
-
-コミット件名とPRタイトルには、[Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/)の形式を使う。
-
-```text
-<type>[optional scope][!]: <description>
-```
-
-- `type` は変更の目的で選ぶ。例は `feat`、`fix`、`docs`、`refactor`、`test`、`ci`。
-- `scope` は対象の領域やモジュールを示す。不要なら省く。
-- `description` は実際の変更を簡潔に述べる。例は `fix(parser): reject empty input`。
-- 互換性を壊す変更は、件名の `!` または `BREAKING CHANGE: 説明` のfooterで示し、影響と必要な移行方法を説明する。
-- 本文とfooterは空行で区切る。PRタイトルを件名、PR本文を本文・footerとして、そのままマージ時のコミットに残す。
-
-[PRテンプレート](../assets/pull_request_template.md)の見出しを使い、問題、判断理由、検証状況を変更の規模に合わせて書く。リンク先に説明を委ねない。採用理由や比較結果を省略して書式だけを満たさない。
 
 ## 設定の選択
 
@@ -48,7 +32,7 @@ bunx --bun --package @commitlint/cli@21.2.4 commitlint --default-config
 ## ワークフローの導入
 
 1. [commitlint.yml](../assets/commitlint.yml)を導入先の `.github/workflows/commitlint.yml` に配置する。
-2. PRで `commitlint` ジョブの実行を確認し、[必須チェックの設定](github-settings.md#commitlintを必須チェックにする)を行う。
+2. PRで `commitlint` ジョブの実行を確認し、[必須チェックの設定](#commitlintを必須チェックにする)を行う。
 
 ワークフローはPRイベントだけで実行する。検査対象は次のとおり。
 
@@ -60,4 +44,17 @@ PRの `edited` を含め、タイトル・本文だけの編集でも検査す�
 
 コミット範囲の取得には全履歴を使い、GitHubがPR検証用に作る仮のマージコミットを対象に混ぜない。ジョブ名は `commitlint` とし、Draft状態や変更ファイルによるスキップを設けない。PRの文字列は環境変数から引用して渡す。設定ファイルの実行を伴うため、書き込み権限を持つ `pull_request_target` には置き換えない。
 
-commitlintが検査するのは書式であり、本文の有無や判断理由の十分性を保証しない。標準の除外条件に合うメッセージは検査が省略される。記録内容はレビューで確認し、[マージ時の保存手順](github-settings.md#最終prタイトルと本文を保存する)で最終的な文字列を揃える。
+commitlintが検査するのは書式であり、本文の有無や判断理由の十分性を保証しない。標準の除外条件に合うメッセージは検査が省略される。記録内容はレビューで確認し、[マージ後に残す情報](conventional-commits.md#マージ後に残す情報)と実際のコミットを揃える。
+
+## commitlintを必須チェックにする
+
+設定変更を依頼されている範囲で適用する。ファイルの配置だけを依頼されている場合は、必要な設定を案内する。
+
+1. [ワークフロー](../assets/commitlint.yml)を導入し、PRで `commitlint` ジョブが実行されることを確認する。導入方法と検査対象は[ワークフローの導入](#ワークフローの導入)を使う。
+2. 対象ブランチのルールセット、または既存のブランチ保護で `Require status checks to pass before merging` を有効にする。
+3. 必須チェックに `commitlint` を追加し、提供元を指定できる場合はGitHub Actionsを選ぶ。
+4. 設定を再取得し、対象ブランチに `commitlint` が要求されることを確認する。
+
+他の必須チェックは保持する。同じ検査を担う既存の `prlint` などを置き換える場合は、`commitlint` が実行されることを確認してから、不要になるチェック名を必須条件から外す。別のワークフローに同じジョブ名を付けない。
+
+PRのタイトル・本文の編集でも `commitlint` を実行し、マージ前に最新の検査結果が成功していることを確認する。

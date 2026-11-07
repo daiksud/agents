@@ -139,6 +139,6 @@ For official/UI/API disagreements preserve confirmed scope/differences without f
 
 ## Decision recording settings
 
-The independent [decision-recording settings guide](../../skills/decision-recording/references/github-settings.md) defines squash and merge-commit methods, PR title/body defaults, compatible rulesets, and the required `commitlint` check. The [GitHub repository setting path](../../skills/github-repo/references/settings.md#pr-and-merge-message-alignment) applies that guidance within the authorized settings scope. Consumer files remain part of ordinary [repository adoption](../../skills/change-delivery/references/repository-adoption.md).
+The independent [decision-recording settings guide](../../skills/decision-recording/references/github-settings.md) defines squash and merge-commit methods, PR title/body defaults, and compatible rulesets. The [GitHub repository setting path](../../skills/github-repo/references/settings.md#pr-and-merge-message-alignment) applies that guidance within the authorized settings scope. The optional [versioning commitlint guide](../../skills/versioning/references/commitlint.md) covers the workflow and required-check adoption. Consumer files remain part of ordinary [repository adoption](../../skills/change-delivery/references/repository-adoption.md).
 
 The [GitHub repository API](https://docs.github.com/en/rest/repos/repos#update-a-repository) documents both sets of message fields. Installing guidance or copying assets does not apply live settings.

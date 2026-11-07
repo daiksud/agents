@@ -14,7 +14,7 @@ description: Apply recording and message conventions when staging and committing
 
 ### Subjects, bodies, and footers
 
-Use [decision-recording](../../decision-recording/SKILL.md) for self-contained judgment records and its [Conventional Commits guide](../../decision-recording/references/conventional-commits.md) for subjects, bodies, footers, breaking changes, and commitlint. The default is unmodified `@commitlint/config-conventional`; honor explicit target-repository configuration rather than adding local type or length restrictions.
+Use [decision-recording](../../decision-recording/SKILL.md) for self-contained judgment records. Format subjects as `<type>[optional scope][!]: <description>`, separate the body and footers with blank lines, and mark confirmed breaking changes with `!` or a `BREAKING CHANGE:` footer. The default lint configuration is unmodified `@commitlint/config-conventional`; honor explicit target-repository configuration rather than adding local type or length restrictions. Detailed convention and commitlint setup guidance is available in the optional [versioning skill](https://github.com/daiksud/agents/tree/main/skills/versioning).
 
 - Write ordinary commit messages, including body and footers, in English. Follow [Repository adoption](repository-adoption.md) for the target's PR-body language. Preserve existing local choices and resolve explicit language conflicts before publication.
 - For squash and merge commits, preserve the final PR title and description verbatim as subject/body under [Integrate and merge](review-and-merge.md#integrate-and-merge). Do not replace, summarize, or translate away decisions or validation status at merge time.

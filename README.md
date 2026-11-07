@@ -11,7 +11,7 @@ This repository shares task-specific [Skills](skills/) through APM.
 
 ## Artifact language
 
-Most Skills use English. The [continuous-delivery](skills/continuous-delivery/SKILL.md) and [decision-recording](skills/decision-recording/SKILL.md) skills use Japanese. Follow the target repository's language conventions for produced artifacts.
+Most Skills use English. The [continuous-delivery](skills/continuous-delivery/SKILL.md), [decision-recording](skills/decision-recording/SKILL.md), and [versioning](skills/versioning/SKILL.md) skills use Japanese. Follow the target repository's language conventions for produced artifacts.
 
 ## Maintainer references
 
@@ -25,9 +25,11 @@ The [continuous-delivery skill](skills/continuous-delivery/SKILL.md) can be used
 
 Under the skill's terminology, the `deployment` phase deploys service artifacts and saves each main commit's CLI artifact to GitHub Actions Artifacts. The `release` phase handles releases: user-visible service behavior changes, or manual `release.yml` (`workflow_dispatch`) that assigns a formal CLI version and creates a GitHub Release from an inspected artifact.
 
-Release versions are calculated automatically from Conventional Commits, with Semantic Versioning recommended. The skill defines the commit range, version increments, commit-message checks, and how the calculated version affects artifact reuse.
+Release versions are calculated automatically from Conventional Commits, with Semantic Versioning recommended. Continuous-delivery retains the calculation requirements and brief defaults, checks the commit history, and determines how the calculated version affects artifact reuse.
 
-The [decision-recording skill](skills/decision-recording/SKILL.md) can also be used independently with its complete directory. It covers the readers and purposes of documents, commit messages, comments, code, and tests, with GitHub settings and Conventional Commits guides, two recording templates, and a standalone commitlint workflow.
+The [decision-recording skill](skills/decision-recording/SKILL.md) covers the readers and purposes of documents, commit messages, comments, code, and tests. It includes a guide to preserving PR records through GitHub merge settings and two recording templates.
+
+The independent [versioning skill](skills/versioning/SKILL.md) covers Conventional Commits, commitlint adoption, Semantic Versioning, and automatic version calculation. It includes a standalone commitlint workflow and supports commit-convention setup without automatic releases. Continuous-delivery and decision-recording keep their own necessary policies and can be used without versioning.
 
 ## Installation
 
@@ -61,4 +63,6 @@ The approval workflow has no `workflow_call` entry point. CI owns its Draft/Read
 
 [decision-recording](skills/decision-recording/SKILL.md) explains what each reader needs: current working information in documents, self-contained historical judgments in PRs/commits, Why-not constraints beside code, behavior and structure in code, and observable contracts in tests. It prescribes no document directory or policy name. [Local policy](docs/engineering-policies/change-records.md) retains actual validation reporting; `Not run` applies to discretionary checks, with required CI and repository validation exclusions preserved.
 
-Use the [PR template](skills/decision-recording/assets/pull_request_template.md), [local instruction example](skills/decision-recording/assets/agents-decision-records.md), and [commitlint workflow](skills/decision-recording/assets/commitlint.yml) to adopt the practice. The [GitHub settings guide](skills/decision-recording/references/github-settings.md) covers squash and merge-commit merging with final PR title/body messages, prohibits rebase merging, and explains the required `commitlint` check. The [Conventional Commits guide](skills/decision-recording/references/conventional-commits.md) describes latest Bun/commitlint defaults and user configuration. Installation bundles these assets; consumer files and live settings require adoption in the target repository. This repository's active CI remains described above.
+Use the [PR template](skills/decision-recording/assets/pull_request_template.md) and [local instruction example](skills/decision-recording/assets/agents-decision-records.md) to adopt the recording practice. The [GitHub settings guide](skills/decision-recording/references/github-settings.md) covers squash and merge-commit merging with final PR title/body messages and prohibits rebase merging.
+
+The optional [versioning skill](skills/versioning/SKILL.md) provides the [Conventional Commits guide](skills/versioning/references/conventional-commits.md), [commitlint guide](skills/versioning/references/commitlint.md), and [workflow](skills/versioning/assets/commitlint.yml). The workflow pins Bun and commitlint while honoring existing commitlint configuration. Consumer files and live settings require adoption in the target repository; package installation alone does not apply them. This repository's active CI remains described above.
