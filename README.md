@@ -25,6 +25,8 @@ The [continuous-delivery skill](skills/continuous-delivery/SKILL.md) can be used
 
 Under the skill's terminology, the `deployment` phase deploys service artifacts and saves each main commit's CLI artifact to GitHub Actions Artifacts. The `release` phase handles releases: user-visible service behavior changes, or manual `release.yml` (`workflow_dispatch`) that assigns a formal CLI version and creates a GitHub Release from an inspected artifact.
 
+Release versions are calculated automatically from Conventional Commits, with Semantic Versioning recommended. The skill defines the commit range, version increments, commit-message checks, and how the calculated version affects artifact reuse.
+
 The [decision-recording skill](skills/decision-recording/SKILL.md) can also be used independently with its complete directory. It covers the readers and purposes of documents, commit messages, comments, code, and tests, with GitHub settings and Conventional Commits guides, two recording templates, and a standalone commitlint workflow.
 
 ## Installation
