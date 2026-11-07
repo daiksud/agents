@@ -18,11 +18,6 @@ The authoring policy lives in [Separate execution guidance from maintainer notes
 
 - [Change records](engineering-policies/change-records.md): current choice, applicability, rationale, alternatives, and trade-offs; historical judgments remain in PRs/commits.
 
-## Historical instructions
-
-- [Retired instruction sources](instruction-sources.md): historical origins and adoption decisions for the instructions removed from `main`.
-- [Sakura Miko conversation sources](sakuramiko-style-reference.md): speech contexts, caption corrections, and editorial decisions. The short contextual excerpts remain in the archived instruction revision.
-
 ## Skills
 
 | Skill | Maintainer material |

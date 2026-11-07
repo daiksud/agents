@@ -15,7 +15,7 @@ Most Skills use English. The [github-actions](skills/github-actions/SKILL.md) an
 
 ## Maintainer references
 
-[Maintainer references](docs/maintainer-references.md) collect source mappings, adoption decisions, and supplementary notes for Skills and retired Instructions, including the [Sakura Miko conversation sources](docs/sakuramiko-style-reference.md). Current guidance lives in the Skills and their references. Ordinary tasks do not require loading maintainer notes.
+[Maintainer references](docs/maintainer-references.md) collect sources and maintenance notes for the Skills. Current guidance lives in the Skills and their references. Ordinary tasks do not require loading maintainer notes.
 
 ## Prerequisites
 
