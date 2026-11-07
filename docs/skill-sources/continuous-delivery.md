@@ -119,11 +119,21 @@ sources:
     resource: https://docs.zizmor.sh/
   - id: github-dependabot-actions
     resource: https://docs.github.com/en/code-security/how-tos/secure-your-supply-chain/secure-your-dependencies/auto-update-actions
+  - id: agents-merge-queue-deployment
+    resource: https://github.com/daiksud/agents/issues/277
+  - id: github-merge-queue
+    resource: https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/configuring-pull-request-merges/managing-a-merge-queue
+  - id: gh-release-create
+    resource: https://cli.github.com/manual/gh_release_create
+  - id: github-releases-api
+    resource: https://docs.github.com/en/rest/releases/releases#create-a-release
+  - id: git-describe
+    resource: https://git-scm.com/docs/git-describe
 ---
 
 ## Scope
 
-The current guidance for continuous delivery on GitHub is in [continuous-delivery](../../skills/continuous-delivery/SKILL.md) and its four bundled references. It covers GitHub settings, Actions workflows, and tools. This catalog preserves source mappings and historical adoption records.
+The current guidance for continuous delivery on GitHub is in [continuous-delivery](../../skills/continuous-delivery/SKILL.md) and its four bundled references. It covers GitHub settings, Actions workflows, and tools, including optional merge queues and separate deployment and release phases. This catalog preserves source mappings and historical adoption records.
 
 Checking dates below are historical records retained from the original documents. Relocating them does not establish a new specification check, human review, successful execution, or current applicability.
 
@@ -131,8 +141,12 @@ Checking dates below are historical records retained from the original documents
 
 | Guidance | Source scope |
 | --- | --- |
-| [Skill entry point](../../skills/continuous-delivery/SKILL.md) | The repository policy defines `pr.yml`, `push.yml`, and `release.yml`, four-layer responsibilities, shared phase actions, and artifact reuse.[^agents-continuous-delivery] |
-| [Workflow design](../../skills/continuous-delivery/references/workflow-design.md) | Artifact availability and retention constraints come from repository settings and artifact-download guidance.[^github-actions-settings][^github-artifact-retention] |
+| [Skill entry point](../../skills/continuous-delivery/SKILL.md) | The repository policy defines `pr.yml`, `push.yml`, `release.yml`, optional `merge-queue.yml`, four-layer responsibilities, shared phase actions, and artifact reuse.[^agents-continuous-delivery][^agents-merge-queue-deployment] |
+| [Deployment and release](../../skills/continuous-delivery/SKILL.md) | The user's policy defines service deployment as placing the build artifact in production, with automated or one-button deployment to any environment. Release changes user-visible behavior; feature flags are optional, and a bug fix may deploy and release together. For a CLI, `deployment` saves each main commit's built artifact to GitHub Actions Artifacts; `delivery` creates a formally versioned GitHub Release through manual `release.yml` (`workflow_dispatch`). These are policy definitions, not GitHub product terminology.[^agents-merge-queue-deployment] |
+| [Merge-queue reuse](../../skills/continuous-delivery/references/workflow-design.md) | Optional `merge-queue.yml` runs `screening` and `inspection` on `merge_group: checks_requested`. A matching successful queue result and eligible inspected artifact let `push.yml` skip both phases. GitHub documents temporary merge-group commits but does not guarantee queue/main SHA equality for every merge method.[^agents-merge-queue-deployment][^github-events][^github-merge-queue] |
+| [Artifact correspondence](../../skills/continuous-delivery/references/workflow-design.md) | Preserve the actual producing SHA, repository, workflow, event, run and attempt, artifact ID, and file hashes. Establish that the inspected artifact represents the target commit. Source-tree equality alone does not cover commit-derived build inputs: `git describe`, for example, depends on tags and commit history. Do not relabel a queue-built artifact as built from a different main SHA.[^agents-merge-queue-deployment][^github-artifact-api][^github-run-variables][^git-describe] |
+| [Workflow design](../../skills/continuous-delivery/references/workflow-design.md) | Reuse requires completed successful checks and the matching inspected artifact. Confirmed absence of a run, or a missing, expired, mismatched, or corrupt artifact from a successful run, requires a warning and both phases for the target commit. Failed, cancelled, unfinished, or unverifiable results stop deployment or release. Artifact availability and retention remain constrained by repository settings and artifact-download guidance.[^agents-merge-queue-deployment][^github-actions-settings][^github-artifact-retention] |
+| [Formal CLI releases](../../skills/continuous-delivery/references/workflow-design.md) | Release/tag metadata and uploaded assets are separate: assigning a formal release version can preserve the inspected binary. Changing an embedded version or rebuilding requires inspecting the resulting artifact. `gh release create` accepts selected files and a target commit; the release API ignores `target_commitish` when the tag already exists.[^agents-merge-queue-deployment][^gh-release-create][^github-releases-api] |
 | [Hardening](../../skills/continuous-delivery/references/hardening.md) | Actions policies and default token permissions, deployment environments and their protection rules, and non-sensitive configuration variables.[^github-actions-settings][^github-environments][^github-configuration-variables] |
 | [Tooling](../../skills/continuous-delivery/references/tooling.md) | `actionlint` checks workflow syntax and expressions, `zizmor` analyzes CI/CD security, and Dependabot updates Actions references. These are tool candidates selected around existing project configuration.[^actionlint][^zizmor][^github-dependabot-actions] |
 
@@ -318,8 +332,16 @@ On 2026-09-22 checked [Runner selection][^github-runner-selection], [self-hosted
 - Do not infer GHES/self-hosted labels from hosted lists; check registered target labels. Unavailable `ubuntu-slim` is a concrete selection constraint.
 
 [^agents-continuous-delivery]: [Continuous-delivery skill scope](https://github.com/daiksud/agents/issues/275).
+[^agents-merge-queue-deployment]: [Merge-queue reuse and deployment/release policy](https://github.com/daiksud/agents/issues/277).
+[^github-events]: [github-events](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows).
+[^github-merge-queue]: [Managing a merge queue](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/configuring-pull-request-merges/managing-a-merge-queue).
+[^github-artifact-api]: [Artifact REST API](https://docs.github.com/en/rest/actions/artifacts#list-workflow-run-artifacts).
+[^github-run-variables]: [Run ID and run attempt variables](https://docs.github.com/en/actions/reference/workflows-and-actions/variables#default-environment-variables).
+[^git-describe]: [Git describe documentation](https://git-scm.com/docs/git-describe).
 [^github-actions-settings]: [Managing GitHub Actions settings](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/enabling-features-for-your-repository/managing-github-actions-settings-for-a-repository).
 [^github-artifact-retention]: [Downloading workflow artifacts](https://docs.github.com/en/actions/how-tos/manage-workflow-runs/download-workflow-artifacts).
+[^gh-release-create]: [Creating a GitHub Release with the GitHub CLI](https://cli.github.com/manual/gh_release_create).
+[^github-releases-api]: [Create a release API](https://docs.github.com/en/rest/releases/releases#create-a-release).
 [^github-environments]: [Managing deployment environments](https://docs.github.com/en/actions/how-tos/deploy/configure-and-manage-deployments/manage-environments).
 [^github-configuration-variables]: [Configuration variables](https://docs.github.com/en/actions/concepts/workflows-and-actions/variables).
 [^actionlint]: [actionlint documentation](https://github.com/rhysd/actionlint).
@@ -335,7 +357,6 @@ On 2026-09-22 checked [Runner selection][^github-runner-selection], [self-hosted
 [^github-self-hosted-labels]: [github-self-hosted-labels](https://docs.github.com/en/actions/how-tos/manage-runners/self-hosted-runners/apply-labels).
 [^github-runner-groups]: [github-runner-groups](https://docs.github.com/en/actions/concepts/runners/runner-groups).
 [^github-commands]: [github-commands](https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-commands).
-[^github-events]: [github-events](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows).
 [^securitylab-pwn-requests]: [securitylab-pwn-requests](https://securitylab.github.com/resources/github-actions-preventing-pwn-requests/).
 [^securitylab-untrusted-input]: [securitylab-untrusted-input](https://securitylab.github.com/resources/github-actions-untrusted-input/).
 [^securitylab-building-blocks]: [securitylab-building-blocks](https://securitylab.github.com/resources/github-actions-building-blocks/).
@@ -364,8 +385,6 @@ On 2026-09-22 checked [Runner selection][^github-runner-selection], [self-hosted
 [^github-expressions]: [Status check functions](https://docs.github.com/en/actions/reference/workflows-and-actions/expressions#status-check-functions).
 [^actions-download-artifact]: [download-artifact README at the checked commit](https://github.com/actions/download-artifact/blob/9000827ccba6bdab643e8b6fd33ac0654aef8333/README.md).
 [^actions-upload-artifact]: [upload-artifact README at the checked commit](https://github.com/actions/upload-artifact/blob/cf430e030ddbb5b0abf93d22962f4752f3646cd9/README.md).
-[^github-run-variables]: [Run ID and run attempt variables](https://docs.github.com/en/actions/reference/workflows-and-actions/variables#default-environment-variables).
-[^github-artifact-api]: [Artifact REST API](https://docs.github.com/en/rest/actions/artifacts#list-workflow-run-artifacts).
 [^github-artifacts]: [github-artifacts](https://docs.github.com/en/actions/tutorials/store-and-share-data).
 [^agents-technical-policy]: [GitHub Actions technical design policy](https://github.com/daiksud/agents/issues/270).
 [^agents-staged-ci]: [agents-staged-ci](https://github.com/daiksud/agents/issues/242).
