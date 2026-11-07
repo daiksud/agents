@@ -9,7 +9,7 @@ Follow the dependency `issue-management` for Issue plans, publication permission
 
 ## Application and reference material
 
-- Follow [Repository artifact language](../../.apm/instructions/language.instructions.md) for repository documentation, including Markdown and feature documents. Determine the target repository's English or Japanese conventions before authoring.
+- Follow the target repository's language conventions when writing documentation, including Markdown and feature documents.
 - Author ordinary Markdown and feature documents in OKF v0.2. Preserve specific formats for GitHub Issue and PR bodies and comments, agent instruction files, Agent Skills `SKILL.md`, and contract documents such as OpenAPI and JSON Schema; do not add OKF frontmatter where the target format does not call for it.
 - When creating or updating Instructions, Skills, or their task references, read [Separate execution guidance from maintainer notes](references/agent-documents.md). Keep execution rules at their entry points, load operational detail only when needed, and put provenance and maintenance-only supplements in human-facing `docs/` material.
 - For reader-facing technical prose, including READMEs, guides, reference explanations, and contributor instructions, read [Developer documentation practices](references/technical-writing.md). Apply its reader, content-type, drafting, and editing guidance to the changed scope; spelling or metadata corrections do not require a new documentation plan or walkthrough.

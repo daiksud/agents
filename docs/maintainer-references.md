@@ -1,6 +1,6 @@
 ---
 type: Guide
-title: Maintainer references for Instructions and Skills
+title: Maintainer references for Skills
 description: Find sources, adoption decisions, and supplementary records without adding them to ordinary agent task context.
 sources:
   - id: guidance-separation
@@ -10,7 +10,7 @@ sources:
 
 ## How the documentation is divided
 
-Instructions and skill entry points state what the agent must do. Operational references bundled with each skill provide the definitions, examples, and detailed procedures needed at a specific stage. The notes linked below preserve origins, adoption decisions, and maintenance history for people maintaining that guidance.[^guidance-separation]
+Skill entry points state what the agent must do. Operational references bundled with each skill provide the definitions, examples, and detailed procedures needed at a specific stage. The notes linked below preserve origins, adoption decisions, and maintenance history for people maintaining that guidance.[^guidance-separation]
 
 The authoring policy lives in [Separate execution guidance from maintainer notes](../skills/document-authoring/references/agent-documents.md). Source notes link back to the guidance they explain; ordinary tasks do not require reading this catalog. Historical checking dates remain historical, and file reorganization does not establish renewed verification.
 
@@ -18,9 +18,9 @@ The authoring policy lives in [Separate execution guidance from maintainer notes
 
 - [Change records](engineering-policies/change-records.md): current choice, applicability, rationale, alternatives, and trade-offs; historical judgments remain in PRs/commits.
 
-## Instructions
+## Historical instructions
 
-- [Shared instruction sources](instruction-sources.md): policy origins and adoption boundaries for change protection, collaboration, decision-making, development, and quality.
+- [Retired instruction sources](instruction-sources.md): historical origins and adoption decisions for the instructions removed from `main`.
 - [Sakura Miko conversation sources](sakuramiko-style-reference.md): speech contexts, caption corrections, and editorial decisions. The short contextual excerpts remain in the conversation instruction.
 
 ## Skills

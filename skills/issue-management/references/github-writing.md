@@ -10,7 +10,7 @@ Issues record desired states and completion conditions; Pull Requests record act
 
 ### Titles
 
-Follow [Repository artifact language](../../../.apm/instructions/language.instructions.md): Issue/PR titles always use English and this Conventional Commits format; bodies and comments follow the target repository's English or Japanese conventions, with the explicit English PR-body adoption choice for verbatim squash records described in that language instruction.
+For repository artifacts: Issue/PR titles always use English and this Conventional Commits format; bodies and comments follow the target repository's English or Japanese conventions, and repositories adopting verbatim squash records should propose English PR bodies.
 
 ```text
 <type>[(scope)][!]: <description>
@@ -45,7 +45,7 @@ Center Issues on “what state to achieve,” rather than “how it was implemen
 PRs record actual changes being reviewed.
 
 - Record the problem or need, actual change and resulting behavior, and decisions needed to understand this change. Retain confirmed bug causes, constraints, relevant alternatives, and trade-offs when useful; do not invent analysis to fill sections.
-- Follow [Change records](../../../.apm/instructions/change-records.instructions.md). Every actual description states validation status: checked scope and observed results, including failures/material limitations, or `Not run`. Execution is discretionary unless independently required. No justification, particular command, or post-merge plan is mandatory boilerplate. Clearly distinguish plans, including optional post-merge checks, from completed checks.
+- Every actual description states validation status: checked scope and observed results, including failures/material limitations, or `Not run`. Execution is discretionary unless independently required. No justification, particular command, or post-merge plan is mandatory boilerplate. Clearly distinguish plans, including optional post-merge checks, from completed checks.
 - Use the [reusable template](../../change-delivery/assets/pull_request_template.md) when no target template exists: Summary, Decisions, Validation. Equivalent existing headings are acceptable. Remove Decisions if unnecessary or if Summary already retains the reasoning; keep substantive validation status.
 - Remove all HTML comments when creating or updating actual descriptions, including template instructions. Comments may remain in template files. An empty Validation section or one containing only instructions does not report status.
 - Keep the judgment made at the time self-contained even when linking a living Engineering Policy. Current cross-cutting policy belongs in topical policy documents for repositories adopting that model; ordinary local decisions remain in the PR.

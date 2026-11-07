@@ -1,7 +1,7 @@
 name: daiksud-agents
 version: 0.1.0
-description: Shared global agent instructions and task skills.
-type: hybrid
+description: Shared task skills.
+type: skill
 includes: auto
 targets:
   - copilot

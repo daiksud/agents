@@ -6,7 +6,7 @@ description: Choose test layers, state, time, external boundaries, UI, and perfo
 
 ## Change units and reproducible validation
 
-These are techniques for validation selected for the change, not a universal execution gate. Follow [Change records](../../../.apm/instructions/change-records.instructions.md): report actual scope/results or `Not run`; execution and timing are discretionary unless independently required. Claims of Red, Green, reproduction, exploration, and acceptance validation require actual execution. Preserve required CI and agreed acceptance conditions.
+These are techniques for validation selected for the change, not a universal execution gate. Report actual scope/results or `Not run`; execution and timing are discretionary unless independently required. Claims of Red, Green, reproduction, exploration, and acceptance validation require actual execution. Preserve required CI and agreed acceptance conditions.
 
 ### Change units and validation
 

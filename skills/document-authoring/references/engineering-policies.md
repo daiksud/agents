@@ -6,7 +6,7 @@ description: Maintain topical current policy while preserving change-specific hi
 
 ## When to write a policy
 
-For repositories adopting the [change-record model](../../../.apm/instructions/change-records.instructions.md), use `docs/engineering-policies/` for effective decisions that guide other parts of the repository or future changes. Local feature choices and bug fixes normally need only a concise PR description. Respect existing ADR conventions in repositories that have not adopted this model; package installation alone does not migrate their records.
+For repositories adopting a change-record model, use `docs/engineering-policies/` for effective decisions that guide other parts of the repository or future changes. Local feature choices and bug fixes normally need only a concise PR description. Respect existing ADR conventions in repositories that have not adopted this model; package installation alone does not migrate their records.
 
 ## Content and revision
 

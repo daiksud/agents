@@ -1,42 +1,39 @@
 ---
 type: Guide
 title: daiksud/agents
-description: Prerequisites for shared Instructions and Skills, and installation through APM.
+description: Installation and use of shared Skills through APM.
 sources:
   - id: github-token-events
     resource: https://docs.github.com/en/actions/concepts/security/github_token
 ---
 
-This repository shares [development policy Instructions](.apm/instructions/) and [task-specific Skills](skills/) through APM.
+This repository shares task-specific [Skills](skills/) through APM.
 
 ## Artifact language
 
-These shared guidance files generally use English. The [github-actions skill](skills/github-actions/SKILL.md) and its four bundled references use Japanese; identifiers, commands, and metadata keys retain their required forms. Artifacts created with the shared guidance follow [Repository artifact language](.apm/instructions/language.instructions.md): commits, code comments, and Issue/PR titles always use English; bodies, discussions, reviews, and documentation use the target repository's English or Japanese conventions.
+Most Skills use English. The [github-actions skill](skills/github-actions/SKILL.md) and its four references use Japanese. Follow each target repository's language conventions alongside the applicable skill guidance.
 
 ## Maintainer references
 
-[Maintainer references](docs/maintainer-references.md) collect source mappings, adoption decisions, research history, and supplementary notes for the Instructions and Skills, including the [Sakura Miko conversation sources](docs/sakuramiko-style-reference.md). Execution rules remain in Instructions and skill entry points; operational details stay in conditional skill references. Ordinary tasks do not require loading the maintainer notes.
+[Maintainer references](docs/maintainer-references.md) collect source mappings, adoption decisions, and supplementary notes for the Skills and retired Instructions, including the [Sakura Miko conversation sources](docs/sakuramiko-style-reference.md). Current guidance is in the Skills and their references. Ordinary tasks do not require loading the maintainer notes.
 
 ## Prerequisites
 
-The distribution targets are Codex and GitHub Copilot, as specified in [apm.yml](apm.yml). For the complete shared package, use an environment with APM CLI available and install the Instructions and Skills globally. Most Skills depend on one another, so copying only an individual `SKILL.md` is not a supported usage assumption.
+The distribution targets are Codex and GitHub Copilot, as specified in [apm.yml](apm.yml). Use APM CLI to install the Skills globally. Some Skills depend on others, so copying a single `SKILL.md` may omit required references.
 
 The [github-actions skill](skills/github-actions/SKILL.md) can be used independently with its complete directory, containing `SKILL.md` and four bundled references.
 
-Under the [collaboration instructions](.apm/instructions/collaboration.instructions.md), code changes require a Navigator with an independent execution context. Before the first code edit, confirm actual initial and follow-up responses from the same Navigator. If unavailable, do not begin code edits, including test code or refactoring; read-only investigation and planning within the approved scope may continue. Pair work is not required for consultation, explanation, planning alone, or documentation-only changes.
-
 ## Installation
 
-The shared instructions require [yomiyasu](https://github.com/nanaism/yomiyasu/tree/main/skills/yomiyasu) for refining Japanese prose. Make the skill available separately; it is not included as an APM dependency of this package.
+Use [yomiyasu](https://github.com/nanaism/yomiyasu/tree/main/skills/yomiyasu) when refining Japanese prose. It is not included as an APM dependency of this package.
 
 ```bash
 apm install --global --target codex,copilot daiksud/agents
-apm compile --global
 ```
 
-## Instructions and GitHub protection settings
+## Skills and GitHub protection settings
 
-The checking procedures defined by Instructions and Skills are separate from protection conditions mechanically enforced by GitHub. Each repository manages its own Rulesets and required status checks; installing this package alone does not apply the same protection settings.
+The checking procedures defined by Skills are separate from protection conditions mechanically enforced by GitHub. Each repository manages its own Rulesets and required status checks; installing this package alone does not apply the same protection settings.
 
 [github-repo](skills/github-repo/SKILL.md) diagnoses immutable releases, squash-only merges, the main Ruleset, full-SHA requirements for external Actions, and free security features for the specified repository, and applies only the explicitly requested scope. “Diagnose the settings” ends with a report, “record the plan in an Issue” ends with a record, and “apply the settings” includes applying the differences and diagnosing again. It coordinates workflow content changes with [github-actions](skills/github-actions/SKILL.md), and does not create empty commits or PRs solely for GitHub-side settings changes.
 
@@ -56,6 +53,6 @@ The approval workflow has no `workflow_call` entry point. CI owns its Draft/Read
 
 ## Change records and Engineering Policies
 
-[Change records](.apm/instructions/change-records.instructions.md) distinguish historical decisions in PR descriptions/commits from current durable guidance in [Engineering Policies](docs/engineering-policies/change-records.md). PRs report actual validation status; `Not run` is valid unless checks are independently required. Existing required CI and the repository's validation exclusions remain applicable.
+[Change records](docs/engineering-policies/change-records.md) distinguish historical decisions in PR descriptions/commits from current durable guidance in Engineering Policies. PRs report actual validation status; `Not run` is valid unless checks are independently required. Existing required CI and the repository's validation exclusions remain applicable.
 
 The [reusable PR template](skills/change-delivery/assets/pull_request_template.md) and [self-adoption copy](.github/pull_request_template.md) are updated together. Use [repository adoption](skills/change-delivery/references/repository-adoption.md) and the [local instruction example](skills/change-delivery/assets/agents-change-records.md) to fill consumer gaps while accepting equivalent arrangements and honoring prior decisions. Adoption explicitly proposes English PR bodies for verbatim squash records and routes authorized message-setting work to `github-repo`. Installation only bundles assets; it does not copy a consumer template, adopt local rules, migrate ADRs, or change GitHub settings.
