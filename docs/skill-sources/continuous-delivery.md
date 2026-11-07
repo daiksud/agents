@@ -129,6 +129,18 @@ sources:
     resource: https://docs.github.com/en/rest/releases/releases#create-a-release
   - id: git-describe
     resource: https://git-scm.com/docs/git-describe
+  - id: agents-release-versioning
+    resource: https://github.com/daiksud/agents/issues/279
+  - id: semver
+    resource: https://semver.org/spec/v2.0.0.html
+  - id: conventional-commits
+    resource: https://www.conventionalcommits.org/en/v1.0.0/
+  - id: semantic-release-commit-analyzer
+    resource: https://github.com/semantic-release/commit-analyzer
+  - id: commitlint-ci
+    resource: https://commitlint.js.org/guides/ci-setup.html
+  - id: github-squash-merging
+    resource: https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/configuring-pull-request-merges/configuring-commit-squashing-for-pull-requests
 ---
 
 ## Scope
@@ -147,6 +159,9 @@ Checking dates below are historical records retained from the original documents
 | [Artifact correspondence](../../skills/continuous-delivery/references/workflow-design.md) | Preserve the actual producing SHA, repository, workflow, event, run and attempt, artifact ID, and file hashes. Establish that the inspected artifact represents the target commit. Source-tree equality alone does not cover commit-derived build inputs: `git describe`, for example, depends on tags and commit history. Do not relabel a queue-built artifact as built from a different main SHA.[^agents-merge-queue-deployment][^github-artifact-api][^github-run-variables][^git-describe] |
 | [Workflow design](../../skills/continuous-delivery/references/workflow-design.md) | Reuse requires completed successful checks and the matching inspected artifact. Confirmed absence of a run, or a missing, expired, mismatched, or corrupt artifact from a successful run, requires a warning and both phases for the target commit. Failed, cancelled, unfinished, or unverifiable results stop deployment or release. Artifact availability and retention remain constrained by repository settings and artifact-download guidance.[^agents-merge-queue-deployment][^github-actions-settings][^github-artifact-retention] |
 | [Formal CLI releases](../../skills/continuous-delivery/references/workflow-design.md) | Release/tag metadata and uploaded assets are separate: assigning a formal release version can preserve the inspected binary. Changing an embedded version or rebuilding requires inspecting the resulting artifact. `gh release create` accepts selected files and a target commit; the release API ignores `target_commitish` when the tag already exists.[^agents-merge-queue-deployment][^gh-release-create][^github-releases-api] |
+| [Release-version calculation](../../skills/continuous-delivery/references/workflow-design.md#リリースバージョン) | The user's policy requires automatic calculation from Conventional Commits and recommends SemVer. Breaking changes, `feat`, and `fix` map to major, minor, and patch; the highest level is applied once and lower components reset. The skill defaults to no new version for other changes and to `1.0.0` for the first release-worthy history; these defaults and explicit `0.x`/prerelease configuration are project policy, not additional SemVer requirements. Per-commit deployment and feature-flag release remain independent of a version bump.[^agents-release-versioning][^semver][^conventional-commits][^semantic-release-commit-analyzer] |
+| [Version inputs and reuse](../../skills/continuous-delivery/references/workflow-design.md#リリースバージョン) | Pin the target SHA and previous published release tag, analyze full commit messages, and calculate before choosing a reusable artifact. `actions/checkout` needs `fetch-depth: 0` for complete history and tags. Changed embedded version bytes require regeneration and inspection; versioned contents and tag targets are not overwritten.[^agents-release-versioning][^actions-checkout][^semver] |
+| [Commit validation and tools](../../skills/continuous-delivery/references/tooling.md) | Validate Conventional Commits in PRs and preserve the checked final squash title/body, including breaking-change footers. GitHub supports PR-title-and-description squash messages; commitlint supports CI commit-range validation. Align parser and release rules with the selected policy: commit-analyzer defaults also release `perf` as patch, and unmatched custom rules can fall back to defaults.[^conventional-commits][^github-squash-merging][^commitlint-ci][^semantic-release-commit-analyzer] |
 | [Hardening](../../skills/continuous-delivery/references/hardening.md) | Actions policies and default token permissions, deployment environments and their protection rules, and non-sensitive configuration variables.[^github-actions-settings][^github-environments][^github-configuration-variables] The untrusted-code policy also covers pre-integration merge-group validation: read-only permissions, no Secrets or OIDC grant, isolated disposable runners without internal-network access, and deployment/release privilege only in separate post-integration jobs.[^github-merge-queue][^github-secure-use] |
 | [Tooling](../../skills/continuous-delivery/references/tooling.md) | `actionlint` checks workflow syntax and expressions, `zizmor` analyzes CI/CD security, and Dependabot updates Actions references. These are tool candidates selected around existing project configuration.[^actionlint][^zizmor][^github-dependabot-actions] |
 
@@ -342,6 +357,13 @@ On 2026-09-22 checked [Runner selection][^github-runner-selection], [self-hosted
 [^github-artifact-retention]: [Downloading workflow artifacts](https://docs.github.com/en/actions/how-tos/manage-workflow-runs/download-workflow-artifacts).
 [^gh-release-create]: [Creating a GitHub Release with the GitHub CLI](https://cli.github.com/manual/gh_release_create).
 [^github-releases-api]: [Create a release API](https://docs.github.com/en/rest/releases/releases#create-a-release).
+[^agents-release-versioning]: [Automatic release-version policy](https://github.com/daiksud/agents/issues/279).
+[^semver]: [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.html).
+[^conventional-commits]: [Conventional Commits 1.0.0](https://www.conventionalcommits.org/en/v1.0.0/).
+[^semantic-release-commit-analyzer]: [Commit analysis and release rules](https://github.com/semantic-release/commit-analyzer).
+[^actions-checkout]: [actions-checkout](https://github.com/actions/checkout).
+[^github-squash-merging]: [Configuring squash commit messages](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/configuring-pull-request-merges/configuring-commit-squashing-for-pull-requests).
+[^commitlint-ci]: [commitlint CI setup](https://commitlint.js.org/guides/ci-setup.html).
 [^github-environments]: [Managing deployment environments](https://docs.github.com/en/actions/how-tos/deploy/configure-and-manage-deployments/manage-environments).
 [^github-configuration-variables]: [Configuration variables](https://docs.github.com/en/actions/concepts/workflows-and-actions/variables).
 [^github-secure-use]: [github-secure-use](https://docs.github.com/en/actions/reference/security/secure-use).
@@ -368,7 +390,6 @@ On 2026-09-22 checked [Runner selection][^github-runner-selection], [self-hosted
 [^codeql-supported-languages]: [codeql-supported-languages](https://codeql.github.com/docs/codeql-overview/supported-languages-and-frameworks/).
 [^github-metadata]: [github-metadata](https://docs.github.com/en/actions/reference/workflows-and-actions/metadata-syntax).
 [^copilot-runtime]: [copilot-runtime](https://github.com/github/awesome-copilot/blob/4f4796f0bf30e105700f97ed8408c12b6aa95e06/skills/github-actions-runtime-upgrade-conventions/SKILL.md).
-[^actions-checkout]: [actions-checkout](https://github.com/actions/checkout).
 [^actions-setup-node]: [actions-setup-node](https://github.com/actions/setup-node).
 [^copilot-cicd]: [copilot-cicd](https://github.com/github/awesome-copilot/blob/4f4796f0bf30e105700f97ed8408c12b6aa95e06/instructions/github-actions-ci-cd-best-practices.instructions.md).
 [^copilot-license]: [copilot-license](https://github.com/github/awesome-copilot/blob/4f4796f0bf30e105700f97ed8408c12b6aa95e06/LICENSE).
