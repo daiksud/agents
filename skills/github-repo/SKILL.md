@@ -18,7 +18,7 @@ Check the complete target `owner/repo`, requested deliverable, execution approva
 | Save a diagnosis document | Use `document-authoring`. For Git-managed files, deliver the document through a supporting Issue plan and `change-delivery`, without applying settings |
 | Apply or correct settings | Retain approval in an ordinary `issue-management` plan, and use [Application procedure](references/operations.md) through applying differences and diagnosing again. Do not stop at plan presentation |
 
-Do not create empty commits or PRs for settings-only changes. Hand prerequisite workflows or other files to `github-actions` and `change-delivery`, documents to `document-authoring`, and implementation code to `software-development`. If necessary dependencies are unavailable, stop that operation and state incomplete scope while continuing possible reading. Do not obtain existing execution approval or verified plans again.
+Do not create empty commits or PRs for settings-only changes. Hand prerequisite workflows or other files to `continuous-delivery` and `change-delivery`, documents to `document-authoring`, and implementation code to `software-development`. If necessary dependencies are unavailable, stop that operation and state incomplete scope while continuing possible reading. Do not obtain existing execution approval or verified plans again.
 
 ## Material to read at each stage
 

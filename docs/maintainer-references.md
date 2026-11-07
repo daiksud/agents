@@ -28,7 +28,7 @@ The authoring policy lives in [Separate execution guidance from maintainer notes
 | Document authoring | [Sources and adoption notes](skill-sources/document-authoring.md); [OKF specification audit](okf-specification-audit.md) |
 | Engineering assessment | [Sources and adoption notes](skill-sources/engineering-assessment.md) |
 | Story-point estimation | [Sources and maintenance scenarios](skill-sources/estimate-story-points.md) |
-| GitHub Actions | [Sources and adoption notes](skill-sources/github-actions.md) |
+| Continuous delivery | [Sources and adoption notes](skill-sources/continuous-delivery.md) |
 | GitHub repository settings | [Sources and adoption notes](skill-sources/github-repo.md) |
 | Issue management | [Sources and adoption notes](skill-sources/issue-management.md) |
 | Software development | [Sources and adoption notes](skill-sources/software-development.md) |
