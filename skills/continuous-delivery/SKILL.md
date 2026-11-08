@@ -15,7 +15,7 @@ description: GitHubで継続的デリバリーを実践するために、Actions
 
 ## リリースバージョン
 
-バージョン番号にはセマンティックバージョニングを強く推奨する。コミットメッセージはConventional Commits形式を必須とし、コミットログから次のバージョンを自動決定する。計算規則とコミット検査は[ワークフロー設計](references/workflow-design.md#リリースバージョン)に従う。規約とツールの詳しい整備には、[versioning](https://github.com/daiksud/agents/tree/main/skills/versioning)も任意で利用できる。
+バージョン戦略の整備には[versioning](https://github.com/daiksud/agents/tree/main/skills/versioning)の利用を強く推奨する。採用は任意とする。リリースでは採用した戦略に従い、コミットログから次のバージョンを自動決定する。計算とコミット検査、成果物への反映は[ワークフロー設計](references/workflow-design.md#リリースバージョン)に従う。
 
 ## 構成の基本
 

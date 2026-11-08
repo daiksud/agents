@@ -27,7 +27,7 @@ description: 設計判断と変更理由を記録する。ドキュメント、�
 
 PRタイトル・本文を、マージ時のコミット件名・本文としてそのまま使う。レビュアーが変更を判断でき、後から読んだ人が当時の前提と理由を理解できる内容にする。
 
-コミット件名とPRタイトルにはConventional Commitsの `<type>[optional scope][!]: <description>` 形式を強く推奨する。互換性を壊す変更は `!` または `BREAKING CHANGE:` のフッターで示し、影響と必要な移行方法を説明する。
+コミット件名とPRタイトルは採用したコミット規約に従う。互換性を壊す変更は規約に沿って明示し、影響と必要な移行方法を説明する。
 
 - 問題と実際の変更、変更後の振る舞いを説明する。
 - 判断に使った事実と制約、実際に比較した案、採用・不採用の理由、受け入れた不利な点を必要な範囲で書く。検討していない案や不明な理由を補わない。
@@ -76,6 +76,6 @@ PRタイトル・本文を、マージ時のコミット件名・本文として
 | リポジトリだけで読める記録ルール | [開発者向け指示の例](assets/agents-decision-records.md) |
 | 両マージ方式とPRタイトル・本文の保存設定 | [GitHub設定ガイド](references/github-settings.md) |
 
-形式の検査にはcommitlintを強く推奨する。同等の既存ツールと設定があれば優先する。形式の検査とは別に、本文だけで判断理由が分かるかをレビューする。
+Conventional Commitsの形式検査にはcommitlintを強く推奨する。同等の既存ツールと設定があれば優先する。形式の検査とは別に、本文だけで判断理由が分かるかをレビューする。
 
-コミット規約や検査を詳しく整備する際は、[versioning](https://github.com/daiksud/agents/tree/main/skills/versioning)も利用できる。
+コミット規約や検査の整備には[versioning](https://github.com/daiksud/agents/tree/main/skills/versioning)の利用を強く推奨する。採用は任意とする。
