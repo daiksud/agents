@@ -6,6 +6,8 @@ sources:
   - id: guidance-separation
     resource: https://github.com/daiksud/agents/issues/231
     title: Separate execution guidance from maintainer references
+  - id: skill-independence
+    resource: https://github.com/daiksud/agents/issues/285
 ---
 
 ## How the documentation is divided
@@ -13,6 +15,10 @@ sources:
 Skill entry points state what the agent must do. Operational references bundled with each skill provide the definitions, examples, and detailed procedures needed at a specific stage. The notes linked below preserve origins, adoption decisions, and maintenance history for people maintaining that guidance.[^guidance-separation]
 
 The authoring policy lives in [Separate execution guidance from maintainer notes](../skills/document-authoring/references/agent-documents.md). Source notes link back to the guidance they explain; ordinary tasks do not require reading this catalog. Historical checking dates remain historical, and file reorganization does not establish renewed verification.
+
+Skill entry points, references, and assets contain no referrals to other skills. Keep the rules needed for the task locally, with concise shared concepts where necessary; describe skill selection and responsibilities in the repository README. Catalog links below map related guidance for maintainers without creating execution dependencies.[^skill-independence]
+
+[^guidance-separation]: [Issue #231](https://github.com/daiksud/agents/issues/231) records the requested separation, preserved execution boundaries, and migration scope, following the Sakura Miko split in [PR #230](https://github.com/daiksud/agents/pull/230).
 
 ## Current Engineering Policies
 
@@ -36,4 +42,4 @@ The authoring policy lives in [Separate execution guidance from maintainer notes
 
 The external `yomiyasu` skill is maintained upstream and is not included as a package dependency or rewritten here. Required attribution and licenses remain with the affected skill.
 
-[^guidance-separation]: [Issue #231](https://github.com/daiksud/agents/issues/231) records the requested separation, preserved execution boundaries, and migration scope, following the Sakura Miko split in [PR #230](https://github.com/daiksud/agents/pull/230).
+[^skill-independence]: [Independent skill guidance and versioning responsibilities](https://github.com/daiksud/agents/issues/285).

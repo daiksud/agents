@@ -5,6 +5,8 @@ description: Installation and use of shared Skills through APM.
 sources:
   - id: github-token-events
     resource: https://docs.github.com/en/actions/concepts/security/github_token
+  - id: skill-independence
+    resource: https://github.com/daiksud/agents/issues/285
 ---
 
 This repository shares task-specific [Skills](skills/) through APM.
@@ -19,17 +21,38 @@ Most Skills use English. The [continuous-delivery](skills/continuous-delivery/SK
 
 ## Prerequisites
 
-The distribution targets are Codex and GitHub Copilot, as specified in [apm.yml](apm.yml). Use APM CLI to install the Skills globally. Some Skills depend on others, so copying only a `SKILL.md` may omit required references.
+The distribution targets are Codex and GitHub Copilot, as specified in [apm.yml](apm.yml). Use APM CLI to install the Skills globally. Keep each skill's bundled references and assets with its `SKILL.md`.
 
-The [continuous-delivery skill](skills/continuous-delivery/SKILL.md) can be used independently with its complete directory, containing `SKILL.md` and four bundled references. It covers GitHub settings, Actions workflows, and tools, using `pr.yml`, `push.yml`, and `release.yml` as the basic pipeline. Optional `merge-queue.yml` runs `screening` and `inspection` on `merge_group: checks_requested`; `push.yml` can skip both when it can reuse a matching artifact from a successful queue run.
+## Choose a skill
+
+Each skill contains the guidance needed for its task without referring to or requiring another skill. Select skills by the work requested; this repository-level catalog explains their responsibilities.[^skill-independence]
+
+| Task | Skill |
+| --- | --- |
+| Assess development practices, architecture, and organization | [engineering-assessment](skills/engineering-assessment/SKILL.md) |
+| Clarify domain rules, examples, and acceptance conditions | [behavior-specification](skills/behavior-specification/SKILL.md) |
+| Estimate work in relative story points | [estimate-story-points](skills/estimate-story-points/SKILL.md) |
+| Record plans, Issues, and work-item decisions | [issue-management](skills/issue-management/SKILL.md) |
+| Implement behavior and contracts | [software-development](skills/software-development/SKILL.md) |
+| Author technical documents and structured specifications | [document-authoring](skills/document-authoring/SKILL.md) |
+| Preserve judgment reasons and PR/commit records | [decision-recording](skills/decision-recording/SKILL.md) |
+| Deliver approved changes through PRs, review, CI, and main verification | [change-delivery](skills/change-delivery/SKILL.md) |
+| Review changes without modifying them | [code-review](skills/code-review/SKILL.md) |
+| Configure continuous-delivery pipelines and artifact handling | [continuous-delivery](skills/continuous-delivery/SKILL.md) |
+| Configure commit conventions, commitlint, and automatic version calculation | [versioning](skills/versioning/SKILL.md) |
+| Diagnose and apply GitHub repository settings | [github-repo](skills/github-repo/SKILL.md) |
+
+Continuous-delivery uses `pr.yml`, `push.yml`, and `release.yml` as the basic pipeline. Optional `merge-queue.yml` runs `screening` and `inspection` on `merge_group: checks_requested`; `push.yml` can skip both when it can reuse a matching artifact from a successful queue run.
 
 Under the skill's terminology, the `deployment` phase deploys service artifacts and saves each main commit's CLI artifact to GitHub Actions Artifacts. The `release` phase handles releases: user-visible service behavior changes, or manual `release.yml` (`workflow_dispatch`) that assigns a formal CLI version and creates a GitHub Release from an inspected artifact.
 
-Release versions are calculated automatically from commit history according to the adopted strategy. Continuous-delivery retains the calculation requirements, checks the commit history, and determines how the calculated version affects artifact reuse.
+Release versions are calculated automatically from commit history according to the adopted strategy. Continuous-delivery integrates the calculation result with build order, artifact reuse, and release.
 
 The [decision-recording skill](skills/decision-recording/SKILL.md) covers the readers and purposes of documents, commit messages, comments, code, and tests. It includes a guide to preserving PR records through GitHub merge settings and two recording templates.
 
-The independent [versioning skill](skills/versioning/SKILL.md) uses Semantic Versioning and Conventional Commits. It covers commitlint adoption and automatic version calculation, includes a standalone commitlint workflow, and supports commit-convention setup without automatic releases. Continuous-delivery and decision-recording strongly recommend adopting versioning; adoption remains optional, and each skill can be used independently.
+Versioning uses Semantic Versioning and Conventional Commits. It owns detailed convention guidance, commitlint setup, its standalone workflow, and version-calculation rules and tools. It also supports commit-convention setup without automatic releases. Continuous-delivery and decision-recording retain brief guidance recommending the conventions for their respective purposes.[^skill-independence]
+
+[^skill-independence]: [Independent skill guidance and versioning responsibilities](https://github.com/daiksud/agents/issues/285).
 
 ## Installation
 
@@ -65,4 +88,4 @@ The approval workflow has no `workflow_call` entry point. CI owns its Draft/Read
 
 Use the [PR template](skills/decision-recording/assets/pull_request_template.md) and [local instruction example](skills/decision-recording/assets/agents-decision-records.md) to adopt the recording practice. The [GitHub settings guide](skills/decision-recording/references/github-settings.md) covers squash and merge-commit merging with final PR title/body messages and prohibits rebase merging.
 
-Decision-recording strongly recommends adopting the [versioning skill](skills/versioning/SKILL.md) for commit conventions and checks. Adoption remains optional. The skill provides the [Conventional Commits guide](skills/versioning/references/conventional-commits.md), [commitlint guide](skills/versioning/references/commitlint.md), and [workflow](skills/versioning/assets/commitlint.yml). The workflow pins Bun and commitlint while honoring existing commitlint configuration. Consumer files and live settings require adoption in the target repository; package installation alone does not apply them. This repository's active CI remains described above.
+For convention and tool setup, [versioning](skills/versioning/SKILL.md) provides the [Conventional Commits guide](skills/versioning/references/conventional-commits.md), [commitlint guide](skills/versioning/references/commitlint.md), and [workflow](skills/versioning/assets/commitlint.yml). The workflow pins Bun and commitlint while honoring existing commitlint configuration. Consumer files and live settings require adoption in the target repository; package installation alone does not apply them. This repository's active CI remains described above.

@@ -33,11 +33,27 @@ Do not uniformly interpret 403/404, absent fields, or null as disabled. Even whe
 
 Do not count exceptions, inapplicable, or unverified items as conforming. Separate completed diagnosis presentation from realization of all standards. Saving Issues/documents and execution approval are separate; stop by [Skill deliverable paths](../SKILL.md).
 
+## Record plans
+
+Search existing Issues before saving a plan. Record the target repository, requested outcome, observed differences, success conditions, scope, order, permissions/costs, validation, and execution approval. Reuse verified plans and retain prior reasons and requester attribution. Assign new Issues to the confirmed requester and choose existing labels by their meaning.
+
+Follow the target's Issue template and language; use concise English Conventional Commits titles. Keep the purpose and decision evidence understandable in the body without following links. Distinguish planned checks from actual results, preserve existing content when updating, and keep private evidence within its approved publication scope.
+
+Save complete drafts to Markdown files and format/check them with rumdl using the target's applicable configuration. Do not add YAML frontmatter to GitHub bodies or replace configuration without agreement. Inspect formatting changes and confirm a second formatting pass makes no further changes. Publish the checked content through a supported API or body-file option, retrieve it, compare it with the draft, and check headings, lists, tables, and links in GitHub rendering. API HTML inspection is not visual screen inspection. Open a browser only when requested. Report the saved body and URL; failed saving or unverified retrieval remains incomplete.
+
+An Issue or plan alone does not authorize execution. A clear change request retains approval through saving and verification. Continue procedure or file adjustments within the same purpose and success conditions; confirm changes to purpose, acceptance conditions, external impact, permissions, or costs before the affected operation.
+
+## Approved file changes
+
+After the supporting plan is saved and verified, protect existing work and prepare a task branch before editing. Follow the target's document formats, implementation contracts, and validation requirements. Record actual results or `Not run` for discretionary checks; never present unexecuted checks as successful.
+
+Deliver approved file changes through commits, a draft PR, required CI and conflict resolution, ordinary review of the current HEAD, and fixes with renewed checks/review when HEAD changes. Preserve target review and approval requirements. Before merging, confirm current-head review, passing required CI, resolved findings, no conflicts, and healthy main. Merge by a permitted squash or merge-commit method without bypassing protections; preserve the final PR title/body verbatim in the resulting commit. Verify required checks on the actual merged-main SHA, synchronize, and clean up the task branch. Prioritize recovery if main fails; PR-side success is not completion. Honor explicit stop conditions and do not release or deploy without authorization.
+
 ## Apply approved settings
 
-1. Save/verify purpose, differences, permissions, costs, effects, validation, and approval through ordinary `issue-management` planning. Inherit confirmed plans/approval without asking again. Hold affected operations until target-policy conflicts, added permissions/costs, or scope changes are resolved.
+1. [Record and verify the plan](#record-plans), including differences, permissions, costs, effects, validation, and approval. Inherit confirmed plans/approval without asking again. Hold affected operations until target-policy conflicts, added permissions/costs, or scope changes are resolved.
 2. Minimally preserve readable settings as before-state evidence. Retrieve immediately before writes; reassess unexpected differences/other changes. Do not assume atomic comparisons/bulk updates.
-3. Complete prerequisites first. For Action pinning, release procedures, existing CI consistency, or other file changes, use responsible Skills and `change-delivery` through PR/review/CI/main verification. Hold enforcement where execution-path effects remain unverified.
+3. Complete prerequisites first. For Action pinning, release procedures, existing CI consistency, or other file changes, follow [Approved file changes](#approved-file-changes) through PR/review/CI/main verification. Hold enforcement where execution-path effects remain unverified.
 4. Apply settings-only changes here without empty branches/commits/PRs; record differences/results in plans. Do not call everything settings changes to bypass necessary file-change PRs.
 5. Apply minimal differences from [Item procedures](settings.md) or [Feature procedures](security.md). Do not mix unrelated defaults into PATCH; for PUT check writable required fields and existing content to preserve. Do not PUT entire GET responses.
 6. Retrieve each setting and compare necessary behavior/analysis/workflow results to target SHAs/run URLs. Verify asynchronous completion, not acceptance alone. Do not perform unrequested release, deployment, or destructive trials merely to confirm enablement.

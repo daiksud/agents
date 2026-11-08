@@ -118,7 +118,7 @@ The writing order is assertion → target operation → setup; the completed tes
 
 When elapsed time itself is contractual, choose a clock and environment that verify that contract. Do not ban all waits or claim a controlled clock proves real-environment timing properties. Retain UI failure screens and traces as evidence for investigation; restrict recorded scope when confidential information is included.
 
-For tests whose results vary under the same conditions, investigate order, state, time, environment, and other causes. Distinguish a successful retry from resolution of its cause. Follow dependency skill `change-delivery` for CI retries and recovery; do not uniformly defer required integration validation until after merge.
+For tests whose results vary under the same conditions, investigate order, state, time, environment, and other causes. Distinguish a successful retry from resolution of its cause. Record evidence before retrying CI; for confirmed transient failures, recheck the same required checks on the same commit. Fix repository defects through ordinary review and CI, and prioritize recovery of failing main. Do not treat cancelled, missing, or unobtainable checks as success or uniformly defer required integration validation until after merge.
 
 Do not make test-layer ratios, coverage, mutation scores, or response-time measurements for every API shared pass/fail conditions. Choose from target contracts, risks, and existing conventions. Do not add E2E or load tests to simple functions without UI or performance contracts.
 

@@ -18,17 +18,27 @@ Do not migrate through tag/asset deletion/recreation, or confuse reverting setti
 
 ## PR merge methods
 
-Use [decision-recording's GitHub settings guide](../../decision-recording/references/github-settings.md) for expected values and concrete UI/API procedures. Allow squash and merge-commit merging, and prohibit rebase merging. Both methods use the final PR title and body as the resulting commit message.
+In `Settings` → `General` → `Pull Requests`, allow squash and merge-commit merging, and prohibit rebase merging. For both enabled methods, select `Pull request title and description` as the default message. The corresponding fields in `GET /repos/{owner}/{repo}` and [repository update API](https://docs.github.com/en/rest/repos/repos#update-a-repository) have these expected values:
+
+| Field | Expected value |
+| --- | --- |
+| `allow_squash_merge` | `true` |
+| `allow_merge_commit` | `true` |
+| `allow_rebase_merge` | `false` |
+| `squash_merge_commit_title` | `PR_TITLE` |
+| `squash_merge_commit_message` | `PR_BODY` |
+| `merge_commit_title` | `PR_TITLE` |
+| `merge_commit_message` | `PR_BODY` |
 
 Compare repository settings with effective branch rules and any merge queue. Required linear history prevents merge commits; allowed merge methods must agree across the repository and target ruleset. Include these related differences when adoption of both methods is requested. Apply only the requested scope, preserve unrelated protections, and retrieve the resulting settings. Do not fill absent values with defaults.
 
 ## PR and merge message alignment
 
-Use this narrow path for message-format diagnosis or application. Inspect all four squash/merge title/body fields against `PR_TITLE` / `PR_BODY` using the [independent guide](../../decision-recording/references/github-settings.md). Missing fields remain unverified. Message-format-only requests do not authorize unrelated merge-method or protection changes.
+Use this narrow path for message-format diagnosis or application. Inspect all four squash/merge title/body fields against `PR_TITLE` / `PR_BODY` in the [setting table](#pr-merge-methods). Missing fields remain unverified. Message-format-only requests do not authorize unrelated merge-method or protection changes.
 
-Keep the final title/body self-contained, aligned with the reviewed change, and free of HTML comments. Respect the agreed language; never translate or summarize away the record at merge. Target-repository template and instruction edits follow [repository adoption](../../change-delivery/references/repository-adoption.md).
+Keep the final title/body self-contained, aligned with the reviewed change, and free of HTML comments. Respect the agreed language; never translate or summarize away the record at merge. For template and instruction edits, inspect existing rules, preserve equivalent local headings, and deliver only approved differences through [Approved file changes](operations.md#approved-file-changes).
 
-For diagnosis, report exact differences. For authorized application, use [Apply approved settings](operations.md#apply-approved-settings), send only the relevant fields with their required paired title fields, then retrieve them again. These are editable defaults: verify the actual saved commit message during delivery. Installation of the skill alone does not change settings.
+For diagnosis, report exact differences. For authorized application, use [Apply approved settings](operations.md#apply-approved-settings): send only approved fields with `PATCH /repos/{owner}/{repo}`, including the corresponding title field when setting a message field, then retrieve them with `GET /repos/{owner}/{repo}`. These are editable defaults: during delivery retrieve the final PR title, body, and HEAD immediately before merge, pass them as `commit_title`, `commit_message`, and `sha` to the [merge API](https://docs.github.com/en/rest/pulls/pulls#merge-a-pull-request), and compare the resulting commit's subject/body with that record. Installation of the skill alone does not change settings.
 
 ## main Ruleset protection
 
@@ -51,8 +61,8 @@ Preserve required checks, approver counts, and CODEOWNERS. Choose new checks fro
 
 Expect native `Require actions to be pinned to a full-length commit SHA` enabled and workflows conforming, including official Actions and other same-owner repositories. Check `GET /repos/{owner}/{repo}/actions/permissions` `sha_pinning_required` or `Settings` → `Actions` → `General`.
 
-First inspect workflows, local composites, and downstream dependencies, handing fixes to `continuous-delivery`. Pin full SHAs checked against releases; complete approved file PRs/CI/main verification before enforcement. Check active other branches/releases as well as main; unverified paths are not safe.
+First inspect workflows, local composites, and downstream dependencies. Pin full SHAs checked against releases; complete approved file PRs/CI/main verification before enforcement. Check active other branches/releases as well as main; unverified paths are not safe.
 
 Apply `PUT /repos/{owner}/{repo}/actions/permissions`, preserving required `enabled` and existing `allowed_actions` from immediate retrieval and setting `sha_pinning_required=true`. Disabled Actions do not justify silent enablement; check reasons/scope. Do not relax allowlists/upper policies. Retrieve settings/workflows afterward.
 
-Native settings do not prohibit reusable-workflow tags; diagnose full SHAs separately even when enabled. Do not replace same-repo relative paths with SHAs or confuse container digests with Git references. Use `continuous-delivery` as authoritative implementation policy.
+Native settings do not prohibit reusable-workflow tags; diagnose full SHAs separately even when enabled. Do not replace same-repo relative paths with SHAs or confuse container digests with Git references. Preserve the target's workflow behavior, permissions, runtime compatibility, and existing validation when changing dependency references.

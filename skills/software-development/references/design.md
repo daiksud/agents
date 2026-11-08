@@ -24,7 +24,7 @@ YAGNI is not a reason to omit necessary validation or refactoring. Handle design
 
 ### Expressing agreed behavior as contracts
 
-For the next small behavior change, start from agreed stories, domain rules, and acceptance conditions. Reuse existing specification and discovery outcomes; use `behavior-specification` for unsettled rules, without making EventStorming or another ceremony a new gate. Make only the applicable contracts explicit before the corresponding test and implementation.
+For the next small behavior change, start from agreed stories, domain rules, and acceptance conditions. Reuse existing specification and discovery outcomes; clarify unsettled rules through examples and questions to people with the relevant knowledge and decision authority, without making EventStorming or another ceremony a new gate. Make only the applicable contracts explicit before the corresponding test and implementation.
 
 | Category | Meaning and owner |
 | --- | --- |
@@ -83,12 +83,12 @@ Check existing naming, placement, and language conventions for comments and docu
 
 ### Retaining intent in code and comments
 
-First express business meaning and dependencies through simple names, types, function decomposition, and expressions. Do not introduce complex abstractions just to remove a comment. Follow [decision-recording](../../decision-recording/SKILL.md) for each medium's reader and purpose.
+First express business meaning and dependencies through simple names, types, function decomposition, and expressions. Do not introduce complex abstractions just to remove a comment. Documents explain current working guidance to new contributors, PRs/commits retain historical judgments, comments explain local constraints, code expresses behavior, and tests specify observable contracts.
 
 - Write Why-not comments beside non-obvious code: identify the plausible simpler alternative, the current constraint that prevents it, and what would fail if it were used. Do not invent incidents, constraints, alternatives, or future removal plans.
 - Keep the explanation local and sufficient without opening a link. Do not narrate code mechanics, editing activity, or the history of the workaround, or require comments in every module.
 - Retain public contract purposes, arguments, return values, failures, and side effects in a form users can understand, including types and existing API documentation. Do not remove invisible contracts such as ownership, units, or destructive input updates on the grounds of “write only reasons.”
-- Keep broader selection reasons and historical comparisons in PRs/commits. Current working guidance follows [Current policy authoring](../../document-authoring/references/engineering-policies.md); it does not replace the constraint a code reader needs beside the implementation.
+- Keep broader selection reasons and historical comparisons in self-contained PRs/commits. Update current working guidance in the repository's existing topical documents without adoption histories or a prescribed directory; it does not replace the constraint a code reader needs beside the implementation.
 - Cross-check related comments when making changes. Leave unnecessary commented-out code and history lists to version control, but check references and removal conditions when handling operational TODOs and similar notes.
 - Write code comments, including docstrings, in English; follow project conventions for their format. Do not make comments on all functions or a particular language's documentation format shared requirements.
 
@@ -100,5 +100,5 @@ First express business meaning and dependencies through simple names, types, fun
 - Estimate additions and deletions per file and in total, and record the basis in the plan.
 - Split into small units independently verifiable, reviewable, and integrable. Multiple scenarios showing normal, boundary, and error cases of the same rule may belong to one task.
 - Use a total of 500 lines or more as a cue to reconsider decomposition. Do not split solely by line or scenario counts; explain splitting or retaining the unit through independent value, validation, and dependencies.
-- For a Sub-issue, state the target behavior or technical change purpose, files, estimate, dependencies, and validation method. Decide and record implementation targets and order within the purpose; follow `issue-management` for changes needing confirmation.
+- For a Sub-issue, state the target behavior or technical change purpose, files, estimate, dependencies, and validation method. Decide and record implementation targets and order within the purpose; confirm changes to outcomes, acceptance conditions, external impact, or authority before dependent work.
 - If scope or change volume grows during implementation, reconsider estimates, decomposition, and the approved scope before expanding work.

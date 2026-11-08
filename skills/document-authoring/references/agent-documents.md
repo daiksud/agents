@@ -28,6 +28,6 @@ Length and a directory name alone do not decide placement. An example that teach
 
 Make human notes discoverable from the repository README or documentation navigation, and link each note back to the operational files or sections it explains. Do not add a blanket instruction to read the human notes, import their contents, or duplicate their bibliography in every entry point.
 
-Keep operational references within the supported skill/package layout and use file-relative links. Do not make normal execution depend on maintainer documents being installed. Follow the target platform's required metadata format.
+Keep each skill usable from its own directory. Do not name, link to, or require other skills in its entry point, references, or assets. State essential execution rules locally and use its own bundled references or primary documentation for operational detail. Put skill-selection guidance and role comparisons in repository navigation. Keep bundled links file-relative, and do not make normal execution depend on maintainer documents being installed. Follow the target platform's required metadata format.
 
 When changing guidance, update affected source mappings and maintainer explanations in the same change. Check incoming links, conditional read routes, missing rules, and the final diff. Measure file-text changes separately from actual loaded context or token usage; do not claim runtime savings without measurement.

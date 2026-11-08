@@ -28,7 +28,7 @@ Use official feature/product lists and API HTTP/response/permission specificatio
 
 - Separate free licenses from Actions/runner/storage execution costs. Do not start billing/trials; hold unknown additional costs. Do not disable existing paid features merely because outside free scope.
 - Meet graph/scanning prerequisites first; retrieve/apply/retrieve per feature without assuming atomic bulk APIs. Do not arbitrarily merge security-update PRs.
-- Do not replace existing advanced CodeQL setup with default setup. Check languages, builds, environments; hand workflows to `continuous-delivery`/`change-delivery`. Without supported languages, record reasoned inapplicability without dummy code. Distinguish configured, successful analysis, and zero alerts.
+- Do not replace existing advanced CodeQL setup with default setup. Check languages, builds, and environments; deliver any workflow edits through [Approved file changes](operations.md#approved-file-changes) before applying dependent settings. Without supported languages, record reasoned inapplicability without dummy code. Distinguish configured, successful analysis, and zero alerts.
 - Account-level push protection alone does not establish repository settings. Do not change account/Organization-wide settings; record out-of-scope dependencies if needed.
 - Present proposals for unagreed exception approvers, patterns, external information transmission, or similar decisions, while continuing independent free features. Do not silently exclude decision-dependent features.
 - Do not fabricate SECURITY.md contacts/intake arrangements or empty settings for SBOM/Advisory Database usage features. Do not automatically add version-update cadence, automatic alert dismissal, or mandatory scans to initial standards.

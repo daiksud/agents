@@ -1,11 +1,11 @@
 ---
 name: document-authoring
-description: Use to create or update document artifacts such as READMEs, developer guides, Markdown, agent Instructions and Skills, specifications, features, ADRs, OpenAPI, and JSON Schema. Covers reader needs, content planning, drafting, editing, examples, maintenance, formats, sources, and Markdown quality. Use behavior-specification to discover acceptance conditions and examples without producing documents. Do not use solely to summarize existing documents or explain concepts.
+description: Use to create or update document artifacts such as READMEs, developer guides, Markdown, agent Instructions and Skills, specifications, features, ADRs, OpenAPI, and JSON Schema. Covers reader needs, content planning, drafting, editing, examples, maintenance, formats, sources, and Markdown quality. Do not use solely to discover acceptance conditions without producing documents, summarize existing documents, or explain concepts.
 ---
 
 # Author useful documents with OKF
 
-Follow the dependency `issue-management` for Issue plans, publication permission, and Markdown quality when creating or updating documents, and `change-delivery` for approved repository changes and PR updates through public-main verification. `docs/` below refers to the working repository; `references/` refers to this skill's bundled resources.
+Create documents within the requested purpose and publication scope. `docs/` below refers to the working repository; `references/` refers to this skill's bundled resources.
 
 ## Application and reference material
 
@@ -14,22 +14,23 @@ Follow the dependency `issue-management` for Issue plans, publication permission
 - When creating or updating Instructions, Skills, or their task references, read [Separate execution guidance from maintainer notes](references/agent-documents.md). Keep execution rules at their entry points, load operational detail only when needed, and put provenance and maintenance-only supplements in human-facing `docs/` material.
 - For reader-facing technical prose, including READMEs, guides, reference explanations, and contributor instructions, read [Developer documentation practices](references/technical-writing.md). Apply its reader, content-type, drafting, and editing guidance to the changed scope; spelling or metadata corrections do not require a new documentation plan or walkthrough.
 - When creating or updating requirements, external contracts, acceptance conditions, design decisions, Engineering Policies, or ADRs, read [Clarifying specifications with existing documents](references/specification.md), first checking authoritative existing features, ADRs, and API specifications.
-- When choosing where to record design information, use [decision-recording](../decision-recording/SKILL.md). For current policy prose, read [Current policy authoring](references/engineering-policies.md); keep historical judgments in commits and respect existing document placement.
+- When choosing where to record design information, write effective guidance in documents, historical judgments in self-contained PRs/commits, and Why-not constraints beside code. Code expresses behavior and tests express contracts. For current policy prose, read [Current policy authoring](references/engineering-policies.md) and respect existing document placement.
 - When creating or updating OKF documents, read [Basic format and references](references/basic-format.md). Check exceptions for indexes/history and ordinary concepts, Bundle boundaries, and link resolution.
 - For documents relying on external material, updates to sourced documents, or judgments about trust, freshness, or status, read [Provenance, trust, and lifecycle](references/provenance.md). Preserve existing sources, unknown metadata, and checking history even for minor corrections; when separating agent guidance, preserve its provenance in the maintainer note.
 - When handling computation definitions or checking methods, read [Attested Computation](references/computation.md). Do not introduce computation contracts merely because a document contains numbers.
 
-## Handoff according to the request
+## Scope and completion
 
-Read [Planning and execution scope](../issue-management/references/planning.md) for planning and approval, and [Issue records](../issue-management/references/issue-recording.md) for publication and save verification, before relevant operations. Before changing PR bodies or repository documents, separately check confirmed saving and execution approval; do not require recreating verified plans or obtaining the same approval again.
+Before repository document changes, reuse a saved and verified Issue plan or record the purpose, scope, success conditions, and validation. Retrieve the saved body, check agreement and display, and present its URL. Distinguish plan saving from execution approval; a clear change request supplies approval for its scope without requiring repeated confirmation.
 
 For unpublished information, confirm permission for only necessary parts and the posting destination and draft. Do not request the same publication permission again for published facts or saved and verified plans.
 
-- For Issue planning alone, stop after `issue-management` saves, verifies, and presents it. Use that skill also for Issue-body or comment-only updates; `change-delivery` is unnecessary.
-- For PR-body-only updates, use `issue-management` and `change-delivery` without expanding to repository editing or merging.
-- For approved repository document changes, use [change-delivery](../change-delivery/SKILL.md) through public-main verification. Do not require code TDD for documents alone.
+- For Issue planning alone, stop after saving, retrieving, checking, and presenting the plan. Issue-body, comment-only, and PR-body-only updates do not authorize repository edits or merging. Preserve existing content and verify each saved update against its formatted body.
+- For approved repository documents, check repository instructions, diffs/worktrees, and required main checks; protect other sessions' work and prepare a task branch before editing. Continue through commits, push, a draft PR, required CI, conflict resolution, ordinary latest-HEAD review, and the permitted squash or merge-commit method. Preserve required approvals and the final PR title/body verbatim; do not bypass protections or use rebase merging. Confirm actual-main checks, synchronize, and clean up the task branch. Honor explicit stopping points.
+- Use English [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) titles for Issues and PRs; follow repository language and templates for bodies. Keep decisions understandable without following links, include actual validation status, and remove HTML comments from published descriptions. Applying this commit convention to Issue/PR titles is a local writing policy.
+- Continue changes to steps or files within the approved purpose and success conditions. Confirm changed purpose, outcomes, acceptance conditions, external impact, or authority before dependent work. Do not require code TDD for documents alone.
 
-Without `issue-management`, do not begin Issue posting or document/PR changes; show drafts, unsaved plans, and missing dependencies. Without `change-delivery`, stop repository document and PR changes, but do not block Issue-body or comment-only updates. Preserve execution approval and saved plans even when dependencies are missing; do not substitute other Skills, and report incomplete scope and conditions for resumption.
+If required access or tooling is unavailable, retain the approved scope and saved plan, present drafts and unverified work, and report what is needed to resume. Failed or unobtainable checks are not success; prioritize recovery of failing main before ordinary subsequent changes.
 
 ## Creation and update process
 
@@ -43,9 +44,9 @@ Without `issue-management`, do not begin Issue posting or document/PR changes; s
 
 ## Placement and content
 
-- Add documents to existing categories appropriate to their purpose. Current policy has no prescribed directory or document name; use discoverable topical documents under [decision-recording](../decision-recording/SKILL.md). Behavior documents use `docs/behavior/`; other guidance follows existing repository conventions.
+- Add documents to existing categories appropriate to their purpose. Current policy has no prescribed directory or document name; use discoverable topical documents. Behavior documents use `docs/behavior/`; other guidance follows existing repository conventions.
 - Create new categories only when existing ones do not fit. Do not uniformly add indexes or history files to every directory.
-- Write `*.feature.md` with OKF frontmatter and Markdown with Gherkin from [Shared specification and format material](../behavior-specification/references/behavior.md) in the dependency `behavior-specification`.
+- Write `*.feature.md` with OKF frontmatter and Markdown with Gherkin under [Feature documents](references/specification.md#feature-documents).
 - Link bundled material through file-relative links for viewing on GitHub and through APM. Record external sources as complete URLs, without assuming the original repository exists at the installation destination.
 - Do not use external assets such as images that cannot be included in Markdown. This is this environment's authoring policy, not an OKF conformance condition.
 - Use headings, lists, tables, and code blocks to show structure needed for decisions. Do not create empty sections or decorative tables.
