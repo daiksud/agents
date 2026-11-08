@@ -5,6 +5,8 @@ description: コミット規約、形式検査、バージョン計算の方針�
 sources:
   - id: agents-versioning
     resource: https://github.com/daiksud/agents/issues/281
+  - id: agents-versioning-adoption
+    resource: https://github.com/daiksud/agents/issues/283
   - id: agents-release-versioning
     resource: https://github.com/daiksud/agents/issues/279
   - id: recording-source
@@ -37,9 +39,11 @@ sources:
 
 ## 対象と方針
 
-[versioning](../../skills/versioning/SKILL.md)はコミット規約とバージョン戦略の整備を扱う。規約・commitlintだけの導入と、コミット履歴からの自動計算の両方に対応する。既存スキルからの参照は任意とし、各スキルには目的に必要な短い方針を残す。[^agents-versioning]
+[versioning](../../skills/versioning/SKILL.md)はセマンティックバージョニングとConventional Commitsを使い、コミット規約とバージョン戦略を整備する。規約・commitlintだけの導入と、コミット履歴からの自動計算の両方に対応する。[^agents-versioning][^agents-versioning-adoption]
 
-計算・検査の詳細はversioningが持ち、デプロイ・リリースとの接続は[continuous-delivery](../../skills/continuous-delivery/SKILL.md)、判断理由とPR記録の保存は[decision-recording](../../skills/decision-recording/SKILL.md)が扱う。元の継続的デリバリー文書の出典と確認履歴は[その出典文書](continuous-delivery.md)に保持している。
+計算・検査の詳細はversioningが持ち、デプロイ・リリースとの接続は[continuous-delivery](../../skills/continuous-delivery/SKILL.md)、判断理由とPR記録の保存は[decision-recording](../../skills/decision-recording/SKILL.md)が扱う。両スキルはversioningの利用を強く推奨し、採用は任意とする。各スキルには目的に必要な短い方針を残す。[^agents-versioning-adoption]
+
+元の継続的デリバリー文書の出典と確認履歴は[その出典文書](continuous-delivery.md)に保持している。
 
 ## 記述と出典の対応
 
@@ -55,6 +59,7 @@ sources:
 | 必須チェック | 導入したジョブの実行後に `commitlint` を必須チェックへ追加し、設定を読み戻す。実際の設定変更は依頼された範囲で行う。[^github-required-checks] |
 
 [^agents-versioning]: [独立スキル作成の目的と範囲](https://github.com/daiksud/agents/issues/281)。
+[^agents-versioning-adoption]: [スキルの採用と使用する規約の方針](https://github.com/daiksud/agents/issues/283)。
 [^conventional-commits]: [Conventional Commits 1.0.0](https://www.conventionalcommits.org/en/v1.0.0/)。
 [^recording-source]: [移設元のコミット規約と導入ガイド](https://github.com/daiksud/agents/blob/d4e677be602be08f24dfc72fae8dea444be86b37/skills/decision-recording/references/conventional-commits.md)。
 [^semver]: [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.html)。

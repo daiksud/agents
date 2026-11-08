@@ -6,7 +6,7 @@ description: コミット履歴から次のバージョンを決める範囲、�
 
 ## 互換性とバージョン
 
-[セマンティックバージョニング](https://semver.org/spec/v2.0.0.html)の `MAJOR.MINOR.PATCH` を推奨する。互換性を判断する公開APIを明確にし、その変更に合わせてコミットを記録する。公開APIの非推奨化はminor更新として扱う。
+[セマンティックバージョニング](https://semver.org/spec/v2.0.0.html)の `MAJOR.MINOR.PATCH` を使う。互換性を判断する公開APIを明確にし、その変更に合わせてコミットを記録する。公開APIの非推奨化はminor更新として扱う。
 
 ## 計算するコミット範囲
 
