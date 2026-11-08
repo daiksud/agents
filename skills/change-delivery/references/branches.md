@@ -8,7 +8,7 @@ description: Check change protection, prepare branches, and work in independentl
 
 ### Execute approved decomposition
 
-Follow the dependency `issue-management` for parent/child Issue creation, scope, dependencies, and execution approval. Creating Sub-issues alone does not approve starting work.
+Use only Feature → Task Issue hierarchies; Tasks are leaves. Before creating or linking Sub-issues, verify the parent's Feature type, each child's Task type and lack of children, and existing relationships. Record decomposition reasons, scope, order, dependencies, and validation; retrieve saved bodies and links before execution. Creating Sub-issues alone does not approve starting work; apply [Scope and plan](../SKILL.md#scope-and-plan).
 
 - In this session, execute approved decomposed tasks within the requested purpose and success conditions sequentially in the recorded scope and order. Do not add other purposes or other sessions' responsibilities.
 - Leave tasks assigned to another session to that session. Before starting a Sub-issue, check Issues, PRs, and working trees for other sessions' progress, avoiding duplicate work. Ask the user if this cannot be determined.
@@ -22,7 +22,7 @@ Validate changes early and integrate into main, reducing drift from long-lived b
 - Treat days with recorded change work as active workdays, aiming for daily main integration on active workdays and branches lasting no more than one active workday in principle. Do not assume weekends or other inactive days indicate delay.
 - Record work start time, the next integration unit, and validation method in the Issue. After more than one active workday, update confirmed reasons such as waiting for approval/review or failure investigation, and the next integration unit.
 - Do not skip approvals, review, or CI to meet the guideline, or merge unverified changes solely for a deadline.
-- Update reasons and plans and continue adjustments to decomposition, order, or files within the purpose. Follow “Planning and execution scope” in the dependency `issue-management` for changes needing confirmation. Sub-issue existence alone is not an execution request.
+- Update reasons and plans and continue adjustments to decomposition, order, or files within the purpose. Follow [Scope and plan](../SKILL.md#scope-and-plan) for changes needing confirmation. Sub-issue existence alone is not an execution request.
 - At the start, check required validation on target main. If main is failing, prioritize [Recovery procedures](review-and-merge.md#post-integration-main-verification-and-recovery) and do not start subsequent work until healthy.
 
 Record active workdays, stagnation, review waits, validation time, and main recovery time from timestamps/URLs in Issues, PRs, and existing Actions. State missing data, substitute timestamps, incomplete results, and unavailability; do not use them for individual evaluation or assertions of improvement effects from single comparisons. Keep project definitions and actual measurements in project documents, Issues, and PRs, without embedding individual results in common skills.
@@ -48,5 +48,5 @@ Record active workdays, stagnation, review waits, validation time, and main reco
 | Documentation-only changes | `docs/` |
 | Others | Choose an appropriate `build/`, `chore/`, `ci/`, `perf/`, `refactor/`, `revert/`, `style/`, or `test/` |
 
-Other prefixes follow @commitlint/config-conventional type definitions.
+Other prefixes follow the target repository's adopted commit conventions.
 Follow [Commit-message instructions](conventional-commits.md) to describe confirmed compatibility impact; the branch prefix does not restrict which commit types may contain a breaking change.

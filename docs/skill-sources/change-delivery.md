@@ -3,6 +3,8 @@ type: Reference
 title: Change delivery sources and adoption notes
 description: Preserve source mappings, adoption decisions, and historical checking scope for maintainers of the change-delivery skill.
 sources:
+  - id: skill-independence
+    resource: https://github.com/daiksud/agents/issues/285
   - id: continuousdelivery-foundations-continuous-integration
     resource: https://continuousdelivery.com/foundations/continuous-integration/
   - id: github-src-index-ts
@@ -102,7 +104,7 @@ Runtime material: [review-and-merge.md](../../skills/change-delivery/references/
 
 Checked fixed versions of three GitHub awesome-copilot resources, summarizing/restructuring commit-message-storyteller's purpose/reason writing guidance,[^commit-message-storyteller] conventional-commit's diff checks/structure,[^conventional-commit] and git-commit's purpose-based units and failure handling.[^git-commit]
 
-Integrate with existing approval/change protection in this environment. Do not adopt fixed XML, unconditional commits after drafting, repeated “Story told” explanations, or removal of all footers without Issues. The current [delivery guide](../../skills/change-delivery/references/conventional-commits.md) retains the message and lint defaults: inherit `@commitlint/config-conventional` without rule overrides and respect the target repository's explicit commitlint configuration. The optional [versioning skill](../../skills/versioning/SKILL.md) owns detailed convention and tool setup guidance.
+Integrate with existing approval/change protection in this environment. Do not adopt fixed XML, unconditional commits after drafting, repeated “Story told” explanations, or removal of all footers without Issues. The current [delivery guide](../../skills/change-delivery/references/conventional-commits.md) retains concise message guidance and respects the target repository's adopted conventions. Detailed convention and tool setup guidance is owned by [versioning](../../skills/versioning/SKILL.md); the delivery skill does not refer to it.[^skill-independence]
 
 ## Copilot execution observation
 
@@ -130,17 +132,19 @@ The requester selected Ready-only Codex review requests, including retries, for 
 [^approval-code-owner-exception]: [approval-code-owner-exception](https://github.com/daiksud/agents/issues/165).
 [^gh-pr-edit]: [gh-pr-edit](https://cli.github.com/manual/gh_pr_edit).
 [^github-rest-review-requests]: [github-rest-review-requests](https://docs.github.com/en/rest/pulls/review-requests#request-reviewers-for-a-pull-request).
+[^skill-independence]: [Independent skill guidance and versioning responsibilities](https://github.com/daiksud/agents/issues/285).
 [^copilot-work-started-observation]: [copilot-work-started-observation](https://github.com/daiksud/agents/pull/166).
-[^codex-github-review-current]: [Review GitHub pull requests with Codex](https://learn.chatgpt.com/docs/third-party/github). Current request instructions checked for the Ready-state policy; no Draft/Ready prerequisite was stated.
 
 ## Change-record responsibilities
 
 [decision-recording](../../skills/decision-recording/SKILL.md) owns reusable recording rules, intended readers, adoption guidance, and the [PR template](../../skills/decision-recording/assets/pull_request_template.md). [Delivery](../../skills/change-delivery/SKILL.md) applies them through its commit and merge procedures; [Change records policy](../engineering-policies/change-records.md) states this repository's effective rules. Actual validation reporting and its distinction from execution have source agreement in [Issue #253](https://github.com/daiksud/agents/issues/253).[^change-record-agreement] These ownership mappings do not establish renewed checking of the external sources above.
 
-[^change-record-agreement]: Owner-agreed change-record policy and implementation scope in Issue #253.
+[^codex-github-review-current]: [Review GitHub pull requests with Codex](https://learn.chatgpt.com/docs/third-party/github). Current request instructions checked for the Ready-state policy; no Draft/Ready prerequisite was stated.
 
 ## Consumer adoption
 
-[Repository adoption](../../skills/change-delivery/references/repository-adoption.md) connects approved delivery to [decision-recording](../../skills/decision-recording/SKILL.md), its [local instruction example](../../skills/decision-recording/assets/agents-decision-records.md), and its merge settings guide. Detailed commitlint adoption is available in the optional [versioning skill](../../skills/versioning/SKILL.md). Delivery retains the environment's artifact-language conventions and accepts equivalent arrangements within the approved scope. The source agreement for that adoption scope is [Issue #254](https://github.com/daiksud/agents/issues/254).[^repository-adoption] Target-local file edits remain ordinary change delivery; package installation does not adopt files or settings. No APM execution or independent simulation is implied by this guidance.
+[Repository adoption](../../skills/change-delivery/references/repository-adoption.md) provides local recording and merge-setting guidance for approved delivery. Related reusable templates are available in [decision-recording](../../skills/decision-recording/SKILL.md), and detailed commitlint adoption in [versioning](../../skills/versioning/SKILL.md); these catalog links are not dependencies of the delivery skill.[^skill-independence] Delivery retains the environment's artifact-language conventions and accepts equivalent arrangements within the approved scope. The source agreement for that adoption scope is [Issue #254](https://github.com/daiksud/agents/issues/254).[^repository-adoption] Target-local file edits remain ordinary change delivery; package installation does not adopt files or settings. No APM execution or independent simulation is implied by this guidance.
+
+[^change-record-agreement]: Owner-agreed change-record policy and implementation scope in Issue #253.
 
 [^repository-adoption]: Owner-requested adoption scope in Issue #254. Current reusable recording rules, assets, and adoption guidance are owned by [decision-recording](../../skills/decision-recording/SKILL.md).

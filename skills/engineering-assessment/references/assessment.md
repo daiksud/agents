@@ -65,6 +65,24 @@ Present findings according to the requested terminal deliverable. If only an ans
 - Expected changes, responsible roles, acceptance conditions/validation, current measurements and missing data, and reassessment points.
 - The state “assessment and planning only; adoption not implemented” and unresolved questions.
 
-If a document such as an assessment report or plan is the terminal deliverable, hand the above to `document-authoring`. When saving repository documents, save and verify the normal `issue-management` plan as a supporting deliverable, then use `change-delivery` to deliver the requested document through post-integration main. Finish when the document is delivered; do not implement improvement measures unless separately requested.
+If a document such as an assessment report or plan is the terminal deliverable, save the above in the requested format and location. For repository documents, use the supporting Issue plan and delivery path below. Finish when the document is delivered; do not implement improvement measures unless separately requested.
 
-If Issue recording alone is the terminal deliverable, follow dependency skill `issue-management`'s [diagnosis-and-planning-only path](../../issue-management/references/issue-recording.md#issue-recording-for-diagnosis-and-planning-only) for saving, duplicate checks, history preservation, retrieval, display, and presentation. If both Issue recording and implementation are requested, do not stop on the diagnosis-only path. Use its normal planning path to save and verify the Issue as implementation support, confirm scope, acceptance conditions, validation, and approval, then hand off to [delivery of approved changes](../../change-delivery/SKILL.md). Recording an Issue alone does not select Sub-issues for execution or obtain implementation approval.
+#### Issue records
+
+Search existing Issues in the confirmed target before creating a record. Preserve the original request, prior evidence, reasons, and relevant history when updating. State the requested outcome, success conditions, scope, proposed order, validation, unresolved decisions, and whether implementation is approved. Assign new Issues to the confirmed requester and select existing labels by their meaning. Use concise English Conventional Commits titles, the target's body language and template, and self-contained explanations with evidence links as supplements.
+
+Keep publication within approved destinations and information scope. Save complete Markdown drafts without YAML frontmatter, format/check with rumdl using the applicable configuration, inspect the resulting diff, and confirm another formatting pass is unchanged. Publish the checked body, retrieve it, and compare the complete saved content with the draft. Check GitHub rendering of headings, tables, lists, and links; API HTML inspection is not visual screen inspection. Open a browser only when requested. Present the saved body and URL. Failed saves or unverified readback remain incomplete.
+
+For diagnosis/planning-only records, leave the Issue open and stop after presenting it. Recording an Issue does not approve implementation, select Sub-issues for execution, or require a formulaic implementation-approval question.
+
+#### Repository documents
+
+Save and verify the supporting Issue plan before editing repository documents. Preserve the target's format, language, existing sources, and unknown metadata. Check document content and links, and report executed results separately from planned or unavailable validation.
+
+Protect existing work and prepare a task branch. Deliver the document through commits, a draft PR, required CI and conflict resolution, ordinary current-HEAD review, and any necessary fixes with renewed checks/review. Preserve the target's approval and protection requirements. Before a permitted squash or merge-commit merge, confirm current-head review, passing required checks, resolved findings, no conflicts, and healthy main; preserve the final PR title/body verbatim. Verify required checks on the actual merged-main SHA, synchronize, and clean up the task branch. Do not claim completion while main is failing or unverified. Honor explicit stop conditions; document delivery does not authorize adopting its proposals.
+
+#### Implementation scope
+
+A clear implementation request authorizes its stated purpose and success conditions; retain that approval through plan saving and verification rather than asking again for each stage. Continue adjustments to procedures or files within that scope. Changes to purpose, outcomes, acceptance conditions, external impact, permissions, or costs require confirmation before the affected work. An Issue, proposal, or silence alone does not authorize execution.
+
+When implementation is also requested, save and verify the plan above, then continue the approved changes through the same branch, review, CI, integration, and main-verification boundaries as repository documents. For settings-only changes, apply only approved differences, retrieve the effective settings, and check required behavior without creating empty commits or PRs. Report actual results, unresolved conditions, and unavailable operations; do not silently widen access or begin unapproved releases or deployments.

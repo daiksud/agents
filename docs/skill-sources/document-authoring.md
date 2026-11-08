@@ -3,6 +3,8 @@ type: Reference
 title: Sources and adoption notes for document authoring
 description: Preserve source mappings and editorial decisions behind document-authoring guidance without requiring them during ordinary authoring.
 sources:
+- id: skill-independence
+  resource: https://github.com/daiksud/agents/issues/285
 - id: okf-spec
   resource: https://github.com/GoogleCloudPlatform/open-knowledge-format/blob/ad30107c31c06aec8a7d5636e0d1058118604e6f/SPEC.md
   title: Open Knowledge Format v0.2
@@ -93,7 +95,7 @@ Specification guidance[^github-instructions-spec-driven-workflow-v1-instructions
 
 Consulted the public materials below on 2026-10-21. The full book was not available in this work. Chapter topics and public explanations support the principles; the content-type completion criteria, example-verification rules, outline, friction-log fields, and integration with existing skills are this repository's adaptations. Do not attribute those details as verbatim book instructions or treat the contents page as evidence for unseen chapter text.
 
-Use this guide for developer-documentation technique, [basic format](../../skills/document-authoring/references/basic-format.md) for OKF, [provenance](../../skills/document-authoring/references/provenance.md) for claims and sources, and `yomiyasu` for Japanese refinement. GitHub-post conventions and delivery remain with their existing skills. The translator labels additional Japanese-writing material separately from the book overview; that material is not imported here. No second-edition AI-specific technique is asserted from a publisher blurb.
+Use this guide for developer-documentation technique, [basic format](../../skills/document-authoring/references/basic-format.md) for OKF, and [provenance](../../skills/document-authoring/references/provenance.md) for claims and sources. The skill includes Japanese-readability guidance and its own publication, Markdown, and delivery conditions without referrals to other skills.[^skill-independence] The translator labels additional Japanese-writing material separately from the book overview; that material is not imported here. No second-edition AI-specific technique is asserted from a publisher blurb.
 
 ### Public-material observations
 
@@ -119,3 +121,5 @@ The public contents identify comments, READMEs, introductory, conceptual, proced
 ## Current policy authoring
 
 [Current policy authoring](../../skills/document-authoring/references/engineering-policies.md) applies the five audiences and recording boundaries in [decision-recording](../../skills/decision-recording/SKILL.md). Documents describe effective technologies, specifications, responsibilities, and procedures without chronological decision sections or required PR footers. The [local policy](../engineering-policies/change-records.md) retains actual validation reporting and the repository's validation exclusions. The skill prescribes no consumer policy directory or document name.
+
+[^skill-independence]: [Independent skill guidance and versioning responsibilities](https://github.com/daiksud/agents/issues/285).

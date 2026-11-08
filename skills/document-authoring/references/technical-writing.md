@@ -61,7 +61,7 @@ Apply these checks to keep examples useful and consistent with the product:
 Review whether the document enables the reader to complete the task before polishing its expression and structure:
 
 1. Can the intended reader find the information and complete the task or decision? Check missing prerequisites, accuracy, necessary context, and observable results against actual evidence.
-2. Is the explanation clear, concise, and consistent? Remove detours and ambiguous wording while preserving conditions and meaning. Apply `yomiyasu` to Japanese prose through the existing language-routing instruction.
+2. Is the explanation clear, concise, and consistent? Remove detours and ambiguous wording while preserving conditions and meaning. For Japanese prose, check natural wording, clear subjects and logical connections, and preservation of facts, conditions, and certainty.
 3. Apply [Markdown and content checks](validation.md). A clean lint result does not establish usability or technical correctness.
 
 For new or materially changed onboarding and procedures, walk the documented path when feasible and authorized. Capture useful friction briefly as `step / expected / observed / obstacle / next action` in existing notes or an Issue. This is a local recording aid, not a mandatory new artifact. Do not invent observations or claim that an agent walkthrough establishes real-user success. If execution is unavailable, inspect the sequence and state the limitation.

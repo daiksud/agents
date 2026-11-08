@@ -112,11 +112,9 @@ Read only [Primary Practices](xp-auxiliary.md#primary-practices) when their mean
 
 This table is not the only mapping. Select only categories and items relevant to the current problem; do not add unrelated XP items to unknowns lists.
 
-### Runtime division of responsibilities
+### Assessment scope
 
-- Put values and short decision principles in the relevant skill entry points.
-- `software-development` handles concrete execution of TDD, Pair Programming, Incremental Design, and similar practices.
-- `engineering-assessment` handles taxonomy, selection, and evidence judgments during assessment.
+- Use this reference for taxonomy, practice selection, and evidence judgments. Diagnosis of TDD, Pair Programming, Incremental Design, or similar practices does not authorize implementing changes.
 - Read the [dedicated lens](architecture-and-organization.md) for Architecture / Organization details.
 - Read the [DORA lens](dora.md) for Core / Capability / metrics.
 

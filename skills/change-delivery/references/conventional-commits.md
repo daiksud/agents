@@ -14,7 +14,7 @@ description: Apply recording and message conventions when staging and committing
 
 ### Subjects, bodies, and footers
 
-Use [decision-recording](../../decision-recording/SKILL.md) for self-contained judgment records. Format subjects as `<type>[optional scope][!]: <description>`, separate the body and footers with blank lines, and mark confirmed breaking changes with `!` or a `BREAKING CHANGE:` footer. The default lint configuration is unmodified `@commitlint/config-conventional`; honor explicit target-repository configuration rather than adding local type or length restrictions. Detailed convention and commitlint setup guidance is available in the optional [versioning skill](https://github.com/daiksud/agents/tree/main/skills/versioning).
+Use [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) to record change types and breaking changes. Format subjects as `<type>[optional scope][!]: <description>`, separate the body and footers with blank lines, and mark confirmed breaking changes with `!` or a `BREAKING CHANGE:` footer. Honor the target repository's adopted conventions rather than adding local type or length restrictions. Keep the reasons and evidence understandable from the message itself.
 
 - Write ordinary commit messages, including body and footers, in English. Follow [Repository adoption](repository-adoption.md) for the target's PR-body language. Preserve existing local choices and resolve explicit language conflicts before publication.
 - For squash and merge commits, preserve the final PR title and description verbatim as subject/body under [Integrate and merge](review-and-merge.md#integrate-and-merge). Do not replace, summarize, or translate away decisions or validation status at merge time.
@@ -23,7 +23,7 @@ Use [decision-recording](../../decision-recording/SKILL.md) for self-contained j
 
 ### When committing
 
-For drafting-only requests, present copyable messages and stop. Follow “Planning and execution scope” in the dependency `issue-management` for Git operations, and [Branches and integration units](branches.md) for protecting other sessions' work and change units. Do not require approval for every commit within the same approved scope.
+For drafting-only requests, present copyable messages and stop. Follow [Scope and plan](../SKILL.md#scope-and-plan) for Git operations, and [Branches and integration units](branches.md) for protecting other sessions' work and change units. Do not require approval for every commit within the same approved scope.
 
 1. Treat related approved implementation, tests, and documents as units validating the same purpose. Do not split solely by file counts/extensions or include unrelated cleanup. Presenting decomposition proposals does not approve out-of-scope commits.
 2. If staging is needed, check files/diff scope and add only approved targets. Do not stage whole files containing out-of-scope unstaged work. If others' staged changes are mixed in, do not arbitrarily unstage/move or commit them; confirm necessary coordination.

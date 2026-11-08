@@ -6,7 +6,7 @@ description: Define shared understanding in BDD/ATDD, declarative examples, and 
 
 ## Shared understanding and feature documents
 
-Use this material for specification work and document creation without code, without starting TDD. When code changes are requested, hand agreed specifications to the dependency [software-development](../../software-development/SKILL.md).
+Use this material for specification work and document creation without code, without starting TDD. When code changes are requested, carry the agreed specifications and examples into the approved implementation and its observable tests.
 
 ### Shared understanding and acceptance conditions (BDD/ATDD)
 
@@ -23,16 +23,17 @@ Use this material for specification work and document creation without code, wit
 
 ### Feature document format
 
-- Apply `document-authoring` and follow [Markdown with Gherkin](https://github.com/cucumber/gherkin/blob/main/MARKDOWN_WITH_GHERKIN.md).
+- Use UTF-8 Markdown with OKF v0.2 YAML frontmatter: a nonempty string `type`, plus `title` and `description`. Preserve existing metadata, authoritative sources, and checking history. `title` and `description` are this environment's authoring convention, not additional mandatory OKF fields.
+- Follow [Markdown with Gherkin](https://github.com/cucumber/gherkin/blob/main/MARKDOWN_WITH_GHERKIN.md), separating rules from concrete scenarios.
 - For Japanese repositories, use Japanese keywords: headings `機能`, `背景`, `ルール`, and `シナリオ`; bulleted steps `前提`, `もし`, `ならば`, `かつ`, and `しかし`. For English repositories, use headings `Feature`, `Background`, `Rule`, and `Scenario`; bulleted steps `Given`, `When`, `Then`, `And`, and `But`.
-- When parsing, select the matching dialect (`ja` for Japanese, `en` for English). Check heading and step structure after rumdl formatting.
+- When parsing, select the matching dialect (`ja` for Japanese, `en` for English). Format and check complete files with rumdl and the existing repository configuration; inspect metadata, headings, steps, links, and the final diff. Formatting success does not establish agreement on the behavior or executed acceptance tests.
 - While editing is unavailable in Plan mode, show drafts within the plan; save before implementation code once editing is possible.
 
 ### Relationships and execution boundaries
 
 BDD is collaborative practice developing shared understanding through examples, iterating Discovery, Formulation, and Automation. ATDD considers acceptance tests before implementation, connecting requirements and validation. Their subjects overlap; this does not mean adding separate mandatory meetings or stages. TDD is programming iteration that progresses tests and implementation one at a time from a list of expected-behavior tests.
 
-This skill starts with stories to organize purposes, rules, meaningful examples, acceptance conditions, and unanswered questions. Only when code changes are also requested does it hand agreed specifications and examples to `software-development`, connecting to that skill's test-first and assert-first implementation. Specification-only requests do not start implementation or TDD. Story-first work and conditional handoff are this environment's operating policy. Do not treat BDD, ATDD, and TDD as synonyms or claim one universal procedure for all organizations.
+Start with stories to organize purposes, rules, meaningful examples, acceptance conditions, and unanswered questions. When code changes are also requested, map the agreed specifications and examples to implementation tests. If TDD is selected or required, begin each small change with assertions of expected behavior, confirm meaningful failure, implement the minimum that passes, and refactor while preserving success. Specification-only requests do not start implementation or TDD. Story-first work and this execution boundary are this environment's operating policy. Do not treat BDD, ATDD, and TDD as synonyms or claim one universal procedure for all organizations.
 
 Use only examples needed for shared understanding and participants with the required knowledge. Choose methods that obtain stakeholders' knowledge and confirm shared understanding. Human-readable requirements must map to automated tests, but direct execution of the same file is not mandatory.
 
@@ -56,4 +57,4 @@ The following Japanese-repository example assumes agreement on the story “buye
 
 Examples at 4,999 yen or exceptional paths for the same rule can also check rule interpretation. Keep amounts concrete without exposing cart-screen click sequences or internal function names. Retain unsettled shipping charges or treatment of discounted amounts as questions rather than guessing expectations.
 
-When saving the content above, add frontmatter following `document-authoring`. File paths and repository-language Markdown with Gherkin are this environment's operating conventions, not universal definitions of BDD.
+When saving the content above, add the frontmatter described in [Feature document format](#feature-document-format). File paths and repository-language Markdown with Gherkin are this environment's operating conventions, not universal definitions of BDD.

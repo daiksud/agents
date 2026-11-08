@@ -1,6 +1,6 @@
 ---
 name: continuous-delivery
-description: GitHubで継続的デリバリーを実践するために、Actionsの設定、ワークフロー、アクション、ツールを整備するときに使う。PR・マージキューの検証、mainへのpush、デプロイとリリースの分離、バージョンの自動決定、検証済み成果物の再利用を設計・改善する。
+description: GitHubで継続的デリバリーを実践するために、Actionsの設定、ワークフロー、アクション、ツールを整備するときに使う。PR・マージキューの検証、mainへのpush、デプロイとリリースの分離、バージョン計算の組み込み、検証済み成果物の再利用を設計・改善する。
 ---
 
 # GitHubで継続的デリバリーを実践する
@@ -15,7 +15,9 @@ description: GitHubで継続的デリバリーを実践するために、Actions
 
 ## リリースバージョン
 
-バージョン戦略の整備には[versioning](https://github.com/daiksud/agents/tree/main/skills/versioning)の利用を強く推奨する。採用は任意とする。リリースでは採用した戦略に従い、コミットログから次のバージョンを自動決定する。計算とコミット検査、成果物への反映は[ワークフロー設計](references/workflow-design.md#リリースバージョン)に従う。
+バージョン番号には[Semantic Versioning](https://semver.org/spec/v2.0.0.html)、コミットメッセージには[Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/)を強く推奨する。公開APIの互換性を基準に番号を更新し、変更の種類と破壊的変更をコミットへ記録する。
+
+リリースでは採用した規則に従い、コミットログから次のバージョンを自動決定する。計算のタイミングと成果物への反映は[ワークフロー設計](references/workflow-design.md#リリースバージョン)に従う。
 
 ## 構成の基本
 
@@ -65,7 +67,7 @@ description: GitHubで継続的デリバリーを実践するために、Actions
 
 ## 設定と実装の詳細
 
-- [ワークフロー設計](references/workflow-design.md): 入出力、実行環境、バージョン計算、コミット検査、キュー検証、成果物の再利用、デプロイ・リリース条件、必須チェック。
+- [ワークフロー設計](references/workflow-design.md): 入出力、実行環境、バージョン計算の組み込み、キュー検証、成果物の再利用、デプロイ・リリース条件、必須チェック。
 - [安全性と設定](references/hardening.md): Actionsの実行許可、権限、配備先の環境、信頼境界、外部入力、依存先の固定。
 - [効率化](references/efficiency.md): キャッシュ、並列化、マトリクス、同時実行、重複実行の抑制。
 - [ツールと実行環境](references/tooling.md): 検査・更新・公開ツールの選定、バージョン固定、ランタイムとランナーの互換性。

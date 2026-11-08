@@ -3,6 +3,8 @@ type: Reference
 title: GitHub repository sources and adoption notes
 description: Preserve source mappings, adoption decisions, and historical checking scope for maintainers of the github-repo skill.
 sources:
+  - id: skill-independence
+    resource: https://github.com/daiksud/agents/issues/285
   - id: repository-api
     resource: https://docs.github.com/en/rest/repos/repos
   - id: rules-api
@@ -118,7 +120,7 @@ Specification checking date at authoring: 2026-09-28. This proves neither human 
 | Free security | Read standard lists and product availability per feature; do not generalize public-free features to entire products/private repos.[^security-features][^advanced-security] |
 | CodeQL setup/results | Separate default/advanced setup, acceptance, completion, analysis.[^code-scanning-api] |
 
-Bundled material: [Standards](../../skills/github-repo/references/settings.md), [Security](../../skills/github-repo/references/security.md), [Operations](../../skills/github-repo/references/operations.md). Use distributed `continuous-delivery` for workflow implementation rather than duplicating Action/container/runner policy.
+Bundled material: [Standards](../../skills/github-repo/references/settings.md), [Security](../../skills/github-repo/references/security.md), [Operations](../../skills/github-repo/references/operations.md). The settings skill contains its own Action-SHA preflight and delivery prerequisites. Broader pipeline implementation is covered by [continuous-delivery](../../skills/continuous-delivery/SKILL.md), without a referral from the settings skill.[^skill-independence]
 
 For official/UI/API disagreements preserve confirmed scope/differences without filling unverified specifications/endpoints. Unknown costs, permissions, or destructive effects justify holding affected operations even within approval.
 
@@ -139,6 +141,8 @@ For official/UI/API disagreements preserve confirmed scope/differences without f
 
 ## Decision recording settings
 
-The independent [decision-recording settings guide](../../skills/decision-recording/references/github-settings.md) defines squash and merge-commit methods, PR title/body defaults, and compatible rulesets. The [GitHub repository setting path](../../skills/github-repo/references/settings.md#pr-and-merge-message-alignment) applies that guidance within the authorized settings scope. The optional [versioning commitlint guide](../../skills/versioning/references/commitlint.md) covers the workflow and required-check adoption. Consumer files remain part of ordinary [repository adoption](../../skills/change-delivery/references/repository-adoption.md).
+The [GitHub repository setting path](../../skills/github-repo/references/settings.md#pr-and-merge-message-alignment) locally defines the merge methods, message fields, and readback steps needed within the authorized settings scope. The [decision-recording settings guide](../../skills/decision-recording/references/github-settings.md) covers those settings for preserving records. The [versioning commitlint guide](../../skills/versioning/references/commitlint.md) covers the workflow and required-check adoption. These maintainer links describe related responsibilities; the skills do not refer to one another.[^skill-independence] Consumer file changes retain ordinary PR, review, CI, and main-verification requirements.
 
 The [GitHub repository API](https://docs.github.com/en/rest/repos/repos#update-a-repository) documents both sets of message fields. Installing guidance or copying assets does not apply live settings.
+
+[^skill-independence]: [Independent skill guidance and versioning responsibilities](https://github.com/daiksud/agents/issues/285).

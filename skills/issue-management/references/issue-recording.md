@@ -86,7 +86,7 @@ Use this path for terminal deliverables limited to Issue records of diagnosis/ad
 For requests only to create/update development-practice diagnosis/adoption-plan Issues, deliver through this path without introducing a wait for implementation-plan approval. If individual change/incident implementation plans or post-diagnosis implementation are also requested, prioritize [Starting and planning](planning.md#starting-and-planning) even when cause diagnosis is included.
 
 1. Check target repository, purpose, and scope, and search existing Issues. For repeated diagnosis, preserve original evidence/bodies and record changed judgments/reasons in history.
-2. Summarize diagnosis evidence, uncertainties, priorities, the first small adoption unit, order/dependencies, expected changes, validation, and reassessment conditions in the body. Use the dependency `engineering-assessment` for development-practice adoption diagnosis.
+2. Summarize diagnosis evidence, uncertainties, priorities, the first small adoption unit, order/dependencies, expected changes, validation, and reassessment conditions in the body. Base adoption priorities on observed constraints and working practices; distinguish configuration from actual practice, unverified assumptions, and reasoned inapplicability.
 3. Save with requester, labels, and posting format from “Issue content.” Do not require implementation-start approval for requested diagnosis/plan records.
 4. Apply [Common post-save procedures](#opening-the-browser-after-saving-an-issue) through saved-state verification and presenting URL/saved body.
 5. Distinguish completed diagnosis from unimplemented adoption and leave the Issue open. Do not proceed to Sub-issues, code/settings/organization changes, branches, PRs, or merge.

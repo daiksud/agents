@@ -7,6 +7,8 @@ sources:
     resource: https://github.com/daiksud/agents/issues/281
   - id: agents-versioning-adoption
     resource: https://github.com/daiksud/agents/issues/283
+  - id: agents-skill-independence
+    resource: https://github.com/daiksud/agents/issues/285
   - id: agents-release-versioning
     resource: https://github.com/daiksud/agents/issues/279
   - id: recording-source
@@ -41,7 +43,7 @@ sources:
 
 [versioning](../../skills/versioning/SKILL.md)はセマンティックバージョニングとConventional Commitsを使い、コミット規約とバージョン戦略を整備する。規約・commitlintだけの導入と、コミット履歴からの自動計算の両方に対応する。[^agents-versioning][^agents-versioning-adoption]
 
-計算・検査の詳細はversioningが持ち、デプロイ・リリースとの接続は[continuous-delivery](../../skills/continuous-delivery/SKILL.md)、判断理由とPR記録の保存は[decision-recording](../../skills/decision-recording/SKILL.md)が扱う。両スキルはversioningの利用を強く推奨し、採用は任意とする。各スキルには目的に必要な短い方針を残す。[^agents-versioning-adoption]
+計算・検査の設定手順はversioningが持ち、デプロイ・リリースとの接続は[continuous-delivery](../../skills/continuous-delivery/SKILL.md)、判断理由とPR記録の保存は[decision-recording](../../skills/decision-recording/SKILL.md)が扱う。各スキルには目的に必要な短い規約の案内を残し、他スキルへの言及は置かない。スキルの選び方と役割分担はリポジトリのREADMEで案内する。[^agents-skill-independence]
 
 元の継続的デリバリー文書の出典と確認履歴は[その出典文書](continuous-delivery.md)に保持している。
 
@@ -60,6 +62,7 @@ sources:
 
 [^agents-versioning]: [独立スキル作成の目的と範囲](https://github.com/daiksud/agents/issues/281)。
 [^agents-versioning-adoption]: [スキルの採用と使用する規約の方針](https://github.com/daiksud/agents/issues/283)。
+[^agents-skill-independence]: [スキル間参照の解消と設定手順の分担](https://github.com/daiksud/agents/issues/285)。
 [^conventional-commits]: [Conventional Commits 1.0.0](https://www.conventionalcommits.org/en/v1.0.0/)。
 [^recording-source]: [移設元のコミット規約と導入ガイド](https://github.com/daiksud/agents/blob/d4e677be602be08f24dfc72fae8dea444be86b37/skills/decision-recording/references/conventional-commits.md)。
 [^semver]: [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.html)。

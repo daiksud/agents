@@ -6,7 +6,7 @@ description: Write the effective guidance a new contributor needs, keeping decis
 
 ## When to write a policy
 
-Use [decision-recording](../../decision-recording/SKILL.md) to decide whether a change affects current working guidance. Write or update a document when a new contributor needs that information to work now. Use the repository's existing topical placement; neither `docs/engineering-policies/` nor the name Engineering Policies is required. An ordinary local fix may need only a concise PR record.
+Write or update a document when a new contributor needs that information to work now. Use the repository's existing topical placement; neither `docs/engineering-policies/` nor the name Engineering Policies is required. An ordinary local fix may need only a concise PR record.
 
 ## Content and revision
 

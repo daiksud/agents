@@ -14,11 +14,11 @@ Check the complete target `owner/repo`, requested deliverable, execution approva
 | Requested deliverable | Path and endpoint |
 | --- | --- |
 | Answer with diagnosis, comparison, or improvement proposals | Read only, report evidence, judgments, and uncertainties, then stop. Do not start Issue posting or setting changes |
-| Issue record of a plan or diagnosis only | Use `issue-management` to save, retrieve, and check display, present the body and URL, then stop. Settings remain unapplied |
-| Save a diagnosis document | Use `document-authoring`. For Git-managed files, deliver the document through a supporting Issue plan and `change-delivery`, without applying settings |
-| Apply or correct settings | Retain approval in an ordinary `issue-management` plan, and use [Application procedure](references/operations.md) through applying differences and diagnosing again. Do not stop at plan presentation |
+| Issue record of a plan or diagnosis only | [Record the plan](references/operations.md#record-plans), retrieve it, check agreement and display, present the body and URL, then stop. Settings remain unapplied |
+| Save a diagnosis document | Save the requested report in the target's format and language. Deliver Git-managed documents through [Approved file changes](references/operations.md#approved-file-changes), without applying settings |
+| Apply or correct settings | Retain approval in a saved and verified plan, and use [Application procedure](references/operations.md#apply-approved-settings) through applying differences and diagnosing again. Do not stop at plan presentation |
 
-Do not create empty commits or PRs for settings-only changes. Hand prerequisite workflows or other files to `continuous-delivery` and `change-delivery`, documents to `document-authoring`, and implementation code to `software-development`. If necessary dependencies are unavailable, stop that operation and state incomplete scope while continuing possible reading. Do not obtain existing execution approval or verified plans again.
+Do not create empty commits or PRs for settings-only changes. Deliver prerequisite workflows, documents, or implementation files through the approved file-change path before enforcing dependent settings. If required access or operations are unavailable, hold the affected operation and state incomplete scope while continuing possible reading. Do not obtain existing execution approval or verified plans again.
 
 ## Material to read at each stage
 
