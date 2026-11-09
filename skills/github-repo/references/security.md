@@ -6,7 +6,7 @@ description: Inventory free applicable features for the target repository, check
 
 ## Determine free scope per feature
 
-Expect all security features free and applicable to the target repository enabled. Investigate standard free features and free GitHub Code Security/Secret Protection applicability, not bulk `advanced_security` enablement. Public-free does not imply private-free; check ownership, subscriptions, languages, dependency ecosystems, and upper-level policies.
+**SHOULD:** Enable security features that are free and applicable to the target repository to detect vulnerable dependencies, exposed credentials, and code vulnerabilities. Investigate standard free features and free GitHub Code Security/Secret Protection applicability, not bulk `advanced_security` enablement. Public-free does not imply private-free; check ownership, subscriptions, languages, dependency ecosystems, and upper-level policies.
 
 Compare official lists/UI at execution time, inventorying additions beyond the starting table. Classify each as configurable, enabled by default, needing workflows/prerequisites, inapplicable, outside free scope, or unverified, reflecting [Common judgments](operations.md). Default-enabled status inaccessible for the target is not confirmed conformance. Do not invent APIs/workflows for features without enablement switches.
 
@@ -31,7 +31,7 @@ Use official feature/product lists and API HTTP/response/permission specificatio
 - Do not replace existing advanced CodeQL setup with default setup. Check languages, builds, and environments; deliver any workflow edits through [Approved file changes](operations.md#approved-file-changes) before applying dependent settings. Without supported languages, record reasoned inapplicability without dummy code. Distinguish configured, successful analysis, and zero alerts.
 - Account-level push protection alone does not establish repository settings. Do not change account/Organization-wide settings; record out-of-scope dependencies if needed.
 - Present proposals for unagreed exception approvers, patterns, external information transmission, or similar decisions, while continuing independent free features. Do not silently exclude decision-dependent features.
-- Do not fabricate SECURITY.md contacts/intake arrangements or empty settings for SBOM/Advisory Database usage features. Do not automatically add version-update cadence, automatic alert dismissal, or mandatory scans to initial standards.
+- Use [Repository files](repository-files.md) for Dependabot version updates and SECURITY.md. Security updates can be enabled without version-update configuration; version updates require the configuration file. Do not fabricate reporting contacts, supported versions, or empty settings for SBOM/Advisory Database usage features. Respect existing update cadence, and do not automatically dismiss alerts or require scans as merge checks.
 
 ## Completion checks
 

@@ -7,6 +7,10 @@ sources:
     resource: https://docs.github.com/en/actions/concepts/security/github_token
   - id: skill-independence
     resource: https://github.com/daiksud/agents/issues/285
+  - id: apm-install
+    resource: https://microsoft.github.io/apm/reference/cli/install/
+  - id: apm-virtual-packages
+    resource: https://microsoft.github.io/apm/consumer/install-packages/
 ---
 
 This repository shares task-specific [Skills](skills/) through APM.
@@ -40,7 +44,7 @@ Each skill contains the guidance needed for its task without referring to or req
 | Review changes without modifying them | [code-review](skills/code-review/SKILL.md) |
 | Configure continuous-delivery pipelines and artifact handling | [continuous-delivery](skills/continuous-delivery/SKILL.md) |
 | Configure commit conventions, commitlint, and automatic version calculation | [versioning](skills/versioning/SKILL.md) |
-| Diagnose and apply GitHub repository settings | [github-repo](skills/github-repo/SKILL.md) |
+| Configure GitHub repository settings and supporting `.github` files | [github-repo](skills/github-repo/SKILL.md) |
 
 Continuous-delivery uses `pr.yml`, `push.yml`, and `release.yml` as the basic pipeline. Optional `merge-queue.yml` runs `screening` and `inspection` on `merge_group: checks_requested`; `push.yml` can skip both when it can reuse a matching artifact from a successful queue run.
 
@@ -62,11 +66,22 @@ Use [yomiyasu](https://github.com/nanaism/yomiyasu/tree/main/skills/yomiyasu) fo
 apm install --global --target codex,copilot daiksud/agents
 ```
 
+To install only [github-repo](skills/github-repo/SKILL.md), specify its skill directory. Its bundled references and assets provide the guidance for repository settings and supporting configuration.[^apm-install][^apm-virtual-packages]
+
+```bash
+apm install --global --target codex,copilot daiksud/agents/skills/github-repo
+```
+
+[^apm-install]: [APM command reference](https://microsoft.github.io/apm/reference/cli/install/) documents global installation and explicit targets.
+[^apm-virtual-packages]: [APM package installation](https://microsoft.github.io/apm/consumer/install-packages/) documents skill subdirectory references. See the [source mapping](docs/skill-sources/github-repo.md#standalone-installation) for the documentation-check scope.
+
 ## Skills and GitHub protection settings
 
 The checking procedures defined by Skills are separate from protection conditions mechanically enforced by GitHub. Each repository manages its own Rulesets and required status checks; installing this package alone does not apply the same protection settings.
 
-[github-repo](skills/github-repo/SKILL.md) diagnoses immutable releases, squash and merge-commit methods, PR-based commit messages, the main Ruleset, full-SHA requirements for external Actions, and free security features for the specified repository, and applies only the explicitly requested scope. “Diagnose the settings” ends with a report, “record the plan in an Issue” ends with a record, and “apply the settings” includes applying the differences and diagnosing again. It coordinates workflow content changes with [continuous-delivery](skills/continuous-delivery/SKILL.md), and does not create empty commits or PRs solely for GitHub-side settings changes.
+[github-repo](skills/github-repo/SKILL.md) diagnoses and applies the requested repository settings and maintains supporting `.github` files using its own references and assets. Its bundle covers Dependabot, CODEOWNERS, issue and PR templates, `SECURITY.md`, and GitHub Actions dependency lockfiles, so it can handle this work when installed on its own. “Diagnose the settings” ends with a report, “record the plan in an Issue” ends with a record, and “apply the settings” includes applying the differences and diagnosing again. GitHub-side settings changes do not require empty commits or PRs; repository file changes follow the target repository's delivery rules.
+
+Choose github-repo for repository settings and supporting configuration. [Continuous-delivery](skills/continuous-delivery/SKILL.md) covers pipeline design, build and test stages, artifact reuse, deployment, and releases. [Decision-recording](skills/decision-recording/SKILL.md) covers the content and purpose of change records, and [versioning](skills/versioning/SKILL.md) covers commit conventions and version calculation. These responsibilities guide skill selection; github-repo's execution uses its own bundle.
 
 This repository requires `pass` for pull requests. [PR validation](.github/workflows/ci-pr.yml) follows `draft → commit-stage → ready → acceptance-stage → pass`: every run first attempts to convert the PR to Draft, runs approval-policy tests and Markdown lint, marks it Ready, and then checks local file links including frontmatter paths. Creation, new commits, reopening, and PR edits trigger validation. Each stage requires its predecessor to succeed; the final `pass` check rejects failed, cancelled, or skipped validation. There is no special handling for fork or Dependabot PRs: a denied state change fails the run instead of allowing validation to continue. [Main-push validation](.github/workflows/ci.yml) runs the same approval-policy tests and Markdown lint.
 

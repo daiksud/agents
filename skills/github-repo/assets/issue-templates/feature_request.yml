@@ -1,0 +1,15 @@
+name: Feature request
+description: Describe a problem to solve or an outcome to support.
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What would you like to achieve?
+      description: Describe the problem and the desired outcome.
+    validations:
+      required: true
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context or ideas
+      description: Optionally share examples, constraints, or a possible solution.
