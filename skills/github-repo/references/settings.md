@@ -1,38 +1,38 @@
 ---
 type: Instruction
-title: GitHub repository setting standards
-description: Define required and recommended values for releases, pull requests, branch protection, and Actions policy.
+title: GitHubリポジトリの設定基準
+description: リリース、プルリクエスト、ブランチ保護、Actionsのポリシーについて、必須値と推奨値を定める。
 ---
 
-## Contents
+## 目次
 
-- [Applying standards](#applying-standards)
-- [Immutable releases](#immutable-releases)
-- [PR merge methods](#pr-merge-methods)
-- [PR and merge message alignment](#pr-and-merge-message-alignment)
-- [PR branch maintenance](#pr-branch-maintenance)
-- [Branch Ruleset protection](#branch-ruleset-protection)
-- [Required checks and fresh approvals](#required-checks-and-fresh-approvals)
-- [Actions dependency policies](#actions-dependency-policies)
-- [Default workflow permissions](#default-workflow-permissions)
+- [基準の適用](#基準の適用)
+- [イミュータブルリリース](#イミュータブルリリース)
+- [PRのマージ方式](#prのマージ方式)
+- [PRとマージコミットのメッセージを揃える](#prとマージコミットのメッセージを揃える)
+- [PRブランチの更新と削除](#prブランチの更新と削除)
+- [Rulesetによるブランチ保護](#rulesetによるブランチ保護)
+- [必須チェックと最新の変更への承認](#必須チェックと最新の変更への承認)
+- [Actionsの依存関係ポリシー](#actionsの依存関係ポリシー)
+- [ワークフローの既定の権限](#ワークフローの既定の権限)
 
-## Applying standards
+## 基準の適用
 
-Use the MUST/SHOULD meanings in the entry point. Separate expected and observed values; follow [Operations and judgments](operations.md) for writes. Diagnose security per feature in [Security](security.md), and complete prerequisite [repository files](repository-files.md) or [Actions locking](actions-lock.md) before dependent enforcement.
+MUST／SHOULDの意味はスキル本体の定義に従う。期待値と実測値を区別し、変更操作は[操作と判定](operations.md)に従う。セキュリティ機能は[セキュリティ](security.md)に沿って個別に診断する。前提となる[リポジトリファイル](repository-files.md)や[Actionsのロック](actions-lock.md)を整備してから、それらに依存する強制ルールを有効にする。
 
-## Immutable releases
+## イミュータブルリリース
 
-**MUST:** Enable release immutability to prevent replacement of published release tags and assets. Inspect settings even without releases. Check official UI `Settings` → `General` → `Releases` → `Enable release immutability`; with approval enable and re-display. For APIs check current official read/update support without invented endpoints/fields.
+**MUST:** 公開済みリリースのタグやアセットの差し替えを防ぐため、リリースのイミュータブル設定を有効にする。リリースがない場合も設定を確認する。公式UIの `Settings` → `General` → `Releases` → `Enable release immutability` を確認し、承認済みであれば有効にして、再表示する。APIを使う場合は、公式の最新仕様で取得・更新への対応を確認し、エンドポイントやフィールドを作り上げない。
 
-It applies to future releases; report no retroactivity. Investigate operations assuming post-publication tag/asset updates; if necessary first change to draft creation, all assets attached, then publication. Do not publish merely to validate settings. Check individual immutable display only for approved upcoming releases.
+設定は今後のリリースに適用され、過去のリリースには遡及しないことを報告する。公開後のタグやアセットの更新を前提とする運用がないか調べる。必要なら、下書きの作成、すべてのアセットの添付、公開の順に進める手順へ先に変更する。設定を検証するためだけに公開しない。個々のリリースのイミュータブル表示は、承認済みの公開予定リリースに限って確認する。
 
-Do not migrate through tag/asset deletion/recreation, or confuse reverting settings with undoing published immutable-release restrictions. Do not claim release titles/bodies are uneditable.
+タグやアセットを削除・再作成して移行しない。設定を戻すことと、公開済みのイミュータブルリリースの制約を解除することを混同しない。リリースのタイトルや本文が編集できないとは説明しない。
 
-## PR merge methods
+## PRのマージ方式
 
-**SHOULD:** Preserve PR decision records by allowing squash and merge-commit merging, prohibiting rebase merging, and selecting `Pull request title and description` for both enabled methods in `Settings` → `General` → `Pull Requests`. Respect an explicitly adopted narrower merge policy. The corresponding fields in `GET /repos/{owner}/{repo}` and [repository update API](https://docs.github.com/en/rest/repos/repos#update-a-repository) have these expected values:
+**SHOULD:** PRの判断記録を残すため、スカッシュマージとマージコミットを許可し、リベースマージを禁止する。`Settings` → `General` → `Pull Requests` で、有効にする両方式のメッセージに `Pull request title and description` を選ぶ。明示的に採用された、より限定的なマージ方針は尊重する。`GET /repos/{owner}/{repo}` と[リポジトリ更新API](https://docs.github.com/en/rest/repos/repos#update-a-repository)の対応フィールドは、次の値を期待値とする。
 
-| Field | Expected value |
+| フィールド | 期待値 |
 | --- | --- |
 | `allow_squash_merge` | `true` |
 | `allow_merge_commit` | `true` |
@@ -42,59 +42,59 @@ Do not migrate through tag/asset deletion/recreation, or confuse reverting setti
 | `merge_commit_title` | `PR_TITLE` |
 | `merge_commit_message` | `PR_BODY` |
 
-Compare repository settings with effective branch rules and any merge queue. Required linear history prevents merge commits; allowed merge methods must agree across the repository and target ruleset. Include these related differences when adoption of both methods is requested. Apply only the requested scope, preserve unrelated protections, and retrieve the resulting settings. Do not fill absent values with defaults.
+リポジトリ設定を、実効的なブランチルールや使用中のマージキューと照合する。直線的な履歴を必須にするとマージコミットは使えないため、許可するマージ方式をリポジトリと対象Rulesetの間で揃える。両方式の採用を依頼された場合は、こうした関連設定の差分も含める。依頼された範囲だけを適用し、無関係な保護を維持したうえで、結果の設定を再取得する。取得できなかった値を既定値で補わない。
 
-## PR and merge message alignment
+## PRとマージコミットのメッセージを揃える
 
-Use this narrow path for message-format diagnosis or application. Inspect all four squash/merge title/body fields against `PR_TITLE` / `PR_BODY` in the [setting table](#pr-merge-methods). Missing fields remain unverified. Message-format-only requests do not authorize unrelated merge-method or protection changes.
+メッセージ形式の診断や適用には、この節の範囲で対応する。スカッシュマージとマージコミットのタイトル・本文に対応する四つのフィールドを、[設定表](#prのマージ方式)の `PR_TITLE`／`PR_BODY` と照合する。取得できないフィールドは未確認とする。メッセージ形式だけの依頼は無関係なマージ方式や保護ルールの変更を承認するものではない。
 
-Keep the final title/body self-contained, aligned with the reviewed change, and free of HTML comments. Respect the agreed language; never translate or summarize away the record at merge. For template and instruction edits, inspect existing rules, preserve equivalent local headings, and deliver only approved differences through [Approved file changes](operations.md#approved-file-changes).
+最終タイトル・本文はそれだけで内容を理解できるようにし、レビュー済みの変更と揃えて、HTMLコメントを除去する。合意した言語を守り、マージ時に翻訳や要約で記録を置き換えない。テンプレートや指示を編集する場合は既存ルールを確認し、同等の見出しを維持する。[承認済みのファイル変更](operations.md#承認済みのファイル変更)に従い、承認された差分だけを反映する。
 
-For diagnosis, report exact differences. For authorized application, use [Apply approved settings](operations.md#apply-approved-settings): send only approved fields with `PATCH /repos/{owner}/{repo}`, including the corresponding title field when setting a message field, then retrieve them with `GET /repos/{owner}/{repo}`. These are editable defaults: during delivery retrieve the final PR title, body, and HEAD immediately before merge, pass them as `commit_title`, `commit_message`, and `sha` to the [merge API](https://docs.github.com/en/rest/pulls/pulls#merge-a-pull-request), and compare the resulting commit's subject/body with that record. Installation of the skill alone does not change settings.
+診断では正確な差分を報告する。承認済みの適用では[承認済みの設定を適用する](operations.md#承認済みの設定の適用)に従い、`PATCH /repos/{owner}/{repo}` で承認済みのフィールドだけを送信する。メッセージのフィールドを設定する際は対応するタイトルのフィールドも含め、その後 `GET /repos/{owner}/{repo}` で再取得する。これらは編集可能な既定値である。変更の反映時には、マージ直前に最終PRタイトル・本文・HEADを取得し、[マージAPI](https://docs.github.com/en/rest/pulls/pulls#merge-a-pull-request)の `commit_title`、`commit_message`、`sha` に渡す。生成されたコミットの件名・本文を、その記録と照合する。スキルをインストールしただけでは設定は変わらない。
 
-## PR branch maintenance
+## PRブランチの更新と削除
 
-**SHOULD:** Enable `Always suggest updating pull request branches` under `Settings` → `General` → `Pull Requests` to make base-branch updates visible. Read and update `allow_update_branch` through the repository API, then retrieve it. The suggestion does not synchronize branches, rerun tests, or prevent merging a stale branch; assess those requirements separately below.
+**SHOULD:** base branchの更新を見つけやすくするため、`Settings` → `General` → `Pull Requests` の `Always suggest updating pull request branches` を有効にする。リポジトリAPIで `allow_update_branch` を取得・更新し、再取得する。この案内はブランチを同期せず、テストを再実行せず、古いブランチのマージも防がない。これらの要件は後述の節で別途判定する。
 
-**SHOULD:** Enable `Automatically delete head branches` (`delete_branch_on_merge=true`) when merged work branches have no ongoing purpose. Respect persistent-branch workflows and branch protections. Retrieve the setting; do not merge or delete a test branch just to demonstrate it.
+**SHOULD:** マージ済みの作業ブランチを引き続き使う目的がなければ、`Automatically delete head branches`（`delete_branch_on_merge=true`）を有効にする。継続して使うブランチがある運用や、ブランチ保護を尊重する。設定を再取得して確認し、動作を示すためだけにテスト用ブランチをマージ・削除しない。
 
-## Branch Ruleset protection
+## Rulesetによるブランチ保護
 
-**MUST:** Protect the integration branch with active Rulesets requiring PRs and preventing deletion and force pushes. Use the requested integration branch, otherwise the confirmed default branch. Inherited conformance suffices without duplicate repository Rulesets. Preserve legacy protection while adding an applicable Ruleset; unavailable plans remain unavailable without upgrades.
+**MUST:** 有効なRulesetで統合ブランチを保護し、PRを必須にして、削除とforce pushを防ぐ。統合先が指定されていればそのブランチを使い、指定がなければ確認済みのデフォルトブランチを使う。継承したルールで基準を満たす場合は、リポジトリに重複するRulesetを作る必要はない。該当するRulesetを追加するときも従来のブランチ保護を維持する。未対応のプランはアップグレードせず、利用不可として扱う。
 
-1. Check the branch exists through `GET /repos/{owner}/{repo}/branches/{branch}` or equivalent. Do not implicitly rename/create/change targets for alternate names or empty repositories.
-2. Fetch all `GET /repos/{owner}/{repo}/rulesets?includes_parents=true` pages and relevant details: target, enforcement, includes/excludes, source, bypass.
-3. Fetch all `GET /repos/{owner}/{repo}/rules/branches/{branch}` pages and compare active effective rules. It also returns rules for nonexistent branches, not proof the target exists.
-4. Check `pull_request`, `deletion`, `non_fast_forward`, and existing extras; do not miss evaluate/disabled, target exclusions, or unnecessary bypass. Inaccessible bypass information does not establish no exceptions.
-5. Add gaps to target-owned Rulesets through `Settings` → `Rulesets` or existing-ID `PUT /repos/{owner}/{repo}/rulesets/{ruleset_id}`. Use new `POST /repos/{owner}/{repo}/rulesets` only when necessary. Preserve out-of-scope conditions, rules, parameters, and exceptions; do not change parent Rulesets.
-6. Retrieve details/effective rules. Initial application excludes deleting legacy protections; leave no protection gap. Do not directly push/delete/force-push the protected branch to validate.
+1. `GET /repos/{owner}/{repo}/branches/{branch}` または同等の手段でブランチの存在を確認する。想定と異なる名前のブランチや空のリポジトリに対し、暗黙に名前の変更、ブランチの作成、対象の変更を行わない。
+2. `GET /repos/{owner}/{repo}/rulesets?includes_parents=true` の全ページと、対象、強制状態、包含・除外条件、ルールの定義元、バイパスの詳細を取得する。
+3. `GET /repos/{owner}/{repo}/rules/branches/{branch}` の全ページを取得し、実際に有効なルールを照合する。このAPIは存在しないブランチにもルールを返すため、対象が存在する証拠にはならない。
+4. `pull_request`、`deletion`、`non_fast_forward` と既存の追加ルールを確認する。evaluate／disabledの状態、対象の除外、不要なバイパスを見落とさない。バイパス情報を取得できないことは、例外がない証拠にはならない。
+5. `Settings` → `Rulesets` または既存IDへの `PUT /repos/{owner}/{repo}/rulesets/{ruleset_id}` で、対象リポジトリが所有するRulesetの不足を補う。新規の `POST /repos/{owner}/{repo}/rulesets` は必要な場合だけ使う。対象範囲外の条件、ルール、パラメーター、例外は維持し、親のRulesetは変更しない。
+6. 詳細と実効ルールを再取得する。初回の適用では従来のブランチ保護を削除せず、保護されない期間を作らない。検証のために、保護対象ブランチへ直接pushしたり、削除やforce pushを行ったりしない。
 
-Record `required_approving_review_count` and `require_code_owner_review` separately: overall approvals versus applicable Code Owner reviews; one of multiple owners suffices. Do not infer unapproved PRs from settings alone; compare author, applicable CODEOWNERS, review states, and mergeability.
+`required_approving_review_count` と `require_code_owner_review` は別々に記録する。前者は全体の承認数、後者は対象パスのCode Ownerによるレビューの要件であり、複数の所有者がいる場合は一人の承認でよい。設定だけからPRが未承認と判断せず、PR作成者、適用されるCODEOWNERS、レビュー状態、マージ可否を照合する。
 
-If the sole applicable Code Owner is the PR author, do not invent other owners/human reviewers because self-approval is impossible. Valid non-owner approval can meet GitHub's effective required count; check approval/mergeability. Enabled Copilot Approvals counted as `APPROVED` may be used. Default comment-only reviews are not approvals, and explicit human-review escalation remains applicable.
+対象パスの唯一のCode OwnerがPR作成者の場合、自己承認ができないことを理由に、別の所有者や人間のレビュアーを作り上げない。所有者以外の有効な承認でもGitHubの実効的な必要承認数を満たせるため、承認状態とマージ可否を確認する。Copilot Approvalsが有効で、`APPROVED` として算入される承認は利用できる。既定のコメントだけのレビューは承認ではなく、人間によるレビューが明示的に求められている場合は、その要件も引き続き適用される。
 
-Preserve required checks, approver counts, and CODEOWNERS. Choose new checks from target policy, actual names/issuers/events/success history without blocking nonexistent checks. Enabling CodeQL does not make it mandatory; do not uniformly add unsatisfiable solo approvals, signing, or linear history. Do not add unnecessary bypasses; confirm impact/approval before removing existing exceptions. Record unsupported plans as unavailable without paid upgrades.
+必須チェック、必要承認数、CODEOWNERSを維持する。新たなチェックは対象の方針、実在する名前、結果の発行元、対象イベント、成功履歴から選び、存在しないチェックを必須にしてマージを止めない。CodeQLの有効化は必須化を意味しない。一人で管理するリポジトリで満たせない承認要件、署名、直線的な履歴を一律に追加しない。不要なバイパスは追加せず、既存の例外を削除する前に影響と承認を確認する。未対応のプランは利用不可と記録し、有料プランへアップグレードしない。
 
-## Required checks and fresh approvals
+## 必須チェックと最新の変更への承認
 
-**MUST, when the repository uses CI:** Configure the agreed checks under the branch Ruleset's required status checks. Confirm actual check names, expected source Apps, relevant PR events, and successful runs before enforcing them. If no suitable check exists, report the prerequisite; do not invent a check name. A skipped/neutral status can satisfy GitHub's status rule, so inspect whether the existing check actually covers the intended work.
+**MUST、リポジトリがCIを使う場合:** 合意したチェックを、ブランチRulesetの必須ステータスチェックに設定する。実在するチェック名、想定する発行元App、対象のPRイベント、成功した実行を確認してから必須にする。適切なチェックがなければ前提条件として報告し、チェック名を作り上げない。skipped／neutralでもGitHubのステータスルールを満たせるため、既存チェックが意図した作業を実際に検証しているか確認する。
 
-**MUST, when using required checks:** Require the branch to be up to date before merging (`strict_required_status_checks_policy=true`), or preserve an existing merge queue that validates the current base plus queued changes. Strict mode needs at least one configured required check to have an effect. Do not enable a queue without compatible `merge_group` checks. Enabling the update suggestion alone does not satisfy this rule.
+**MUST、必須チェックを使う場合:** マージ前にブランチが最新であることを要求する（`strict_required_status_checks_policy=true`）。または、現在のbaseとキュー内の変更を合わせて検証する既存のマージキューを維持する。厳格モードを機能させるには、少なくとも一つの必須チェックが設定されている必要がある。対応する `merge_group` のチェックがない状態でキューを有効にしない。ブランチ更新の案内を有効にするだけでは、このルールを満たさない。
 
-**SHOULD, when approval is required:** Prevent old approvals from silently covering new changes by dismissing stale approvals or requiring approval of the latest reviewable push. Choose a viable policy for the actual reviewers, preserve stronger requirements, and retrieve effective rules afterward. Code Owner requirements also depend on the [target's CODEOWNERS](repository-files.md).
+**SHOULD、承認を必須にする場合:** 古い承認が新しい変更にも使われることを防ぐため、古くなった承認を取り消すか、レビュー可能な最新のpushへの承認を要求する。実際のレビュアーが満たせる方針を選び、より強い要件を維持したうえで、適用後の実効ルールを再取得する。Code Ownerの要件は[対象のCODEOWNERS](repository-files.md)にも依存する。
 
-## Actions dependency policies
+## Actionsの依存関係ポリシー
 
-**MUST, when Actions is used:** Adopt `gh actions-lock` through [Actions locking](actions-lock.md), and enable native `Require actions to be pinned to a full-length commit SHA` in `Settings` → `Actions` → `General`. A valid lockfile satisfies this policy for locked Actions; readable tag references do not need redundant literal-SHA rewrites. External reusable-workflow call references are not locked and need separate full-SHA pinning.
+**MUST、Actionsを使う場合:** [Actionsのロック](actions-lock.md)に従って `gh actions-lock` を導入し、`Settings` → `Actions` → `General` にあるGitHubの標準機能 `Require actions to be pinned to a full-length commit SHA` を有効にする。有効なロックファイルはロック対象のActionについてこのポリシーを満たす。読みやすいタグ参照を、さらにSHAの直接指定へ書き換える必要はない。外部の再利用可能ワークフローを呼び出す参照はロックされないため、別途完全長SHAで固定する。
 
-Check `GET /repos/{owner}/{repo}/actions/permissions` `sha_pinning_required` or the UI. Complete prerequisite file PRs and checks before enforcement; examine active branches and called workflows as well as the default branch. Unverified execution paths are not ready for enforcement. Disabled Actions do not justify silent enablement.
+`GET /repos/{owner}/{repo}/actions/permissions` の `sha_pinning_required`、またはUIを確認する。前提となるファイルのPRとチェックを完了してから強制し、デフォルトブランチだけでなく、使用中のブランチや呼び出すワークフローも調べる。実行経路を確認できていない場合は、強制する準備ができていないものとして扱う。Actionsが無効であっても、断りなく有効にしてよい理由にはならない。
 
-Apply `PUT /repos/{owner}/{repo}/actions/permissions`, preserving required `enabled` and existing `allowed_actions` from immediate retrieval and setting `sha_pinning_required=true`. Do not relax allowlists or upper-level policies. Retrieve settings/workflows afterward. Native SHA enforcement does not cover reusable-workflow call references or prove lockfile coverage.
+変更直前に設定を取得し、必須の `enabled` と既存の `allowed_actions` を維持して、`PUT /repos/{owner}/{repo}/actions/permissions` で `sha_pinning_required=true` を設定する。許可リストや上位のポリシーを緩めない。適用後に設定とワークフローを再取得する。GitHub標準のSHA固定の強制は、再利用可能ワークフローの呼び出し参照を対象に含めず、ロックファイルが必要な依存関係を網羅している証拠にもならない。
 
-**SHOULD, after lockfile adoption:** Enable `Require lockfile` for the intended workflows through `Settings` → `Actions` → `Policies`. Check feature availability and existing policy targets. Confirm every targeted workflow and called source workflow has been onboarded before making the policy Active; a workflow without Action dependencies still needs onboarding. This policy is separate from SHA enforcement. Retrieve policy scope/enforcement and verify affected runs without disabling either policy to hide a failure.
+**SHOULD、ロックファイル導入後:** `Settings` → `Actions` → `Policies` で、対象のワークフローに `Require lockfile` を有効にする。機能の利用可否と既存ポリシーの対象を確認する。ポリシーをActiveにする前に、対象の全ワークフローと、呼び出される側のワークフローへの導入を確認する。Actionへの依存がないワークフローにも導入が必要である。このポリシーとSHA固定の強制は別の設定である。ポリシーの対象範囲と強制状態を再取得し、影響する実行を確認する。失敗を隠すために、どちらかのポリシーを無効にしない。
 
-## Default workflow permissions
+## ワークフローの既定の権限
 
-**MUST, when Actions is used:** Set `Settings` → `Actions` → `General` → `Workflow permissions` to read repository contents and packages, reducing default `GITHUB_TOKEN` privileges. This is a default, not a maximum: workflow/job `permissions` can grant more. Inspect actual needs and make any necessary explicit permissions changes before restricting a workflow that relies on the old default.
+**MUST、Actionsを使う場合:** `Settings` → `Actions` → `General` → `Workflow permissions` を、リポジトリの内容とパッケージの読み取りに設定し、`GITHUB_TOKEN` の既定の権限を減らす。これは権限の上限ではなく既定値であり、ワークフローやジョブの `permissions` で追加の権限を付与できる。以前の既定値に依存するワークフローの権限を制限する前に、実際の必要性を調べ、必要な権限を明示する変更を済ませる。
 
-Read `GET /repos/{owner}/{repo}/actions/permissions/workflow`; set `default_workflow_permissions=read` through the corresponding `PUT`, preserving the separate approval setting and unrelated behavior. Retrieve the result. Do not treat the repository default as proof that every job has minimal permissions.
+`GET /repos/{owner}/{repo}/actions/permissions/workflow` で取得し、別項目の承認設定と無関係な挙動を維持したまま、対応する `PUT` で `default_workflow_permissions=read` を設定する。その後、結果を再取得する。リポジトリの既定値だけを根拠に、すべてのジョブが最小権限であると判断しない。

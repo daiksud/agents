@@ -17,7 +17,7 @@ This repository shares task-specific [Skills](skills/) through APM.
 
 ## Artifact language
 
-Most Skills use English. The [continuous-delivery](skills/continuous-delivery/SKILL.md), [decision-recording](skills/decision-recording/SKILL.md), and [versioning](skills/versioning/SKILL.md) skills use Japanese. Follow the target repository's language conventions for produced artifacts.
+Most Skills use English. The [continuous-delivery](skills/continuous-delivery/SKILL.md), [decision-recording](skills/decision-recording/SKILL.md), [github-repo](skills/github-repo/SKILL.md), and [versioning](skills/versioning/SKILL.md) skills use Japanese. Follow the target repository's language conventions for produced artifacts.
 
 ## Maintainer references
 

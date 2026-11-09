@@ -1,16 +1,16 @@
 ---
 type: Instruction
-title: Lock GitHub Actions dependencies
-description: Adopt and maintain workflow dependency lockfiles, resolve coverage gaps, and prepare safe enforcement.
+title: GitHub Actionsの依存関係をロックする
+description: ワークフローの依存関係のロックファイルを導入・保守し、ロック対象の不足を解消して、安全に必須化するための準備を行う。
 ---
 
-## Scope and prerequisites
+## 対象範囲と前提条件
 
-When the target repository uses GitHub Actions, use `gh actions-lock` and commit `.github/workflows/actions.lock` [MUST]. The purpose is to reduce unexpected replacement of dependency Actions, including transitive dependencies. Locking does not prove that the selected dependency code is safe.
+対象リポジトリでGitHub Actionsを使う場合は、`gh actions-lock` を使用し、`.github/workflows/actions.lock` をコミットする [MUST]。推移的な依存関係を含め、依存するActionが予期せず差し替わるリスクを減らすためのルールである。ロックは、選択した依存先のコードが安全であることの証明にはならない。
 
-Use this procedure only within the requested scope. Diagnosis remains read-only; installation of this skill does not authorize dependency or setting changes. Report unavailable access, unsupported environments, and incomplete coverage through [Operations and judgments](operations.md); do not silently substitute SHA pinning or count an unmet requirement as conforming.
+この手順は依頼された範囲でのみ使う。診断は読み取りだけで行い、このスキルのインストールを依存関係や設定の変更への承認とは扱わない。アクセスできない対象、未対応の環境、ロック対象の不足は[操作と判定](operations.md)に従って報告する。説明なくSHA固定で代用せず、満たしていない要件を適合と判定しない。
 
-Install GitHub CLI, authenticate to the target host, and install the official extension before an authorized onboarding:
+承認済みの導入に着手する前に、GitHub CLIをインストールし、対象ホストで認証して、公式の拡張機能をインストールする。
 
 ```bash
 gh auth login
@@ -18,38 +18,38 @@ gh auth status
 gh extension install github/gh-actions-lock
 ```
 
-Reuse an existing authenticated session and extension. The extension supports github.com and GitHub Enterprise Cloud with data residency, but not GitHub Enterprise Server. For host-specific authentication, cross-host token handling, current options, or installation problems, consult the [extension usage guide](https://github.com/github/gh-actions-lock/blob/main/README.md). Never print credentials or obtain broader permissions merely to complete diagnosis.
+認証済みのセッションと導入済みの拡張機能があれば再利用する。この拡張機能はgithub.comとデータレジデンシー付きのGitHub Enterprise Cloudに対応し、GitHub Enterprise Serverには対応しない。ホスト別の認証、ホストをまたぐトークンの扱い、現在のオプション、インストール時の問題は[拡張機能の利用ガイド](https://github.com/github/gh-actions-lock/blob/main/README.md)で確認する。認証情報を出力しない。診断を完了させるためだけに権限を広げない。
 
-## Onboard and enforce
+## 導入と必須化
 
-1. Inspect every workflow and its Action dependencies, local composites, reusable-workflow calls, and container references. Review the intended versions and original upstream repositories before resolving them. Identify coverage gaps below and preserve the target's existing permissions, validation, and runtime behavior.
-2. Run `gh actions-lock` from the target repository checkout. It generates the lockfile and can narrow workflow version references, such as a major tag to a specific version. Do not edit generated lockfile entries manually.
-3. Review the complete diff: workflow references, locked commits, repository identities (`owner_id` and `repo_id`), and workflow coverage. Investigate unexpected identity or commit changes before accepting them; regenerating a lockfile is not a security review.
-4. Run `gh actions-lock --verify`. Resolve errors and assess warnings against the intended dependency versions. A locked floating reference may legitimately differ from the latest upstream commit; verification is not a requirement to adopt every upstream update.
-5. Deliver the reviewed workflows and lockfile together through [Approved file changes](operations.md#approved-file-changes). Complete the target's required review and CI, and confirm the merged files before activating dependent settings. Do not create a release or deployment merely to test adoption.
-6. Apply authorized enforcement through [Setting standards](settings.md). Confirm coverage for every targeted workflow and relevant branch or tag, including called reusable workflows. Keep the setting unapplied where preparation is incomplete, report the remaining work, and retrieve the effective setting after application.
+1. すべてのワークフローと、その依存Action、ローカルの複合Action、再利用可能なワークフローの呼び出し、コンテナーの参照を調べる。参照を解決する前に、使うバージョンと本来の上流リポジトリをレビューする。以下に示すロック対象の不足を特定し、導入先の既存の権限、検証、実行時の動作を維持する。
+2. チェックアウトした対象リポジトリで `gh actions-lock` を実行する。ロックファイルが生成され、メジャーバージョンのタグを特定のバージョンにするなど、ワークフロー内のバージョン参照がより限定されることがある。生成されたロックファイルのエントリは手作業で編集しない。
+3. ワークフローの参照、固定したコミット、リポジトリの識別情報（`owner_id` と `repo_id`）、対象ワークフローの網羅状況を含め、差分全体をレビューする。想定外の識別情報やコミットの変更は、受け入れる前に調査する。ロックファイルの再生成だけではセキュリティレビューにならない。
+4. `gh actions-lock --verify` を実行する。エラーを解消し、警告を意図した依存先のバージョンと照らして判断する。ロック済みの可変参照が上流の最新コミットと異なっていても、問題がない場合がある。検証は上流の更新をすべて取り込むことを要求するものではない。
+5. レビュー済みのワークフローとロックファイルを、[承認済みのファイル変更](operations.md#承認済みのファイル変更)に従って一緒に反映する。導入先で必須のレビューとCIを完了し、マージされたファイルを確認してから、それらに依存する設定を有効にする。導入の動作確認だけのためにリリースやデプロイを行わない。
+6. 承認されたポリシーの必須化を[設定基準](settings.md)に従って適用する。呼び出し先の再利用可能なワークフローも含め、対象の全ワークフローと関係するブランチ・タグにロック漏れがないか確認する。準備が不十分な範囲には設定を適用せず、残る作業を報告する。適用後は実際に有効な設定を取得する。
 
-Use an existing suitable CI check for `gh actions-lock --verify` when PR verification is requested or required by target policy. A separate workflow is not required. Keep any verifier's credentials minimal, and complete coverage for that workflow too.
+PRでの検証を依頼された場合や、導入先の方針で必要な場合は、既存の適切なCIチェックで `gh actions-lock --verify` を実行する。別のワークフローを作る必要はない。検証に使う認証情報の権限は最小限にし、そのワークフローについてもロック対象の不足を解消する。
 
-## Resolve coverage gaps
+## ロック対象の不足を解消する
 
-| Dependency or policy | Required handling |
+| 依存先またはポリシー | 必要な対応 |
 | --- | --- |
-| External reusable workflow (`jobs.<job_id>.uses`) | Pin the call to a full commit SHA. The caller's lockfile does not lock this call or the called workflow's dependencies; those dependencies require the source repository's own lockfile. An active Require lockfile policy can block the caller when the called workflow is not onboarded. |
-| Local Action (`./...`) | It runs from the checked-out workspace and is not followed or locked by the extension. Retaining it with `--ignore-local-actions` is appropriate only when workspace semantics are intentional and it invokes no uncovered Action dependency. Each lockable external Action it invokes needs an entry for the same workflow; another workflow's entries do not suffice. The flag does not create missing pins. Preserve and report unresolved references instead of concealing a gap. |
-| Same-repository Action (`$/...`) | It runs from the workflow's own commit and allows its Action dependencies to be locked. `--migrate-local-actions` changes `./...` to `$/...`; these forms are not interchangeable when checkout selects different code. Migrate only after establishing the intended behavior. Otherwise preserve the reference, report the gap, and hold affected enforcement. |
-| Container image | Images are outside lockfile coverage. Inspect `docker://` Actions, job containers, and service images separately; use an immutable `@sha256:` digest for images that must be pinned. |
-| Workflow without `uses:` | Require lockfile still requires the targeted workflow to be onboarded. Check its workflow entry rather than assuming that having no Action dependencies exempts it. |
-| Native full-SHA policy | A workflow onboarded to a lockfile satisfies Require actions to be pinned to a full-length commit SHA. Keep stronger existing policy; do not rewrite every covered Action reference to a SHA merely to satisfy it. External reusable-workflow calls still need separate SHA pinning. |
-| Allowed Actions policy | Onboarded workflows are checked against locked SHAs rather than tags. Inspect the existing allowlist before rollout: a tag-only allowance may no longer match. Propose an approved exact-SHA or suitable wildcard entry without silently broadening access or bypassing inherited policy. |
+| 外部の再利用可能なワークフロー（`jobs.<job_id>.uses`） | 呼び出し先を完全長のコミットSHAに固定する。呼び出し元のロックファイルは、呼び出し自体も、呼び出し先ワークフローの依存関係も固定しない。呼び出し先の依存関係には、そのソースリポジトリ自身のロックファイルが必要となる。呼び出し先ワークフローにロックを導入していない場合、有効なRequire lockfileポリシーによって呼び出し元がブロックされることがある。 |
+| ローカルAction（`./...`） | チェックアウト済みのワークスペースから実行され、拡張機能による追跡・ロックの対象外となる。ワークスペースのコードを使う意図があり、呼び出す依存Actionにロック漏れがない場合に限り、`--ignore-local-actions` でこの参照を残すことが適切となる。呼び出す外部Actionのうちロック可能なものは、それぞれ同じワークフロー用のエントリを必要とする。別のワークフローのエントリでは足りない。このフラグは不足する固定情報を作成しない。未解決の参照は保持して報告し、不足を隠さない。 |
+| 同一リポジトリのAction（`$/...`） | ワークフロー自身のコミットから実行され、依存するActionをロックできる。`--migrate-local-actions` は `./...` を `$/...` に変更する。checkoutが別のコードを選択する場合、この二つは置き換えられない。意図する動作を確認してから移行する。それ以外の場合は参照を維持し、不足を報告して、影響する範囲の必須化を保留する。 |
+| コンテナーイメージ | イメージはロックファイルの対象外となる。`docker://` のAction、ジョブのコンテナー、サービスのイメージを別途調べ、固定が必要なイメージには不変の `@sha256:` ダイジェストを使う。 |
+| `uses:` のないワークフロー | Require lockfileは、このような対象ワークフローにもロックの導入を要求する。依存Actionがないという理由で対象外と判断せず、そのワークフローのエントリを確認する。 |
+| GitHubの完全長SHA固定ポリシー | ロックファイルを導入したワークフローは、Require actions to be pinned to a full-length commit SHAを満たす。既存のより強いポリシーを維持し、この設定を満たすためだけに、ロック済みのAction参照をすべてSHAに書き換えない。外部の再利用可能なワークフローの呼び出しは、別途SHAに固定する必要がある。 |
+| 許可するActionのポリシー | 導入済みのワークフローは、タグではなくロックされたSHAで許可リストと照合される。タグだけを許可する項目は一致しなくなる場合があるため、展開前に既存の許可リストを確認する。承認済みのSHA完全一致、または適切なワイルドカードの許可項目を提案する。説明なくアクセス範囲を広げたり、継承したポリシーを回避したりしない。 |
 
-For an uncovered dependency or a changed tool behavior, use the [official onboarding procedure](https://docs.github.com/en/actions/how-tos/secure-your-work/lock-workflow-dependencies) to choose a supported resolution before enforcing the policy.
+ロック対象外の依存関係やツールの動作変更がある場合は、[公式の導入手順](https://docs.github.com/en/actions/how-tos/secure-your-work/lock-workflow-dependencies)を参照し、対応している解決方法を選んでからポリシーを必須化する。
 
-## Maintain the lockfile
+## ロックファイルを保守する
 
-- Run `gh actions-lock` after adding or removing workflows or changing Action dependencies, including dependencies inside composites. Review and commit the generated changes with the source changes. A full-directory run also removes entries for deleted workflows; a scoped run does not clean up other workflows.
-- Use Dependabot's `github-actions` updates when enabled by target policy. It updates matching lockfile entries for already onboarded workflows; it does not onboard a new workflow. Review dependency changes even when generated by Dependabot.
-- Use `gh actions-lock --relock` only after reviewing why a branch or tag moved and deciding to advance its pin. Ordinary runs retain locked floating references. A moved full-version tag or unreachable recorded commit requires investigation, not blind regeneration.
-- Never use `--accept-moved` in automation. Consider it only after investigating the upstream history and confirming that acceptance is within the approved dependency change. Review lockfile diffs for unintended downgrades, which a still-reachable floating-reference commit may not expose automatically.
-- Distinguish `--verify` from `--verify-local`: the former checks online provenance and consistency; the latter checks offline coverage only. Do not describe the local check as equivalent protection.
-- Keep PR verification and runtime enforcement distinct. The runner uses locked commits for onboarded workflows; Require lockfile also prevents targeted workflows from escaping adoption. Consult the [enforcement procedure](https://docs.github.com/en/actions/how-tos/administer/enforce-workflow-lockfiles) when targeting or policy behavior is unclear.
+- ワークフローの追加・削除や、複合Action内を含むActionの依存関係の変更後に `gh actions-lock` を実行する。生成された変更をレビューし、元ファイルの変更と一緒にコミットする。ディレクトリ全体を対象にした実行では、削除済みワークフローのエントリも削除される。対象を限定した実行では、ほかのワークフローのエントリは整理されない。
+- 導入先の方針で有効になっている場合は、Dependabotの `github-actions` 更新を使う。導入済みワークフローの対応するロックファイルのエントリは更新されるが、新しいワークフローにロックを導入することはない。Dependabotが生成した依存関係の変更もレビューする。
+- ブランチやタグが移動した理由をレビューし、固定先を更新すると決めた後に限り、`gh actions-lock --relock` を使う。通常の実行では、可変参照のロックは維持される。完全なバージョンを示すタグが移動した場合や、記録されたコミットに到達できない場合は、再生成する前に原因を調査する。
+- 自動処理で `--accept-moved` を使わない。上流の履歴を調べ、受け入れる変更が承認済みの依存関係の変更範囲に収まることを確認してから、このオプションの使用を検討する。可変参照で固定したコミットに引き続き到達できる場合、意図しないダウングレードが自動では判明しないことがある。ロックファイルの差分をレビューして確かめる。
+- `--verify` と `--verify-local` を区別する。前者はオンラインで出所と整合性を検証し、後者はオフラインで対象の網羅状況だけを確認する。ローカルでの確認が同等の保護を提供すると説明しない。
+- PRでの検証と実行時の強制を区別する。ランナーは導入済みワークフローで固定済みのコミットを使う。Require lockfileは、対象ワークフローがロック未導入のまま実行されることも防ぐ。対象の指定方法やポリシーの動作が不明な場合は、[必須化の手順](https://docs.github.com/en/actions/how-tos/administer/enforce-workflow-lockfiles)で確認する。

@@ -1,54 +1,54 @@
 ---
 name: github-repo
-description: Recommend, audit, and configure a GitHub.com repository's Settings and repository-operation files. Use for immutable releases, branch rules, Actions permissions and lockfiles, security features, Dependabot, CODEOWNERS, and Issue/PR templates. Do not use for ordinary Issue/PR administration or complete product-pipeline design.
+description: GitHub.comリポジトリのSettingsと運用ファイルについて、推奨設定の案内、診断、設定を行う。イミュータブルリリース、ブランチルール、Actionsの権限とロックファイル、セキュリティ機能、Dependabot、CODEOWNERS、Issue・PRテンプレートを扱うときに使う。通常のIssue・PR管理や、製品のパイプライン全体の設計には使わない。
 ---
 
-# Configure GitHub repository settings and files
+# GitHubリポジトリの設定とファイルを整備する
 
-Compare the target repository with the recommended practices, explain applicable differences, and implement the requested changes. Work on one specified GitHub.com repository. Repository paths refer to that target; bundled links refer to this skill's own directory.
+対象リポジトリを推奨プラクティスと比較し、適用対象の差分を説明して、依頼された変更を実施する。指定された一つのGitHub.comリポジトリを対象にする。リポジトリ内のパスは対象リポジトリを指し、同梱資料へのリンクはこのスキルのディレクトリを基準にする。
 
-Cover repository Settings and configuration or contribution files normally placed under `.github`. Respect equivalent existing files in other supported locations. Include workflow changes needed for these practices, without expanding the request into product-specific build, test, release, or deployment design.
+リポジトリのSettingsと、通常は `.github` に置く設定ファイルや貢献者向けのファイルを扱う。他の対応済みの場所に同等のファイルがある場合は尊重する。これらのプラクティスに必要なワークフローの変更も含めるが、依頼を製品固有のビルド、テスト、リリース、デプロイの設計まで広げない。
 
-## Requirements and prerequisites
+## 要件と前提条件
 
-- **MUST** is required for an applicable adopted practice. **SHOULD** is recommended unless the target has a justified reason to differ. These are this skill's adoption rules, not universal GitHub requirements. Report policy conflicts and exceptions; do not override the user's scope or stronger protection.
-- Determine applicability from the repository's actual features, plan, ownership, and workflow paths. An unavailable feature or unmet prerequisite is not conformance. State the reason and continue independent work.
-- Use an authenticated GitHub integration, GitHub CLI, or supported UI with the permissions needed for the operation. Use Git and the target's delivery tools for file changes. Actions locking additionally needs GitHub CLI and `github/gh-actions-lock`, as described in the bundled guide.
-- Keep the bundled references and assets with this file. Installation makes the guidance available; it does not adopt templates, modify Settings, or authorize writes.
+- **MUST** は適用対象として採用したプラクティスで必須とする。**SHOULD** は対象リポジトリに異なる設定を使う妥当な理由がない限り推奨する。これらはこのスキルの採用基準であり、GitHub全体の必須要件ではない。方針の衝突や例外を報告し、ユーザーが指定した範囲や、より強い既存の保護を上書きしない。
+- リポジトリで実際に使う機能、プラン、所有形態、ワークフローの実行経路から適用対象を判断する。利用できない機能や満たしていない前提条件を適合とは扱わない。理由を示し、それらに依存せず進められる作業を続ける。
+- 操作に必要な権限を持つ、認証済みのGitHub連携、GitHub CLI、または対応するUIを使う。ファイルの変更にはGitと対象リポジトリの変更を届けるためのツールを使う。Actionsのロックには、同梱ガイドに従ってGitHub CLIと `github/gh-actions-lock` も用意する。
+- 同梱の参照資料とテンプレート類を、このファイルと一緒に保持する。インストールは手順を利用できるようにするもので、テンプレートの採用、Settingsの変更、書き込みの承認を意味しない。
 
-## Entry and responsibilities
+## 依頼内容と担当範囲
 
-Check the complete target `owner/repo`, requested deliverable, execution approval, and target repository policy. A diagnosis request does not approve file or setting changes. Do not impose these standards on external reviewers as another repository's review policy; present differences and options for policy conflicts.
+対象の完全な `owner/repo`、求められる成果物、実行承認、対象リポジトリの方針を確認する。診断の依頼はファイルや設定の変更を承認するものではない。この基準を他のリポジトリのレビュー方針として外部レビュアーに課さない。方針が衝突する場合は、差分と選択肢を示す。
 
-| Requested deliverable | Path and endpoint |
+| 求められる成果物 | 進め方と終了条件 |
 | --- | --- |
-| Answer with diagnosis, comparison, or improvement proposals | Read only, report evidence, judgments, and uncertainties, then stop. Do not start Issue posting or setting changes |
-| Issue record of a plan or diagnosis only | [Record the plan](references/operations.md#record-plans), retrieve it, check agreement and display, present the body and URL, then stop. Settings remain unapplied |
-| Save a diagnosis document | Save the requested report in the target's format and language. Deliver Git-managed documents through [Approved file changes](references/operations.md#approved-file-changes), without applying settings |
-| Add or refine repository files | Use [Approved file changes](references/operations.md#approved-file-changes), preserving existing content and target delivery requirements. File adoption does not authorize unrelated Settings changes |
-| Apply or correct settings and files | Retain approval in the plan, complete prerequisite [file changes](references/operations.md#approved-file-changes), then use [Application procedure](references/operations.md#apply-approved-settings) through applying differences and diagnosing again. Do not stop at plan presentation |
+| 診断、比較、改善提案への回答 | 読み取りだけで調査し、根拠、判定、不確かな点を報告して終了する。Issueの投稿や設定変更を始めない |
+| 計画や診断をIssueに記録するだけの依頼 | [計画を記録](references/operations.md#計画の記録)し、取得し直して内容の一致と表示を確認する。本文とURLを提示して終了する。設定は適用しない |
+| 診断文書の保存 | 対象の形式と言語で依頼された報告書を保存する。Gitで管理する文書は[承認済みのファイル変更](references/operations.md#承認済みのファイル変更)の手順で届け、設定は適用しない |
+| リポジトリファイルの追加・改善 | [承認済みのファイル変更](references/operations.md#承認済みのファイル変更)に従い、既存の内容と対象リポジトリの変更手順の要件を保つ。ファイルの導入は、無関係なSettingsの変更を承認するものではない |
+| 設定とファイルの適用・修正 | 承認を計画に記録し、前提となる[ファイル変更](references/operations.md#承認済みのファイル変更)を完了する。その後、[設定の適用手順](references/operations.md#承認済みの設定の適用)に従って差分を適用し、再診断する。計画の提示だけで終了しない |
 
-Do not create empty commits or PRs for settings-only changes. Deliver prerequisite workflows, documents, or implementation files through the approved file-change path before enforcing dependent settings. If required access or operations are unavailable, hold the affected operation and state incomplete scope while continuing possible reading. Do not obtain existing execution approval or verified plans again.
+設定だけの変更では、空のコミットやPRを作らない。前提となるワークフロー、文書、実装ファイルを承認済みのファイル変更手順で届けてから、それらに依存する設定を強制する。必要なアクセスや操作手段がない場合は、該当操作を保留し、未完了の範囲を示して、可能な読み取りを続ける。取得済みの実行承認や確認済みの計画を、改めて求めない。
 
-## Material to read at each stage
+## 段階ごとの参照資料
 
-For diagnosis, first read the reading/reporting parts of [Operations and judgments](references/operations.md). Add only target items, without always loading all unrelated material.
+診断では、まず[操作と判定](references/operations.md)の調査・報告に関する部分を読む。その後は対象項目の資料だけを追加し、無関係な資料まで毎回すべて読み込まない。
 
-| Condition | Reference material |
+| 条件 | 参照資料 |
 | --- | --- |
-| Narrow PR-title/body merge-message alignment diagnosis or authorized application | [PR and merge message alignment](references/settings.md#pr-and-merge-message-alignment); do not expand to unrelated standards |
-| Releases, merges, branch protection, required checks, Actions policy | [Setting standards](references/settings.md) |
-| Free security features, availability, billing, prerequisites | [Security](references/security.md) |
-| Dependabot, CODEOWNERS, Issue/PR templates, security-reporting policy | [Repository files and bundled templates](references/repository-files.md) |
-| Introducing or maintaining Actions dependency lockfiles | [Actions locking](references/actions-lock.md) |
-| Retrieving settings, applying differences, failures, conflicts, reruns, result verification | [Operations and judgments](references/operations.md) |
+| PRのタイトル・本文とマージメッセージの一致だけを診断、または承認済みの範囲で設定する | [PRとマージコミットのメッセージを揃える](references/settings.md#prとマージコミットのメッセージを揃える)。無関係な基準まで広げない |
+| リリース、マージ、ブランチ保護、必須チェック、Actionsのポリシー | [設定基準](references/settings.md) |
+| 無料のセキュリティ機能、利用可否、課金、前提条件 | [セキュリティ](references/security.md) |
+| Dependabot、CODEOWNERS、Issue・PRテンプレート、脆弱性の報告方針 | [リポジトリファイルと同梱テンプレート](references/repository-files.md) |
+| Actionsの依存関係ロックファイルの導入・保守 | [Actionsのロック](references/actions-lock.md) |
+| 設定の取得、差分の適用、失敗、競合、再実行、結果の確認 | [操作と判定](references/operations.md) |
 
-For version-dependent judgments, recheck current official specifications for APIs, feature availability, free-use conditions, permissions, and UI names. Record observations in the target diagnosis; historical checks do not establish current applicability.
+バージョンに依存する判断では、API、機能の利用可否、無料で使える条件、権限、UIの名称について、現在の公式仕様を確認し直す。確認結果は対象の診断に記録する。過去に確認したことだけでは、現在も適用できる根拠にならない。
 
-## Common boundaries
+## 共通の制約
 
-- Investigate public/private visibility, personal/Organization ownership, default branch, permissions, and higher-level policies. Do not replace inaccessible, missing, or unsupported fields with “disabled” or “conforming.”
-- Preserve stronger existing protection, required checks, approval requirements, and equivalent configuration. Do not hard-code branch names, Ruleset IDs, check names, package ecosystems, owners, or reporting contacts for installation destinations.
-- Organization-, Enterprise-, or account-wide changes, visibility changes, permission escalation, and starting paid subscriptions or trials are out of scope. Hold operations where costs are unverified.
-- Do not include unrelated improvements, bulk vulnerability fixes, dismissing alerts, or automatic merging of fix PRs. Enabling free features and making them merge requirements are separate decisions.
-- Preserve evidence before and after application, and judge through retrieval and necessary behavior checks. Distinguish successful, incomplete, inapplicable, and approved exceptions; API success alone is not completion.
+- 公開・非公開、個人・Organizationの所有形態、デフォルトブランチ、権限、上位のポリシーを調べる。取得できない項目、欠落した項目、未対応の項目を「無効」や「適合」に置き換えない。
+- より強い既存の保護、必須チェック、承認要件、同等の設定を保つ。導入先のブランチ名、RulesetのID、チェック名、パッケージエコシステム、担当者、報告先を固定値で埋め込まない。
+- Organization、Enterprise、アカウント全体の変更、公開範囲の変更、権限の拡大、有料契約や試用の開始は対象外とする。費用が未確認の操作は保留する。
+- 無関係な改善、脆弱性の一括修正、アラートの却下、修正PRの自動マージを含めない。無料機能の有効化と、その機能をマージ要件にすることは別々に判断する。
+- 適用前後の根拠を残し、取得し直した結果と必要な振る舞いの確認に基づいて判定する。成功、未完了、対象外、承認済みの例外を区別する。APIの成功応答だけでは完了としない。
