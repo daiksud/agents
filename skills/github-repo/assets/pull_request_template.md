@@ -1,25 +1,25 @@
 <!--
-Follow the repository's title convention and artifact language.
-Keep the final title and body suitable for preservation in the merge commit.
-Explain the problem and reasoning here; links supplement the record.
-Remove all HTML comments, including these instructions, before submitting.
+リポジトリのタイトル規約と成果物の言語に従う。
+最終タイトルと本文は、マージ時のコミットにそのまま残せる内容にする。
+問題と判断理由は本文に書き、リンクは記録の補足に使う。
+提出前に、この案内を含むすべてのHTMLコメントを削除する。
 -->
 
-## Summary
+## 概要
 
-<!-- Describe the problem, actual changes, and resulting behavior. -->
+<!-- 問題、実際の変更、変更後の振る舞いを説明する。 -->
 
-## Decisions
+## 判断事項
 
 <!--
-Explain relevant facts, constraints, alternatives actually considered, and trade-offs.
-Remove this section when Summary is sufficient or no separate decision needs recording.
+関係する事実、制約、実際に比較した案、トレードオフを説明する。
+概要だけで十分な場合や、別に記録する判断がない場合は、この節を削除する。
 -->
 
-## Validation
+## 検証
 
 <!--
-Record the scope and results of checks actually performed, including failures and gaps.
-Use Not run for checks not performed; do not present planned checks as completed.
-Discretionary validation may be omitted; required CI and agreed acceptance conditions remain required.
+実施した検証の範囲と結果を、失敗や未確認の点も含めて記録する。
+未実施の検証は Not run と記載する。予定している検証を完了扱いにしない。
+任意の検証は省略してよい。必須CIと合意済みの受入条件は引き続き満たす。
 -->

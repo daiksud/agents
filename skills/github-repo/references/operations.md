@@ -1,72 +1,74 @@
 ---
 type: Instruction
-title: Repository settings and file operations
-description: Proceed from read-only diagnosis through approved differences and revalidation while preserving permission and failure boundaries.
+title: リポジトリの設定とファイルの操作
+description: 権限や失敗時の制約を守り、読み取り専用の診断から、承認済みの差分の適用と再検証まで進める。
 ---
 
-## Read-only diagnosis
+## 読み取り専用の診断
 
-1. Match user-specified GitHub.com `owner/repo` with retrieved repository ID, full name, and URL. Do not resolve omissions/ambiguity by operating on another repository. Replace subsequent endpoint `{owner}`, `{repo}`, and `{ruleset_id}` with confirmed values.
-2. Check requested deliverables/approval scope. Diagnosis uses only GET/UI reading, without Issue posts, test pushes, workflow starts, or setting changes.
-3. Investigate target instructions, visibility, ownership, default branch, permissions, and upper-level policies. Metadata alone does not prove administrative authority.
-4. Select applicable MUST/SHOULD rules from [Setting standards](settings.md), [Security](security.md), [Repository files](repository-files.md), and [Actions locking](actions-lock.md). Do not add unrelated items to a limited diagnosis; comprehensive diagnosis covers both Settings and repository files.
-5. Check all API pages, needed detail, files, and UI, recording retrieval time, evidence URLs, and targets. Separate file declarations from effective GitHub settings, and enabled settings from successful execution. Inspect existing file locations and inherited community defaults before proposing duplicates.
+1. ユーザーが指定したGitHub.comの `owner/repo` を、取得したリポジトリのID、完全名、URLと照合する。指定の不足や曖昧さを、別のリポジトリを操作して解消しない。以降のエンドポイントの `{owner}`、`{repo}`、`{ruleset_id}` は確認済みの値に置き換える。
+2. 求められる成果物と承認の範囲を確認する。診断ではGETとUIの読み取りだけを使い、Issueの投稿、試験用のpush、ワークフローの起動、設定変更はしない。
+3. 対象の指示、公開範囲、所有形態、デフォルトブランチ、権限、上位のポリシーを調べる。メタデータだけでは管理権限の証明にならない。
+4. [設定基準](settings.md)、[セキュリティ](security.md)、[リポジトリファイル](repository-files.md)、[Actionsのロック](actions-lock.md)から、適用対象のMUST／SHOULDを選ぶ。範囲を限定した診断に無関係な項目を足さない。全体の診断ではSettingsとリポジトリファイルの両方を調べる。
+5. APIの全ページ、必要な詳細、ファイル、UIを確認し、取得時刻、根拠のURL、対象を記録する。ファイルに書かれた設定とGitHubで実際に有効な設定、有効化された設定と実行の成功を区別する。重複するファイルを提案する前に、既存ファイルの配置と継承されるコミュニティ健全性ファイルの既定値を調べる。
 
-Choose GitHub integrations, `gh api`, or official UI explicitly supporting necessary operations in the environment. GET-only integrations are not update APIs; do not claim unavailable admin APIs/CLIs executed. Check official authentication, API versions, and required parameters; use minimal existing permissions. Do not expose credentials in bodies/logs or bypass authentication/additional permissions.
+環境内で必要な操作に対応すると明示されているGitHub連携、`gh api`、公式UIを選ぶ。GET専用の連携を更新APIとして扱わず、利用できない管理APIやCLIを実行したと報告しない。公式の認証方法、APIバージョン、必須パラメーターを確認し、既存の最小限の権限を使う。認証情報を本文やログに出したり、認証や追加の権限要件を回避したりしない。
 
-For official/UI/API disagreements, preserve confirmed scope and differences without inventing missing specifications or endpoints. Hold affected operations when costs, permissions, or destructive effects remain unverified, even within existing execution approval.
+公式仕様、UI、APIが食い違う場合は、確認できた範囲と差分を残し、不明な仕様やエンドポイントを作り上げない。実行承認を得ていても、費用、権限、破壊的な影響が未確認の操作は保留する。
 
-## Judgment and reporting
+## 判定と報告
 
-For each item record its MUST/SHOULD level, applicability, expected/current values, evidence, judgment, proposal, effects, and rechecking. Report unmet prerequisites separately from an unsupported feature. No large custom score or dedicated format is required.
+項目ごとにMUST／SHOULDの強度、適用条件、期待値と現在値、根拠、判定、提案、影響、再確認の方法を記録する。満たしていない前提条件と、未対応の機能は分けて報告する。大がかりな独自スコアや専用の形式は要求しない。
 
-| Judgment | Meaning |
+| 判定 | 意味 |
 | --- | --- |
-| Conforming | Confirmed effective settings meet expectations |
-| Needs change | Confirmed evidence-based differences |
-| Inapplicable | Confirmed reasons such as no target language |
-| Unavailable | Confirmed reasons such as outside free scope or unsupported plans |
-| Unverified | Permissions, retrieval failures, unknown costs, or similar gaps prevent judgment |
-| Approved exception | Difference from standards with target, reason, approver, and approval evidence recorded |
+| 適合 | 実際に有効な設定が期待値を満たしていることを確認済み |
+| 要変更 | 根拠のある差分を確認済み |
+| 対象外 | 対象の言語を使っていないなど、適用しない理由を確認済み |
+| 利用不可 | 無料範囲外やプラン非対応など、利用できない理由を確認済み |
+| 未確認 | 権限不足、取得失敗、費用不明などにより判定できない |
+| 承認済みの例外 | 基準との差分について、対象、理由、承認者、承認の根拠を記録済み |
 
-Do not uniformly interpret 403/404, absent fields, or null as disabled. Even where disabled settings return 404, first independently establish target existence/permissions; remain unverified until permission deficiencies and similar alternatives are excluded. Do not replace unreturned bypass lists with empty arrays.
+403／404、項目の欠落、nullを一律に無効と解釈しない。無効な設定が404を返す場合でも、先に対象の存在と権限を別途確認する。権限不足などの別の原因を除外できるまでは未確認とする。取得されなかったバイパス一覧を空配列に置き換えない。
 
-Do not count exceptions, inapplicable, or unverified items as conforming. Separate completed diagnosis presentation from realization of all standards. Saving Issues/documents and execution approval are separate; stop by [Skill deliverable paths](../SKILL.md).
+例外、対象外、未確認の項目を適合に数えない。診断結果の提示が完了したことと、すべての基準を満たしたことを区別する。Issueや文書の保存と実行承認は別であり、[スキルの成果物別の進め方](../SKILL.md)に従って終了する。
 
-## Record plans
+## 計画の記録
 
-Search existing Issues before saving a plan. Record the target repository, requested outcome, observed differences, success conditions, scope, order, permissions/costs, validation, and execution approval. Reuse verified plans and retain prior reasons and requester attribution. Assign new Issues to the confirmed requester and choose existing labels by their meaning.
+計画を保存する前に既存のIssueを検索する。対象リポジトリ、求められる成果、確認した差分、成功条件、範囲、順序、権限・費用、検証、実行承認を記録する。確認済みの計画を再利用し、過去の理由と依頼者の情報を保つ。新しいIssueは確認済みの依頼者に割り当て、意味に合う既存のラベルを選ぶ。
 
-Follow the target's Issue template and language; use concise English Conventional Commits titles. Keep the purpose and decision evidence understandable in the body without following links. Distinguish planned checks from actual results, preserve existing content when updating, and keep private evidence within its approved publication scope.
+対象のIssueテンプレートと言語に従い、タイトルは簡潔な英語のConventional Commits形式にする。リンクを開かなくても、本文から目的と判断の根拠が分かるようにする。予定している検証と実際の結果を区別し、更新時は既存の内容を保つ。非公開の根拠は、公開が承認された範囲でだけ扱う。
 
-Save complete drafts to Markdown files and use the target's formatting requirements and available checks. Do not require tools or configuration from the skill's distribution repository. Do not add YAML frontmatter to GitHub bodies or replace target configuration. Publish through a supported API or body-file option, retrieve the saved content, compare it with the draft, and check the used Markdown structures. API HTML inspection is not visual screen inspection. Report the saved body and URL; failed saving or unverified retrieval remains incomplete.
+完全な下書きをMarkdownファイルに保存し、対象の書式要件と利用できる検査を使う。このスキルの配布元リポジトリにあるツールや設定を要求しない。GitHubの本文にYAML frontmatterを付けず、対象の設定を置き換えない。対応するAPIまたは本文ファイルを指定するオプションで投稿し、保存された内容を取得して下書きと比較する。使ったMarkdown構造の表示も確認する。APIでHTMLを調べたことを、画面を目視で確認したことと同一視しない。保存した本文とURLを報告する。保存に失敗した場合や、保存後の取得を確認できない場合は未完了とする。
 
-An Issue or plan alone does not authorize execution. A clear change request retains approval through saving and verification. Continue procedure or file adjustments within the same purpose and success conditions; confirm changes to purpose, acceptance conditions, external impact, permissions, or costs before the affected operation.
+Issueや計画があるだけでは、実行の承認にならない。明確な変更依頼による承認は、保存と検証を経ても引き継ぐ。同じ目的と成功条件の範囲で、手順やファイルの調整を続ける。目的、受入条件、外部への影響、権限、費用を変える場合は、該当操作の前に確認する。
 
-## Approved file changes
+## 承認済みのファイル変更
 
-After the supporting plan is saved and verified, protect existing work and prepare a task branch before editing. Follow the target's document formats, implementation contracts, and validation requirements. Record actual results or `Not run` for discretionary checks; never present unexecuted checks as successful.
+変更の根拠となる計画を保存・確認した後、既存の作業を保護し、編集前に作業ブランチを用意する。対象の文書形式、実装上の契約、検証要件に従う。任意の検証は実際の結果、または `Not run` を記録し、未実行の検証を成功したと報告しない。
 
-Adapt bundled templates instead of copying target-specific assumptions. Preserve existing supported files, labels, owners, update cadence, and policy decisions. Validate YAML or CODEOWNERS syntax and intended effects using the target's tools. Files must reach the branch GitHub actually reads: typically the default branch for Dependabot/templates and the PR base branch for CODEOWNERS. File existence on a task branch alone does not complete adoption.
+同梱テンプレートは導入先に合わせて調整し、特定のリポジトリを前提にした内容をそのままコピーしない。既存の対応済みのファイル、ラベル、担当者、更新頻度、方針の判断を保つ。対象のツールでYAMLやCODEOWNERSの構文と、意図した効果を確認する。GitHubが実際に参照するブランチまでファイルを届ける。通常、Dependabotとテンプレートはデフォルトブランチ、CODEOWNERSはPRのbaseブランチが参照される。作業ブランチにファイルがあるだけでは導入完了としない。
 
-Deliver approved file changes through commits, a draft PR, required CI and conflict resolution, ordinary review of the current HEAD, and fixes with renewed checks/review when HEAD changes. Preserve target review and approval requirements. Before merging, confirm current-head review, passing required CI, resolved findings, no conflicts, and a healthy integration branch. Merge by a permitted squash or merge-commit method without bypassing protections; preserve the final PR title/body verbatim in the resulting commit. Verify required checks on the actual integrated SHA, synchronize, and clean up the task branch. Prioritize recovery if integration checks fail; PR-side success is not completion. Honor explicit stop conditions and do not release or deploy without authorization.
+承認済みのファイル変更はコミット、Draft PR、必須CIと競合解消、現在のHEADに対する通常のレビューを経て届ける。修正でHEADが変わった場合は、チェックとレビューをやり直す。対象のレビュー・承認要件を保つ。マージ前に、現在のHEADへのレビュー、必須CIの成功、指摘の解消、競合がないこと、統合先ブランチが正常であることを確認する。保護を回避せず、許可されたスカッシュマージまたはマージコミットを使い、最終PRタイトル・本文を作成されるコミットにそのまま残す。
 
-## Apply approved settings
+実際に統合されたSHAの必須チェックを確認し、同期と作業ブランチの片付けを行う。統合後のチェックが失敗した場合は復旧を優先し、PR側の成功だけでは完了としない。明示された終了条件を守り、承認なしにリリースやデプロイをしない。
 
-1. [Record and verify the plan](#record-plans), including differences, permissions, costs, effects, validation, and approval. Inherit confirmed plans/approval without asking again. Hold affected operations until target-policy conflicts, added permissions/costs, or scope changes are resolved.
-2. Minimally preserve readable settings as before-state evidence. Retrieve immediately before writes; reassess unexpected differences/other changes. Do not assume atomic comparisons/bulk updates.
-3. Complete prerequisites first. For lockfiles, Action pinning, CODEOWNERS, release procedures, existing CI consistency, or other file changes, follow [Approved file changes](#approved-file-changes) through PR/review/CI/target-branch verification. Hold enforcement where execution-path effects remain unverified.
-4. Apply settings-only changes here without empty branches/commits/PRs; record differences/results in plans. Do not call everything settings changes to bypass necessary file-change PRs.
-5. Apply minimal differences from [Item procedures](settings.md) or [Feature procedures](security.md). Do not mix unrelated defaults into PATCH; for PUT check writable required fields and existing content to preserve. Do not PUT entire GET responses.
-6. Retrieve each setting and compare necessary behavior/analysis/workflow results to target SHAs/run URLs. Verify asynchronous completion, not acceptance alone. Do not perform unrequested release, deployment, or destructive trials merely to confirm enablement.
-7. Diagnose again, showing before/after, confirmed effects, remaining mandatory items, exceptions/evidence. Do not claim all applied if items remain incomplete.
+## 承認済みの設定の適用
 
-Free features still require separate Actions/execution-cost checks. Do not bypass Organization/Enterprise enforcement from repositories; inherited conformance needs no change, while conflicts/gaps require reasons/admin actions. Do not achieve application through new bypasses or weaker protection.
+1. 差分、権限、費用、影響、検証、承認を含めて[計画を記録・確認](#計画の記録)する。確認済みの計画と承認を引き継ぎ、再度求めない。対象の方針との衝突、追加の権限・費用、範囲の変更が解決するまで、該当操作を保留する。
+2. 読み取れる設定を、変更前の根拠として必要な範囲で保存する。書き込みの直前にも取得し、想定外の差分や他の変更があれば再評価する。比較や一括更新がアトミックに行われるとは仮定しない。
+3. 前提条件を先に満たす。ロックファイル、Actionの固定、CODEOWNERS、リリース手順、既存CIとの整合、その他のファイル変更は、[承認済みのファイル変更](#承認済みのファイル変更)に従い、PR、レビュー、CI、対象ブランチでの確認まで進める。実行経路への影響が未確認の箇所では、設定の強制を保留する。
+4. 設定だけの変更は、空のブランチ・コミット・PRを作らず、この手順で適用する。差分と結果は計画に記録する。必要なファイル変更のPRを省くために、すべてを設定変更と呼ばない。
+5. [項目ごとの手順](settings.md)または[機能ごとの手順](security.md)に従い、必要最小限の差分を適用する。PATCHに無関係な既定値を混ぜない。PUTでは、書き込み可能な必須項目と、保持する既存の内容を確認する。GET応答の全体をそのままPUTしない。
+6. 各設定を取得し直し、必要な振る舞い、解析結果、ワークフローの結果を、対象SHAや実行URLと照合する。非同期の処理は受付だけでなく完了を確認する。有効化を確認するだけの目的で、依頼されていないリリース、デプロイ、破壊的な試験を行わない。
+7. 再診断し、変更前後、確認できた効果、残る必須項目、例外と根拠を示す。未完了の項目がある場合は、すべて適用済みと報告しない。
 
-## Idempotency, conflicts, and partial failure
+無料機能でも、Actionsや実行にかかる費用は別途確認する。リポジトリ側からOrganizationやEnterpriseの強制ルールを回避しない。継承した設定で適合していれば変更は不要とし、衝突や不足がある場合は理由と管理者による対応を示す。新しいバイパスや保護の弱体化によって適用を実現しない。
 
-On reruns recreate differences from current settings without unnecessary writes to conforming items. Ruleset names alone do not establish identity; compare IDs, sources, targets, and effective rules. After creation timeouts retrieve saved state before resending, avoiding duplicate Rulesets.
+## 再実行、競合、部分的な失敗
 
-Separate succeeded, unstarted, failed application, and applied-but-unverified items. Independent approved work may proceed, without unexplained retries or blanket success claims. Recovery preserves others' updates/stronger protections; avoid mechanically restoring whole snapshots. Report irreversible effects even after reverting settings, such as published immutable-release constraints.
+再実行では現在の設定から差分を求め直し、適合している項目への不要な書き込みを避ける。Ruleset名だけで同一性を判断せず、ID、設定元、対象、実際に有効なルールを比較する。作成がタイムアウトした場合は、再送前に保存状態を取得し、Rulesetの重複を防ぐ。
 
-Without administrative operations, show target repository, permissions, official UI paths, expected values, and post-operation checks. Completed manual-operation requests do not prove changed settings; remain incomplete until retrieval is possible.
+成功、未着手、適用失敗、適用済みだが未確認の項目を分ける。他の失敗に依存しない承認済みの作業は進めてよいが、理由のない再試行や一括した成功の報告はしない。復旧では他者の更新とより強い保護を保ち、保存した設定全体を機械的に戻さない。公開済みのイミュータブルリリースの制約など、設定を戻しても元に戻せない影響を報告する。
+
+管理操作ができない場合は、対象リポジトリ、必要な権限、公式UIの場所、期待値、操作後の確認事項を示す。手動操作を依頼し終えたことだけでは、設定が変わった証拠にならない。取得して確認できるまでは未完了とする。

@@ -1,20 +1,20 @@
-name: Bug report
-description: Describe behavior that did not work as expected.
+name: バグ報告
+description: 期待どおりに動かなかった内容を記入してください。
 body:
   - type: textarea
     id: problem
     attributes:
-      label: What happened?
-      description: Describe the actual behavior and what you expected instead.
+      label: 何が起きましたか？
+      description: 実際の動作と期待していた動作を記入してください。
     validations:
       required: true
   - type: textarea
     id: reproduction
     attributes:
-      label: How can we reproduce it?
-      description: If known, include the steps or a small example.
+      label: どうすれば再現できますか？
+      description: 分かる場合は、手順や小さな例を記入してください。
   - type: textarea
     id: context
     attributes:
-      label: Additional context
-      description: If relevant, include the version, environment, and diagnostic output.
+      label: 補足情報
+      description: 関連する場合は、バージョン、環境、診断結果の出力を記入してください。

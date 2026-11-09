@@ -1,15 +1,15 @@
-name: Feature request
-description: Describe a problem to solve or an outcome to support.
+name: 機能提案
+description: 解決したい問題や実現したいことを記入してください。
 body:
   - type: textarea
     id: problem
     attributes:
-      label: What would you like to achieve?
-      description: Describe the problem and the desired outcome.
+      label: 実現したいことは何ですか？
+      description: 解決したい問題と望む結果を記入してください。
     validations:
       required: true
   - type: textarea
     id: context
     attributes:
-      label: Additional context or ideas
-      description: Optionally share examples, constraints, or a possible solution.
+      label: 補足情報やアイデア
+      description: 任意で、具体例、制約、解決案を記入してください。

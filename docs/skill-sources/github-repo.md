@@ -230,7 +230,7 @@ For official/UI/API disagreements preserve confirmed scope/differences without f
 
 ## Decision recording settings
 
-The [GitHub repository setting path](../../skills/github-repo/references/settings.md#pr-and-merge-message-alignment) locally defines the merge methods, message fields, and readback steps needed within the authorized settings scope. Related skill responsibilities are described in the [README](../../README.md#skills-and-github-protection-settings); github-repo's execution uses its own guidance.[^skill-independence] Consumer file changes retain ordinary PR, review, CI, and main-verification requirements.
+The [GitHub repository setting path](../../skills/github-repo/references/settings.md#prとマージコミットのメッセージを揃える) locally defines the merge methods, message fields, and readback steps needed within the authorized settings scope. Related skill responsibilities are described in the [README](../../README.md#skills-and-github-protection-settings); github-repo's execution uses its own guidance.[^skill-independence] Consumer file changes retain ordinary PR, review, CI, and main-verification requirements.
 
 The [GitHub repository API](https://docs.github.com/en/rest/repos/repos#update-a-repository) documents both sets of message fields. Installing guidance or copying assets does not apply live settings.
 
