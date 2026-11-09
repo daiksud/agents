@@ -33,6 +33,38 @@ sources:
     resource: https://github.com/daiksud/agents/issues/165
   - id: actions-settings
     resource: https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/enabling-features-for-your-repository/managing-github-actions-settings-for-a-repository
+  - id: standalone-scope
+    resource: https://github.com/daiksud/agents/issues/287
+  - id: workflow-lockfiles
+    resource: https://docs.github.com/en/actions/concepts/security/workflow-dependency-lockfiles
+  - id: locking-action-dependencies
+    resource: https://docs.github.com/en/actions/how-tos/secure-your-work/lock-workflow-dependencies
+  - id: actions-execution-policies
+    resource: https://docs.github.com/en/actions/how-tos/administer/control-workflow-execution
+  - id: actions-lock-cli
+    resource: https://github.com/github/gh-actions-lock
+  - id: dependabot-version-updates
+    resource: https://docs.github.com/en/code-security/how-tos/secure-your-supply-chain/secure-your-dependencies/configure-version-updates
+  - id: dependabot-options
+    resource: https://docs.github.com/en/code-security/reference/supply-chain-security/dependabot-options-reference
+  - id: issue-templates
+    resource: https://docs.github.com/en/communities/using-templates-to-encourage-useful-issues-and-pull-requests/configuring-issue-templates-for-your-repository
+  - id: issue-form-syntax
+    resource: https://docs.github.com/en/communities/using-templates-to-encourage-useful-issues-and-pull-requests/syntax-for-issue-forms
+  - id: pr-templates
+    resource: https://docs.github.com/en/communities/using-templates-to-encourage-useful-issues-and-pull-requests/creating-a-pull-request-template-for-your-repository
+  - id: security-policy
+    resource: https://docs.github.com/en/code-security/how-tos/report-and-fix-vulnerabilities/configure-vulnerability-reporting/add-security-policy
+  - id: branch-update-suggestions
+    resource: https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/configuring-pull-request-merges/managing-suggestions-to-update-pull-request-branches
+  - id: automatic-branch-deletion
+    resource: https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/configuring-pull-request-merges/managing-the-automatic-deletion-of-branches
+  - id: apm-install
+    resource: https://microsoft.github.io/apm/reference/cli/install/
+  - id: apm-virtual-packages
+    resource: https://microsoft.github.io/apm/consumer/install-packages/
+  - id: apm-skill-bundles
+    resource: https://microsoft.github.io/apm/producer/package-relative-links/
 ---
 
 ## Scope
@@ -43,7 +75,7 @@ Checking dates below are historical records retained from the original documents
 
 ## Source mapping
 
-The following mapping preserves the original source IDs and annotation scope for each runtime document and former source catalog.
+The following mapping preserves the original source IDs and annotation scope and records sources for the current bundled guidance.
 
 ### Repository setting operations and judgments
 
@@ -84,6 +116,47 @@ Runtime material: [settings.md](../../skills/github-repo/references/settings.md)
 | [^actions-settings] | Native SHA-setting scope and reusable-workflow limits. |
 | [^actions-permissions-api] | Actions permissions reads/updates and required parameters. |
 
+### Supporting repository configuration
+
+Runtime material: [repository-files.md](../../skills/github-repo/references/repository-files.md), the bundled [bug-report form](../../skills/github-repo/assets/issue-templates/bug_report.yml), [feature-request form](../../skills/github-repo/assets/issue-templates/feature_request.yml), [template chooser configuration](../../skills/github-repo/assets/issue-templates/config.yml), and [PR template](../../skills/github-repo/assets/pull_request_template.md).
+
+| Source | Guidance supported |
+| --- | --- |
+| [^standalone-scope] | Repository settings and supporting files are handled within the installed github-repo bundle. |
+| [^dependabot-version-updates][^dependabot-options] | `.github/dependabot.yml`, supported ecosystems, manifest locations, schedules, and preservation of existing update configuration. |
+| [^code-owners] | CODEOWNERS placement, eligible owners, base-branch evaluation, and required-review behavior. |
+| [^issue-templates][^issue-form-syntax] | Issue-form location and schema, template chooser configuration, default-branch availability, and existing-label prerequisites. |
+| [^pr-templates] | PR-template placement and default-branch availability. |
+| [^security-policy] | `SECURITY.md` content for supported versions and vulnerability reporting. |
+
+### GitHub Actions dependency lockfiles
+
+Runtime material: [actions-lock.md](../../skills/github-repo/references/actions-lock.md) and the Actions settings in [settings.md](../../skills/github-repo/references/settings.md).
+
+| Source | Guidance supported |
+| --- | --- |
+| [^workflow-lockfiles] | `.github/workflows/actions.lock`, direct and transitive action coverage, runtime resolution, source identity, and reusable-workflow limits. |
+| [^locking-action-dependencies] | Extension installation, generation, workflow changes, dependency review, and lockfile adoption. |
+| [^actions-lock-cli] | Current CLI generation and verification behavior, supported hosts, options, and limitations. |
+| [^actions-execution-policies] | Require lockfile under Actions policies, targeting and enforcement, and interaction with native SHA requirements. |
+| [^actions-settings] | Action allowlists use locked SHAs; lockfile adoption can satisfy the native SHA requirement. |
+
+### Additional repository settings
+
+Runtime material: [settings.md](../../skills/github-repo/references/settings.md).
+
+| Source | Guidance supported |
+| --- | --- |
+| [^branch-update-suggestions] | Always suggest updating pull request branches provides the update control without requiring an update or new validation. |
+| [^ruleset-rules] | Strict required checks enforce an up-to-date branch separately from update suggestions. |
+| [^automatic-branch-deletion] | Automatic head-branch deletion after merge, protection constraints, and fork behavior. |
+
+### Standalone installation
+
+User guidance: [README installation](../../README.md#installation). APM's command reference documents `--global` and explicit targets; its package installation guide documents skill subdirectory references.[^apm-install][^apm-virtual-packages] Together they support the documented command `apm install --global --target codex,copilot daiksud/agents/skills/github-repo`. Skills are copied as complete bundles with their internal relative links preserved, so the operational references and assets stay inside that directory.[^apm-skill-bundles]
+
+This is documentation review, not an executed APM installation or compilation. The repository's validation exclusions remain in effect.
+
 ### Repository setting sources and application decisions
 
 Former source catalog: `skills/github-repo/references/sources.md`. Its adoption and checking records are preserved below.
@@ -120,7 +193,7 @@ Specification checking date at authoring: 2026-09-28. This proves neither human 
 | Free security | Read standard lists and product availability per feature; do not generalize public-free features to entire products/private repos.[^security-features][^advanced-security] |
 | CodeQL setup/results | Separate default/advanced setup, acceptance, completion, analysis.[^code-scanning-api] |
 
-Bundled material: [Standards](../../skills/github-repo/references/settings.md), [Security](../../skills/github-repo/references/security.md), [Operations](../../skills/github-repo/references/operations.md). The settings skill contains its own Action-SHA preflight and delivery prerequisites. Broader pipeline implementation is covered by [continuous-delivery](../../skills/continuous-delivery/SKILL.md), without a referral from the settings skill.[^skill-independence]
+Bundled material: [Standards](../../skills/github-repo/references/settings.md), [Security](../../skills/github-repo/references/security.md), [Operations](../../skills/github-repo/references/operations.md), [Repository files](../../skills/github-repo/references/repository-files.md), and [Actions lockfiles](../../skills/github-repo/references/actions-lock.md). The skill contains its own setting prerequisites, file-adoption procedures, and delivery requirements. Skill-selection guidance is maintained in the [README](../../README.md#skills-and-github-protection-settings).[^skill-independence][^standalone-scope]
 
 For official/UI/API disagreements preserve confirmed scope/differences without filling unverified specifications/endpoints. Unknown costs, permissions, or destructive effects justify holding affected operations even within approval.
 
@@ -138,10 +211,26 @@ For official/UI/API disagreements preserve confirmed scope/differences without f
 [^approval-code-owner-exception]: [approval-code-owner-exception](https://github.com/daiksud/agents/issues/165).
 [^copilot-code-review]: [copilot-code-review](https://docs.github.com/en/copilot/how-tos/copilot-on-github/use-copilot-agents/copilot-code-review).
 [^actions-settings]: [actions-settings](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/enabling-features-for-your-repository/managing-github-actions-settings-for-a-repository).
+[^standalone-scope]: [Standalone github-repo scope](https://github.com/daiksud/agents/issues/287).
+[^dependabot-version-updates]: [Configuring Dependabot version updates](https://docs.github.com/en/code-security/how-tos/secure-your-supply-chain/secure-your-dependencies/configure-version-updates).
+[^dependabot-options]: [Dependabot options reference](https://docs.github.com/en/code-security/reference/supply-chain-security/dependabot-options-reference).
+[^issue-templates]: [Configuring issue templates](https://docs.github.com/en/communities/using-templates-to-encourage-useful-issues-and-pull-requests/configuring-issue-templates-for-your-repository).
+[^issue-form-syntax]: [Syntax for issue forms](https://docs.github.com/en/communities/using-templates-to-encourage-useful-issues-and-pull-requests/syntax-for-issue-forms).
+[^pr-templates]: [Creating a pull request template](https://docs.github.com/en/communities/using-templates-to-encourage-useful-issues-and-pull-requests/creating-a-pull-request-template-for-your-repository).
+[^security-policy]: [Adding a security policy](https://docs.github.com/en/code-security/how-tos/report-and-fix-vulnerabilities/configure-vulnerability-reporting/add-security-policy).
+[^workflow-lockfiles]: [Workflow dependency lockfiles](https://docs.github.com/en/actions/concepts/security/workflow-dependency-lockfiles).
+[^locking-action-dependencies]: [Locking action dependencies](https://docs.github.com/en/actions/how-tos/secure-your-work/lock-workflow-dependencies).
+[^actions-lock-cli]: [github/gh-actions-lock](https://github.com/github/gh-actions-lock).
+[^actions-execution-policies]: [Governing execution of GitHub Actions workflows](https://docs.github.com/en/actions/how-tos/administer/control-workflow-execution).
+[^branch-update-suggestions]: [Managing suggestions to update pull request branches](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/configuring-pull-request-merges/managing-suggestions-to-update-pull-request-branches).
+[^automatic-branch-deletion]: [Managing automatic deletion of branches](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/configuring-pull-request-merges/managing-the-automatic-deletion-of-branches).
+[^apm-install]: [APM command reference](https://microsoft.github.io/apm/reference/cli/install/).
+[^apm-virtual-packages]: [APM package installation](https://microsoft.github.io/apm/consumer/install-packages/).
+[^apm-skill-bundles]: [APM package-relative links and skill bundles](https://microsoft.github.io/apm/producer/package-relative-links/).
 
 ## Decision recording settings
 
-The [GitHub repository setting path](../../skills/github-repo/references/settings.md#pr-and-merge-message-alignment) locally defines the merge methods, message fields, and readback steps needed within the authorized settings scope. The [decision-recording settings guide](../../skills/decision-recording/references/github-settings.md) covers those settings for preserving records. The [versioning commitlint guide](../../skills/versioning/references/commitlint.md) covers the workflow and required-check adoption. These maintainer links describe related responsibilities; the skills do not refer to one another.[^skill-independence] Consumer file changes retain ordinary PR, review, CI, and main-verification requirements.
+The [GitHub repository setting path](../../skills/github-repo/references/settings.md#pr-and-merge-message-alignment) locally defines the merge methods, message fields, and readback steps needed within the authorized settings scope. Related skill responsibilities are described in the [README](../../README.md#skills-and-github-protection-settings); github-repo's execution uses its own guidance.[^skill-independence] Consumer file changes retain ordinary PR, review, CI, and main-verification requirements.
 
 The [GitHub repository API](https://docs.github.com/en/rest/repos/repos#update-a-repository) documents both sets of message fields. Installing guidance or copying assets does not apply live settings.
 

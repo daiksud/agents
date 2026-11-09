@@ -1,0 +1,20 @@
+name: Bug report
+description: Describe behavior that did not work as expected.
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What happened?
+      description: Describe the actual behavior and what you expected instead.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: How can we reproduce it?
+      description: If known, include the steps or a small example.
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context
+      description: If relevant, include the version, environment, and diagnostic output.
