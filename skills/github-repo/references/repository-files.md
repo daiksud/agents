@@ -1,7 +1,7 @@
 ---
 type: Instruction
 title: リポジトリの設定ファイル
-description: GitHub側の前提条件を確認し、依存関係の更新、担当者、投稿用テンプレート、脆弱性の報告方法を整備する。
+description: GitHub側の前提条件を確認し、依存関係の更新、担当者、投稿用テンプレート、脆弱性の報告方法、任意の参加手順や問い合わせ先を整備する。
 ---
 
 ## 既存の設定を活かす
@@ -61,6 +61,14 @@ Code Ownerの承認をマージ条件にする場合は、承認できる担当�
 - PRの案内は概要、任意の判断事項、実際の検証結果に絞る。提出する本文から執筆用のHTMLコメントを削除する。テンプレートは執筆を案内するものであり、レビュー、CI、本文が必要な内容を満たし続けることを強制しない。
 
 YAMLとスキーマの妥当性、デフォルトブランチに保存されたファイルを確認する。利用できる場合はIssueの選択画面と、送信前のIssue／PR作成フォームを開き、意図した入力欄、空のIssueの選択肢、PR本文の初期入力を確認する。テンプレートの検証だけを目的に、ダミーのIssueやPRを送信しない。静的確認と、画面で確認した動作を区別する。
+
+## 参加手順と問い合わせ先
+
+**MAY:** 参加者に投稿や開発の進め方を案内したい場合、`.github/CONTRIBUTING.md` を用意してよい。Issue・PRの提出方法や必要な検証を、確認済みの運用に合わせて記載する。既存の文書にある手順はリンクで参照し、未確認のルールを作り上げない。[参加ガイドの公式仕様](https://docs.github.com/en/communities/setting-up-your-project-for-healthy-contributions/setting-guidelines-for-repository-contributors)では、IssueとPRの作成時に案内へのリンクが表示される。
+
+**MAY:** 問い合わせ先や利用者向けの支援情報を案内したい場合、`.github/SUPPORT.md` を用意してよい。確認済みの窓口、対応範囲、FAQや既存文書へのリンクを記載する。担当者や応答期限を作り上げず、脆弱性の報告は既存のセキュリティポリシーに従って案内する。[サポート情報の公式仕様](https://docs.github.com/en/communities/setting-up-your-project-for-healthy-contributions/adding-support-resources-to-your-project)では、Issueの作成時に案内へのリンクが表示される。
+
+いずれも新規配置は `.github/` を優先する。ルートや `docs/` に有効な既存ファイルがある場合や、[既定のコミュニティ健全性ファイル](https://docs.github.com/en/communities/setting-up-your-project-for-healthy-contributions/creating-a-default-community-health-file)が継承されている場合は活かし、重複するファイルを追加しない。採用する場合はデフォルトブランチに保存された内容とリンク先を確認する。利用できる作成画面で案内を確認し、検証のためだけにIssuesを有効にしたり、IssueやPRを送信したりしない。静的確認と、画面で確認した動作を区別する。
 
 ## セキュリティポリシー
 

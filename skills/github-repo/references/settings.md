@@ -1,7 +1,7 @@
 ---
 type: Instruction
 title: GitHubリポジトリの設定基準
-description: リリース、プルリクエスト、ブランチ保護、Actionsのポリシーについて、必須値と推奨値を定める。
+description: リリース、プルリクエスト、ブランチ保護、Actionsのポリシーについて、必須値、推奨値、任意の選択肢を定める。
 ---
 
 ## 目次
@@ -11,6 +11,7 @@ description: リリース、プルリクエスト、ブランチ保護、Actions
 - [PRのマージ方式](#prのマージ方式)
 - [PRとマージコミットのメッセージを揃える](#prとマージコミットのメッセージを揃える)
 - [PRブランチの更新と削除](#prブランチの更新と削除)
+- [PRの自動マージの許可](#prの自動マージの許可)
 - [Rulesetによるブランチ保護](#rulesetによるブランチ保護)
 - [必須チェックと最新の変更への承認](#必須チェックと最新の変更への承認)
 - [Actionsの依存関係ポリシー](#actionsの依存関係ポリシー)
@@ -18,7 +19,7 @@ description: リリース、プルリクエスト、ブランチ保護、Actions
 
 ## 基準の適用
 
-MUST／SHOULDの意味はスキル本体の定義に従う。期待値と実測値を区別し、変更操作は[操作と判定](operations.md)に従う。セキュリティ機能は[セキュリティ](security.md)に沿って個別に診断する。前提となる[リポジトリファイル](repository-files.md)や[Actionsのロック](actions-lock.md)を整備してから、それらに依存する強制ルールを有効にする。
+MUST／SHOULD／MAYの意味はスキル本体の定義に従う。期待値と実測値を区別し、変更操作は[操作と判定](operations.md)に従う。セキュリティ機能は[セキュリティ](security.md)に沿って個別に診断する。前提となる[リポジトリファイル](repository-files.md)や[Actionsのロック](actions-lock.md)を整備してから、それらに依存する強制ルールを有効にする。
 
 ## イミュータブルリリース
 
@@ -57,6 +58,14 @@ MUST／SHOULDの意味はスキル本体の定義に従う。期待値と実測�
 **SHOULD:** base branchの更新を見つけやすくするため、`Settings` → `General` → `Pull Requests` の `Always suggest updating pull request branches` を有効にする。リポジトリAPIで `allow_update_branch` を取得・更新し、再取得する。この案内はブランチを同期せず、テストを再実行せず、古いブランチのマージも防がない。これらの要件は後述の節で別途判定する。
 
 **SHOULD:** マージ済みの作業ブランチを引き続き使う目的がなければ、`Automatically delete head branches`（`delete_branch_on_merge=true`）を有効にする。継続して使うブランチがある運用や、ブランチ保護を尊重する。設定を再取得して確認し、動作を示すためだけにテスト用ブランチをマージ・削除しない。
+
+## PRの自動マージの許可
+
+**MAY:** 必須チェックと承認を満たしたPRのマージ待ちを減らしたい場合、`Allow auto-merge` を有効にしてよい。[公式ガイド](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/configuring-pull-request-merges/managing-auto-merge-for-pull-requests-in-your-repository)でプランと権限を確認し、既存の必須チェック、承認要件、許可されたマージ方式を維持する。
+
+`Settings` → `General` → `Pull Requests`、または `GET /repos/{owner}/{repo}` の `allow_auto_merge` を確認する。承認済みなら、[リポジトリ更新API](https://docs.github.com/en/rest/repos/repos#update-a-repository)の `PATCH /repos/{owner}/{repo}` で `allow_auto_merge=true` だけを送信し、再取得する。これはリポジトリで自動マージを利用可能にする設定であり、個々のPRの自動マージ予約やマージ実行は含めない。
+
+この設定はマージキューを必須とするブランチには適用されない。既存のキューを維持し、`allow_auto_merge` の値だけから、キュー経由での自動マージが使えるかどうかを判定しない。
 
 ## Rulesetによるブランチ保護
 

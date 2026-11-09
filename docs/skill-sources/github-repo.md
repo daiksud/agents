@@ -3,6 +3,10 @@ type: Reference
 title: GitHub repository sources and adoption notes
 description: Preserve source mappings, adoption decisions, and historical checking scope for maintainers of the github-repo skill.
 sources:
+  - id: requirement-levels
+    resource: https://www.rfc-editor.org/rfc/rfc2119.html
+  - id: optional-practices
+    resource: https://github.com/daiksud/agents/issues/291
   - id: skill-independence
     resource: https://github.com/daiksud/agents/issues/285
   - id: repository-api
@@ -55,10 +59,18 @@ sources:
     resource: https://docs.github.com/en/communities/using-templates-to-encourage-useful-issues-and-pull-requests/creating-a-pull-request-template-for-your-repository
   - id: security-policy
     resource: https://docs.github.com/en/code-security/how-tos/report-and-fix-vulnerabilities/configure-vulnerability-reporting/add-security-policy
+  - id: contributing-guidelines
+    resource: https://docs.github.com/en/communities/setting-up-your-project-for-healthy-contributions/setting-guidelines-for-repository-contributors
+  - id: support-resources
+    resource: https://docs.github.com/en/communities/setting-up-your-project-for-healthy-contributions/adding-support-resources-to-your-project
+  - id: default-community-files
+    resource: https://docs.github.com/en/communities/setting-up-your-project-for-healthy-contributions/creating-a-default-community-health-file
   - id: branch-update-suggestions
     resource: https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/configuring-pull-request-merges/managing-suggestions-to-update-pull-request-branches
   - id: automatic-branch-deletion
     resource: https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/configuring-pull-request-merges/managing-the-automatic-deletion-of-branches
+  - id: auto-merge
+    resource: https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/configuring-pull-request-merges/managing-auto-merge-for-pull-requests-in-your-repository
   - id: apm-install
     resource: https://microsoft.github.io/apm/reference/cli/install/
   - id: apm-virtual-packages
@@ -79,10 +91,11 @@ The following mapping preserves the original source IDs and annotation scope and
 
 ### Repository setting operations and judgments
 
-Runtime material: [operations.md](../../skills/github-repo/references/operations.md).
+Runtime material: [SKILL.md](../../skills/github-repo/SKILL.md) and [operations.md](../../skills/github-repo/references/operations.md).
 
 | Source | Original annotation scope |
 | --- | --- |
+| [^requirement-levels][^optional-practices] | Local MUST/SHOULD/MAY adoption levels; an unadopted MAY is optional, not a defect, incomplete work, or an exception requiring approval. Adopted or requested items retain prerequisite and verification requirements. |
 | [^repository-api] | Repository/security permissions, reads/updates, response meanings. |
 | [^rules-api] | Ruleset inheritance, bypass information, effective rules, updates. |
 | [^actions-permissions-api] | Administrative permissions and Actions permissions read/update contracts. |
@@ -128,6 +141,7 @@ Runtime material: [repository-files.md](../../skills/github-repo/references/repo
 | [^issue-templates][^issue-form-syntax] | Issue-form location and schema, template chooser configuration, default-branch availability, and existing-label prerequisites. |
 | [^pr-templates] | PR-template placement and default-branch availability. |
 | [^security-policy] | `SECURITY.md` content for supported versions and vulnerability reporting. |
+| [^contributing-guidelines][^support-resources][^default-community-files] | Optional contributor and support guidance, supported file locations, inherited defaults, and links in Issue/PR creation flows. |
 
 ### GitHub Actions dependency lockfiles
 
@@ -150,6 +164,7 @@ Runtime material: [settings.md](../../skills/github-repo/references/settings.md)
 | [^branch-update-suggestions] | Always suggest updating pull request branches provides the update control without requiring an update or new validation. |
 | [^ruleset-rules] | Strict required checks enforce an up-to-date branch separately from update suggestions. |
 | [^automatic-branch-deletion] | Automatic head-branch deletion after merge, protection constraints, and fork behavior. |
+| [^auto-merge][^repository-api] | Optional repository auto-merge enablement, permissions and availability, `allow_auto_merge` read/update, individual-PR scope, and the merge-queue exception. |
 
 ### Standalone installation
 
@@ -197,6 +212,8 @@ Bundled material: [Standards](../../skills/github-repo/references/settings.md), 
 
 For official/UI/API disagreements preserve confirmed scope/differences without filling unverified specifications/endpoints. Unknown costs, permissions, or destructive effects justify holding affected operations even within approval.
 
+[^requirement-levels]: [RFC 2119 requirement levels](https://www.rfc-editor.org/rfc/rfc2119.html).
+[^optional-practices]: [Optional MAY practices](https://github.com/daiksud/agents/issues/291).
 [^repository-api]: [repository-api](https://docs.github.com/en/rest/repos/repos).
 [^rules-api]: [rules-api](https://docs.github.com/en/rest/repos/rules).
 [^actions-permissions-api]: [actions-permissions-api](https://docs.github.com/en/rest/actions/permissions).
@@ -218,12 +235,16 @@ For official/UI/API disagreements preserve confirmed scope/differences without f
 [^issue-form-syntax]: [Syntax for issue forms](https://docs.github.com/en/communities/using-templates-to-encourage-useful-issues-and-pull-requests/syntax-for-issue-forms).
 [^pr-templates]: [Creating a pull request template](https://docs.github.com/en/communities/using-templates-to-encourage-useful-issues-and-pull-requests/creating-a-pull-request-template-for-your-repository).
 [^security-policy]: [Adding a security policy](https://docs.github.com/en/code-security/how-tos/report-and-fix-vulnerabilities/configure-vulnerability-reporting/add-security-policy).
+[^contributing-guidelines]: [Setting guidelines for repository contributors](https://docs.github.com/en/communities/setting-up-your-project-for-healthy-contributions/setting-guidelines-for-repository-contributors).
+[^support-resources]: [Adding support resources](https://docs.github.com/en/communities/setting-up-your-project-for-healthy-contributions/adding-support-resources-to-your-project).
+[^default-community-files]: [Creating default community health files](https://docs.github.com/en/communities/setting-up-your-project-for-healthy-contributions/creating-a-default-community-health-file).
 [^workflow-lockfiles]: [Workflow dependency lockfiles](https://docs.github.com/en/actions/concepts/security/workflow-dependency-lockfiles).
 [^locking-action-dependencies]: [Locking action dependencies](https://docs.github.com/en/actions/how-tos/secure-your-work/lock-workflow-dependencies).
 [^actions-lock-cli]: [github/gh-actions-lock](https://github.com/github/gh-actions-lock).
 [^actions-execution-policies]: [Governing execution of GitHub Actions workflows](https://docs.github.com/en/actions/how-tos/administer/control-workflow-execution).
 [^branch-update-suggestions]: [Managing suggestions to update pull request branches](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/configuring-pull-request-merges/managing-suggestions-to-update-pull-request-branches).
 [^automatic-branch-deletion]: [Managing automatic deletion of branches](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/configuring-pull-request-merges/managing-the-automatic-deletion-of-branches).
+[^auto-merge]: [Managing auto-merge for pull requests](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/configuring-pull-request-merges/managing-auto-merge-for-pull-requests-in-your-repository).
 [^apm-install]: [APM command reference](https://microsoft.github.io/apm/reference/cli/install/).
 [^apm-virtual-packages]: [APM package installation](https://microsoft.github.io/apm/consumer/install-packages/).
 [^apm-skill-bundles]: [APM package-relative links and skill bundles](https://microsoft.github.io/apm/producer/package-relative-links/).
