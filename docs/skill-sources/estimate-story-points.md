@@ -9,7 +9,7 @@ sources:
 
 ## Purpose and runtime documents
 
-These are maintainer notes for [estimate-story-points](../../skills/estimate-story-points/SKILL.md). Runtime entry points and task references retain the instructions needed for execution; this document preserves attribution and background for maintenance. Any source-check dates below are retained history, not new verification performed during this separation.
+These are maintainer notes for [estimate-story-points](../../archived-skills/estimate-story-points/SKILL.md). Runtime entry points and task references retain the instructions needed for execution; this document preserves attribution and background for maintenance. Any source-check dates below are retained history, not new verification performed during this separation.
 
 ### Source mapping
 
@@ -17,10 +17,10 @@ Source IDs are preserved from the original files, including aliases for the same
 
 | Runtime document or original catalog | Source IDs |
 | --- | --- |
-| [SKILL.md](../../skills/estimate-story-points/SKILL.md) | First-version scope boundaries: [^issue-209] |
-| [references/aggregation-and-review.md](../../skills/estimate-story-points/references/aggregation-and-review.md) | [^issue-209] |
-| [references/estimator-contract.md](../../skills/estimate-story-points/references/estimator-contract.md) | [^issue-209] |
-| [references/recording.md](../../skills/estimate-story-points/references/recording.md) | [^issue-209] |
+| [SKILL.md](../../archived-skills/estimate-story-points/SKILL.md) | First-version scope boundaries: [^issue-209] |
+| [references/aggregation-and-review.md](../../archived-skills/estimate-story-points/references/aggregation-and-review.md) | [^issue-209] |
+| [references/estimator-contract.md](../../archived-skills/estimate-story-points/references/estimator-contract.md) | [^issue-209] |
+| [references/recording.md](../../archived-skills/estimate-story-points/references/recording.md) | [^issue-209] |
 
 ## Review scenarios
 

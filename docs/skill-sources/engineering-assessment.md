@@ -109,7 +109,7 @@ sources:
 
 ## Purpose and runtime documents
 
-These are maintainer notes for [engineering-assessment](../../skills/engineering-assessment/SKILL.md). Runtime entry points and task references retain the instructions needed for execution; this document preserves attribution and background for maintenance. Any source-check dates below are retained history, not new verification performed during this separation.
+These are maintainer notes for [engineering-assessment](../../archived-skills/engineering-assessment/SKILL.md). Runtime entry points and task references retain the instructions needed for execution; this document preserves attribution and background for maintenance. Any source-check dates below are retained history, not new verification performed during this separation.
 
 ### Source mapping
 
@@ -118,14 +118,14 @@ Source IDs are preserved from the original files, including aliases for the same
 | Runtime document or original catalog | Source mapping |
 | --- | --- |
 | Former bundled source catalog (`references/sources.md`) | [Primary materials and application decisions](#primary-materials-and-application-decisions) retains its source IDs and adoption notes |
-| [references/architecture-and-organization.md](../../skills/engineering-assessment/references/architecture-and-organization.md) | [^ddd-reference], [^team-topologies-key-concepts], [^continuous-delivery-architecture], [^dora-loosely-coupled-teams] |
-| [references/dora.md](../../skills/engineering-assessment/references/dora.md) | [^dora-core-v2-1-0], [^dora-research], [^dora-capabilities], [^dora-metrics], [^dora-metrics-history], [^dora-small-batches] |
-| [references/xp-auxiliary.md](../../skills/engineering-assessment/references/xp-auxiliary.md) | [^xp-second-edition], [^ron-jeffries-xp], [^xp-second-edition-principles], [^xp-second-edition-primary-practices], [^xp-second-edition-corollary-practices] |
-| [references/xp.md](../../skills/engineering-assessment/references/xp.md) | [^xp-second-edition] |
+| [references/architecture-and-organization.md](../../archived-skills/engineering-assessment/references/architecture-and-organization.md) | [^ddd-reference], [^team-topologies-key-concepts], [^continuous-delivery-architecture], [^dora-loosely-coupled-teams] |
+| [references/dora.md](../../archived-skills/engineering-assessment/references/dora.md) | [^dora-core-v2-1-0], [^dora-research], [^dora-capabilities], [^dora-metrics], [^dora-metrics-history], [^dora-small-batches] |
+| [references/xp-auxiliary.md](../../archived-skills/engineering-assessment/references/xp-auxiliary.md) | [^xp-second-edition], [^ron-jeffries-xp], [^xp-second-edition-principles], [^xp-second-edition-primary-practices], [^xp-second-edition-corollary-practices] |
+| [references/xp.md](../../archived-skills/engineering-assessment/references/xp.md) | [^xp-second-edition] |
 
 ## Primary materials and application decisions
 
-Existing materials were checked on 2026-09-11, XP five-Values materials on 2026-09-26, and materials added for second-edition XP taxonomy, Architecture / Organization lenses, and DORA model organization on 2026-09-27. Rather than reproducing translations of the following, they were summarized and restructured in [principle relationships](../../skills/engineering-assessment/references/principles.md), [assessment procedures](../../skills/engineering-assessment/references/assessment.md), and conditional focused references. Do not label verification dates as publication dates for undated materials. In later assessments, record versions and verification dates actually referenced.
+Existing materials were checked on 2026-09-11, XP five-Values materials on 2026-09-26, and materials added for second-edition XP taxonomy, Architecture / Organization lenses, and DORA model organization on 2026-09-27. Rather than reproducing translations of the following, they were summarized and restructured in [principle relationships](../../archived-skills/engineering-assessment/references/principles.md), [assessment procedures](../../archived-skills/engineering-assessment/references/assessment.md), and conditional focused references. Do not label verification dates as publication dates for undated materials. In later assessments, record versions and verification dates actually referenced.
 
 ### DevOps, Lean, and improvement
 
@@ -183,11 +183,11 @@ This skill's proportionality to solo development; organization into observed, ga
 
 ## Assessment adoption background
 
-Operational observation and procedure-sharing perspectives were made concrete with reference to DevOps Core Principles. Consolidate referenced versions and adoption decisions, including CALMS, in [source materials](#primary-materials-and-application-decisions). Use the [DORA lens](../../skills/engineering-assessment/references/dora.md) for Core / Catalog / metrics version differences.
+Operational observation and procedure-sharing perspectives were made concrete with reference to DevOps Core Principles. Consolidate referenced versions and adoption decisions, including CALMS, in [source materials](#primary-materials-and-application-decisions). Use the [DORA lens](../../archived-skills/engineering-assessment/references/dora.md) for Core / Catalog / metrics version differences.
 
 ## XP taxonomy source discrepancy
 
-InformIT's Table of Contents lists the 14 named Principles used in the [runtime taxonomy](../../skills/engineering-assessment/references/xp.md#principles). The introduction on the same publisher page inconsistently says “Eleven principles”; this repository bases taxonomy on the listed TOC and retains the discrepancy in provenance.[^xp-second-edition]
+InformIT's Table of Contents lists the 14 named Principles used in the [runtime taxonomy](../../archived-skills/engineering-assessment/references/xp.md#principles). The introduction on the same publisher page inconsistently says “Eleven principles”; this repository bases taxonomy on the listed TOC and retains the discrepancy in provenance.[^xp-second-edition]
 
 ## DORA metric history
 

@@ -53,7 +53,7 @@ sources:
 
 ## Scope
 
-Maintainer reference for [change-delivery](../../skills/change-delivery/SKILL.md). These records explain source provenance and adoption history. Execution procedures and decision-relevant details remain in the skill and its task-specific references; ordinary execution does not require this document.
+Maintainer reference for [change-delivery](../../archived-skills/change-delivery/SKILL.md). These records explain source provenance and adoption history. Execution procedures and decision-relevant details remain in the skill and its task-specific references; ordinary execution does not require this document.
 
 The checking records below are retained from the original documents. Relocating them does not establish a new specification check, human review, successful execution, or current applicability.
 
@@ -63,7 +63,7 @@ The following mapping preserves the original source IDs and annotation scope for
 
 ### Branches and integration units
 
-Runtime material: [branches.md](../../skills/change-delivery/references/branches.md).
+Runtime material: [branches.md](../../archived-skills/change-delivery/references/branches.md).
 
 | Source | Original annotation scope |
 | --- | --- |
@@ -72,7 +72,7 @@ Runtime material: [branches.md](../../skills/change-delivery/references/branches
 
 ### Commit messages
 
-Runtime material: [Commit staging and delivery](../../skills/change-delivery/references/conventional-commits.md), with detailed [Conventional Commits](../../skills/versioning/references/conventional-commits.md) and [commitlint](../../skills/versioning/references/commitlint.md) guidance in the optional versioning skill.
+Runtime material: [Commit staging and delivery](../../archived-skills/change-delivery/references/conventional-commits.md), with detailed [Conventional Commits](../../skills/versioning/references/conventional-commits.md) and [commitlint](../../skills/versioning/references/commitlint.md) guidance in the optional versioning skill.
 
 | Source | Original annotation scope |
 | --- | --- |
@@ -83,7 +83,7 @@ Runtime material: [Commit staging and delivery](../../skills/change-delivery/ref
 
 ### Review and merge
 
-Runtime material: [review-and-merge.md](../../skills/change-delivery/references/review-and-merge.md).
+Runtime material: [review-and-merge.md](../../archived-skills/change-delivery/references/review-and-merge.md).
 
 | Source | Original annotation scope |
 | --- | --- |
@@ -104,15 +104,15 @@ Runtime material: [review-and-merge.md](../../skills/change-delivery/references/
 
 Checked fixed versions of three GitHub awesome-copilot resources, summarizing/restructuring commit-message-storyteller's purpose/reason writing guidance,[^commit-message-storyteller] conventional-commit's diff checks/structure,[^conventional-commit] and git-commit's purpose-based units and failure handling.[^git-commit]
 
-Integrate with existing approval/change protection in this environment. Do not adopt fixed XML, unconditional commits after drafting, repeated “Story told” explanations, or removal of all footers without Issues. The current [delivery guide](../../skills/change-delivery/references/conventional-commits.md) retains concise message guidance and respects the target repository's adopted conventions. Detailed convention and tool setup guidance is owned by [versioning](../../skills/versioning/SKILL.md); the delivery skill does not refer to it.[^skill-independence]
+Integrate with existing approval/change protection in this environment. Do not adopt fixed XML, unconditional commits after drafting, repeated “Story told” explanations, or removal of all footers without Issues. The current [delivery guide](../../archived-skills/change-delivery/references/conventional-commits.md) retains concise message guidance and respects the target repository's adopted conventions. Detailed convention and tool setup guidance is owned by [versioning](../../skills/versioning/SKILL.md); the delivery skill does not refer to it.[^skill-independence]
 
 ## Copilot execution observation
 
-The original [review procedure](../../skills/change-delivery/references/review-and-merge.md#checking-execution-after-copilot-requests) recorded that PR #166 emitted `copilot_work_started` while `requested_reviewers=[]` and reviews were absent, followed by normal completion.[^copilot-work-started-observation] This historical observation is not a permanent public API contract or evidence of a current review's state. The execution procedure retains the need to correlate the event with a request for the current, unchanged HEAD.
+The original [review procedure](../../archived-skills/change-delivery/references/review-and-merge.md#checking-execution-after-copilot-requests) recorded that PR #166 emitted `copilot_work_started` while `requested_reviewers=[]` and reviews were absent, followed by normal completion.[^copilot-work-started-observation] This historical observation is not a permanent public API contract or evidence of a current review's state. The execution procedure retains the need to correlate the event with a request for the current, unchanged HEAD.
 
 ## Codex Ready-state policy
 
-The requester selected Ready-only Codex review requests, including retries, for this workflow. The current official GitHub integration documentation describes the `@codex review` comment trigger but does not state a Draft/Ready prerequisite.[^codex-github-review-current] The [Alternative review procedure](../../skills/change-delivery/references/review-and-merge.md#alternative-review) therefore records Ready as an operating policy, without asserting that Codex universally rejects draft PRs. This service-specific prerequisite leaves the shared 10-minute retry policy product-independent and preserves the separate CI, review, approval, and merge conditions.
+The requester selected Ready-only Codex review requests, including retries, for this workflow. The current official GitHub integration documentation describes the `@codex review` comment trigger but does not state a Draft/Ready prerequisite.[^codex-github-review-current] The [Alternative review procedure](../../archived-skills/change-delivery/references/review-and-merge.md#alternative-review) therefore records Ready as an operating policy, without asserting that Codex universally rejects draft PRs. This service-specific prerequisite leaves the shared 10-minute retry policy product-independent and preserves the separate CI, review, approval, and merge conditions.
 
 [^continuousdelivery-foundations-continuous-integration]: [continuousdelivery-foundations-continuous-integration](https://continuousdelivery.com/foundations/continuous-integration/).
 [^github-src-index-ts]: [github-src-index-ts](https://github.com/conventional-changelog/commitlint/blob/f4b108182e6d20eca52433135c7ba1675746318e/%40commitlint/config-conventional/src/index.ts#L24-L36).
@@ -137,13 +137,13 @@ The requester selected Ready-only Codex review requests, including retries, for 
 
 ## Change-record responsibilities
 
-[decision-recording](../../skills/decision-recording/SKILL.md) owns reusable recording rules, intended readers, adoption guidance, and the [PR template](../../skills/decision-recording/assets/pull_request_template.md). [Delivery](../../skills/change-delivery/SKILL.md) applies them through its commit and merge procedures; [Change records policy](../engineering-policies/change-records.md) states this repository's effective rules. Actual validation reporting and its distinction from execution have source agreement in [Issue #253](https://github.com/daiksud/agents/issues/253).[^change-record-agreement] These ownership mappings do not establish renewed checking of the external sources above.
+[decision-recording](../../skills/decision-recording/SKILL.md) owns reusable recording rules, intended readers, adoption guidance, and the [PR template](../../skills/decision-recording/assets/pull_request_template.md). [Delivery](../../archived-skills/change-delivery/SKILL.md) applies them through its commit and merge procedures; [Change records policy](../engineering-policies/change-records.md) states this repository's effective rules. Actual validation reporting and its distinction from execution have source agreement in [Issue #253](https://github.com/daiksud/agents/issues/253).[^change-record-agreement] These ownership mappings do not establish renewed checking of the external sources above.
 
 [^codex-github-review-current]: [Review GitHub pull requests with Codex](https://learn.chatgpt.com/docs/third-party/github). Current request instructions checked for the Ready-state policy; no Draft/Ready prerequisite was stated.
 
 ## Consumer adoption
 
-[Repository adoption](../../skills/change-delivery/references/repository-adoption.md) provides local recording and merge-setting guidance for approved delivery. Related reusable templates are available in [decision-recording](../../skills/decision-recording/SKILL.md), and detailed commitlint adoption in [versioning](../../skills/versioning/SKILL.md); these catalog links are not dependencies of the delivery skill.[^skill-independence] Delivery retains the environment's artifact-language conventions and accepts equivalent arrangements within the approved scope. The source agreement for that adoption scope is [Issue #254](https://github.com/daiksud/agents/issues/254).[^repository-adoption] Target-local file edits remain ordinary change delivery; package installation does not adopt files or settings. No APM execution or independent simulation is implied by this guidance.
+[Repository adoption](../../archived-skills/change-delivery/references/repository-adoption.md) provides local recording and merge-setting guidance for approved delivery. Related reusable templates are available in [decision-recording](../../skills/decision-recording/SKILL.md), and detailed commitlint adoption in [versioning](../../skills/versioning/SKILL.md); these catalog links are not dependencies of the delivery skill.[^skill-independence] Delivery retains the environment's artifact-language conventions and accepts equivalent arrangements within the approved scope. The source agreement for that adoption scope is [Issue #254](https://github.com/daiksud/agents/issues/254).[^repository-adoption] Target-local file edits remain ordinary change delivery; package installation does not adopt files or settings. No APM execution or independent simulation is implied by this guidance.
 
 [^change-record-agreement]: Owner-agreed change-record policy and implementation scope in Issue #253.
 

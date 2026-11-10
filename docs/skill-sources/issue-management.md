@@ -37,7 +37,7 @@ sources:
 
 ## Scope
 
-Maintainer reference for [issue-management](../../skills/issue-management/SKILL.md). These records explain source provenance and adoption history. Execution procedures and decision-relevant details remain in the skill and its task-specific references; ordinary execution does not require this document.
+Maintainer reference for [issue-management](../../archived-skills/issue-management/SKILL.md). These records explain source provenance and adoption history. Execution procedures and decision-relevant details remain in the skill and its task-specific references; ordinary execution does not require this document.
 
 Checking dates below are historical records retained from the original documents. Relocating them does not establish a new specification check, human review, successful execution, or current applicability.
 
@@ -47,7 +47,7 @@ The following mapping preserves the original source IDs and annotation scope for
 
 ### Writing Issues and PRs
 
-Runtime material: [github-writing.md](../../skills/issue-management/references/github-writing.md).
+Runtime material: [github-writing.md](../../archived-skills/issue-management/references/github-writing.md).
 
 | Source | Original annotation scope |
 | --- | --- |
@@ -59,7 +59,7 @@ Runtime material: [github-writing.md](../../skills/issue-management/references/g
 
 ### Markdown quality for GitHub
 
-Runtime material: [markdown-quality.md](../../skills/issue-management/references/markdown-quality.md).
+Runtime material: [markdown-quality.md](../../archived-skills/issue-management/references/markdown-quality.md).
 
 | Source | Original annotation scope |
 | --- | --- |
@@ -70,7 +70,7 @@ Runtime material: [markdown-quality.md](../../skills/issue-management/references
 
 ### Planning and execution scope
 
-Runtime material: [planning.md](../../skills/issue-management/references/planning.md).
+Runtime material: [planning.md](../../archived-skills/issue-management/references/planning.md).
 
 | Source | Original annotation scope |
 | --- | --- |
@@ -103,7 +103,7 @@ Use Conventional Commits syntax, types, scopes, and breaking-change notation as 
 
 ## Writing guidance attribution
 
-The original [GitHub writing guidance](../../skills/issue-management/references/github-writing.md) attributed immediately understandable Issue titles and purpose/resolution information to GitHub, and PR context about problems, approaches, results, and review needs to GitHub's review guide. It also attributed preserving changes and reasons for future history to Google's change-description guide.[^github-issue-quickstart][^github-review-changes][^google-cl-descriptions]
+The original [GitHub writing guidance](../../archived-skills/issue-management/references/github-writing.md) attributed immediately understandable Issue titles and purpose/resolution information to GitHub, and PR context about problems, approaches, results, and review needs to GitHub's review guide. It also attributed preserving changes and reasons for future history to Google's change-description guide.[^github-issue-quickstart][^github-review-changes][^google-cl-descriptions]
 
 Applying Conventional Commits to Issue and PR titles is this environment's local convention; Conventional Commits 1.0.0 itself specifies commit messages.[^conventional-commits]
 
@@ -124,6 +124,6 @@ Applying Conventional Commits to Issue and PR titles is this environment's local
 
 ## Change-record policy adoption
 
-[PR writing](../../skills/issue-management/references/github-writing.md) apply the agreement in [Issue #253](https://github.com/daiksud/agents/issues/253).[^change-record-agreement] The current rationale and boundaries live in [Change records policy](../engineering-policies/change-records.md): actual validation reporting is required while execution is discretionary unless independently required; PRs/commits retain historical judgment and topical policies retain current guidance. This adoption does not establish renewed checking of the external sources above.
+[PR writing](../../archived-skills/issue-management/references/github-writing.md) apply the agreement in [Issue #253](https://github.com/daiksud/agents/issues/253).[^change-record-agreement] The current rationale and boundaries live in [Change records policy](../engineering-policies/change-records.md): actual validation reporting is required while execution is discretionary unless independently required; PRs/commits retain historical judgment and topical policies retain current guidance. This adoption does not establish renewed checking of the external sources above.
 
 [^change-record-agreement]: Owner-agreed change-record policy and implementation scope in Issue #253.

@@ -36,7 +36,7 @@ sources:
 
 ## Purpose and scope
 
-These are maintainer notes for [document-authoring](../../skills/document-authoring/SKILL.md). Runtime procedures remain in the skill and its conditional references. The dates and source observations below are retained research history; reorganizing them does not constitute a new source check.
+These are maintainer notes for [document-authoring](../../archived-skills/document-authoring/SKILL.md). Runtime procedures remain in the skill and its conditional references. The dates and source observations below are retained research history; reorganizing them does not constitute a new source check.
 
 The [OKF specification audit](../okf-specification-audit.md) preserves the detailed section mapping, upstream revisions, and reference-implementation observations.
 
@@ -44,11 +44,11 @@ The [OKF specification audit](../okf-specification-audit.md) preserves the detai
 
 | Runtime document | Sources |
 | --- | --- |
-| [OKF basic format and references](../../skills/document-authoring/references/basic-format.md) | [^okf-spec] |
-| [OKF provenance, trust, and lifecycle](../../skills/document-authoring/references/provenance.md) | [^okf-spec] |
-| [Attested Computation contracts and verification](../../skills/document-authoring/references/computation.md) | [^okf-spec], [^rumdl-md025], [^sample-attester] |
-| [Clarifying specifications with existing documents](../../skills/document-authoring/references/specification.md) | [^github-create-specification-skill-md], [^github-instructions-spec-driven-workflow-v1-instructions-md] |
-| [Developer documentation practices](../../skills/document-authoring/references/technical-writing.md) | [^docs-for-developers-contents], [^docs-for-developers-audience], [^docs-for-developers-planning], [^docs-for-developers-translator], [^docs-for-developers-publisher] |
+| [OKF basic format and references](../../archived-skills/document-authoring/references/basic-format.md) | [^okf-spec] |
+| [OKF provenance, trust, and lifecycle](../../archived-skills/document-authoring/references/provenance.md) | [^okf-spec] |
+| [Attested Computation contracts and verification](../../archived-skills/document-authoring/references/computation.md) | [^okf-spec], [^rumdl-md025], [^sample-attester] |
+| [Clarifying specifications with existing documents](../../archived-skills/document-authoring/references/specification.md) | [^github-create-specification-skill-md], [^github-instructions-spec-driven-workflow-v1-instructions-md] |
+| [Developer documentation practices](../../archived-skills/document-authoring/references/technical-writing.md) | [^docs-for-developers-contents], [^docs-for-developers-audience], [^docs-for-developers-planning], [^docs-for-developers-translator], [^docs-for-developers-publisher] |
 
 ## Original annotation scope
 
@@ -95,7 +95,7 @@ Specification guidance[^github-instructions-spec-driven-workflow-v1-instructions
 
 Consulted the public materials below on 2026-10-21. The full book was not available in this work. Chapter topics and public explanations support the principles; the content-type completion criteria, example-verification rules, outline, friction-log fields, and integration with existing skills are this repository's adaptations. Do not attribute those details as verbatim book instructions or treat the contents page as evidence for unseen chapter text.
 
-Use this guide for developer-documentation technique, [basic format](../../skills/document-authoring/references/basic-format.md) for OKF, and [provenance](../../skills/document-authoring/references/provenance.md) for claims and sources. The skill includes Japanese-readability guidance and its own publication, Markdown, and delivery conditions without referrals to other skills.[^skill-independence] The translator labels additional Japanese-writing material separately from the book overview; that material is not imported here. No second-edition AI-specific technique is asserted from a publisher blurb.
+Use this guide for developer-documentation technique, [basic format](../../archived-skills/document-authoring/references/basic-format.md) for OKF, and [provenance](../../archived-skills/document-authoring/references/provenance.md) for claims and sources. The skill includes Japanese-readability guidance and its own publication, Markdown, and delivery conditions without referrals to other skills.[^skill-independence] The translator labels additional Japanese-writing material separately from the book overview; that material is not imported here. No second-edition AI-specific technique is asserted from a publisher blurb.
 
 ### Public-material observations
 
@@ -120,6 +120,6 @@ The public contents identify comments, READMEs, introductory, conceptual, proced
 
 ## Current policy authoring
 
-[Current policy authoring](../../skills/document-authoring/references/engineering-policies.md) applies the five audiences and recording boundaries in [decision-recording](../../skills/decision-recording/SKILL.md). Documents describe effective technologies, specifications, responsibilities, and procedures without chronological decision sections or required PR footers. The [local policy](../engineering-policies/change-records.md) retains actual validation reporting and the repository's validation exclusions. The skill prescribes no consumer policy directory or document name.
+[Current policy authoring](../../archived-skills/document-authoring/references/engineering-policies.md) applies the five audiences and recording boundaries in [decision-recording](../../skills/decision-recording/SKILL.md). Documents describe effective technologies, specifications, responsibilities, and procedures without chronological decision sections or required PR footers. The [local policy](../engineering-policies/change-records.md) retains actual validation reporting and the repository's validation exclusions. The skill prescribes no consumer policy directory or document name.
 
 [^skill-independence]: [Independent skill guidance and versioning responsibilities](https://github.com/daiksud/agents/issues/285).
