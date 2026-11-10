@@ -53,7 +53,7 @@ sources:
 
 ## Purpose and runtime documents
 
-These are maintainer notes for [software-development](../../skills/software-development/SKILL.md). Runtime entry points and task references retain the instructions needed for execution; this document preserves attribution and background for maintenance. Any source-check dates below are retained history, not new verification performed during this separation.
+These are maintainer notes for [software-development](../../archived-skills/software-development/SKILL.md). Runtime entry points and task references retain the instructions needed for execution; this document preserves attribution and background for maintenance. Any source-check dates below are retained history, not new verification performed during this separation.
 
 ### Source mapping
 
@@ -62,11 +62,11 @@ Source IDs are preserved from the original files, including aliases for the same
 | Runtime document or original catalog | Source mapping |
 | --- | --- |
 | Former bundled source catalog (`references/sources.md`) | [Sources for design and testing](#sources-for-design-and-testing) retains its source IDs and adoption notes |
-| [references/agent-communication.md](../../skills/software-development/references/agent-communication.md) | [^issue-99], [^issue-140] |
-| [references/copilot-cli-pairing.md](../../skills/software-development/references/copilot-cli-pairing.md) | [^github-copilot-cli-changelog], [^issue-87], [^issue-99], [^issue-100], [^issue-161] |
-| [references/design.md](../../skills/software-development/references/design.md) | `practice-sources` (original resource: `sources.md`; catalog retained here) |
-| [references/navigator-recovery.md](../../skills/software-development/references/navigator-recovery.md) | [^issue-140], [^issue-100], [^issue-161] |
-| [references/testing.md](../../skills/software-development/references/testing.md) | `practice-sources` (original resource: `sources.md`; catalog retained here) |
+| [references/agent-communication.md](../../archived-skills/software-development/references/agent-communication.md) | [^issue-99], [^issue-140] |
+| [references/copilot-cli-pairing.md](../../archived-skills/software-development/references/copilot-cli-pairing.md) | [^github-copilot-cli-changelog], [^issue-87], [^issue-99], [^issue-100], [^issue-161] |
+| [references/design.md](../../archived-skills/software-development/references/design.md) | `practice-sources` (original resource: `sources.md`; catalog retained here) |
+| [references/navigator-recovery.md](../../archived-skills/software-development/references/navigator-recovery.md) | [^issue-140], [^issue-100], [^issue-161] |
+| [references/testing.md](../../archived-skills/software-development/references/testing.md) | `practice-sources` (original resource: `sources.md`; catalog retained here) |
 
 ## Sources for design and testing
 
@@ -105,7 +105,7 @@ Starting with TDD, incremental design, and automated validation; selecting outco
 
 MinoDriven's Designing for code reading[^minodriven-designing-for-code-reading], published 2026-09-30, was checked on 2026-10-06: slides 13–20 cover contract categories and black-box tests, 23–27 cover side effects and isolation, and 29–36 cover abstraction. Adopt these ideas to implement existing agreed domain behavior faithfully within this repository's incremental workflow.
 
-Detailed guidance belongs in [design](../../skills/software-development/references/design.md#expressing-agreed-behavior-as-contracts) and [testing](../../skills/software-development/references/testing.md#mapping-contracts-to-observable-tests). Caller/callee ownership, current-scope enforcement, and the inventory example are local application choices, not universal business rules or verbatim deck requirements.
+Detailed guidance belongs in [design](../../archived-skills/software-development/references/design.md#expressing-agreed-behavior-as-contracts) and [testing](../../archived-skills/software-development/references/testing.md#mapping-contracts-to-observable-tests). Caller/callee ownership, current-scope enforcement, and the inventory example are local application choices, not universal business rules or verbatim deck requirements.
 
 Reuse specification outcomes without mandatory discovery ceremonies. Identify only applicable conditions and implement one assert-first item at a time. Preserve happy-path MVP, resilient assertions, and ordinary review/CI; do not adopt repeated internal guards, speculative hardening, mandatory classes, a new framework, fixed templates, coverage quotas, or whole-repository retrofits. Contracts and tests are scoped evidence, not formal proof or the deck's near-total correctness claim.
 
@@ -182,6 +182,6 @@ These annotations preserve the original per-file attribution and checking detail
 
 ## Change-record policy adoption
 
-[Development](../../skills/software-development/SKILL.md) and its design/testing references apply the agreement in [Issue #253](https://github.com/daiksud/agents/issues/253).[^change-record-agreement] The current rationale and boundaries live in [Change records policy](../engineering-policies/change-records.md): actual validation reporting is required while execution is discretionary unless independently required; PRs/commits retain historical judgment and topical policies retain current guidance. This adoption does not establish renewed checking of the external sources above.
+[Development](../../archived-skills/software-development/SKILL.md) and its design/testing references apply the agreement in [Issue #253](https://github.com/daiksud/agents/issues/253).[^change-record-agreement] The current rationale and boundaries live in [Change records policy](../engineering-policies/change-records.md): actual validation reporting is required while execution is discretionary unless independently required; PRs/commits retain historical judgment and topical policies retain current guidance. This adoption does not establish renewed checking of the external sources above.
 
 [^change-record-agreement]: Owner-agreed change-record policy and implementation scope in Issue #253.

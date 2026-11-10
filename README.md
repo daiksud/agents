@@ -17,7 +17,7 @@ This repository shares task-specific [Skills](skills/) through APM.
 
 ## Artifact language
 
-Most Skills use English. The [continuous-delivery](skills/continuous-delivery/SKILL.md), [decision-recording](skills/decision-recording/SKILL.md), [github-repo](skills/github-repo/SKILL.md), and [versioning](skills/versioning/SKILL.md) skills use Japanese. Follow the target repository's language conventions for produced artifacts.
+All four installable Skills use Japanese. Follow the target repository's language conventions for produced artifacts.
 
 ## Maintainer references
 
@@ -29,22 +29,29 @@ The distribution targets are Codex and GitHub Copilot, as specified in [apm.yml]
 
 ## Choose a skill
 
-Each skill contains the guidance needed for its task without referring to or requiring another skill. Select skills by the work requested; this repository-level catalog explains their responsibilities.[^skill-independence]
+The four skills below are installable through APM. Each is independently usable without installing the others.[^skill-independence]
 
 | Task | Skill |
 | --- | --- |
-| Assess development practices, architecture, and organization | [engineering-assessment](skills/engineering-assessment/SKILL.md) |
-| Clarify domain rules, examples, and acceptance conditions | [behavior-specification](skills/behavior-specification/SKILL.md) |
-| Estimate work in relative story points | [estimate-story-points](skills/estimate-story-points/SKILL.md) |
-| Record plans, Issues, and work-item decisions | [issue-management](skills/issue-management/SKILL.md) |
-| Implement behavior and contracts | [software-development](skills/software-development/SKILL.md) |
-| Author technical documents and structured specifications | [document-authoring](skills/document-authoring/SKILL.md) |
 | Preserve judgment reasons and PR/commit records | [decision-recording](skills/decision-recording/SKILL.md) |
-| Deliver approved changes through PRs, review, CI, and main verification | [change-delivery](skills/change-delivery/SKILL.md) |
-| Review changes without modifying them | [code-review](skills/code-review/SKILL.md) |
 | Configure continuous-delivery pipelines and artifact handling | [continuous-delivery](skills/continuous-delivery/SKILL.md) |
 | Configure commit conventions, commitlint, and automatic version calculation | [versioning](skills/versioning/SKILL.md) |
 | Configure GitHub repository settings and supporting `.github` files | [github-repo](skills/github-repo/SKILL.md) |
+
+## Temporarily archived skills
+
+The following bundles are preserved under `archived-skills/` for later refinement. APM's automatic discovery installs skills from the root `skills/` directory, not `archived-skills/`, so these eight bundles are excluded from this package's installation.
+
+| Task | Archived skill |
+| --- | --- |
+| Assess development practices, architecture, and organization | [engineering-assessment](archived-skills/engineering-assessment/SKILL.md) |
+| Clarify domain rules, examples, and acceptance conditions | [behavior-specification](archived-skills/behavior-specification/SKILL.md) |
+| Estimate work in relative story points | [estimate-story-points](archived-skills/estimate-story-points/SKILL.md) |
+| Record plans, Issues, and work-item decisions | [issue-management](archived-skills/issue-management/SKILL.md) |
+| Implement behavior and contracts | [software-development](archived-skills/software-development/SKILL.md) |
+| Author technical documents and structured specifications | [document-authoring](archived-skills/document-authoring/SKILL.md) |
+| Deliver approved changes through PRs, review, CI, and main verification | [change-delivery](archived-skills/change-delivery/SKILL.md) |
+| Review changes without modifying them | [code-review](archived-skills/code-review/SKILL.md) |
 
 Continuous-delivery uses `pr.yml`, `push.yml`, and `release.yml` as the basic pipeline. Optional `merge-queue.yml` runs `screening` and `inspection` on `merge_group: checks_requested`; `push.yml` can skip both when it can reuse a matching artifact from a successful queue run.
 
@@ -85,7 +92,7 @@ Choose github-repo for repository settings and supporting configuration. [Contin
 
 This repository requires `pass` for pull requests. [PR validation](.github/workflows/ci-pr.yml) follows `draft → commit-stage → ready → acceptance-stage → pass`: every run first attempts to convert the PR to Draft, runs approval-policy tests and Markdown lint, marks it Ready, and then checks local file links including frontmatter paths. Creation, new commits, reopening, and PR edits trigger validation. Each stage requires its predecessor to succeed; the final `pass` check rejects failed, cancelled, or skipped validation. There is no special handling for fork or Dependabot PRs: a denied state change fails the run instead of allowing validation to continue. [Main-push validation](.github/workflows/ci.yml) runs the same approval-policy tests and Markdown lint.
 
-CI does not wait for reviews or merge PRs. This repository does not wait for CodeQL scans or results before merging PRs. Check the [Ruleset](https://github.com/daiksud/agents/rules/22615823) for the latest enforced conditions, and [Review and merge](skills/change-delivery/references/review-and-merge.md) for procedures from ordinary review through post-integration verification.
+CI does not wait for reviews or merge PRs. This repository does not wait for CodeQL scans or results before merging PRs. Check the [Ruleset](https://github.com/daiksud/agents/rules/22615823) for the latest enforced conditions and [AGENTS.md](AGENTS.md) for repository-specific validation and change-record requirements.
 
 ## Codex approval automation
 

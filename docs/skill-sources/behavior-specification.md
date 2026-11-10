@@ -29,7 +29,7 @@ sources:
 
 ## Purpose and runtime documents
 
-These are maintainer notes for [behavior-specification](../../skills/behavior-specification/SKILL.md). Runtime entry points and task references retain the instructions needed for execution; this document preserves attribution and background for maintenance. Any source-check dates below are retained history, not new verification performed during this separation.
+These are maintainer notes for [behavior-specification](../../archived-skills/behavior-specification/SKILL.md). Runtime entry points and task references retain the instructions needed for execution; this document preserves attribution and background for maintenance. Any source-check dates below are retained history, not new verification performed during this separation.
 
 ### Source mapping
 
@@ -38,7 +38,7 @@ Source IDs are preserved from the original files, including aliases for the same
 | Runtime document or original catalog | Source mapping |
 | --- | --- |
 | Former bundled source catalog (`references/sources.md`) | [Sources for shared understanding and acceptance specifications](#sources-for-shared-understanding-and-acceptance-specifications) retains its source IDs and adoption notes |
-| [references/behavior.md](../../skills/behavior-specification/references/behavior.md) | `practice-sources` (original resource: `sources.md`; catalog retained here), [^gherkin-markdown], [^gherkin-ja] |
+| [references/behavior.md](../../archived-skills/behavior-specification/references/behavior.md) | `practice-sources` (original resource: `sources.md`; catalog retained here), [^gherkin-markdown], [^gherkin-ja] |
 
 ## Sources for shared understanding and acceptance specifications
 

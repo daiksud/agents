@@ -34,7 +34,7 @@ sources:
 
 ## Purpose and scope
 
-This maintainer audit records the adopted specification, earlier source comparisons, and local authoring decisions. Ordinary authoring uses [document-authoring](../skills/document-authoring/SKILL.md) and its operational references. Source-reading observations below are retained history, not evidence that this reorganization reran upstream code or rechecked its current state.
+This maintainer audit records the adopted specification, earlier source comparisons, and local authoring decisions. Ordinary authoring uses [document-authoring](../archived-skills/document-authoring/SKILL.md) and its operational references. Source-reading observations below are retained history, not evidence that this reorganization reran upstream code or rechecked its current state.
 
 ## Authoritative source and interpretation
 
