@@ -1,11 +1,27 @@
-## Summary
+<!--
+Start without a heading: state what was decided or changed and the resulting behavior.
+Keep the opening and Validation; remove other sections when unnecessary or already covered.
+Keep the reasons needed to understand the judgment somewhere in the body.
+Write in English and preserve the final title/body verbatim in the commit created at merge.
+Remove ALL HTML comments after writing and before creating/updating the PR.
+-->
 
-<!-- Describe the problem or need, actual change, and resulting behavior. -->
+## Background
 
-## Decisions
+<!-- Describe the problem, requirements, confirmed facts, and constraints behind the change. -->
 
-<!-- Record confirmed facts, constraints, real alternatives, reasons, and trade-offs needed to understand the judgment without following links. Links are supplementary. Include relevant review conclusions. Remove this section if unnecessary or already clear in Summary. -->
+## Considerations
+
+<!-- Explain real alternatives and the reasons for choosing or rejecting them. Include relevant review conclusions. Do not invent comparisons. -->
+
+## Impact
+
+<!-- Describe effects on users, compatibility, migration, operations, and accepted trade-offs. -->
 
 ## Validation
 
-<!-- State actual checked scope and observed results, including failures and material limitations, or write Not run for discretionary checks. Preserve required CI. Distinguish plans from completed checks. Remove ALL HTML comments before creating/updating the PR. Preserve the final title/body verbatim in the commit created at merge. -->
+<!-- State actual checked scope and observed results, including failures and material limitations, or write Not run for discretionary checks. Preserve required CI and agreed acceptance conditions. Distinguish plans from completed checks. -->
+
+## References
+
+<!-- Add supplementary links to Issues, discussions, or sources. Keep necessary facts, conclusions, and reasons in the body so the record is understandable without following links. -->
