@@ -12,11 +12,11 @@ Use [decision-recording](../../skills/decision-recording/SKILL.md) to choose the
 
 ## PR and commit records
 
-PR descriptions use Summary, optional Decisions, and Validation. State the problem, actual change, resulting behavior, and the facts, constraints, alternatives, reasons, and trade-offs needed to understand the judgment. Links may supplement this text but must not be necessary to understand it. Incorporate conclusions from discussion into the final body.
+PR descriptions start with the decision and overview without a heading. Follow with flat Background, Considerations, Impact, Validation, and References sections. Keep the opening and Validation; remove other sections when unnecessary or already covered. State the problem, actual change, resulting behavior, and the facts, constraints, alternatives, reasons, and trade-offs needed to understand the judgment. Do not invent comparisons to fill a section. Links may supplement this text but must not be necessary to understand it. Incorporate conclusions from discussion into the final body.
 
 Every PR reports actual validation status. Execution remains discretionary unless required by the task or repository; `Not run` is valid for discretionary checks. Preserve required CI, agreed acceptance conditions, and the APM and independent-validation exclusions in [AGENTS.md](../../AGENTS.md).
 
-Remove all HTML comments from actual descriptions. This repository uses English commit messages and PR titles/bodies. Preserve the final title/body verbatim in the commit created at merge, and verify the saved message. The repository's effective protections determine which permitted method is available; guidance for consumers does not apply live settings.
+Remove all HTML comments after writing and before creating/updating the PR. PR validation rejects any HTML comment opener in the body, including unclosed comments and literal examples in code blocks. This repository uses English commit messages and PR titles/bodies. Preserve the final title/body verbatim in the commit created at merge, and verify the saved message. The repository's effective protections determine which permitted method is available; guidance for consumers does not apply live settings.
 
 ## Consumer adoption
 

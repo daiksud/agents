@@ -57,7 +57,7 @@ sources:
 | 初回・0.x・プレリリース | SemVerは `0.x` とプレリリースを認める。semantic-releaseは初回 `0.0.1` とmajor 0の特別な扱いをサポートしないため、採用する規則に対応するツールを選ぶ。[^semver][^semantic-release-faq] |
 | パーサーと計算ツール | commitlintのconventional設定はConventional Commitsのプリセットを使う。commit-analyzerは `angular` が既定で、独自規則に一致しない場合は既定規則を適用し、`perf` をpatchとする。任意のtypeの破壊的変更を保ったまま計算方針に設定を合わせる。[^commitlint-configuration][^semantic-release-commit-analyzer] |
 | [commitlintの設定](../../skills/versioning/references/commitlint.md) | 標準の設定探索は `commitlint.config.mjs` や `package.json` の `commitlint` を扱う。`--default-config` はルールが見つからない場合の内蔵設定を選ぶ。既存設定を尊重し、設定エラーを標準設定への切り替えで隠さない。[^commitlint-configuration][^commitlint-cli] |
-| [ワークフロー](../../skills/versioning/assets/commitlint.yml) | PRのコミット範囲とタイトル・本文を検査する。Bun `1.4.4`、commitlint `21.2.4`、外部ActionのSHAは移設元の固定値を保持する。変更したのはステップの表示名。バージョン指定付きのbunxはローカルCLIを選ばず、`--bun` は実行ランタイムを指定する。[^commitlint-workflow-source][^commitlint-ci][^setup-bun][^bunx] |
+| [ワークフロー](../../skills/versioning/assets/commitlint.yml) | PRのコミット範囲とタイトル・本文を検査する。別のステップで、PR本文にHTMLコメントの開始記号が残っていないことを確認する。Bun `1.4.4`、commitlint `21.2.4`、外部ActionのSHAを固定する。バージョン指定付きのbunxはローカルCLIを選ばず、`--bun` は実行ランタイムを指定する。[^commitlint-workflow-source][^commitlint-ci][^setup-bun][^bunx] |
 | 必須チェック | 導入したジョブの実行後に `commitlint` を必須チェックへ追加し、設定を読み戻す。実際の設定変更は依頼された範囲で行う。[^github-required-checks] |
 
 [^agents-versioning]: [独立スキル作成の目的と範囲](https://github.com/daiksud/agents/issues/281)。

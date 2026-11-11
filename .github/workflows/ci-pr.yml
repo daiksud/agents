@@ -32,6 +32,14 @@ jobs:
     timeout-minutes: 10
     permissions: {contents: read}
     steps:
+      - name: Reject HTML comments in PR body
+        env:
+          PR_BODY: ${{ github.event.pull_request.body }}
+        run: |
+          if [[ "$PR_BODY" == *'<!--'* ]]; then
+            printf '%s\n' '::error::Remove all HTML comments from the PR body before creating or updating the PR.'
+            exit 1
+          fi
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
