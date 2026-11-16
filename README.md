@@ -39,7 +39,7 @@ The skills below are installable through APM. Each is independently usable witho
 | Configure commit conventions, commitlint, and automatic version calculation | [versioning](skills/versioning/SKILL.md) |
 | Configure GitHub repository settings and supporting `.github` files | [github-repo](skills/github-repo/SKILL.md) |
 
-Documentation separates user-facing concepts, tutorials, how-to guides, and references from contributor material under `docs/development/`. Its bundled [placement guidance](skills/documentation/references/placement.md) and [writing guidance](skills/documentation/references/writing.md) cover content, examples, sources, review, and maintenance.
+Documentation separates user-facing concepts, tutorials, how-to guides, and references from contributor material under `docs/development/`. It starts each category in a single file and adds directory levels only when growing content needs to be split, preserving each page's purpose and the flow of its procedures. Its bundled [placement guidance](skills/documentation/references/placement.md) and [writing guidance](skills/documentation/references/writing.md) cover content, examples, sources, review, and maintenance.
 
 ## Temporarily archived skills
 
