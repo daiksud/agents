@@ -17,11 +17,11 @@ This repository shares task-specific [Skills](skills/) through APM.
 
 ## Artifact language
 
-All four installable Skills use Japanese. Follow the target repository's language conventions for produced artifacts.
+The installable Skills use Japanese. Follow the target repository's language conventions for produced artifacts.
 
 ## Maintainer references
 
-[Maintainer references](docs/maintainer-references.md) collect sources and maintenance notes for the Skills. Current guidance lives in the Skills and their references. Ordinary tasks do not require loading maintainer notes.
+[Maintainer references](docs/maintainer-references.md) index existing source and maintenance material. Current authoring guidance and its sources are bundled with [documentation](skills/documentation/SKILL.md). Ordinary tasks use each skill's own references.
 
 ## Prerequisites
 
@@ -29,14 +29,17 @@ The distribution targets are Codex and GitHub Copilot, as specified in [apm.yml]
 
 ## Choose a skill
 
-The four skills below are installable through APM. Each is independently usable without installing the others.[^skill-independence]
+The skills below are installable through APM. Each is independently usable without installing the others.[^skill-independence]
 
 | Task | Skill |
 | --- | --- |
+| Write, organize, and maintain user and contributor documentation | [documentation](skills/documentation/SKILL.md) |
 | Preserve judgment reasons and PR/commit records | [decision-recording](skills/decision-recording/SKILL.md) |
 | Configure continuous-delivery pipelines and artifact handling | [continuous-delivery](skills/continuous-delivery/SKILL.md) |
 | Configure commit conventions, commitlint, and automatic version calculation | [versioning](skills/versioning/SKILL.md) |
 | Configure GitHub repository settings and supporting `.github` files | [github-repo](skills/github-repo/SKILL.md) |
+
+Documentation separates user-facing concepts, tutorials, how-to guides, and references from contributor material under `docs/development/`. Its bundled [placement guidance](skills/documentation/references/placement.md) and [writing guidance](skills/documentation/references/writing.md) cover content, examples, sources, review, and maintenance.
 
 ## Temporarily archived skills
 
@@ -49,9 +52,11 @@ The following bundles are preserved under `archived-skills/` for later refinemen
 | Estimate work in relative story points | [estimate-story-points](archived-skills/estimate-story-points/SKILL.md) |
 | Record plans, Issues, and work-item decisions | [issue-management](archived-skills/issue-management/SKILL.md) |
 | Implement behavior and contracts | [software-development](archived-skills/software-development/SKILL.md) |
-| Author technical documents and structured specifications | [document-authoring](archived-skills/document-authoring/SKILL.md) |
+| Consult archived authoring and structured-specification guidance | [document-authoring](archived-skills/document-authoring/SKILL.md) |
 | Deliver approved changes through PRs, review, CI, and main verification | [change-delivery](archived-skills/change-delivery/SKILL.md) |
 | Review changes without modifying them | [code-review](archived-skills/code-review/SKILL.md) |
+
+Use [documentation](skills/documentation/SKILL.md) for current documentation work. The archived `document-authoring` bundle remains available as reference material and is excluded from package installation.
 
 Continuous-delivery uses `pr.yml`, `push.yml`, and `release.yml` as the basic pipeline. Optional `merge-queue.yml` runs `screening` and `inspection` on `merge_group: checks_requested`; `push.yml` can skip both when it can reuse a matching artifact from a successful queue run.
 
