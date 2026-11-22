@@ -1,72 +1,76 @@
 # XP第2版の価値・原則・プラクティス
 
-価値は「何を大切にするか」、原則は「その価値を目の前の状況でどう判断に使うか」、プラクティスは「実際に何をするか」を示す。たとえば、結果を早く知りたい（Feedback）ときは、一歩を小さくする（Baby Steps）ために、次の振る舞いを一つだけ先にテストする（Test-First Programming）。
+開発中の問いを手掛かりに、該当する項目を開く。たとえばテストの結果を待つ間にほかの作業が増えるなら、変更を分割できるかを Baby Steps で考え、ビルド自体に時間がかかっていれば Ten-Minute Build を参照する。
 
-英語名と分類は Kent Beck、Cynthia Andres 著『Extreme Programming Explained: Embrace Change』第2版の第4、5、7、9章に従う。表の判断例は、それぞれを開発で使う場面を示す。[出版社の目次](https://www.informit.com/store/extreme-programming-explained-embrace-change-9780134051987)
+項目の名称と分類は Kent Beck、Cynthia Andres 著『Extreme Programming Explained: Embrace Change』第2版の第4・5・7・9章に基づく。各ページの開発例は、そこで扱う考え方を具体化したもの。[原著の目次](https://www.informit.com/store/extreme-programming-explained-embrace-change-9780134051987)・[日本語版の詳細目次](https://www.ohmsha.co.jp/book/9784274217623.html)
 
 ## 価値
 
-| 英語名 | 意味 | 判断・行動の例 |
-| --- | --- | --- |
-| Communication | 対話で理解をそろえる。 | 「取消可能」の解釈が割れたら、発送直前と直後の例を並べて依頼者に確かめる。 |
-| Simplicity | 現在の要求を満たす簡潔な設計を選ぶ。 | 出力形式が一つなら、その形式を読みやすく実装する。別形式が必要になった時点で共通部分を検討する。 |
-| Feedback | 判断の結果を早く知り、次の判断に反映する。 | 解釈に自信がなければ、動く最小の例を利用者に試してもらう。 |
-| Courage | 分かった問題に向き合い、必要な変更に踏み切る。 | 実装途中で前提が崩れたら、失敗する例を共有して方針を改める。 |
-| Respect | 関係者の知識、時間、判断を尊重する。 | 運用担当者が手順の難しさを指摘したら、実際の操作を教わって設計を見直す。 |
+何を大切にして判断するか。目的は合っているのに意見が割れるときは、それぞれの案が守ろうとしているものを確かめる。
+
+| 項目 | こんなときに読む |
+| --- | --- |
+| [Communication（コミュニケーション）](values/communication.md) | 同じ用語から異なる結果を想像している |
+| [Simplicity（シンプリシティ）](values/simplicity.md) | いま設計に加える仕組みの範囲を決めたい |
+| [Feedback（フィードバック）](values/feedback.md) | 実装や利用者についての予想を確かめたい |
+| [Courage（勇気）](values/courage.md) | 途中で前提が崩れ、進め方を変える必要がある |
+| [Respect（リスペクト）](values/respect.md) | 影響を受ける人の知識や制約を設計に生かしたい |
 
 ## 原則
 
-| 英語名 | 意味 | 判断・行動の例 |
-| --- | --- | --- |
-| Humanity | 安心して働き、学び、貢献できる条件を整える。 | 担当者が休めるように、別のメンバーと復旧手順を一緒に試す。 |
-| Economics | 今得る価値、費用、判断を遅らせる価値を考える。 | 高価な移行方式を決める前に、小さなデータで所要時間を測る。 |
-| Mutual Benefit | 今の作業者にも、後から関わる人にも利益がある解を選ぶ。 | 障害の再現例を自動テストにし、今日の原因調査と将来の回帰検出に使う。 |
-| Self-Similarity | ある規模で役立つ考え方を、別の規模でも試す。 | 関数の変更を小刻みに試せたなら、システム移行も利用者の操作一つ分に区切って試す。 |
-| Improvement | 現状から少しずつ良くする。 | テスト全体の書き直しを待たず、今日触るテストで失敗の理由を読み取れるようにする。 |
-| Diversity | 異なる経験や視点を解決に生かす。 | 一括更新の受け入れ例を考えるとき、途中失敗への対処を運用担当者にも聞く。 |
-| Reflection | 結果と進め方を振り返り、次の行動を変える。 | 手戻りの原因が用語の食い違いなら、次のストーリーでは境界例を先に共有する。 |
-| Flow | 完了した仕事が継続的に次へ流れるようにする。 | レビュー待ちが積み上がったら、着手済みの変更を一つ統合できるよう支援する。 |
-| Opportunity | 問題を、仕組みを良くする機会と捉える。 | 問い合わせが続く入力エラーを調べ、利用者がその場で訂正できる表示にする。 |
-| Redundancy | 重大な失敗には異なる手段で備える。 | 請求額の丸めを例でテストし、請求書全体でも明細と合計が一致することを確かめる。 |
-| Failure | 小さく失敗できる試みから学ぶ。 | 二案で迷ったら、未知の制約を最も早く確かめられる実験を選び、結果から判断する。 |
-| Quality | 品質を保って、変更を続けられるようにする。 | 納期に収まらないときは、必要な精度とテストを保ち、後に回せる機能を依頼者と選ぶ。 |
-| Baby Steps | 結果を確認できる小さな一歩を重ねる。 | 日付処理の置き換えを一つの呼び出し元から始め、結果を比較して次へ進む。 |
-| Accepted Responsibility | 責任は、仕事を担う人が自ら引き受ける。 | 復旧を引き受ける人と、判断に必要な情報、権限、助けを求める先を確かめる。 |
+その状況で価値をどう行動に結びつけるか。たとえばフィードバックを早く得たいなら、まず結果を観測できる大きさまで変更を小さくする。
+
+| 項目 | こんなときに読む |
+| --- | --- |
+| [Humanity（人間性）](principles/humanity.md) | 特定の人に負担が集中している |
+| [Economics（経済性）](principles/economics.md) | 今決める費用と、判断を後に延ばす費用を比べたい |
+| [Mutual Benefit（相互利益）](principles/mutual-benefit.md) | 今の作業と将来の保守の両方に役立つ手があるか |
+| [Self-Similarity（自己相似性）](principles/self-similarity.md) | 小さな範囲で役立った方法を別の規模でも試したい |
+| [Improvement（改善）](principles/improvement.md) | 全体を作り直す前に一つ良くしたい |
+| [Diversity（多様性）](principles/diversity.md) | 一つの視点で見落とした条件を探したい |
+| [Reflection（ふりかえり）](principles/reflection.md) | 実際に起きたことから次の試みを決めたい |
+| [Flow（流れ）](principles/flow.md) | 着手した仕事が途中で滞っている |
+| [Opportunity（機会）](principles/opportunity.md) | 繰り返す困りごとを改善のきっかけにしたい |
+| [Redundancy（冗長性）](principles/redundancy.md) | 一つの対策をすり抜ける失敗に備えたい |
+| [Failure（失敗）](principles/failure.md) | 安全な範囲で未知の条件を試したい |
+| [Quality（品質）](principles/quality.md) | 納期が迫るなかで品質を保ちたい |
+| [Baby Steps（ベイビーステップ）](principles/baby-steps.md) | 次の変更を試して戻せる大きさにしたい |
+| [Accepted Responsibility（責任の引き受け）](principles/accepted-responsibility.md) | 誰が何を判断し、どこまで引き受けられるか |
 
 ## 基本プラクティス
 
-チームが現在の仕事から着手できる実践。いま必要なフィードバックを得られるものを選ぶ。
+日々の作業で何を試すか。結果を知るのが遅いときは、対話、テスト、統合のどこで待ちが生まれているかを見て選ぶ。日本語版の第7章では「主要プラクティス」と呼ぶ。
 
-| 英語名 | 意味 | 判断・行動の例 |
-| --- | --- | --- |
-| Sit Together | 同じ場所で、疑問をすぐに相談できるようにする。 | 分散環境なら、同じ失敗を画面共有し、その場で一緒に調べられるようにする。 |
-| Whole Team | 価値を届けるのに必要な専門性をチームにそろえる。 | 返品機能なら、業務を知る人、実装する人、検証する人で返金の例を決める。 |
-| Informative Workspace | 作業状況や問題が自然に目に入る場所を作る。 | 誰もが普段見る場所に、統合ビルドの失敗と対応状況を示す。 |
-| Energized Work | 集中して良い判断ができるペースで働く。 | 疲労で判断が鈍ったら、通ったテストと残る例を共有して交代できるようにする。 |
-| Pair Programming | 二人が同じコードについて考えながらプログラムを書く。 | ドライバーが実装する間、ナビゲーターはテスト結果を読み、抜けている条件をその場で伝える。 |
-| Stories | 利用者に価値のある単位で変更を話し合い、優先順位を決める。 | 「予約機能」を「空席のある回を予約する」と「予約を取り消す」に分けて順番を相談する。 |
-| Weekly Cycle | 週ごとに成果を振り返り、次に届けるものを選ぶ。 | 前週に完了したストーリーと新しく得た意見から、今週取り組むストーリーを選ぶ。 |
-| Quarterly Cycle | 四半期ごとにテーマと投資の方向を見直す。 | 利用者がどこで困っているかを基に、次の四半期に改善する業務を選ぶ。 |
-| Slack | 計画に余裕を持たせ、予期しない仕事を引き受けられるようにする。 | 今週の計画時に、必要なら延期できるストーリーを依頼者と決めておく。 |
-| Ten-Minute Build | ビルドと自動テストをおよそ10分で繰り返せるようにする。 | 待ち時間の長い工程を測り、毎回同じ依存関係を取得しているなら再利用する。 |
-| Continuous Integration | 小さな変更を頻繁に共有のコードに統合し、一緒に動くことを確かめる。 | 変更を取り込んだ状態でビルドとテストを実行し、統合で壊れたら早く直す。 |
-| Test-First Programming | 変えたい振る舞いを、実装より先に自動テストで表す。 | 満席でも予約できてしまうなら、予約を拒むことを期待するテストを書き、失敗を見てから直す。 |
-| Incremental Design | 現在の要求と実装から学び、設計を少しずつ育てる。 | 二つの操作で同じ取消期限を判定するようになった時点で、テストを通したまま判定をまとめる。 |
+| 項目 | こんなときに読む |
+| --- | --- |
+| [Sit Together（全員同席）](primary-practices/sit-together.md) | 小さな疑問が長い返事待ちになる |
+| [Whole Team（チーム全体）](primary-practices/whole-team.md) | 成果を届けるのに必要な知識がチームに足りない |
+| [Informative Workspace（情報満載のワークスペース）](primary-practices/informative-workspace.md) | 進捗や失敗を問い合わせずに知りたい |
+| [Energized Work（いきいきとした仕事）](primary-practices/energized-work.md) | 集中して良い判断を続けられる働き方を選びたい |
+| [Pair Programming（ペアプログラミング）](primary-practices/pair-programming.md) | 二者が同じ変更を一緒に考える進め方を知りたい |
+| [Stories（ストーリー）](primary-practices/stories.md) | 利用者が価値を得られる単位で範囲を切りたい |
+| [Weekly Cycle（週次サイクル）](primary-practices/weekly-cycle.md) | 今週届ける成果を選びたい |
+| [Quarterly Cycle（四半期サイクル）](primary-practices/quarterly-cycle.md) | 投資先と複数週にまたがるテーマを見直したい |
+| [Slack（ゆとり）](primary-practices/slack.md) | 急な仕事を引き受ける余地を計画に持たせたい |
+| [Ten-Minute Build（10分ビルド）](primary-practices/ten-minute-build.md) | 変更を確かめるビルドとテストを速くしたい |
+| [Continuous Integration（継続的インテグレーション）](primary-practices/continuous-integration.md) | 他の変更と組み合わせた結果を早く知りたい |
+| [Test-First Programming（テストファーストプログラミング）](primary-practices/test-first-programming.md) | 次に実装する振る舞いを一つ決めたい |
+| [Incremental Design（インクリメンタルな設計）](primary-practices/incremental-design.md) | 増えた要求に合わせて設計を育てたい |
 
 ## 導出プラクティス
 
-基本プラクティスで培った協働や技術を前提として取り組む実践。たとえば段階的な配備には、各段階で利用者への影響を観測し、必要なら戻せる仕組みが要る。チームや契約に関わる判断は、その当事者と進める。
+基本プラクティスで培った協働や技術を前提に、どこまで進めるか。項目ごとに、始める条件と、効果を判断できる人を確かめる。
 
-| 英語名 | 意味 | 判断・行動の例 |
-| --- | --- | --- |
-| Real Customer Involvement | 実際に使う顧客と継続して開発する。 | 新しい受付操作を窓口担当者に試してもらい、次に直す箇所を一緒に選ぶ。 |
-| Incremental Deployment | 稼働中の仕組みを小分けにして置き換える。 | 一つの窓口だけ新しい受付処理に切り替え、結果を確認してから対象を広げる。 |
-| Team Continuity | うまく協働できているチームの関係と知識を保つ。 | 一つの案件が終わったら、そのチームで次の仕事を引き受けられるか検討する。 |
-| Shrinking Teams | チームの能力向上で生まれた余力を、ほかの仕事にも生かす。 | 少人数で運用を続けられるようになったら、必要な知識を引き継ぎ、別のチームを支援できる人と相談する。 |
-| Root-Cause Analysis | 不具合が生まれ、検出をすり抜けた仕組みを調べて改善する。 | 修正後に「なぜ既存の例で検出できなかったか」を調べ、同種の欠陥も防げる手を打つ。 |
-| Shared Code | チーム全員が必要な箇所を改善できるようにする。 | 他の担当者が書いた処理も、事情を共有し、既存テストで振る舞いを守りながら直す。 |
-| Code and Tests | 実際の振る舞いを伝える中心的な成果物として、コードとテストを保つ。 | 料金規則を変えたら、計算処理と金額を例示するテストを一緒に更新する。 |
-| Single Code Base | 一つの製品を一つのコードベースで育てる。 | 二つの顧客向けに同じ修正を繰り返しているなら、共通の修正を一度で届けられる構成を検討する。 |
-| Daily Deployment | 毎日本番に配備し、小さな変更への反応を得る。 | 自動検証と復旧手段が整ったら、その日完成した変更を配備して利用状況を確認する。 |
-| Negotiated Scope Contract | 時間や費用の枠内で、学んだことに合わせて契約の範囲を交渉する。 | もっと価値のある機能が見つかったら、予定していた機能と入れ替える合意を取る。 |
-| Pay-Per-Use | 利用に応じて対価を得て、顧客が感じる価値を確かめる。 | 帳票の作成回数に応じた課金なら、どの帳票が継続して購入されているかを次の投資判断に使う。 |
+| 項目 | こんなときに読む |
+| --- | --- |
+| [Real Customer Involvement（本物の顧客参加）](corollary-practices/real-customer-involvement.md) | 実際に使う人の経験を優先順位に反映したい |
+| [Incremental Deployment（インクリメンタルなデプロイ）](corollary-practices/incremental-deployment.md) | 稼働中の仕組みを少しずつ入れ替えたい |
+| [Team Continuity（チームの継続）](corollary-practices/team-continuity.md) | 案件が変わっても協働してきた知識を生かしたい |
+| [Shrinking Teams（チームの縮小）](corollary-practices/shrinking-teams.md) | 生まれた余力を別の仕事にも生かしたい |
+| [Root-Cause Analysis（根本原因分析）](corollary-practices/root-cause-analysis.md) | 不具合が繰り返される仕組みを変えたい |
+| [Shared Code（コードの共有）](corollary-practices/shared-code.md) | 担当範囲を越えて必要なコードを直せるようにしたい |
+| [Code and Tests（コードとテスト）](corollary-practices/code-and-tests.md) | 維持すべき振る舞いを実行できる形で伝えたい |
+| [Single Code Base（単一のコードベース）](corollary-practices/single-code-base.md) | 同じ製品の修正を複数系統に繰り返している |
+| [Daily Deployment（デイリーデプロイ）](corollary-practices/daily-deployment.md) | 日々の変更を本番で確かめたい |
+| [Negotiated Scope Contract（交渉によるスコープ契約）](corollary-practices/negotiated-scope-contract.md) | 期限や費用の枠内で価値の高い仕事を選び直したい |
+| [Pay-Per-Use（利用都度課金）](corollary-practices/pay-per-use.md) | 実際の利用と対価を結びつけたい |
