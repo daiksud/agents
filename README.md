@@ -36,7 +36,8 @@ The skills below are installable through APM. Each is independently usable witho
 | Write, organize, and maintain user and contributor documentation | [documentation](skills/documentation/SKILL.md) |
 | Preserve judgment reasons and PR/commit records | [decision-recording](skills/decision-recording/SKILL.md) |
 | Configure continuous-delivery pipelines and artifact handling | [continuous-delivery](skills/continuous-delivery/SKILL.md) |
-| Configure commit conventions, commitlint, and automatic version calculation | [versioning](skills/versioning/SKILL.md) |
+| Configure commit conventions and automatic version calculation | [versioning](skills/versioning/SKILL.md) |
+| Set up commitlint and its required check | [decision-recording](skills/decision-recording/SKILL.md) or [versioning](skills/versioning/SKILL.md) |
 | Configure GitHub repository settings and supporting `.github` files | [github-repo](skills/github-repo/SKILL.md) |
 
 Documentation separates user-facing concepts, tutorials, how-to guides, and references from contributor material under `docs/development/`. It starts each category in a single file and adds directory levels only when growing content needs to be split, preserving each page's purpose and the flow of its procedures. Its bundled [placement guidance](skills/documentation/references/placement.md) and [writing guidance](skills/documentation/references/writing.md) cover content, examples, sources, review, and maintenance.
@@ -66,7 +67,7 @@ Release versions are calculated automatically from commit history according to t
 
 The [decision-recording skill](skills/decision-recording/SKILL.md) covers the readers and purposes of documents, commit messages, comments, code, and tests. It includes a guide to preserving PR records through GitHub merge settings and two recording templates.
 
-Versioning uses Semantic Versioning and Conventional Commits. It owns detailed convention guidance, commitlint setup, its standalone workflow, and version-calculation rules and tools. It also supports commit-convention setup without automatic releases. Continuous-delivery and decision-recording retain brief guidance recommending the conventions for their respective purposes.[^skill-independence]
+Versioning covers Conventional Commits and automatic version calculation using Semantic Versioning. It also supports setting up commit conventions and validation on their own. [Conventional Commits guide](skills/versioning/references/conventional-commits.md)
 
 [^skill-independence]: [Independent skill guidance and versioning responsibilities](https://github.com/daiksud/agents/issues/285).
 
@@ -115,4 +116,4 @@ The approval workflow has no `workflow_call` entry point. CI owns its Draft/Read
 
 Use the [PR template](skills/decision-recording/assets/pull_request_template.md) and [local instruction example](skills/decision-recording/assets/agents-decision-records.md) to adopt the recording practice. Start with the decision and overview without a heading, then use flat Background, Considerations, Impact, Validation, and References sections. Keep the opening and validation status; remove unnecessary sections and every HTML authoring comment. The [GitHub settings guide](skills/decision-recording/references/github-settings.md) covers squash and merge-commit merging with final PR title/body messages and prohibits rebase merging.
 
-For convention and tool setup, [versioning](skills/versioning/SKILL.md) provides the [Conventional Commits guide](skills/versioning/references/conventional-commits.md), [commitlint guide](skills/versioning/references/commitlint.md), and [workflow](skills/versioning/assets/commitlint.yml). The workflow pins Bun and commitlint while honoring existing commitlint configuration. A separate step rejects HTML comment openers in the PR body without changing commitlint rules. Consumer files and live settings require adoption in the target repository; package installation alone does not apply them. This repository's active CI remains described above.
+The decision-recording and versioning skills each bundle a commitlint guide and workflow. The workflow pins Bun and commitlint, honors existing commitlint configuration, and checks PR bodies for HTML comment openers in a separate step. Adopt the workflow and any required check in the target repository. [decision-recording guide](skills/decision-recording/references/commitlint.md), [versioning guide](skills/versioning/references/commitlint.md)
