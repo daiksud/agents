@@ -51,6 +51,14 @@ sources:
     resource: https://docs.github.com/en/code-security/how-tos/secure-your-supply-chain/secure-your-dependencies/configure-version-updates
   - id: dependabot-options
     resource: https://docs.github.com/en/code-security/reference/supply-chain-security/dependabot-options-reference
+  - id: labeler
+    resource: https://github.com/actions/labeler/blob/v7.0.0/README.md
+  - id: labeler-sync
+    resource: https://github.com/actions/labeler/blob/v7.0.0/src/labeler.ts#L62-L83
+  - id: pull-request-target
+    resource: https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#pull_request_target
+  - id: pull-request-target-policy
+    resource: https://docs.github.com/en/actions/reference/security/securely-using-pull_request_target#default-policy-for-pull_request_target
   - id: issue-templates
     resource: https://docs.github.com/en/communities/using-templates-to-encourage-useful-issues-and-pull-requests/configuring-issue-templates-for-your-repository
   - id: issue-form-syntax
@@ -137,6 +145,8 @@ Runtime material: [repository-files.md](../../skills/github-repo/references/repo
 | --- | --- |
 | [^standalone-scope] | Repository settings and supporting files are handled within the installed github-repo bundle. |
 | [^dependabot-version-updates][^dependabot-options] | `.github/dependabot.yml`, supported ecosystems, manifest locations, schedules, and preservation of existing update configuration. |
+| [^labeler][^labeler-sync][^dependabot-options][^pull-request-target] | Path matching, synchronization, preservation of Dependabot labels, minimum permissions, and trusted execution for fork PRs. |
+| [^pull-request-target-policy] | Default event policy and execution eligibility in public repositories. |
 | [^code-owners] | CODEOWNERS placement, eligible owners, base-branch evaluation, and required-review behavior. |
 | [^issue-templates][^issue-form-syntax] | Issue-form location and schema, template chooser configuration, default-branch availability, and existing-label prerequisites. |
 | [^pr-templates] | PR-template placement and default-branch availability. |
@@ -231,6 +241,10 @@ For official/UI/API disagreements preserve confirmed scope/differences without f
 [^standalone-scope]: [Standalone github-repo scope](https://github.com/daiksud/agents/issues/287).
 [^dependabot-version-updates]: [Configuring Dependabot version updates](https://docs.github.com/en/code-security/how-tos/secure-your-supply-chain/secure-your-dependencies/configure-version-updates).
 [^dependabot-options]: [Dependabot options reference](https://docs.github.com/en/code-security/reference/supply-chain-security/dependabot-options-reference).
+[^labeler]: [Labeler v7.0.0 configuration and permissions](https://github.com/actions/labeler/blob/v7.0.0/README.md).
+[^labeler-sync]: [Labeler v7.0.0 label synchronization](https://github.com/actions/labeler/blob/v7.0.0/src/labeler.ts#L62-L83).
+[^pull-request-target]: [GitHub Actions event reference for pull_request_target](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#pull_request_target).
+[^pull-request-target-policy]: [GitHub's default event policy for pull_request_target](https://docs.github.com/en/actions/reference/security/securely-using-pull_request_target#default-policy-for-pull_request_target).
 [^issue-templates]: [Configuring issue templates](https://docs.github.com/en/communities/using-templates-to-encourage-useful-issues-and-pull-requests/configuring-issue-templates-for-your-repository).
 [^issue-form-syntax]: [Syntax for issue forms](https://docs.github.com/en/communities/using-templates-to-encourage-useful-issues-and-pull-requests/syntax-for-issue-forms).
 [^pr-templates]: [Creating a pull request template](https://docs.github.com/en/communities/using-templates-to-encourage-useful-issues-and-pull-requests/creating-a-pull-request-template-for-your-repository).

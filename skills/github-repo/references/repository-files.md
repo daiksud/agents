@@ -1,7 +1,7 @@
 ---
 type: Instruction
 title: リポジトリの設定ファイル
-description: GitHub側の前提条件を確認し、依存関係の更新、担当者、投稿用テンプレート、脆弱性の報告方法、任意の参加手順や問い合わせ先を整備する。
+description: GitHub側の前提条件を確認し、依存関係の更新、PRのラベル付け、担当者、投稿用テンプレート、脆弱性の報告方法、任意の参加手順や問い合わせ先を整備する。
 ---
 
 ## 既存の設定を活かす
@@ -26,6 +26,38 @@ updates:
 ```
 
 バージョン更新の設定と、Dependabotアラートやセキュリティ更新の有効化は別の操作である。保存された設定と認識されたマニフェストを確認し、取得できる場合は更新ジョブの結果と作成されたPRも確認する。ファイルが存在することや、更新PRがないことだけでは、必要な依存関係が正しく対象になっているとは判断できない。依存関係の更新にも通常のレビューと必須チェックを適用する。
+
+## PRの変更ファイルに応じたラベル付け
+
+**MAY** 変更箇所をラベルで把握したいリポジトリでは、`actions/labeler` を使ってよい。採用する場合は、ルールを `.github/labeler.yml` にまとめ、イベントごとにLabelerを1回実行する構成を推奨する（SHOULD）。対象のラベルがすでに存在することを確認し、ラベル名とパスを導入先の運用に合わせる。
+
+ラベルごとに `changed-files` の `any-glob-to-any-file` で判定する。ブランチ名の命名規則は設けず、1つでも該当するファイルがあればラベルを付ける。たとえば、コードと文書が混在するPRにも `documentation` が付き、ワークフローも変わる場合は `github_actions` も付く。修正や機能追加の判断が必要な `bug` や `enhancement` は、PRの内容を確認して付ける。[Labelerのマッチ条件](https://github.com/actions/labeler/blob/v7.0.0/README.md#match-object)
+
+```yaml
+documentation:
+  - changed-files:
+      - any-glob-to-any-file: ['**/*.md', 'docs/**']
+github_actions:
+  - changed-files:
+      - any-glob-to-any-file: ['.github/workflows/**', '.github/actions/**']
+dependencies:
+  - changed-files:
+      - any-glob-to-any-file: [go.mod, go.sum, .github/workflows/actions.lock]
+```
+
+`sync-labels: true` では、差分に一致するパスがなくなると、設定に含まれるラベルは手動で付けたものも外れる。同期を有効にするなら、自動で付け外しするラベルだけを設定に含める。Dependabotの更新では、ワークフローや複合Actionの `uses:` だけが変わり、ロックファイルに差分が出ない場合がある。Dependabotが付けたラベルを保持する場合は、PR作成者に応じて `sync-labels` を切り替える。[Labelerの入力](https://github.com/actions/labeler/blob/v7.0.0/README.md#inputs) · [Dependabotのラベル設定](https://docs.github.com/en/code-security/reference/supply-chain-security/dependabot-options-reference#labels)
+
+```yaml
+sync-labels: ${{ github.event.pull_request.user.login != 'dependabot[bot]' }}
+```
+
+この設定では通常のPRで付け外しし、DependabotのPRでは一致するラベルを追加する。切り替えは実行全体に効くため、DependabotのPRでは後から一致するパスが消えても、`documentation` など付与済みのラベルが残る。
+
+forkからのPRにもラベルを付ける場合は、対象リポジトリのActionsイベントポリシーが `pull_request_target` を許可するか確認する。公開リポジトリではGitHubの既定ポリシーが実行をブロックする場合がある。[GitHubの既定ポリシー](https://docs.github.com/en/actions/reference/security/securely-using-pull_request_target#default-policy-for-pull_request_target)
+
+`pull_request_target` の `opened`、`synchronize`、`reopened` で実行し、LabelerにAPI経由でベースリポジトリのデフォルトブランチのルールを読ませる。PRのブランチをチェックアウトせず、PR側のコードも実行しない。既存ラベルを扱うジョブには既定の `GITHUB_TOKEN` を使い、`contents: read` と `pull-requests: write` を指定する。レビュー済みの公式リリースの完全なコミットSHAを固定し、[Actionsのロック](actions-lock.md)を確認する。[Labelerの推奨権限](https://github.com/actions/labeler/blob/v7.0.0/README.md#recommended-permissions) · [GitHubのイベント仕様](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#pull_request_target)
+
+マージ前にルールとワークフローを確認する。導入後はデフォルトブランチに保存されたルールで、文書・ワークフロー・依存ファイルが混在するPRへの複数付与、他の差分が残る通常のPRで最後の一致を取り消したときのラベル解除、Dependabotの `uses:` 更新での既存ラベル保持を確認する。Labelerの実行結果と実際のラベルを照合し、静的な確認と稼働確認を区別する。
 
 ## コードオーナー
 
