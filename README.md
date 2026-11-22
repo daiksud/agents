@@ -34,6 +34,7 @@ The skills below are installable through APM. Each is independently usable witho
 | Task | Skill |
 | --- | --- |
 | Write, organize, and maintain user and contributor documentation | [documentation](skills/documentation/SKILL.md) |
+| Develop features, fix bugs, and refactor using Extreme Programming | [extreme-programming](skills/extreme-programming/SKILL.md) |
 | Preserve judgment reasons and PR/commit records | [decision-recording](skills/decision-recording/SKILL.md) |
 | Configure continuous-delivery pipelines and artifact handling | [continuous-delivery](skills/continuous-delivery/SKILL.md) |
 | Configure commit conventions and automatic version calculation | [versioning](skills/versioning/SKILL.md) |
