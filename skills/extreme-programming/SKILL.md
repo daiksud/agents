@@ -38,10 +38,17 @@ description: 機能追加、不具合修正、リファクタリングを進め�
 
 ## 判断に迷ったときに引く項目
 
-[XP第2版の項目一覧](references/xp-second-edition.md)から、今の判断に関係する価値、原則、プラクティスを選ぶ。
+| 分類 | 読む場面 |
+| --- | --- |
+| [価値](references/values.md) | 意見が分かれ、判断で何を大切にするかを考えたい。 |
+| [原則](references/principles.md) | 大切にしたい価値を、目の前の状況でどう行動に移すか考えたい。 |
+| [基本プラクティス](references/primary-practices.md) | 日々の計画、実装、テスト、統合の進め方を選びたい。 |
+| [導出プラクティス](references/corollary-practices.md) | 基本プラクティスで培った協働や技術を使い、顧客との仕事の進め方や配備を改善したい。 |
 
 | 開発中の問い | XP第2版の参照先 |
 | --- | --- |
-| 仕様の解釈が割れた。誰と何を確かめるか。 | [Communication](references/values/communication.md)、[Feedback](references/values/feedback.md) |
-| 変更が大きく、結果を知るまでが長い。最初に何を小さく試せるか。 | [Baby Steps](references/principles/baby-steps.md)、[Test-First Programming](references/primary-practices/test-first-programming.md) |
-| 小さく統合できるようになった。利用者にも段階的に届けるには何が要るか。 | [Incremental Deployment](references/corollary-practices/incremental-deployment.md) |
+| 仕様の解釈が割れた。誰と何を確かめるか。 | [Communication](references/values.md#communicationコミュニケーション)、[Feedback](references/values.md#feedbackフィードバック) |
+| 変更が大きく、結果を知るまでが長い。最初に何を小さく試せるか。 | [Baby Steps](references/principles.md#baby-stepsベイビーステップ)、[Test-First Programming](references/primary-practices.md#test-first-programmingテストファーストプログラミング) |
+| 小さく統合できるようになった。利用者にも段階的に届けるには何が要るか。 | [Incremental Deployment](references/corollary-practices.md#incremental-deploymentインクリメンタルなデプロイ) |
+
+項目の名称と分類は、Kent Beck、Cynthia Andres 著『Extreme Programming Explained: Embrace Change』第2版の第4・5・7・9章に基づく。各項目の開発例は、そこで扱う考え方を具体化したもの。[原著の目次](https://www.informit.com/store/extreme-programming-explained-embrace-change-9780134051987)・[日本語版の詳細目次](https://www.ohmsha.co.jp/book/9784274217623.html)
