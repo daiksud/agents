@@ -43,7 +43,7 @@ sources:
 
 [versioning](../../skills/versioning/SKILL.md)はセマンティックバージョニングとConventional Commitsを使い、コミット規約とバージョン戦略を整備する。規約・commitlintだけの導入と、コミット履歴からの自動計算の両方に対応する。[^agents-versioning][^agents-versioning-adoption]
 
-計算・検査の設定手順はversioningが持ち、デプロイ・リリースとの接続は[continuous-delivery](../../skills/continuous-delivery/SKILL.md)、判断理由とPR記録の保存は[decision-recording](../../skills/decision-recording/SKILL.md)が扱う。各スキルには目的に必要な短い規約の案内を残し、他スキルへの言及は置かない。スキルの選び方と役割分担はリポジトリのREADMEで案内する。[^agents-skill-independence]
+バージョン計算の設定はversioningが扱い、デプロイ・リリースとの接続はcontinuous-deliveryが扱う。commitlintの導入ガイドとワークフローはversioningとdecision-recordingの両方に同梱し、それぞれのスキル内で導入を完結できるようにする。共通の導入手順や検査内容、固定バージョンを変更するときは両方の同梱資料を揃える。[^agents-skill-independence] [スキルの選び方](../../README.md)
 
 元の継続的デリバリー文書の出典と確認履歴は[その出典文書](continuous-delivery.md)に保持している。
 
@@ -58,7 +58,7 @@ sources:
 | パーサーと計算ツール | commitlintのconventional設定はConventional Commitsのプリセットを使う。commit-analyzerは `angular` が既定で、独自規則に一致しない場合は既定規則を適用し、`perf` をpatchとする。任意のtypeの破壊的変更を保ったまま計算方針に設定を合わせる。[^commitlint-configuration][^semantic-release-commit-analyzer] |
 | [commitlintの設定](../../skills/versioning/references/commitlint.md) | 標準の設定探索は `commitlint.config.mjs` や `package.json` の `commitlint` を扱う。`--default-config` はルールが見つからない場合の内蔵設定を選ぶ。既存設定を尊重し、設定エラーを標準設定への切り替えで隠さない。[^commitlint-configuration][^commitlint-cli] |
 | [ワークフロー](../../skills/versioning/assets/commitlint.yml) | PRのコミット範囲とタイトル・本文を検査する。別のステップで、PR本文にHTMLコメントの開始記号が残っていないことを確認する。Bun `1.4.4`、commitlint `21.2.4`、外部ActionのSHAを固定する。バージョン指定付きのbunxはローカルCLIを選ばず、`--bun` は実行ランタイムを指定する。[^commitlint-workflow-source][^commitlint-ci][^setup-bun][^bunx] |
-| 必須チェック | 導入したジョブの実行後に `commitlint` を必須チェックへ追加し、設定を読み戻す。実際の設定変更は依頼された範囲で行う。[^github-required-checks] |
+| 必須チェック | 対象のジョブの実行を確認してから必須チェックへ追加し、設定を読み戻す。同梱ワークフローのジョブ名は `commitlint`。実際の設定変更は依頼された範囲で行う。[^github-required-checks] |
 
 [^agents-versioning]: [独立スキル作成の目的と範囲](https://github.com/daiksud/agents/issues/281)。
 [^agents-versioning-adoption]: [スキルの採用と使用する規約の方針](https://github.com/daiksud/agents/issues/283)。

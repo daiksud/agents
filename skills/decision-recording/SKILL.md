@@ -4,7 +4,7 @@ description: >-
   設計判断と変更理由を記録する。PRの作成・更新、PRタイトル・本文の執筆・レビュー、
   コミットメッセージの作成・修正、PRのマージ、
   ドキュメント・コミットメッセージ・コードコメント・コード・テストの役割の整理、
-  記録ルール・PRテンプレート・マージ設定の整備に使う。
+  記録ルール・PRテンプレート・マージ設定の整備、commitlintによるコミットとPRの形式検査の導入に使う。
 ---
 
 # 設計判断を記録する
@@ -83,5 +83,6 @@ PRタイトル・本文をマージ時のコミット件名・本文としてそ
 | 変更と判断を記録するPR本文 | [PRテンプレート](assets/pull_request_template.md) |
 | リポジトリだけで読める記録ルール | [開発者向け指示の例](assets/agents-decision-records.md) |
 | 両マージ方式とPRタイトル・本文の保存設定 | [GitHub設定ガイド](references/github-settings.md) |
+| コミットとPRタイトル・本文の形式検査、必須チェック | [commitlintの導入](references/commitlint.md)、[ワークフロー](assets/commitlint.yml) |
 
 形式の検査とは別に、本文だけで判断理由が分かるかをレビューする。
