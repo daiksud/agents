@@ -1,6 +1,6 @@
 ---
 name: github-repo
-description: GitHub.comリポジトリのSettingsと運用ファイルについて、推奨設定の案内、診断、設定を行う。イミュータブルリリース、ブランチルール、Actionsの権限とロックファイル、セキュリティ機能、Dependabot、CODEOWNERS、Issue・PRテンプレート、参加手順や問い合わせ先の案内を扱うときに使う。通常のIssue・PR管理や、製品のパイプライン全体の設計には使わない。
+description: GitHub.comリポジトリのSettingsと運用ファイルについて、推奨設定の案内、診断、設定を行う。イミュータブルリリース、ブランチルール、Actionsの権限とロックファイル、セキュリティ機能、Dependabot、Labeler、CODEOWNERS、Issue・PRテンプレート、参加手順や問い合わせ先の案内を扱うときに使う。通常のIssue・PR管理や、製品のパイプライン全体の設計には使わない。
 ---
 
 # GitHubリポジトリの設定とファイルを整備する
@@ -47,6 +47,7 @@ description: GitHub.comリポジトリのSettingsと運用ファイルについ�
 | リリース、マージ、ブランチ保護、必須チェック、Actionsのポリシー | [設定基準](references/settings.md) |
 | 無料のセキュリティ機能、利用可否、課金、前提条件 | [セキュリティ](references/security.md) |
 | Dependabot、CODEOWNERS、Issue・PRテンプレート、脆弱性の報告方針、参加手順、問い合わせ先 | [リポジトリファイルと同梱テンプレート](references/repository-files.md) |
+| Labelerによる変更ファイルに応じたPRラベルの設定 | [PRの変更ファイルに応じたラベル付け](references/repository-files.md#prの変更ファイルに応じたラベル付け) |
 | Actionsの依存関係ロックファイルの導入・保守 | [Actionsのロック](references/actions-lock.md) |
 | 設定の取得、差分の適用、失敗、競合、再実行、結果の確認 | [操作と判定](references/operations.md) |
 
