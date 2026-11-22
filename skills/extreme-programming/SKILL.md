@@ -1,6 +1,6 @@
 ---
 name: extreme-programming
-description: エクストリームプログラミング（XP）で機能追加、不具合修正、リファクタリングを進めるときに使う。利用者のストーリーを小さく切り、ペアプログラミング、テストファースト、漸進的設計を組み合わせて実装する。
+description: 機能追加、不具合修正、リファクタリングを進めるときに使う。エクストリームプログラミングを適用して進める。利用者のストーリーを小さく切り、ペアプログラミング、テストファースト、漸進的設計を組み合わせて実装する。
 ---
 
 # XPで機能を実装する
@@ -38,8 +38,10 @@ description: エクストリームプログラミング（XP）で機能追加�
 
 ## 判断に迷ったときに引く項目
 
+[XP第2版の項目一覧](references/xp-second-edition.md)から、今の判断に関係する価値、原則、プラクティスを選ぶ。
+
 | 開発中の問い | XP第2版の参照先 |
 | --- | --- |
-| 仕様の解釈が割れた。誰と何を確かめるか。 | [価値](references/xp-second-edition.md#価値)の Communication、Feedback |
-| 変更が大きく、結果を知るまでが長い。最初に何を小さく試せるか。 | [原則](references/xp-second-edition.md#原則)の Baby Steps、[基本プラクティス](references/xp-second-edition.md#基本プラクティス)の Test-First Programming |
-| 小さく統合できるようになった。利用者にも段階的に届けるには何が要るか。 | [導出プラクティス](references/xp-second-edition.md#導出プラクティス)の Incremental Deployment |
+| 仕様の解釈が割れた。誰と何を確かめるか。 | [Communication](references/values/communication.md)、[Feedback](references/values/feedback.md) |
+| 変更が大きく、結果を知るまでが長い。最初に何を小さく試せるか。 | [Baby Steps](references/principles/baby-steps.md)、[Test-First Programming](references/primary-practices/test-first-programming.md) |
+| 小さく統合できるようになった。利用者にも段階的に届けるには何が要るか。 | [Incremental Deployment](references/corollary-practices/incremental-deployment.md) |
