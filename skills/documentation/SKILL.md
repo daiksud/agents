@@ -12,7 +12,8 @@ description: ソフトウェアやリポジトリのドキュメントを執筆�
 ## 基本方針
 
 - 読者を文書の利用目的で分ける。APIやライブラリを使うエンジニアは利用者、プロダクトを変更・保守する人は開発者として扱う。
-- 利用者向けは `docs/concepts.md`、`docs/tutorials.md`、`docs/guides.md`、`docs/references.md` に分類する。開発者向けは文書の種類によらず `docs/development/` にまとめ、現在の開発方針は `docs/development/policies.md` に書く。
+- 利用者向けは `docs/concepts.md`、`docs/tutorials.md`、`docs/guides.md`、`docs/references.md` に分類する。開発者向けの仕様や手順は `docs/development/` にまとめ、現在の開発方針は `docs/development/policies.md` に書く。
+- リポジトリの構成を案内するときは、トップレベルと主要な下位ディレクトリに開発者向けの `README.md` を置く。対象の選び方と `.github` の命名は[ディレクトリ案内の配置](references/placement.md#ディレクトリ案内の配置)に従う。
 - 機能仕様は利用者に提供するツール、API、サービスなどの振る舞いを対象にする。開発者が実装・検証するために、`docs/development/features/*.feature.md` にMarkdown with Gherkinで書く。利用者に提供しない開発用の便利ツールやスクリプトは対象に含めない。
 - 機能仕様は最初の1件から指定のディレクトリに置く。その他の文書は必要になった時点で単一ファイルから始める。内容が増えて話題を分ける必要が出たら、同名のディレクトリを作って分割する。分割後も必要に応じて階層を深くする。
 - 作成時の議論や過去の構成を知らなくても、現在の理解や作業に使える情報を書く。仕組みの目的や理由は必要に応じて含め、採用・変更時の比較や経緯はPR・コミットに残す。
