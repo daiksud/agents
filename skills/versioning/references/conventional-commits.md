@@ -12,7 +12,7 @@ description: コミットの形式と変更の意味をそろえ、バージョ�
 <type>[optional scope][!]: <description>
 ```
 
-- `type` は変更の目的で選ぶ。機能追加は `feat`、バグ修正は `fix` とし、ほかに `docs`、`refactor`、`test`、`ci` などを使う。
+- `type` は変更の目的で選ぶ。機能追加は `feat`、性能改善は `perf`、バグ修正は `fix` とする。ほかに `docs`、`refactor`、`test`、`ci` などを使う。
 - `scope` は対象の領域やモジュールを示す。不要なら省く。
 - `description` は実際の変更を簡潔に述べる。例は `fix(parser): reject empty input`。
 - 本文には変更内容と理由を記録し、件名・本文・フッターを空行で区切る。
