@@ -31,6 +31,8 @@ sources:
     resource: https://semantic-release.org/support/faq/
   - id: actions-checkout
     resource: https://github.com/actions/checkout
+  - id: github-workflow-dispatch-inputs
+    resource: https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax#onworkflow_dispatchinputs
   - id: setup-bun
     resource: https://github.com/oven-sh/setup-bun
   - id: bunx
@@ -52,10 +54,11 @@ sources:
 | 記述 | 根拠と適用範囲 |
 | --- | --- |
 | [コミットの形式](../../skills/versioning/references/conventional-commits.md) | Conventional Commitsは件名、本文、フッターと破壊的変更の表記を定める。PRタイトルへの適用と、最終タイトル・本文の検査はこのスキルの運用方針であり、規格自体の必須条件ではない。[^conventional-commits][^recording-source] |
-| [更新規則](../../skills/versioning/references/semantic-versioning.md) | SemVerは公開APIの互換性、非推奨化、major・minor・patchの更新と下位番号のリセットを定める。Conventional Commitsは変更の種類と更新を対応付ける。初回 `1.0.0`、更新対象のない履歴では新しい番号を作らないこと、履歴不足を変更なしと扱わないことは採用した運用方針。[^semver][^conventional-commits][^agents-release-versioning] |
+| [更新規則](../../skills/versioning/references/semantic-versioning.md) | SemVerは公開APIの互換性、非推奨化、下位番号のリセットを定める。Conventional Commitsは `feat`、`fix`、破壊的変更を採番に対応付ける。[^semver][^conventional-commits] このスキルは速度改善を機能として扱い、`perf` もminorとする。機能を変えずに利用者への配布物を変える変更はpatch、配布物が変わらない `docs`・`test`・`ci` は更新対象外とする。 |
 | 計算する履歴 | 対象SHAと前回の正式リリースタグを固定し、完全なコミットメッセージを解析する。checkoutの `fetch-depth: 0` は履歴とタグの取得に使う。[^agents-release-versioning][^actions-checkout] |
-| 初回・0.x・プレリリース | SemVerは `0.x` とプレリリースを認める。semantic-releaseは初回 `0.0.1` とmajor 0の特別な扱いをサポートしないため、採用する規則に対応するツールを選ぶ。[^semver][^semantic-release-faq] |
-| パーサーと計算ツール | commitlintのconventional設定はConventional Commitsのプリセットを使う。commit-analyzerは `angular` が既定で、独自規則に一致しない場合は既定規則を適用し、`perf` をpatchとする。任意のtypeの破壊的変更を保ったまま計算方針に設定を合わせる。[^commitlint-configuration][^semantic-release-commit-analyzer] |
+| 初回・0.x・プレリリース | SemVerは `0.x` とプレリリースを認める。このスキルでは初めて更新対象があるときに `v0.1.0` を公開し、以後 `0.x` の破壊的変更はminorとする。semantic-releaseはmajor 0の特別な扱いをサポートしないため、この規則に対応する計算ツールを選ぶ。[^semver][^semantic-release-faq] |
+| v1への昇格 | GitHub Actionsの `workflow_dispatch` はboolean入力を `inputs` で真偽値として参照できる。[^github-workflow-dispatch-inputs] このスキルでは `0.x` のリリースワークフローに既定値falseの `promote to v1` チェックボックスを設ける。選択すると追加の変更がなくても `v1.0.0` を公開し、公開に成功した後で入力と昇格処理を削除する。 |
+| パーサーと計算ツール | commitlintのconventional設定はConventional Commitsのプリセットを使う。commit-analyzerは `angular` が既定で、独自規則に一致しない場合は既定規則を適用する。既定では `perf` がpatchになるため、minorを明示する。破壊的変更はどのtypeでも優先し、配布物の差分も判定に使う。[^commitlint-configuration][^semantic-release-commit-analyzer] |
 | [commitlintの設定](../../skills/versioning/references/commitlint.md) | 標準の設定探索は `commitlint.config.mjs` や `package.json` の `commitlint` を扱う。`--default-config` はルールが見つからない場合の内蔵設定を選ぶ。既存設定を尊重し、設定エラーを標準設定への切り替えで隠さない。[^commitlint-configuration][^commitlint-cli] |
 | [ワークフロー](../../skills/versioning/assets/commitlint.yml) | PRのコミット範囲とタイトル・本文を検査する。別のステップで、PR本文にHTMLコメントの開始記号が残っていないことを確認する。Bun `1.4.4`、commitlint `21.2.4`、外部ActionのSHAを固定する。バージョン指定付きのbunxはローカルCLIを選ばず、`--bun` は実行ランタイムを指定する。[^commitlint-workflow-source][^commitlint-ci][^setup-bun][^bunx] |
 | 必須チェック | 対象のジョブの実行を確認してから必須チェックへ追加し、設定を読み戻す。同梱ワークフローのジョブ名は `commitlint`。実際の設定変更は依頼された範囲で行う。[^github-required-checks] |
@@ -69,6 +72,7 @@ sources:
 [^agents-release-versioning]: [自動バージョン計算の方針](https://github.com/daiksud/agents/issues/279)。
 [^actions-checkout]: [checkoutの履歴取得](https://github.com/actions/checkout)。
 [^semantic-release-faq]: [semantic-releaseの初回バージョンの制約](https://semantic-release.org/support/faq/)。
+[^github-workflow-dispatch-inputs]: [GitHub Actionsの手動実行時の入力](https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax#onworkflow_dispatchinputs)。
 [^commitlint-configuration]: [commitlintの設定とパーサー](https://commitlint.js.org/reference/configuration.html)。
 [^semantic-release-commit-analyzer]: [commit-analyzerの設定と判定規則](https://github.com/semantic-release/commit-analyzer)。
 [^commitlint-cli]: [commitlint CLI](https://commitlint.js.org/reference/cli.html)。

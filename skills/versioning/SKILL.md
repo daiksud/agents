@@ -21,6 +21,6 @@ description: セマンティックバージョニングとConventional Commits�
 | --- | --- |
 | コミットの件名・本文・フッターと、マージ後に残す情報 | [Conventional Commits](references/conventional-commits.md) |
 | 設定の選択、PRでの検査、必須チェック | [commitlintの導入](references/commitlint.md)、[ワークフロー](assets/commitlint.yml) |
-| 計算対象、更新規則、初回・0.x・プレリリース、計算ツール | [セマンティックバージョニング](references/semantic-versioning.md) |
+| 配布物の変更と採番、初回リリース、v1への昇格、プレリリース、計算ツール | [セマンティックバージョニング](references/semantic-versioning.md) |
 
 バージョンの計算と公開処理は分けて構成する。番号を成果物へ埋め込む場合はビルド前に確定し、検査後に書き換えない。公開済みバージョンの内容とタグの参照先を変更しない。
