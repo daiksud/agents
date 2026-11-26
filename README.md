@@ -34,7 +34,8 @@ The skills below are installable through APM. Each is independently usable witho
 | Task | Skill |
 | --- | --- |
 | Write, organize, and maintain user and contributor documentation | [documentation](skills/documentation/SKILL.md) |
-| Develop features, fix bugs, and refactor using Extreme Programming | [extreme-programming](skills/extreme-programming/SKILL.md) |
+| Practice Extreme Programming with a human pair using AI | [extreme-programming](skills/extreme-programming/SKILL.md) |
+| Manage feature requirements, tasks, and incremental integration on GitHub using XP | [github-xp](skills/github-xp/SKILL.md) |
 | Design tests around observable behavior, reproduce regressions, and diagnose flaky tests | [testing](skills/testing/SKILL.md) |
 | Preserve judgment reasons and PR/commit records | [decision-recording](skills/decision-recording/SKILL.md) |
 | Configure continuous-delivery pipelines and artifact handling | [continuous-delivery](skills/continuous-delivery/SKILL.md) |
