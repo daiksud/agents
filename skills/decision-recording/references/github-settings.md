@@ -4,67 +4,52 @@ title: GitHubの記録とマージ設定
 description: PRタイトルと本文をコミットに保存するため、マージ方式とメッセージを設定する。
 ---
 
-PRタイトル・本文をマージ時のコミット件名・本文としてそのまま残すことを強く推奨する。この運用を採用する場合は、以下の設定と手順を適用する。
+PRタイトル・本文をマージ時のコミット件名・本文としてそのまま残すことを強く推奨する。既定メッセージを変える依頼と、許可するマージ方式を変える依頼では、次のように設定を選ぶ。
 
 ## 現在の設定と変更箇所を確認する
 
-対象リポジトリのマージ設定、既定ブランチのルールセット・ブランチ保護、PRテンプレート、既存のコミット検査を確認する。期待値との差分と変更箇所を示す。同等の設定はそのまま利用する。
+対象リポジトリのマージ設定、対象ブランチで有効なルールセット・ブランチ保護とマージキュー、PRテンプレート、既存のコミット検査を確認する。依頼された範囲で差分を示し、同等の設定は活かす。ファイルの配置やガイドの作成だけを依頼された場合は、設定の変更箇所を案内する。
 
-設定変更を依頼されている範囲で適用し、変更後に読み戻して確認する。ファイルの配置やガイドの作成だけを依頼されている場合は、設定の変更箇所を案内する。確認できない設定を適用済みとして報告しない。
+## 既定のメッセージを設定する
 
-## マージ方式とメッセージを設定する
+`Settings → General → Pull Requests` で、対象の方式に `Pull request title and description` を選ぶ。[リポジトリ更新API](https://docs.github.com/en/rest/repos/repos#update-a-repository)では、対象の方式のタイトルと本文を組で指定する。
 
-GitHubの **Settings → General → Pull Requests** で、次のように設定する。
+| 対象の方式 | タイトル | 本文 |
+| --- | --- | --- |
+| [スカッシュ](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/configuring-pull-request-merges/configuring-commit-squashing-for-pull-requests) | `squash_merge_commit_title=PR_TITLE` | `squash_merge_commit_message=PR_BODY` |
+| [マージコミット](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/configuring-pull-request-merges/configuring-commit-merging-for-pull-requests) | `merge_commit_title=PR_TITLE` | `merge_commit_message=PR_BODY` |
 
-1. `Allow squash merging` と `Allow merge commits` を有効にする。
-2. `Allow rebase merging` を無効にする。
-3. スカッシュとマージコミットの両方で、既定メッセージに `Pull request title and description` を選ぶ。
+例えば、スカッシュ限定で直線履歴が必須のリポジトリで、スカッシュ時にPR本文を残したい場合は次の2項目を送る。`OWNER/REPO` は対象リポジトリに置き換える。
 
-[スカッシュの設定](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/configuring-pull-request-merges/configuring-commit-squashing-for-pull-requests)と[マージコミットの設定](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/configuring-pull-request-merges/configuring-commit-merging-for-pull-requests)に対応する[REST API](https://docs.github.com/en/rest/repos/repos#update-a-repository)の期待値は次のとおり。
+```sh
+gh api --method PATCH repos/OWNER/REPO \
+  -f squash_merge_commit_title=PR_TITLE \
+  -f squash_merge_commit_message=PR_BODY
+```
 
-| 設定 | 値 |
-| --- | --- |
-| `allow_squash_merge` | `true` |
-| `allow_merge_commit` | `true` |
-| `allow_rebase_merge` | `false` |
-| `squash_merge_commit_title` | `PR_TITLE` |
-| `squash_merge_commit_message` | `PR_BODY` |
-| `merge_commit_title` | `PR_TITLE` |
-| `merge_commit_message` | `PR_BODY` |
+## 許可するマージ方式を変更する
 
-APIで設定する場合は、対象を示す `OWNER/REPO` を置き換える。現状を取得して差分を確認し、変更対象のフィールドを送る。両方式をまとめて設定する例は次のとおり。
+スカッシュとマージコミットの両方を許可し、リベースマージを禁止する方針の導入を依頼された場合は、現在値と照合して次の設定を適用する。
 
 ```sh
 gh api --method PATCH repos/OWNER/REPO \
   -F allow_squash_merge=true \
   -F allow_merge_commit=true \
-  -F allow_rebase_merge=false \
-  -f squash_merge_commit_title=PR_TITLE \
-  -f squash_merge_commit_message=PR_BODY \
-  -f merge_commit_title=PR_TITLE \
-  -f merge_commit_message=PR_BODY
+  -F allow_rebase_merge=false
 ```
 
-実行後に `gh api repos/OWNER/REPO` で再取得し、表の期待値と比較する。書き込みAPIの成功だけで確認を終えない。
+両方式を対象ブランチで使えるようにするには、`Require a pull request before merging` が許可する方式も揃える。`Require linear history` はマージコミットと両立しないため、両方式の導入を依頼された場合にだけ解除の要否と変更権限を確認する。組織のルールなどにより両立できない場合は差分を報告する。[ルールセットで利用できるルール](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-rulesets/available-rules-for-rulesets)
 
-## ブランチのルールと揃える
-
-`Settings → Rules → Rulesets` と、利用している場合は `Settings → Branches` のブランチ保護を確認する。組織から適用されるルールも含め、対象ブランチに効くルールを確認する。
-
-- `Require linear history` はマージコミットを禁止するため、この運用を適用するブランチでは解除する。
-- `Require a pull request before merging` の許可するマージ方式も、スカッシュとマージコミットに揃える。
-- 変更対象以外のレビュー要件、必須チェック、権限などは保持する。変更できないルールがある場合は、対象と未適用の差分を報告する。
-
-各項目の仕様は[ルールセットで利用できるルール](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-rulesets/available-rules-for-rulesets)で確認する。
+設定後は `gh api repos/OWNER/REPO` と対象ブランチの実効ルールを読み戻し、依頼された値と照合する。
 
 ## 最終PRタイトルと本文を保存する
 
-形式検査を導入している場合は、PRタイトル・本文の編集にも適用し、マージ前に最新の結果が成功していることを確認する。
+PR作成・更新前にHTMLコメントをすべて除去する。マージ直前に最終タイトル・本文とhead SHAを取得し、記録がレビュー済みの変更、判断理由、実際の検証状況を表し、必要な承認と最新の必須チェックを満たすことを確認する。
 
-1. 最終PRタイトル・本文がレビュー済みの変更、判断理由、実際の検証状況を表していることを確認する。リンク先を読まなくても判断を理解できる内容にし、案内用のHTMLコメントをすべて除去する。
-2. マージ直前にPRタイトル、本文、head SHAを取得する。スカッシュかマージコミットを選び、取得したタイトルと本文をマージ時のメッセージに指定する。
-3. マージが完了したことと生成されたコミットSHAを確認し、そのコミットの件名・本文が最終PRタイトル・本文と一致することを確認する。
+| マージ経路 | APIを使う場合の操作 |
+| --- | --- |
+| 通常のPRを直接マージ | [マージAPI](https://docs.github.com/en/rest/pulls/pulls#merge-a-pull-request)に `sha`、最終タイトルの `commit_title`、最終本文の `commit_message` と、許可された `merge_method`（`squash` または `merge`）を渡す。 |
+| ネイティブのStacked PRを直接マージ | 1件ずつ統合するには最下段の未統合PRを選ぶ。[非同期マージAPI](https://docs.github.com/en/rest/pulls/pulls#merge-a-pull-request-asynchronously)に `merge_action=direct_merge` と通常の直接マージと同じ引数を渡す。受付時にUUIDが返ったら、そのUUIDで結果を取得して `merged` とコミットSHAを確認する。[スタックのマージ手順](https://docs.github.com/en/pull-requests/how-tos/merge-and-close-pull-requests/merging-stacked-pull-requests) |
+| マージキュー経由（スタックを含む） | 投入前にキューのマージ方式と、その方式の既定メッセージを確認する。PR単位の原文保存が必須で設定が対応しない場合は、投入を見合わせて差分を伝える。非同期APIでは `merge_action=merge_queue` と `sha` を指定する。方式・タイトル・本文の引数は直接マージ専用。`enqueued` の後は対象PRが実際にマージされるまで状態を確認する。 |
 
-GitHubのメッセージ設定は既定値であり、マージ時に編集できる。既定値の設定だけで本文の保存を保証したとみなさず、翻訳・要約・別の説明への置き換えをせずに保存する。
-
-[マージAPI](https://docs.github.com/en/rest/pulls/pulls#merge-a-pull-request)を使う場合は、`commit_title` に最終タイトル、`commit_message` に最終本文、`sha` に確認したhead SHAを渡す。`merge_method` は `squash` または `merge` とする。どちらの方式でも、必要な承認・CI・競合解消を満たしてからマージする。
+検証失敗などでキューから取り除かれた場合は、その理由を報告する。統合後は対象PRごとに生成されたコミットのSHAを特定し、件名と本文をPRの最終タイトル・本文と照合する。差異があれば実際に保存された内容を報告する。

@@ -9,7 +9,7 @@ description: GitHubで継続的デリバリーを実践するために、Actions
 
 ## デプロイとリリース
 
-デプロイはビルド成果物を本番環境へ展開することで、機能の追加・変更・削除を必ずしも伴わない。mainへ統合したコミットごとに行い、全自動かボタン一つで任意の環境へ展開できるようにする。CLIでは、コミットごとのビルド成果物をGitHub ActionsのArtifactsに保存することをデプロイとする。
+デプロイはビルド成果物を本番環境へ展開することで、機能の追加・変更・削除を必ずしも伴わない。mainへの各pushで、更新後の先端SHA（`github.event.after`）を対象にする。全自動かボタン一つで任意の環境へ展開できるようにする。CLIでは、そのSHAの検証済み成果物をGitHub ActionsのArtifactsに保存することをデプロイとする。
 
 リリースはサービスの挙動を変えることで、機能の追加・変更・削除・修正を含む。デプロイを伴わず、フィーチャーフラグなどで公開を切り替えてもよい。バグ修正などは複雑な制御を増やさず、デプロイと同時にリリースしてもよい。CLIでは `release.yml` を起動し、正式バージョンを付けてGitHub Releaseを作成する。
 
@@ -34,7 +34,7 @@ description: GitHubで継続的デリバリーを実践するために、Actions
 
 同じイベントでも、目的や必要な起動条件が異なり、一つにまとめるとジョブやステップの条件分岐・スキップ制御が複雑になる場合は、ワークフローを分ける。それぞれの `on` で必要なイベントとアクティビティを指定する。
 
-例えば、ビルド・テスト・lintを行う `pr.yml` は `pull_request` の `opened`、`synchronize`、`reopened` で起動する。PRタイトル・本文を検査する `commitlint.yml` では `edited` も指定し、タイトルや本文だけの変更でも起動する。PR本文だけの変更では `pr.yml` を起動しない構成にし、各ジョブやステップへ同じスキップ条件を繰り返し書かない。
+`pr.yml` は `pull_request` の `opened`、`synchronize`、`reopened`、`edited` を受け取る。製品検証の入口で一度だけ `github.event.action != 'edited' || github.event.changes.base != null` を判定する。PRの作成・コミット追加・再開とマージ先の変更では、そのbaseとheadを組み合わせてビルド・テスト・lintを行う。タイトル・本文だけの編集では製品検証の実行と結果を保持し、`commitlint` で最新のPRタイトル・本文を検査する。[PR編集時のペイロード](https://github.com/octokit/webhooks/blob/main/payload-schemas/api.github.com/pull_request/edited.schema.json)
 
 ## 基本ワークフローとフェーズ
 
@@ -62,7 +62,7 @@ description: GitHubで継続的デリバリーを実践するために、Actions
 | `push.yml` | mainへの `push` | キューの検証結果・成果物を照合 → `deployment` |
 | `release.yml` | `workflow_dispatch` | キューで検証した成果物を再利用 → `release` |
 
-キューで両フェーズが成功し、mainに統合された内容と対応する成果物を確認できる場合、pushでは両フェーズを省略する。キュー不使用時は基本構成で検証する。キューとの対応、必須チェック、再利用できない場合の扱いは[ワークフロー設計](references/workflow-design.md)に従う。
+PRとキューの両方で同じ必須チェックを報告する。PRでは `screening` と採用した `commitlint`、キューではグループのhead SHAでの `screening` と `inspection` の成功を確認する。キューの検証済み成果物がpush後の先端SHAに対応する場合は、pushで再利用してデプロイする。[必須チェックと成果物の再利用条件](references/workflow-design.md)
 
 ## 再利用の単位
 

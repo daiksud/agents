@@ -21,7 +21,7 @@ description: コミット履歴と配布物の変更から次のバージョン�
 | 変更内容 | v0.x | v1.0.0以降 |
 | --- | --- | --- |
 | 任意のtypeの破壊的変更（`!`、またはフッターの `BREAKING CHANGE:`・`BREAKING-CHANGE:`） | minor | major |
-| 機能追加（`feat`）、性能改善（`perf`）、公開APIの非推奨化 | minor | minor |
+| 機能追加・互換性を保つ公開APIの非推奨化（`feat`）、性能改善（`perf`） | minor | minor |
 | バグ修正（`fix`） | patch | patch |
 | 機能は同じでも配布物が変わる変更（リファクタリングなど） | patch | patch |
 | 配布物に影響しない開発用ドキュメント、テスト、CIなどの変更のみ | 更新なし | 更新なし |
