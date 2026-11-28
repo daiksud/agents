@@ -67,6 +67,8 @@ Projectとリポジトリの所有者が同じで、ステータスの同期が�
 3. 統合後のメインラインと必要な検証結果を確認する。共有のコードや先行するPRの検証に失敗したら、次の変更より復旧を優先する。
 4. Taskの完了条件を満たしたことと、必要な変更がすべて統合されたことを確認してTask Issueをクローズする。結果をペアで確認し、Featureの残りの受け入れ条件から次のTaskを選ぶ。
 
+最終PRタイトル・本文をコミットに保存する運用では、マージ直前に原文とhead SHAを取得する。通常の直接マージでは、[マージAPI](https://docs.github.com/en/rest/pulls/pulls#merge-a-pull-request)に `commit_title`、`commit_message`、`sha` と許可されたマージ方式を渡す。キュー経由では投入前にキューのマージ方式と既定メッセージを確認し、原文保存の要件と合わない場合は投入を見合わせて差分を伝える。統合後は各PRに対応するコミットSHAを特定し、件名・本文をPRの原文と照合する。
+
 Taskを完了させるPRでは、受け入れに必要な確認がマージ前に済み、デフォルトブランチを対象にしていれば、本文に `Closes #123` と書ける。GitHubはIssueにリンクされたドラフトPRをもとに `In progress`、レビュー可能なPRをもとに `In review` に自動更新することがある。[PRとIssueのリンク](https://docs.github.com/en/issues/tracking-your-work-with-issues/using-issues/linking-a-pull-request-to-an-issue)
 
 途中のPRや統合後に検証が必要なPRでは、本文とコミットメッセージに `Refs #123` と書き、自動クローズにつながるリンクを避ける。この参照だけではIssueのステータスも自動更新されない。Task全体がレビュー段階に入ったら必要に応じて `In review` にし、完了条件を確認してから閉じる。
@@ -77,7 +79,8 @@ Taskを完了させるPRでは、受け入れに必要な確認がマージ前�
 
 - 最下段のPRはメインラインを、後続のPRは直下のPRの作業ブランチをベースにする。各PRで対象のTask Issueを参照し、そのPRで追加する変更を示す。
 - GitHubのネイティブのStacked PRを利用できる場合は、[公式の手順](https://docs.github.com/en/pull-requests/get-started/stacked-prs-quickstart)に従って依存関係を登録する。利用できない場合は通常のPRを順に統合する。
-- GitHubでは、選択したPRとその下にある未統合のPRがすべて一緒にマージされる。未統合のうち最下段のPRを選び、必須チェックと承認を満たしたら、その1件を速やかに統合する。[Stacked PRのマージ仕様](https://docs.github.com/en/pull-requests/how-tos/merge-and-close-pull-requests/merging-stacked-pull-requests)
+- 選択したPRと、その下にある未統合のPRが一緒にマージされる。1件ずつ統合するときは最下段の未統合PRを選ぶ。APIでは[非同期マージAPI](https://docs.github.com/en/rest/pulls/pulls#merge-a-pull-request-asynchronously)を使う。直接マージでは `merge_action=direct_merge` と通常の直接マージと同じ引数を渡し、UUIDが返ったら結果を取得する。[Stacked PRのマージ仕様](https://docs.github.com/en/pull-requests/how-tos/merge-and-close-pull-requests/merging-stacked-pull-requests)
+- キューを使う場合は、投入対象のPRと順序を確認し、`merge_action=merge_queue` と `sha` を渡す。方式・タイトル・本文の指定は直接マージに限られる。`enqueued` はキューへの登録完了を示すので、対象PRが実際にマージされたことを確認してからTaskの完了条件を評価する。
 - 先行PRの変更や統合後は、後続PRのベース、差分、CI、承認の状態を確認し、必要に応じて更新する。保護ルールを回避しない。
 - 先行PRの失敗を放置して後続の変更を積み上げない。未統合の変更を増やす負担が待ち時間を減らす効果を上回るなら、通常のPRに戻す。
 

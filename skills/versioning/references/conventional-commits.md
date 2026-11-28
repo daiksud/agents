@@ -17,6 +17,8 @@ description: コミットの形式と変更の意味をそろえ、バージョ�
 - `description` は実際の変更を簡潔に述べる。例は `fix(parser): reject empty input`。
 - 本文には変更内容と理由を記録し、件名・本文・フッターを空行で区切る。
 
+このスキルでは、互換性を保って公開APIを非推奨にする変更も `feat` で記録する。たとえば `feat(api): deprecate oldSearch in favor of search` はminor更新となる。後に `oldSearch` を削除する変更は、破壊的変更として記録する。
+
 互換性を壊す変更は、任意のtypeに付けた `!`、または `BREAKING CHANGE: 説明`・`BREAKING-CHANGE: 説明` のフッターで示す。影響と必要な移行方法も説明する。
 
 ## マージ後に残す情報

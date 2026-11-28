@@ -22,6 +22,6 @@ Remove all HTML comments after writing and before creating/updating the PR. PR v
 
 The independent [decision-recording skill](../../skills/decision-recording/SKILL.md) provides a [PR template](../../skills/decision-recording/assets/pull_request_template.md) and [local instruction example](../../skills/decision-recording/assets/agents-decision-records.md). Accept equivalent arrangements and existing topical placement; no document directory or policy name is required.
 
-The [settings guide](../../skills/decision-recording/references/github-settings.md) explains allowing squash and merge-commit merging, prohibiting rebase merging, and saving PR title/body with either method.
+To save the PR title and body, configure the message defaults for the enabled merge method and verify the generated commit. A request to adopt both squash and merge commits also covers their compatibility with branch rules. [Settings guide](../../skills/decision-recording/references/github-settings.md)
 
 Use either skill's commitlint guide to adopt its bundled workflow and, when requested, configure the required check in the target repository. Both workflows pin Bun and commitlint, use standard configuration discovery, and fall back to the conventional default when no rules are configured. [decision-recording guide](../../skills/decision-recording/references/commitlint.md), [versioning guide](../../skills/versioning/references/commitlint.md)

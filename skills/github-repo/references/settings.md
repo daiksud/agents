@@ -31,27 +31,34 @@ MUST／SHOULD／MAYの意味はスキル本体の定義に従う。期待値と�
 
 ## PRのマージ方式
 
-**SHOULD:** PRの判断記録を残すため、スカッシュマージとマージコミットを許可し、リベースマージを禁止する。`Settings` → `General` → `Pull Requests` で、有効にする両方式のメッセージに `Pull request title and description` を選ぶ。明示的に採用された、より限定的なマージ方針は尊重する。`GET /repos/{owner}/{repo}` と[リポジトリ更新API](https://docs.github.com/en/rest/repos/repos#update-a-repository)の対応フィールドは、次の値を期待値とする。
+**SHOULD:** PRの判断記録を残すため、スカッシュマージとマージコミットを許可し、リベースマージを禁止する。既存のスカッシュ限定などの方針を尊重する。両方式の採用を依頼された場合は、`Settings` → `General` → `Pull Requests` または[リポジトリ更新API](https://docs.github.com/en/rest/repos/repos#update-a-repository)で、マージ方式の差分だけを適用する。
 
 | フィールド | 期待値 |
 | --- | --- |
 | `allow_squash_merge` | `true` |
 | `allow_merge_commit` | `true` |
 | `allow_rebase_merge` | `false` |
-| `squash_merge_commit_title` | `PR_TITLE` |
-| `squash_merge_commit_message` | `PR_BODY` |
-| `merge_commit_title` | `PR_TITLE` |
-| `merge_commit_message` | `PR_BODY` |
 
 リポジトリ設定を、実効的なブランチルールや使用中のマージキューと照合する。直線的な履歴を必須にするとマージコミットは使えないため、許可するマージ方式をリポジトリと対象Rulesetの間で揃える。両方式の採用を依頼された場合は、こうした関連設定の差分も含める。依頼された範囲だけを適用し、無関係な保護を維持したうえで、結果の設定を再取得する。取得できなかった値を既定値で補わない。
 
 ## PRとマージコミットのメッセージを揃える
 
-メッセージ形式の診断や適用には、この節の範囲で対応する。スカッシュマージとマージコミットのタイトル・本文に対応する四つのフィールドを、[設定表](#prのマージ方式)の `PR_TITLE`／`PR_BODY` と照合する。取得できないフィールドは未確認とする。メッセージ形式だけの依頼は無関係なマージ方式や保護ルールの変更を承認するものではない。
+メッセージ形式は、依頼された方式の既定値を `Pull request title and description` にする。`GET /repos/{owner}/{repo}` で現在値を取得し、`PATCH /repos/{owner}/{repo}` には次のうち対象の組だけを送って読み戻す。スカッシュ限定・直線履歴必須のリポジトリなら、スカッシュ用の2項目で本文保存を設定できる。取得できないフィールドは未確認とする。
+
+| 対象の方式 | タイトル | 本文 |
+| --- | --- | --- |
+| スカッシュ | `squash_merge_commit_title=PR_TITLE` | `squash_merge_commit_message=PR_BODY` |
+| マージコミット | `merge_commit_title=PR_TITLE` | `merge_commit_message=PR_BODY` |
 
 最終タイトル・本文はそれだけで内容を理解できるようにし、レビュー済みの変更と揃えて、HTMLコメントを除去する。合意した言語を守り、マージ時に翻訳や要約で記録を置き換えない。テンプレートや指示を編集する場合は既存ルールを確認し、同等の見出しを維持する。[承認済みのファイル変更](operations.md#承認済みのファイル変更)に従い、承認された差分だけを反映する。
 
-診断では正確な差分を報告する。承認済みの適用では[承認済みの設定を適用する](operations.md#承認済みの設定の適用)に従い、`PATCH /repos/{owner}/{repo}` で承認済みのフィールドだけを送信する。メッセージのフィールドを設定する際は対応するタイトルのフィールドも含め、その後 `GET /repos/{owner}/{repo}` で再取得する。これらは編集可能な既定値である。変更の反映時には、マージ直前に最終PRタイトル・本文・HEADを取得し、[マージAPI](https://docs.github.com/en/rest/pulls/pulls#merge-a-pull-request)の `commit_title`、`commit_message`、`sha` に渡す。生成されたコミットの件名・本文を、その記録と照合する。スキルをインストールしただけでは設定は変わらない。
+実際にPRを統合するときは、直前に最終タイトル・本文とhead SHAを取得し、経路に応じて記録を保存する。
+
+- 通常の直接マージでは[マージAPI](https://docs.github.com/en/rest/pulls/pulls#merge-a-pull-request)に `commit_title`、`commit_message`、`sha` と許可された `merge_method`（`squash` または `merge`）を渡す。
+- ネイティブのStacked PRは最下段の未統合PRから[非同期マージAPI](https://docs.github.com/en/rest/pulls/pulls#merge-a-pull-request-asynchronously)を使う。直接マージの場合は `merge_action=direct_merge` と通常の直接マージと同じ引数を渡し、UUIDが返ったら結果を取得する。
+- キューでは投入前にキューの方式と既定メッセージを確認する。原文保存が必須で設定が対応しない場合は、投入を見合わせて差分を示す。非同期APIのキュー投入には `merge_action=merge_queue` と `sha` を指定する。`commit_title`・`commit_message`・`merge_method` は直接マージ専用である。
+
+受付やキュー投入の後は、各PRのマージ状態を確認する。検証失敗などでキューから取り除かれた場合は理由を報告する。統合されたPRは対応するコミットSHAを特定し、実際に保存された件名・本文をPRの最終タイトル・本文と照合する。
 
 ## PRブランチの更新と削除
 
